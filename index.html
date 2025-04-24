@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+  <title>SichrSpace - Apartment Search Platform</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+  <style>
+    :root {
+      --primary-color: #2563EB; /* Blue */
+      --secondary-color: #F9FAFB; /* Soft Gray */
+      --secondary-border: #E5E7EB; /* Light Gray */
+      --accent-color: #40E0D0; /* Turquoise */
+      --accent-hover: #2BC4B6; /* Darker Turquoise */
+      --text-color: #374151; /* Neutral Gray */
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+    }
+    body {
+      margin: 0;
+      font-family: var(--body-font);
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    header {
+      background: var(--primary-color);
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+    }
+    header img {
+      height: 40px;
+    }
+    header nav {
+      display: flex;
+      gap: 15px;
+    }
+    header nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-family: var(--heading-font);
+    }
+    header nav a:hover {
+      text-decoration: underline;
+    }
+    .hero {
+      background: url('./img/koeln.jpg') no-repeat center center;
+      background-size: cover; /* Ensure the image covers the entire area */
+      height: 75vh; /* Reduce height to 75% of the viewport */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      margin: 0; /* Remove any default margins */
+      padding: 0; /* Remove any default paddings */
+    }
+    .hero h1 {
+      font-family: var(--heading-font);
+      font-size: 54px; /* Increase font size by 50% */
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    .section {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section h2 {
+      font-family: var(--heading-font);
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    .section p {
+      font-family: var(--body-font);
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+    .section-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 40px 0; /* Add spacing between sections */
+      position: relative;
+    }
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--secondary-border); /* Light gray line */
+    }
+    .section-divider span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+      background: var(--primary-color); /* Primary blue */
+      color: white;
+      border-radius: 50%;
+      font-size: 1rem;
+      font-weight: bold;
+      margin: 0 10px; /* Space between the circle and the lines */
+    }
+    .faq {
+      margin-top: 20px;
+    }
+    .faq-item {
+      margin-bottom: 20px;
+    }
+    .faq-item h3 {
+      font-family: var(--heading-font);
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    .faq-item p {
+      font-family: var(--body-font);
+      color: var(--text-color);
+    }
+    footer {
+      background: var(--primary-color);
+      color: white;
+      padding: 20px;
+      font-size: 14px;
+      text-align: center;
+    }
+    footer a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+    .instructions {
+      background-color: var(--secondary-color);
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .instructions h2 {
+      font-family: var(--heading-font);
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    .instructions ol {
+      padding-left: 20px;
+      line-height: 1.8;
+      color: var(--text-color);
+    }
+    .instructions ol li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="img/logo.jpg" alt="SichrSpace Logo">
+    <nav>
+      <a href="apartments-listing.html">Apartments</a>
+      <a href="apartment-offers.html">Rent</a>
+      <a href="login.html">Login</a>
+      <a href="create-account.html">Create Account</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <h1>SichrSpace</h1>
+  </div>
+
+  <main>
+    <!-- Introduction Section -->
+    <section class="section" id="introduction">
+      <h2>Welcome to SichrSpace</h2>
+      <p><strong>Easy search. Secure offers.</strong></p>
+      <p>
+        SichrSpace is the safest way to find your new home. Our innovative apartment search platform focuses on security and transparency to protect people from scams while providing landlords with advanced account management tools and filters to ease the workload. Find a suitable apartment that matches your needs and check it from the comfort of your room.
+      </p>
+    </section>
+
+    <!-- Section Divider -->
+    <div class="section-divider">
+      <span>•</span>
+    </div>
+
+    <!-- Instruction Section -->
+    <section class="section" id="instruction">
+      <h2>How It Works</h2>
+      <p>
+        Getting started with SichrSpace is easy:
+      </p>
+      <ol>
+        <li>Create an account as a renter or landlord.</li>
+        <li>Browse available apartments or list your property.</li>
+        <li>Connect with landlords or renters through our secure messaging system.</li>
+        <li>Find your perfect match and finalize the deal!</li>
+      </ol>
+    </section>
+
+    <!-- Section Divider -->
+    <div class="section-divider">
+      <span>•</span>
+    </div>
+
+    <!-- SEO Content Section -->
+    <section class="section" id="seo-content">
+      <h2>Why Choose SichrSpace?</h2>
+      <p>
+        SichrSpace is designed to simplify apartment searching and property listing. With our user-friendly interface and advanced search filters, you can find exactly what you're looking for in no time. Our platform is optimized for both renters and landlords, ensuring a smooth experience for everyone.
+      </p>
+      <p>
+        Key features include:
+      </p>
+      <ul>
+        <li>Comprehensive apartment listings with photos and details.</li>
+        <li>Secure messaging between renters and landlords.</li>
+        <li>Advanced search filters to narrow down your options.</li>
+        <li>Responsive design for seamless use on any device.</li>
+      </ul>
+    </section>
+
+    <!-- Section Divider -->
+    <div class="section-divider">
+      <span>•</span>
+    </div>
+
+    <!-- FAQ Section -->
+    <section class="section" id="faq">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <h3>How do I create an account?</h3>
+          <p>
+            Click on the "Sign Up" link in the navigation bar and fill out the registration form. You can choose to register as a renter or landlord.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>Is SichrSpace free to use?</h3>
+          <p>
+            Yes, SichrSpace is free for renters to browse listings. Landlords can list their properties for free, with optional premium features available.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>How do I contact a landlord or renter?</h3>
+          <p>
+            Once you find a listing you're interested in, use our secure messaging system to connect with the landlord or renter.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>Can I list multiple properties?</h3>
+          <p>
+            Yes, landlords can list multiple properties under a single account.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Divider -->
+    <div class="section-divider">
+      <span>•</span>
+    </div>
+
+    <!-- Instructions Section -->
+    <section class="instructions" id="instructions">
+      <h2>Instructions</h2>
+      <ol>
+        <li>Register and sign in.</li>
+        <li>Create your account.</li>
+        <li>Fill in your personal details.</li>
+        <li>Post an apartment offer or go on a search.</li>
+        <li>Discuss the details in chat.</li>
+        <li>Request to book an apartment.</li>
+        <li>After acceptance, apply for viewing.</li>
+        <li>Receive confirmation.</li>
+        <li>Secure payment.</li>
+        <li>Get viewing video footage.</li>
+        <li>Ask for contract creation with the landlord.</li>
+        <li>Sign the contract online and move in.</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 SichrSpace. All rights reserved.</p>
+    <p>Created by <a href="https://www.linkedin.com/in/z%C3%A9t%C3%A9ny-dobos/?originalSubdomain=hu">Zétény Dobos</a> and <a href="https://www.linkedin.com/in/%C3%B6mer-%C3%BC%C3%A7kale-482787202/">Ömer Üçkale</a>.</p>
+  </footer>
+</body>
+</html>

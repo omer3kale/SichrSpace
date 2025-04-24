@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apartments Listing</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #F9FAFB;
+    }
+
+    header {
+      background-color: #2563EB;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .filters-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .filters-container.active {
+      display: block;
+    }
+
+    .filters-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .filters-header h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .close-filters {
+      background: none;
+      border: none;
+      color: #F87171;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 20px;
+    }
+
+    .close-filters:hover {
+      color: #E11D48;
+    }
+
+    .filters-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .filters-container label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .filters-container input, .filters-container select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+    }
+
+    .filters-container button.apply-filters {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #10B981;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .filters-container button.apply-filters:hover {
+      background-color: #059669;
+    }
+
+    .listings {
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .listing {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    width: calc(33.333% - 20px);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .listing:hover {
+    background-color: #F3F4F6;
+  }
+
+  /* Add the new CSS block here */
+  .left-block, .middle-block, .right-block {
+    flex: 1;
+  }
+
+  .left-block img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .left-block p, .middle-block p, .right-block p {
+    margin: 5px 0;
+    color: #6B7280;
+  }
+
+  .middle-block p strong {
+    color: #2563EB;
+  }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      width: 80%;
+      max-width: 1000px;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .modal-left {
+      flex: 2;
+      padding: 20px;
+    }
+
+    .modal-left img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .modal-left h2 {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+
+    .modal-left p {
+      margin: 10px 0;
+      color: #6B7280;
+    }
+
+    .modal-right {
+      flex: 1;
+      background: #F3F4F6;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-right button {
+      padding: 10px;
+      background-color: #2563EB;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .modal-right button:hover {
+      background-color: #1E3A8A;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Apartments Listing</h1>
+    <button class="filter-toggle" onclick="toggleFilters()">Filters</button>
+  </header>
+
+  <!-- Filters Section -->
+  <div class="filters-container" id="filters-container">
+    <div class="filters-header">
+      <h2>Filters</h2>
+      <button class="close-filters" onclick="toggleFilters()">×</button>
+    </div>
+    <div class="filters-row">
+      <div class="filter-group">
+        <label for="city">City/Area</label>
+        <input type="text" id="city" placeholder="Enter city or area">
+      </div>
+      <div class="filter-group">
+        <label for="move-in">Move-in Date</label>
+        <input type="date" id="move-in">
+      </div>
+      <div class="filter-group">
+        <label for="move-out">Move-out Date</label>
+        <input type="date" id="move-out">
+      </div>
+      <div class="filter-group">
+        <label for="price">Price (€ per month)</label>
+        <input type="number" id="price" placeholder="Enter max price">
+      </div>
+      <div class="filter-group">
+        <label for="property-type">Property Type</label>
+        <select id="property-type">
+          <option value="">Any</option>
+          <option value="shared-room">Shared Room</option>
+          <option value="private-room">Private Room</option>
+          <option value="studio">Studio</option>
+          <option value="apartment">Apartment</option>
+        </select>
+      </div>
+    </div>
+    <div class="filters-row">
+      <div class="filter-group" style="flex: 1;">
+        <label for="amenities">Amenities</label>
+        <select id="amenities" multiple>
+          <option value="washing-machine">Washing Machine</option>
+          <option value="dryer">Dryer</option>
+          <option value="dishwasher">Dishwasher</option>
+          <option value="tv">TV</option>
+          <option value="lift">Lift</option>
+          <option value="kitchen">Kitchen</option>
+          <option value="air-conditioning">Air Conditioning</option>
+          <option value="wifi">WiFi</option>
+          <option value="heating">Heating</option>
+          <option value="private-bathroom">Private Bathroom</option>
+          <option value="wheelchair-accessible">Wheelchair Accessible</option>
+        </select>
+      </div>
+      <div class="filter-group" style="flex: 1;">
+        <label for="bed-type">Bed Type</label>
+        <select id="bed-type" multiple>
+          <option value="single-bed">Single Bed</option>
+          <option value="double-bed">Double Bed</option>
+          <option value="hochbett">Hochbett</option>
+        </select>
+      </div>
+    </div>
+    <div class="filters-row">
+      <div class="filter-group">
+        <label for="rooms">Number of Rooms</label>
+        <input type="number" id="rooms" placeholder="Enter number of rooms">
+      </div>
+    </div>
+    <button class="apply-filters">Apply Filters</button>
+  </div>
+
+  <div class="listings">
+    <!-- First Listing -->
+    <div class="listing" onclick="openOfferDetails(1)">
+      <!-- Background Image -->
+      <div class="listing-image" style="background-image: url('./img/apartment1.jpg'); height: 150px; background-size: cover; background-position: center; border-radius: 8px;"></div>
+      <!-- Left Block -->
+      <div class="left-block">
+        <p>123 Main St, City</p>
+      </div>
+      <!-- Middle Block -->
+      <div class="middle-block">
+        <p><strong>€800/month</strong></p>
+        <p>Includes: Utilities, TV Broadcast Fee, Cleaning, WiFi</p>
+      </div>
+      <!-- Right Block -->
+      <div class="right-block">
+        <p>Property Type: Private Room</p>
+        <p>Size: 50m²</p>
+        <p>Single Beds: 1</p>
+        <p>Double Beds: 0</p>
+        <p>Move-in: 01/05/2025</p>
+        <p>Move-out: 01/08/2025</p>
+      </div>
+    </div>
+  
+    <!-- Second Listing -->
+    <div class="listing" onclick="openOfferDetails(2)">
+      <!-- Background Image -->
+      <div class="listing-image" style="background-image: url('./img/apartment2.jpg'); height: 150px; background-size: cover; background-position: center; border-radius: 8px;"></div>
+      <!-- Left Block -->
+      <div class="left-block">
+        <p>456 Elm St, City</p>
+      </div>
+      <!-- Middle Block -->
+      <div class="middle-block">
+        <p><strong>€1200/month</strong></p>
+        <p>Includes: Utilities, TV Broadcast Fee, Cleaning, WiFi</p>
+      </div>
+      <!-- Right Block -->
+      <div class="right-block">
+        <p>Property Type: Studio</p>
+        <p>Size: 70m²</p>
+        <p>Single Beds: 0</p>
+        <p>Double Beds: 2</p>
+        <p>Move-in: 01/06/2025</p>
+        <p>Move-out: 01/12/2025</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Offer Details -->
+  <div class="modal" id="offer-modal">
+    <button class="close-modal" onclick="closeModal()">×</button>
+    <div class="modal-content">
+      <div class="modal-left">
+        <img id="offer-image" src="" alt="Offer Image">
+        <h2 id="offer-title">Apartment Title</h2>
+        <p id="offer-address">Exact Address</p>
+        <p id="offer-price">Price: €</p>
+        <p id="offer-details">Details: Size, Property Type, Furnished/Unfurnished, Rooms, Beds</p>
+        <h3>Amenities and Extra Services</h3>
+        <p id="offer-amenities">Amenities list...</p>
+        <h3>Description</h3>
+        <p id="offer-description">Apartment description...</p>
+        <h3>Area Description</h3>
+        <p id="offer-area-description">Area description...</p>
+        <h3>Availability</h3>
+        <p id="offer-availability">Min Stay, Move-in Date, Move-out Date</p>
+      </div>
+      <div class="modal-right">
+        <h3>Landlord</h3>
+        <button>Message Landlord</button>
+        <button onclick="openRequestModal()">Request to Book</button>
+        <button>How to Book?</button>
+        <button>Customer Service</button>
+        <button>Contact Us</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Request to Book Modal -->
+  <div class="modal" id="request-modal">
+    <button class="close-modal" onclick="closeRequestModal()">×</button>
+    <div class="modal-content">
+      <div class="modal-left">
+        <h2>Request to Book</h2>
+        <form id="request-form">
+          <!-- Stay Duration -->
+          <h3>Stay Duration</h3>
+          <label for="move-in-date">Preferred Move-in Date</label>
+          <input type="date" id="move-in-date" required>
+          <label for="move-out-date">Preferred Move-out Date</label>
+          <input type="date" id="move-out-date" required>
+          <label for="extend-stay">Would you like to extend later?</label>
+          <select id="extend-stay">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+
+          <!-- About the Tenants -->
+          <h3>About the Tenants</h3>
+          <label for="adults">Adults (Name, Relation to Applicant)</label>
+          <textarea id="adults" placeholder="E.g., John Doe, Friend"></textarea>
+          <label for="children">Children (Age Group)</label>
+          <textarea id="children" placeholder="E.g., Infant, Child, Teenager"></textarea>
+          <label for="pets">Pets (Type of Pet)</label>
+          <textarea id="pets" placeholder="E.g., Dog, Cat"></textarea>
+
+          <!-- About Moving In -->
+          <h3>About Moving In</h3>
+          <label for="reason">Reason to Stay</label>
+          <select id="reason">
+            <option value="work">Work</option>
+            <option value="study">Study</option>
+            <option value="temporary-stay">Temporary Stay</option>
+            <option value="apprenticeship">Apprenticeship</option>
+            <option value="internship">Internship</option>
+          </select>
+          <label for="institution">Educational Institution or Company</label>
+          <input type="text" id="institution" placeholder="Enter name">
+          <label for="payer">Who is Paying for the Rent?</label>
+          <select id="payer">
+            <option value="myself">Myself</option>
+            <option value="family">Family</option>
+            <option value="scholarship">Scholarship</option>
+            <option value="company">Company</option>
+          </select>
+          <label for="detailed-reason">Detailed Reason for Stay</label>
+          <textarea id="detailed-reason" placeholder="Explain your reason for staying"></textarea>
+
+          <!-- Submit Button -->
+          <button type="submit" class="apply-filters">Submit Request</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleFilters() {
+      const filtersContainer = document.getElementById('filters-container');
+      filtersContainer.classList.toggle('active');
+    }
+
+    function openOfferDetails(offerId) {
+    const modal = document.getElementById('offer-modal');
+
+    // Example data (replace with backend data)
+    const offers = {
+      1: {
+        image: 'apartment1.jpg',
+        title: 'Apartment 1',
+        address: '123 Main St, City',
+        price: '€800/month',
+        details: '50m², Private Room, Furnished, 2 Rooms, 1 Single Bed',
+        amenities: 'Washing Machine, WiFi, Heating',
+        description: 'A cozy apartment in the city center.',
+        areaDescription: 'Close to public transport and parks.',
+        availability: 'Min Stay: 3 months, Move-in: 01/05/2025, Move-out: 01/08/2025'
+      },
+      2: {
+        image: 'apartment2.jpg',
+        title: 'Apartment 2',
+        address: '456 Elm St, City',
+        price: '€1200/month',
+        details: '70m², Studio, Unfurnished, 3 Rooms, 2 Double Beds',
+        amenities: 'Dishwasher, TV, Air Conditioning',
+        description: 'A spacious studio with modern amenities.',
+        areaDescription: 'Located in a quiet neighborhood.',
+        availability: 'Min Stay: 6 months, Move-in: 01/06/2025, Move-out: 01/12/2025'
+      }
+    };
+
+    const offer = offers[offerId];
+    if (offer) {
+      document.getElementById('offer-image').src = offer.image;
+      document.getElementById('offer-title').textContent = offer.title;
+      document.getElementById('offer-address').textContent = offer.address;
+      document.getElementById('offer-price').textContent = offer.price;
+      document.getElementById('offer-details').textContent = offer.details;
+      document.getElementById('offer-amenities').textContent = offer.amenities;
+      document.getElementById('offer-description').textContent = offer.description;
+      document.getElementById('offer-area-description').textContent = offer.areaDescription;
+      document.getElementById('offer-availability').textContent = offer.availability;
+
+      modal.classList.add('active');
+    } else {
+      alert('Offer not found!');
+    }
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('offer-modal');
+    modal.classList.remove('active');
+  }
+    // Request to Book Modal
+
+    function openRequestModal() {
+      const requestModal = document.getElementById('request-modal');
+      requestModal.classList.add('active');
+    }
+
+    function closeRequestModal() {
+      const requestModal = document.getElementById('request-modal');
+      requestModal.classList.remove('active');
+    }
+
+    document.getElementById('request-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      alert('Your request has been submitted!');
+      closeRequestModal();
+    });
+  </script>
+</body>
+</html>

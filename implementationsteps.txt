@@ -1,0 +1,170 @@
+Below is a step-by-step guide to implement the functionality for the applicant-dashboard.html file:
+
+1. Frontend Enhancements
+a. Dynamic Content Loading
+Ensure the content object contains all the necessary sections (Profile, Wishlist, Last Seen Offers, Messages).
+Dynamically update the main-content area based on the sidebar link clicked.
+b. Progress Bar
+Ensure the progress bar dynamically updates as the user fills out the profile form.
+Use JavaScript to calculate the percentage of completed fields and update the progress bar width and text.
+c. Messaging Interface
+Add a conversation list and chat window to the Messages section.
+Ensure the chat window dynamically loads messages for the selected conversation.
+Allow users to send new messages using the message form.
+2. Backend Implementation
+a. API Endpoints
+Implement the following backend endpoints to support the functionality:
+
+GET /api/conversations
+
+Fetch the list of conversations for the logged-in user.
+Response example:
+GET /api/messages/:conversationId
+
+Fetch the messages for a specific conversation.
+Response example:
+POST /api/messages
+
+Send a new message.
+Request body example:
+GET /api/profile
+
+Fetch the user's profile data to pre-fill the profile form.
+Response example:
+POST /api/update-profile
+
+Update the user's profile data.
+Request body example:
+3. Database Schema
+a. Conversations Table
+Fields:
+id: Unique identifier for the conversation.
+user1: User ID of the first participant.
+user2: User ID of the second participant.
+b. Messages Table
+Fields:
+id: Unique identifier for the message.
+conversationId: ID of the conversation.
+sender: User ID of the sender.
+text: Message content.
+timestamp: Time the message was sent.
+c. Users Table
+Fields:
+id: Unique identifier for the user.
+fullName: Full name of the user.
+email: Email address.
+profilePhoto: Path to the profile photo.
+Other profile fields (e.g., student, age, telefon, etc.).
+4. Frontend-Backend Integration
+a. Fetch Profile Data
+Use the /api/profile endpoint to pre-fill the profile form when the page loads.
+Example:
+b. Update Profile
+Use the /api/update-profile endpoint to save changes when the user submits the profile form.
+Example:
+c. Load Conversations
+Use the /api/conversations endpoint to populate the conversation list.
+Example:
+d. Load Messages
+Use the /api/messages/:conversationId endpoint to load messages for a specific conversation.
+Example:
+e. Send Message
+Use the /api/messages endpoint to send a new message.
+Example:
+5. Real-Time Messaging
+Use WebSockets (e.g., Socket.IO) to enable real-time updates for new messages.
+Example:
+6. Testing
+Test all features (profile update, messaging, etc.) to ensure they work as expected.
+Use tools like Postman to test the backend endpoints.
+7. Deployment
+Deploy the frontend and backend to a hosting platform (e.g., Vercel for frontend, AWS/Heroku for backend).
+Ensure the API endpoints are accessible from the deployed frontend.
+
+//applicant
+
+1. Backend Implementation
+a. Set Up WebSocket Server
+Use a library like Socket.IO (Node.js) to handle WebSocket connections.
+
+Install Dependencies:
+
+Update Your Backend:
+
+'
+2. Frontend Implementation
+a. Connect to WebSocket Server
+Use the Socket.IO client library to connect to the WebSocket server.
+
+Install the Client Library:
+
+Update the Messaging Section:
+
+3. Database Integration
+To persist messages and retrieve conversation history:
+
+Save Messages:
+
+When a message is sent, save it to the database in the sendMessage event on the server.
+Example:
+Load Conversation History:
+
+When a user joins a conversation, fetch the conversation history from the database and send it to the client.
+Example:
+Frontend: Load Conversation History:
+
+Update the chat window with the conversation history when the conversationHistory event is received.
+Example:
+4. Styling
+Add CSS to style the chat window and messages:
+
+5. Testing
+Test the messaging feature with multiple users to ensure real-time updates work correctly.
+Verify that messages are saved to the database and retrieved correctly when a conversation is loaded.
+6. Deployment
+Deploy the backend WebSocket server and frontend to a hosting platform.
+Ensure the WebSocket server is accessible from the deployed frontend.
+Let me know if you need help with any specific part of the implementation!
+
+//landlord
+
+TODOs
+
+handle requests
+
+Next Steps:
+Backend Integration:
+
+Fetch apartment listings dynamically from the backend.
+Use APIs to retrieve landlord details and apartment descriptions.
+Map Integration:
+
+Use a mapping library to display apartment locations on the map.
+Booking Requests:
+
+Add a form in the modal to allow users to request bookings.
+Styling Enhancements:
+
+Improve the modal design to resemble an iOS-like feature.
+
+//apartmentlist
+
+Next Steps:
+Backend Integration:
+
+Implement an API endpoint (POST /upload-apartment) to handle the form submission and store the apartment data in the database.
+Redirect to Listings:
+
+After successfully storing the data, redirect the user to the apartments-listing.html page.
+Dynamic Listings:
+
+Fetch the stored apartment data from the backend and display it dynamically on the apartments-listing.html page.
+
+//apartment offers
+
+number of beds
+//filters
+
+on the offer page
+add to favorites/wishlists option
+//requests 

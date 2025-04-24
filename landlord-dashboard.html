@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landlord Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Sidebar styles */
+    .sidebar {
+      width: 250px;
+      background-color: #2563EB; /* Primary Blue */
+      color: #FFFFFF; /* White text */
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar h2 {
+      margin: 0 0 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .sidebar a {
+      text-decoration: none;
+      color: #FFFFFF;
+      padding: 10px 15px;
+      margin: 5px 0;
+      border-radius: 5px;
+      display: block;
+      transition: background-color 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      background-color: #1E40AF; /* Darker Blue */
+    }
+
+    .sidebar a.active {
+      background-color: #1E3A8A; /* Active Link Color */
+    }
+
+    /* Main content styles */
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      background-color: #F9FAFB; /* Light Gray Background */
+      overflow-y: auto;
+    }
+
+    .main-content h1 {
+      font-size: 24px;
+      color: #374151; /* Neutral Gray */
+    }
+
+    .main-content p {
+      color: #6B7280; /* Subtle Gray Text */
+    }
+
+    .form-container {
+      background: #FFFFFF;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .form-container h2 {
+      font-size: 20px;
+      color: #2563EB;
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+    }
+
+    input[type="file"] {
+      padding: 5px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #10B981; /* Green */
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #059669;
+    }
+
+    .offer-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .offer-actions button {
+      flex: 1;
+      padding: 10px;
+      background-color: #2563EB;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .offer-actions button:hover {
+      background-color: #1E3A8A;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Dashboard</h2>
+    <a href="#" id="profile-link" class="active">Profile</a>
+    <a href="#" id="listed-apartments-link">Listed Apartments</a>
+    <a href="#" id="messages-link">Messages</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" id="main-content">
+    <h1>Profile</h1>
+    <div class="form-container">
+      <h2>Update Your Profile</h2>
+      <form id="profile-form" action="/api/update-landlord-profile" method="POST" enctype="multipart/form-data">
+        <!-- Profile Photo -->
+        <label for="photo">Profile Photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*">
+
+        <!-- Full Name -->
+        <label for="full-name">Full Name:</label>
+        <input type="text" id="full-name" name="full-name" placeholder="Enter your full name" required>
+
+        <!-- Email Address -->
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+
+        <!-- Telephone Number -->
+        <label for="telefon">Telephone Number:</label>
+        <input type="tel" id="telefon" name="telefon" placeholder="Enter your phone number" required>
+
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Content for each section
+    const content = {
+      profile: `
+        <h1>Profile</h1>
+        <div class="form-container">
+          <h2>Update Your Profile</h2>
+          <form id="profile-form" action="/api/update-landlord-profile" method="POST" enctype="multipart/form-data">
+            <label for="photo">Profile Photo:</label>
+            <input type="file" id="photo" name="photo" accept="image/*">
+
+            <label for="full-name">Full Name:</label>
+            <input type="text" id="full-name" name="full-name" placeholder="Enter your full name" required>
+
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+
+            <label for="telefon">Telephone Number:</label>
+            <input type="tel" id="telefon" name="telefon" placeholder="Enter your phone number" required>
+
+            <button type="submit">Save Changes</button>
+          </form>
+        </div>
+      `,
+      listedApartments: `
+        <h1>Listed Apartments</h1>
+        <div class="offer-actions">
+          <button id="browse-apartments">Browse Apartments</button>
+          <button id="create-apartment">Create Apartment Offer</button>
+        </div>
+      `,
+      messages: `
+        <h1>Messages</h1>
+        <div class="messages-container">
+          <div class="message-list">
+            <h2>Conversations</h2>
+            <ul id="conversation-list">
+              <!-- Conversations will be dynamically loaded here -->
+            </ul>
+          </div>
+          <div class="message-box">
+            <h2>Chat</h2>
+            <div id="chat-window" class="chat-window">
+              <!-- Messages will be dynamically loaded here -->
+            </div>
+            <form id="message-form">
+              <input type="text" id="message-input" placeholder="Type your message..." required>
+              <button type="submit">Send</button>
+            </form>
+          </div>
+        </div>
+      `,
+    };
+
+    // Add click event listeners to sidebar links
+    const links = document.querySelectorAll('.sidebar a');
+    const mainContent = document.getElementById('main-content');
+
+    links.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Remove active class from all links
+        links.forEach(l => l.classList.remove('active'));
+
+        // Add active class to the clicked link
+        link.classList.add('active');
+
+        // Update main content based on the clicked link
+        const section = link.id.split('-')[0]; // Extract section name from ID
+        mainContent.innerHTML = content[section];
+
+        // Initialize functionality for specific sections
+        if (section === 'listedApartments') {
+          document.getElementById('browse-apartments').addEventListener('click', () => {
+            window.location.href = 'apartments-listing.html'; // Corrected path
+          });
+          document.getElementById('create-apartment').addEventListener('click', () => {
+            window.location.href = 'apartment-offers.html'; // Corrected path
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="img/logo.jpg" type="image/jpeg"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SichrSpace Login</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('./img/koeln2.jpg') no-repeat center center fixed;
+      background-size: cover;
+      background-color: #F9FAFB; /* Secondary: Soft Gray */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      color: #2563EB; /* Primary: Blue */
+    }
+    header {
+      width: 100%;
+      padding: 15px;
+      background: #2563EB; /* Primary: Blue */
+      text-align: left;
+    }
+    header a {
+      color: #F9FAFB; /* Secondary: White */
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .form-container {
+      background: #FFFFFF; /* White */
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      margin-top: auto;
+      margin-bottom: auto;
+      text-align: center;
+      border: 1px solid #E5E7EB; /* Secondary: Soft Gray Border */
+    }
+    .form-container h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #2563EB; /* Blue */
+    }
+    .form-container label {
+      display: block;
+      margin-bottom: 5px;
+      text-align: left;
+      color: #2563EB; /* Blue for labels */
+    }
+    .form-container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #E5E7EB; /* Secondary: Soft Gray Border */
+      border-radius: 5px;
+      font-size: 14px;
+      background-color: #F9FAFB; /* Secondary: Soft Gray Background */
+    }
+    .form-container input:focus {
+      border-color: #2563EB; /* Primary: Blue Focus */
+      outline: none;
+      box-shadow: 0 0 5px rgba(37, 99, 235, 0.5); /* Blue Glow */
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #2563EB; /* Primary: Blue */
+      color: #FFFFFF; /* White */
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .form-container button:hover {
+      background-color: #1E3A8A; /* Darker Blue on Hover */
+    }
+    .form-container .role-selection {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    .form-container .role-selection label {
+      font-size: 14px;
+      color: #2563EB;
+    }
+    footer {
+      text-align: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      width: 100%;
+      font-size: 13px;
+      color: #FFFFFF; /* White */
+    }
+    footer a {
+      color: #2563EB; /* Primary: Blue */
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">&larr; Back to Homepage</a>
+  </header>
+
+  <div class="form-container">
+    <h1>SichrSpace Login</h1>
+    <form action="/login" method="POST">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+
+      <!-- Role Selection -->
+      <div class="role-selection">
+        <label for="role">Login as:</label>
+        <select id="role" name="role" required>
+          <option value="" disabled selected>Select your role</option>
+          <option value="landlord">Landlord</option>
+          <option value="applicant">Applicant</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center;">
+          <input type="checkbox" id="remember-me" name="remember-me" style="margin-right: 5px;">
+          <label for="remember-me" style="margin: 0; font-size: 12px; color: #374151;">Remember Me</label>
+        </div>
+        <a href="/forgot-password" style="font-size: 12px; text-decoration: none; color: #2563EB;">Forgot Password?</a>
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <footer>
+    <p>Don't have an account? <a href="create-account.html">Sign Up</a></p>
+  </footer>
+</body>
+</html>
