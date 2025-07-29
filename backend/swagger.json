@@ -1,0 +1,170 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SichrPlace API",
+    "version": "1.0.0",
+    "description": "API documentation for SichrPlace backend"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["username", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered"
+          },
+          "400": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login and get JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "emailOrUsername": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["emailOrUsername", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/api/booking-request": {
+      "post": {
+        "summary": "Create a booking request",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "apartmentId": { "type": "string" },
+                  "move_in": { "type": "string", "format": "date" },
+                  "move_out": { "type": "string", "format": "date" },
+                  "tenant_names": { "type": "string" },
+                  "reason": { "type": "string" },
+                  "habits": { "type": "string" },
+                  "payer": { "type": "string" },
+                  "profile_link": { "type": "string" }
+                },
+                "required": ["apartmentId", "move_in", "move_out", "tenant_names", "reason", "payer"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Booking created" },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+    "/api/booking-requests/{apartmentId}": {
+      "get": {
+        "summary": "Get all booking requests for an apartment",
+        "parameters": [
+          {
+            "name": "apartmentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "List of booking requests" }
+        }
+      }
+    },
+    "/api/send-message": {
+      "post": {
+        "summary": "Send a message",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sender": { "type": "string" },
+                  "recipient": { "type": "string" },
+                  "content": { "type": "string" }
+                },
+                "required": ["sender", "recipient", "content"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Message sent" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/messages/{username}": {
+      "get": {
+        "summary": "Get all messages for a user",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "List of messages" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": { "description": "Backend is running" }
+        }
+      }
+    }
+  },
+  "components": {}
+}

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SichrPlace Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: "Roboto", sans-serif; background: #F9FAFB; color: #222; margin: 0; }
+    header { background: #2563EB; color: #fff; padding: 24px; font-family: "Poppins", sans-serif; font-size: 1.5rem; }
+    nav { background: #fff; padding: 12px 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    nav a { color: #2563EB; margin-right: 24px; text-decoration: none; font-weight: 600; }
+    nav a:hover { color: #40E0D0; }
+    .admin-section { max-width: 1100px; margin: 32px auto; background: #fff; border-radius: 18px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 32px; }
+    h2 { color: #2563EB; font-family: "Poppins", sans-serif; }
+    table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+    th, td { padding: 10px; border-bottom: 1px solid #eee; }
+    th { background: #F3F4F6; color: #2563EB; }
+    button { background: #2563EB; color: #fff; border: none; border-radius: 8px; padding: 6px 18px; font-weight: 600; cursor: pointer; }
+    button:hover { background: #40E0D0; }
+    .logout-btn { float: right; background: #e11d48; margin-left: 24px; }
+    .logout-btn:hover { background: #f87171; }
+    .error-msg { color: #e11d48; font-weight: 600; margin: 32px auto; text-align: center; }
+    /* --- Added for Viewing Request Form --- */
+    .top-row {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 32px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .top-row button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .top-row button:hover {
+      background: #1e40af;
+    }
+    .form-container {
+      background: #fff;
+      padding: 32px;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 32px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .form-container h2 {
+      font-size: 20px;
+      color: #2563EB;
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 15px;
+    }
+    textarea {
+      resize: vertical;
+    }
+    button[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #10B981;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button[type="submit"]:hover {
+      background-color: #059669;
+    }
+    .confirmation-message {
+      background: #e0f7fa;
+      color: #2563eb;
+      padding: 18px;
+      border-radius: 8px;
+      margin-top: 18px;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <i class="fa fa-user-shield"></i> SichrPlace Admin Dashboard
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+  <nav>
+    <a href="#users">Users</a>
+    <a href="#offers">Offers</a>
+    <a href="#viewings">Viewing Requests</a>
+    <a href="#messages">Messages</a>
+    <a href="#analytics">Analytics</a>
+    <a href="index.html">Back to Site</a>
+  </nav>
+  <!-- --- Added Top Row Buttons for Quick Actions --- -->
+  <div class="top-row" style="max-width:1100px;margin:32px auto 0 auto;">
+    <button onclick="scrollToSection('offers')"><i class="fa fa-box"></i> Offers</button>
+    <button onclick="showViewingRequestForm()"><i class="fa fa-calendar-check"></i> Viewing Request</button>
+  </div>
+  <!-- --- Viewing Request Form (hidden by default) --- -->
+  <div class="form-container" id="viewing-request-form" style="display:none;">
+    <h2>Submit a Viewing Request</h2>
+    <form id="admin-viewing-form">
+      <label for="apartment-id">Apartment ID</label>
+      <input type="text" id="apartment-id" name="apartment-id" required placeholder="Enter Apartment ID">
+
+      <label for="viewing-date">Date</label>
+      <input type="date" id="viewing-date" name="viewing-date" required>
+
+      <label for="viewing-time">Time (hh:mm)</label>
+      <input type="time" id="viewing-time" name="viewing-time" required>
+
+      <label for="questions">Questions</label>
+      <textarea id="questions" name="questions" rows="2" placeholder="Any questions?"></textarea>
+
+      <label for="attention">What should we pay attention to?</label>
+      <textarea id="attention" name="attention" rows="2" placeholder="Details to pay attention to"></textarea>
+
+      <button type="submit">Send Viewing Request</button>
+    </form>
+    <div id="confirmation-message" class="confirmation-message" style="display:none;">
+      Your viewing request has been submitted!<br>
+      A confirmation email will be sent.<br>
+      Our team will contact you for further steps.
+    </div>
+  </div>
+  <div id="admin-content">
+    <div class="admin-section" id="users">
+      <h2><i class="fa fa-users"></i> User Management</h2>
+      <table>
+        <tr><th>Username</th><th>Email</th><th>Status</th><th>Actions</th></tr>
+        <tr><td>zeteny</td><td>zeteny@example.com</td><td>Admin</td><td><button disabled>Admin</button></td></tr>
+        <tr><td>omer</td><td>omer@example.com</td><td>User</td><td><button>Block</button> <button>Delete</button></td></tr>
+        <!-- More users loaded from backend -->
+      </table>
+    </div>
+    <div class="admin-section" id="offers">
+      <h2><i class="fa fa-box"></i> Offer Management</h2>
+      <table>
+        <tr><th>Item</th><th>Owner</th><th>Status</th><th>Actions</th></tr>
+        <tr><td>Double Bed Frame</td><td>omer</td><td>Active</td><td><button>Edit</button> <button>Remove</button></td></tr>
+        <!-- More offers loaded from backend -->
+      </table>
+    </div>
+    <!-- Viewing Requests Section -->
+    <div class="admin-section" id="viewings">
+      <h2><i class="fa fa-eye"></i> Viewing Requests</h2>
+      <table>
+        <tr>
+          <th>Request ID</th>
+          <th>Apartment</th>
+          <th>Requested By</th>
+          <th>Date Requested</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+        <!-- Viewing requests loaded from backend -->
+      </table>
+    </div>
+    <div class="admin-section" id="messages">
+      <h2><i class="fa fa-envelope"></i> Support Messages</h2>
+      <table>
+        <tr><th>User</th><th>Message</th><th>Date</th><th>Actions</th></tr>
+        <tr><td>omer</td><td>How do I reset my password?</td><td>2025-06-15</td><td><button>Reply</button></td></tr>
+        <!-- More messages loaded from backend -->
+      </table>
+    </div>
+    <div class="admin-section" id="analytics">
+      <h2><i class="fa fa-chart-bar"></i> Analytics</h2>
+      <ul>
+        <li>Total Users: <strong>102</strong></li>
+        <li>Active Offers: <strong>37</strong></li>
+        <li>Completed Sales: <strong>14</strong></li>
+        <!-- More analytics loaded from backend -->
+      </ul>
+    </div>
+  </div>
+  <div id="error-msg" class="error-msg" style="display:none;"></div>
+  <script>
+    // --- Restrict Access to Admins Only ---
+    if (!localStorage.getItem('sichrplace_admin') || localStorage.getItem('sichrplace_admin') !== 'true') {
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('admin-content').style.display = 'none';
+        document.getElementById('error-msg').style.display = '';
+        document.getElementById('error-msg').textContent = "Access denied. Admins only. Please log in as an admin.";
+        setTimeout(() => window.location.href = 'login.html', 2000);
+      });
+    }
+    // Replace this with a real backend check in production!
+    async function checkAdminStatus() {
+      try {
+        const response = await fetch('/api/check-admin', { credentials: 'include' });
+        if (!response.ok) throw new Error('Network error');
+        const data = await response.json();
+        if (!data.isAdmin) {
+          document.getElementById('admin-content').style.display = 'none';
+          document.getElementById('error-msg').style.display = '';
+          document.getElementById('error-msg').textContent = "Access denied. Admins only. Please log in as an admin.";
+          setTimeout(() => window.location.href = 'login.html', 2000);
+        }
+      } catch (err) {
+        document.getElementById('admin-content').style.display = 'none';
+        document.getElementById('error-msg').style.display = '';
+        document.getElementById('error-msg').textContent = "Error verifying admin status. Please try again.";
+      }
+    }
+    document.addEventListener('DOMContentLoaded', checkAdminStatus);
+    async function isAdmin() {
+      try {
+        const response = await fetch('/api/check-admin', { credentials: 'include' });
+        if (!response.ok) return false;
+        const data = await response.json();
+        return data.isAdmin === true;
+      } catch (err) {
+        return false;
+      }
+      return localStorage.getItem('sichrplace_admin') === 'true';
+    }
+
+    function logout() {
+      localStorage.removeItem('sichrplace_admin');
+      window.location.href = 'login.html';
+    }
+
+    // --- Added: Scroll to Offers Section ---
+    function scrollToSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+      // Hide viewing request form if open
+      document.getElementById('viewing-request-form').style.display = 'none';
+    }
+
+    // --- Added: Show Viewing Request Form ---
+    function showViewingRequestForm() {
+      document.getElementById('viewing-request-form').style.display = '';
+      window.scrollTo({ top: document.getElementById('viewing-request-form').offsetTop - 40, behavior: 'smooth' });
+    }
+
+    // --- Added: Handle Viewing Request Form Submission ---
+    document.addEventListener('DOMContentLoaded', function() {
+      // Viewing Request Form Submission
+      const viewingForm = document.getElementById('admin-viewing-form');
+      if (viewingForm) {
+        viewingForm.onsubmit = function(e) {
+          e.preventDefault();
+          // In production, send data to backend and trigger email automation
+          document.getElementById('confirmation-message').style.display = '';
+          setTimeout(() => {
+            document.getElementById('confirmation-message').style.display = 'none';
+            viewingForm.reset();
+            document.getElementById('viewing-request-form').style.display = 'none';
+          }, 3500);
+        };
+      }
+
+      // --- Fetch and render users ---
+      fetch('/api/admin/users', { credentials: 'include' })
+        .then(res => res.json())
+        .then(users => {
+          const usersTable = document.querySelector('#users table');
+          usersTable.querySelectorAll('tr:not(:first-child)').forEach(tr => tr.remove());
+          users.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${user.username}</td>
+              <td>${user.email}</td>
+              <td>${user.role === 'admin' ? 'Admin' : 'User'}</td>
+              <td>
+                ${user.role === 'admin'
+                ? '<button disabled>Admin</button>'
+                : `<button onclick="blockUser('${user.username}')">Block</button>
+                   <button onclick="deleteUser('${user.username}')">Delete</button>`}
+              </td>
+            `;
+            usersTable.appendChild(tr);
+          });
+        });
+
+      // --- Fetch and render offers ---
+      fetch('/api/admin/offers', { credentials: 'include' })
+        .then(res => res.json())
+        .then(offers => {
+          const offersTable = document.querySelector('#offers table');
+          offersTable.querySelectorAll('tr:not(:first-child)').forEach(tr => tr.remove());
+          offers.forEach(offer => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${offer.item}</td>
+              <td>${offer.owner}</td>
+              <td>${offer.status}</td>
+              <td>
+                <button onclick="editOffer('${offer.id}')">Edit</button>
+                <button onclick="removeOffer('${offer.id}')">Remove</button>
+              </td>
+            `;
+            offersTable.appendChild(tr);
+          });
+        });
+
+      // --- Fetch and render viewing requests ---
+      fetch('/api/admin/viewing-requests', { credentials: 'include' })
+        .then(res => res.json())
+        .then(viewings => {
+          const viewingsTable = document.querySelector('#viewings table');
+          viewingsTable.querySelectorAll('tr:not(:first-child)').forEach(tr => tr.remove());
+          viewings.forEach(req => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${req.id}</td>
+              <td>${req.apartment}</td>
+              <td>${req.requestedBy}</td>
+              <td>${req.dateRequested}</td>
+              <td>${req.status}</td>
+              <td>
+                <button onclick="attendViewing('${req.id}')">Attend</button>
+                <button onclick="markViewingDone('${req.id}')">Mark as Done</button>
+              </td>
+            `;
+            viewingsTable.appendChild(tr);
+          });
+        });
+
+      // --- Fetch and render messages ---
+      fetch('/api/admin/messages', { credentials: 'include' })
+        .then(res => res.json())
+        .then(messages => {
+          const messagesTable = document.querySelector('#messages table');
+          messagesTable.querySelectorAll('tr:not(:first-child)').forEach(tr => tr.remove());
+          messages.forEach(msg => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${msg.user}</td>
+              <td>${msg.message}</td>
+              <td>${msg.date}</td>
+              <td><button onclick="replyMessage('${msg.id}')">Reply</button></td>
+            `;
+            messagesTable.appendChild(tr);
+          });
+        });
+
+      // --- Fetch and render analytics ---
+      fetch('/api/admin/analytics', { credentials: 'include' })
+        .then(res => res.json())
+        .then(analytics => {
+          const analyticsSection = document.querySelector('#analytics ul');
+          analyticsSection.innerHTML = `
+            <li>Total Users: <strong>${analytics.totalUsers}</strong></li>
+            <li>Active Offers: <strong>${analytics.activeOffers}</strong></li>
+            <li>Completed Sales: <strong>${analytics.completedSales}</strong></li>
+          `;
+        });
+
+      // --- Action handlers (implement API calls as needed) ---
+      window.blockUser = async function(username) {
+        if (!confirm(`Block user ${username}?`)) return;
+        try {
+          const res = await fetch(`/api/admin/users/${encodeURIComponent(username)}/block`, {
+            method: 'POST',
+            credentials: 'include'
+          });
+          if (res.ok) location.reload();
+          else alert('Failed to block user');
+        } catch (err) {
+          alert('Network error while blocking user');
+        }
+      };
+      window.deleteUser = async function(username) {
+        if (!confirm(`Delete user ${username}?`)) return;
+        try {
+          const res = await fetch(`/api/admin/users/${encodeURIComponent(username)}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+          if (res.ok) location.reload();
+          else alert('Failed to delete user');
+        } catch (err) {
+          alert('Network error while deleting user');
+        }
+      };
+      window.editOffer = function(offerId) {
+        alert('Edit offer: ' + offerId);
+      };
+      window.removeOffer = async function(offerId) {
+        if (!confirm(`Remove offer ${offerId}?`)) return;
+        try {
+          const res = await fetch(`/api/admin/offers/${encodeURIComponent(offerId)}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+          if (res.ok) location.reload();
+          else alert('Failed to remove offer');
+        } catch (err) {
+          alert('Network error while removing offer');
+        }
+      };
+      window.replyMessage = function(messageId) {
+        alert('Reply to message: ' + messageId);
+      };
+      // --- Viewing request actions ---
+      window.attendViewing = function(requestId) {
+        alert('Attend viewing request: ' + requestId);
+      };
+      window.markViewingDone = async function(requestId) {
+        if (!confirm(`Mark viewing request ${requestId} as done?`)) return;
+        try {
+          const res = await fetch(`/api/admin/viewing-requests/${encodeURIComponent(requestId)}/done`, {
+            method: 'POST',
+            credentials: 'include'
+          });
+          if (res.ok) location.reload();
+          else alert('Failed to mark as done');
+        } catch (err) {
+          alert('Network error while marking as done');
+        }
+      };
+    });
+  </script>
+</body>
+</html>

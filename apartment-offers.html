@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="img/logo.jpg" type="image/jpeg"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apartment Offers</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --text: #222;
+      --muted: #6b7280;
+      --card: #fff;
+      --radius: 18px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+    }
+    body {
+      margin: 0;
+      font-family: var(--body-font);
+      background: url('./img/koeln2.jpg') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      color: var(--text);
+      position: relative;
+    }
+    /* Make overlay lighter for more visible background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(249,250,251,0.45); /* was 0.85 */
+      z-index: 0;
+      pointer-events: none;
+    }
+    header, .form-container {
+      position: relative;
+      z-index: 1;
+    }
+    header {
+      width: 100%;
+      padding: 0 40px;
+      height: 70px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: var(--primary);
+      text-decoration: none;
+      margin-right: 32px;
+    }
+    .logo-link img {
+      height: 38px;
+      border-radius: 8px;
+    }
+    .back-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 1rem;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .back-link:hover {
+      color: #10B981;
+    }
+    .form-container {
+      background: var(--card);
+      padding: 40px 32px 32px 32px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 440px;
+      margin: 40px auto 32px auto;
+      font-family: var(--body-font);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .form-container h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-family: var(--heading-font);
+      color: var(--primary);
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .form-container label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: var(--primary);
+      font-family: var(--heading-font);
+    }
+    .form-container input,
+    .form-container textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-family: var(--body-font);
+      font-size: 1rem;
+      background: #F9FAFB;
+      color: var(--text);
+      box-sizing: border-box;
+      transition: border 0.2s;
+    }
+    .form-container input:focus,
+    .form-container textarea:focus {
+      border: 1.5px solid var(--primary);
+      outline: none;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 40px;
+      font-size: 1.1rem;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: var(--shadow);
+      transition: background 0.2s;
+    }
+    .form-container button:hover {
+      background-color: #2BC4B6;
+    }
+    .preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .preview img {
+      width: 100px;
+      height: 70px;
+      border-radius: 5px;
+      object-fit: cover;
+      box-shadow: var(--shadow);
+      background: #fff;
+    }
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 18px 6px 18px 6px;
+        max-width: 98vw;
+      }
+      header {
+        padding: 0 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo-link">
+      <img src="img/logo.jpg" alt="SichrPlace Logo">
+      SichrPlace
+    </a>
+    <a href="index.html" class="back-link"><i class="fa fa-arrow-left"></i> Back to Homepage</a>
+  </header>
+
+  <div class="form-container">
+    <h1>Apartment Offers</h1>
+    <form action="/upload-apartment" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+      <label for="apartment-title">Apartment Title:</label>
+      <input type="text" id="apartment-title" name="apartment-title" placeholder="Enter apartment title" required>
+
+      <label for="apartment-description">Description:</label>
+      <textarea id="apartment-description" name="apartment-description" rows="4" placeholder="Enter apartment description" required></textarea>
+
+      <label for="apartment-address">Address:</label>
+      <input type="text" id="apartment-address" name="apartment-address" placeholder="Enter apartment address" required>
+
+      <label for="apartment-postal-code">Postal Code:</label>
+      <input type="text" id="apartment-postal-code" name="apartment-postal-code" placeholder="Enter postal code" required>
+
+      <label for="apartment-price">Price (€):</label>
+      <input type="number" id="apartment-price" name="apartment-price" placeholder="Enter price" required>
+
+      <label for="move-in-date">Move-In Date:</label>
+      <input type="date" id="move-in-date" name="move-in-date" required>
+
+      <label for="move-out-date">Move-Out Date:</label>
+      <input type="date" id="move-out-date" name="move-out-date">
+
+      <label for="number-of-rooms">Number of Rooms:</label>
+      <input type="number" id="number-of-rooms" name="number-of-rooms" placeholder="Enter number of rooms" required>
+
+      <label for="deposit-required">Deposit Required (€):</label>
+      <input type="number" id="deposit-required" name="deposit-required" placeholder="Enter deposit amount" required>
+
+      <label for="apartment-images">Upload Images:</label>
+      <input type="file" id="apartment-images" name="apartment-images" accept="image/*" multiple required onchange="previewImages(event)">
+
+      <div class="preview" id="image-preview"></div>
+
+      <button type="submit">Submit Offer</button>
+    </form>
+  </div>
+
+  <script>
+    function validateForm() {
+      const postalCode = document.getElementById('apartment-postal-code').value;
+      const title = document.getElementById('apartment-title').value.trim();
+      const description = document.getElementById('apartment-description').value.trim();
+      const address = document.getElementById('apartment-address').value.trim();
+      const price = document.getElementById('apartment-price').value;
+      const rooms = document.getElementById('number-of-rooms').value;
+      const deposit = document.getElementById('deposit-required').value;
+
+      if (title.length < 5) {
+        alert("Title must be at least 5 characters long.");
+        return false;
+      }
+
+      if (description.length < 10) {
+        alert("Description must be at least 10 characters long.");
+        return false;
+      }
+
+      if (address.length < 5) {
+        alert("Address must be at least 5 characters long.");
+        return false;
+      }
+
+      if (price <= 0) {
+        alert("Price must be greater than 0.");
+        return false;
+      }
+
+      if (rooms <= 0) {
+        alert("Number of rooms must be greater than 0.");
+        return false;
+      }
+
+      if (deposit < 0) {
+        alert("Deposit cannot be negative.");
+        return false;
+      }
+
+      const postalCodePattern = /^\d{4,10}$/;
+      if (!postalCodePattern.test(postalCode)) {
+        alert("Postal Code must be a number between 4 to 10 digits.");
+        return false;
+      }
+      return true;
+    }
+
+    function previewImages(event) {
+      const files = event.target.files;
+      const previewContainer = document.getElementById('image-preview');
+      previewContainer.innerHTML = '';
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          previewContainer.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  </script>
+</body>
+</html>

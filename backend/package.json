@@ -1,0 +1,65 @@
+{
+  "name": "sichrplace-backend",
+  "version": "1.0.0",
+  "description": "Backend API for SichrPlace - a property rental and management platform.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "lint": "eslint .",
+    "test": "jest",
+    "gdpr:migrate": "node utils/gdprMigration.js migrate",
+    "gdpr:anonymize": "node utils/gdprMigration.js anonymize",
+    "gdpr:report": "node utils/gdprMigration.js report",
+    "gdpr:cleanup": "node -e \"require('./utils/gdprService').cleanupExpiredData()\""
+  },
+  "keywords": [
+    "express",
+    "mongodb",
+    "mongoose",
+    "jwt",
+    "property",
+    "rental",
+    "backend",
+    "api"
+  ],
+  "author": "omer3kale",
+  "license": "MIT",
+  "dependencies": {
+    "@microsoft/clarity": "^1.0.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "lusca": "^1.7.0",
+    "mongoose": "^8.3.5",
+    "morgan": "^1.10.0",
+    "multer": "^2.0.1",
+    "nodemailer": "^7.0.3",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.29.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0",
+    "supertest": "^7.1.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omer3kale/SichrPlace.git"
+  },
+  "bugs": {
+    "url": "https://github.com/omer3kale/SichrPlace/issues"
+  },
+  "homepage": "https://github.com/omer3kale/SichrPlace#readme"
+}

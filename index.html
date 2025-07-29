@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SichrPlace - Verified Student Apartments in Germany | Safe Apartment Search Platform</title>
+  <meta name="description" content="Find safe, verified apartments for students and young professionals in Germany. Secure messaging, trusted landlords, and exclusive offers for AIESEC and university students.">
+  <meta name="keywords" content="student apartments Germany, verified apartments, rent apartment Germany, student housing Berlin, landlord listing Germany, AIESEC housing, safe rental Germany, WG, student flat, young professionals, university housing">
+  <link rel="canonical" href="https://sichrplace.com/">
+  <meta property="og:title" content="SichrPlace - Verified Student Apartments in Germany">
+  <meta property="og:description" content="Secure, transparent, and easy apartment search for students and professionals in Germany. Verified listings, secure messaging, and digital contracts.">
+  <meta property="og:image" content="https://sichrplace.com/img/logo.jpg">
+  <meta property="og:url" content="https://sichrplace.com/">
+  <meta property="og:type" content="website">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --text: #222;
+      --muted: #6b7280;
+      --card: #fff;
+      --radius: 18px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+    }
+    body {
+      margin: 0;
+      font-family: var(--body-font);
+      background: var(--secondary);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    main {
+      flex: 1 0 auto;
+    }
+    header {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .logo img {
+      height: 40px;
+      border-radius: 8px;
+    }
+    nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      position: relative;
+    }
+    nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-family: var(--heading-font);
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: var(--accent);
+    }
+    .notification-bell {
+      position: relative;
+      display: inline-block;
+      margin-left: 8px;
+      cursor: pointer;
+      outline: none;
+    }
+    .notification-badge {
+      position: absolute;
+      top: -7px;
+      right: -7px;
+      background: #e11d48;
+      color: #fff;
+      border-radius: 50%;
+      padding: 2px 7px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      min-width: 20px;
+      text-align: center;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      pointer-events: none;
+    }
+    .notification-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 32px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+      min-width: 320px;
+      z-index: 100;
+      padding: 0;
+      font-size: 1rem;
+    }
+    .notification-dropdown.active {
+      display: block;
+    }
+    .notification-dropdown ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .notification-dropdown li {
+      padding: 14px 18px;
+      border-bottom: 1px solid #f3f4f6;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .notification-dropdown li:last-child {
+      border-bottom: none;
+    }
+    .notification-deadline {
+      color: #e11d48;
+      font-weight: 600;
+      margin-left: auto;
+      font-size: 0.95em;
+    }
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(120deg, var(--primary) 60%, var(--accent) 100%);
+      color: #fff;
+      padding: 80px 20px 60px 20px;
+      text-align: center;
+      position: relative;
+    }
+    .hero-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-family: var(--heading-font);
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: -1px;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 32px;
+      color: #e0e7ff;
+    }
+    .search-bar {
+      display: flex;
+      background: #fff;
+      border-radius: 40px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      max-width: 480px;
+      margin: 0 auto;
+      margin-bottom: 24px;
+    }
+    .search-bar input {
+      flex: 1;
+      border: none;
+      padding: 18px 24px;
+      font-size: 1.1rem;
+      border-radius: 40px 0 0 40px;
+      outline: none;
+    }
+    .search-bar button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0 32px;
+      font-size: 1.1rem;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      border-radius: 0 40px 40px 0;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-bar button:hover {
+      background: #2BC4B6;
+    }
+    .hero-cta {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .hero-cta a {
+      background: #fff;
+      color: var(--primary);
+      padding: 12px 32px;
+      border-radius: 40px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      transition: background 0.2s, color 0.2s;
+    }
+    .hero-cta a.primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .hero-cta a:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    /* 5th Stage Feature Styles */
+    .matching-section {
+      max-width: 950px;
+      margin: 60px auto 0 auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      padding: 32px;
+    }
+    .matching-section h2 {
+      font-family: var(--heading-font);
+      color: var(--primary);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .matching-features-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 18px 0;
+      color: #374151;
+      font-size: 1.08rem;
+    }
+    .matching-features-list li {
+      margin-bottom: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .matching-features-list i {
+      color: var(--primary);
+      font-size: 1.2rem;
+      margin-top: 2px;
+    }
+    .matching-section .info {
+      background: #f3f4f6;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      color: #2563eb;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .matching-section .info i {
+      color: #40E0D0;
+      font-size: 1.2rem;
+    }
+    .matching-section .payment-flow {
+      margin-top: 18px;
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 16px 18px;
+      color: #222;
+      font-size: 1rem;
+    }
+    /* ...rest of your CSS... */
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      justify-content: center;
+      margin: 60px auto 0 auto;
+      max-width: 1100px;
+    }
+    .feature-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 28px;
+      flex: 1 1 260px;
+      min-width: 260px;
+      max-width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+    }
+    .feature-card i {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .feature-card h3 {
+      font-family: var(--heading-font);
+      font-size: 1.25rem;
+      margin: 0;
+      color: var(--primary);
+    }
+    .feature-card p {
+      color: var(--muted);
+      font-size: 1rem;
+      margin: 0;
+    }
+    /* Slider Section */
+    .slider-section {
+      max-width: 950px;
+      margin: 60px auto 0 auto;
+      padding: 0 0 40px 0;
+      position: relative;
+    }
+    .slider-container {
+      overflow: hidden;
+      position: relative;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      background: var(--card);
+    }
+    .slides {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(.4,2,.6,1);
+      width: 100%;
+    }
+    .slide {
+      min-width: 100%;
+      box-sizing: border-box;
+      padding: 36px 32px 32px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .slider-nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .slider-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #d1d5db;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: none;
+    }
+    .slider-dot.active {
+      background: var(--primary);
+    }
+
+    /* Top Apartments */
+    .top-apartments-list {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 18px;
+    }
+    .apartment-card {
+      background: #f3f4f6;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 220px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .apartment-card img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .apartment-card .apartment-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .apartment-card .wishlist-btn {
+      background: none;
+      border: none;
+      color: #e11d48;
+      font-size: 1.3rem;
+      cursor: pointer;
+      margin-left: 8px;
+      transition: color 0.2s;
+    }
+    .apartment-card .wishlist-btn.active {
+      color: #f87171;
+    }
+    .apartment-card .badge {
+      background: var(--primary);
+      color: #fff;
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 0.85rem;
+      margin-left: 8px;
+    }
+    .apartment-card .interview {
+      color: #10B981;
+      font-size: 0.95rem;
+      margin-left: 8px;
+    }
+
+    /* User Opinions */
+    .user-opinions {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background: #f9fafb;
+      border-radius: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      padding: 24px 18px;
+      margin-top: 18px;
+    }
+    .user-opinions h2 {
+      font-family: var(--heading-font);
+      color: var(--primary);
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    #opinion-form textarea {
+      width: 100%;
+      min-height: 60px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      margin-bottom: 10px;
+      font-family: var(--body-font);
+      resize: vertical;
+    }
+    #opinion-form button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 40px;
+      padding: 8px 24px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    #opinions-list {
+      margin-top: 18px;
+    }
+    .opinion-item {
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+
+   /* Customer Service, FAQ, Viewing Service Section */
+    .customer-service-faq-section {
+      max-width: 900px;
+      margin: 60px auto 0 auto;
+    }
+    .customer-service-faq-container {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      padding: 32px;
+    }
+    .customer-service-faq-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+    .customer-service-faq-flex > div {
+      flex: 1 1 320px;
+      min-width: 260px;
+    }
+    .customer-service-faq-container h2 {
+      font-family: 'Poppins',sans-serif;
+      color: #2563eb;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    .customer-service-faq-container h3 {
+      color: #2563eb;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    .customer-service-faq-container ul {
+      padding-left: 18px;
+      color: #374151;
+    }
+    .customer-service-faq-container form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .customer-service-faq-container input,
+    .customer-service-faq-container textarea {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    .customer-service-faq-container button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 10px 0;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .customer-service-faq-container button:hover {
+      background: #1e40af;
+    }
+    .customer-service-faq-container #customer-service-status {
+      margin-top: 8px;
+      color: #10B981;
+      font-weight: 600;
+    }
+    /* Footer */
+    footer {
+      background: var(--primary);
+      color: #fff;
+      padding: 32px 0 16px 0;
+      text-align: center;
+      margin-top: 60px;
+    }
+    .footer-links {
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      font-family: var(--heading-font);
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+    .footer-social {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+    }
+    .footer-social a {
+      color: #fff;
+      font-size: 1.3rem;
+      transition: color 0.2s;
+    }
+    .footer-social a:hover {
+      color: var(--accent);
+    }
+    /* Facebook/Instagram/TikTok CTA styles */
+    .social-cta-bar {
+      background: #f3f4f6;
+      color: #2563eb;
+      padding: 18px 0;
+      text-align: center;
+      font-size: 1.15rem;
+      font-family: var(--heading-font);
+      margin: 0;
+      border-top: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .social-cta-bar .social-icons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+    }
+    .social-cta-bar .social-icons a {
+      color: #2563eb;
+      font-size: 1.6rem;
+      transition: color 0.2s;
+    }
+    .social-cta-bar .social-icons a:hover {
+      color: #40E0D0;
+    }
+    @media (max-width: 900px) {
+      .features {
+        flex-direction: column;
+        gap: 18px;
+        align-items: center;
+      }
+      .testimonials {
+        flex-direction: column;
+        gap: 18px;
+        align-items: center;
+      }
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .slider-section {
+        padding: 0 0 24px 0;
+      }
+      .slide {
+        padding: 24px 8px 24px 8px;
+      }
+      .customer-service-faq-flex {
+        flex-direction: column;
+        gap: 18px;
+      }
+      .notification-dropdown {
+        min-width: 90vw;
+        right: -20vw;
+      }
+      .matching-section {
+        padding: 18px 4vw;
+      }
+      .social-cta-bar {
+        font-size: 1rem;
+        padding: 12px 0;
+      }
+    }
+
+    /* Feedback Button Styles */
+    .feedback-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(37,99,235,0.35);
+      background: linear-gradient(135deg, #1d4ed8 0%, #38bdf8 100%);
+    }
+
+    .feedback-button:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 16px rgba(37,99,235,0.25);
+    }
+
+    /* Responsive feedback section */
+    @media (max-width: 768px) {
+      .feedback-section {
+        padding: 0 16px;
+      }
+      
+      .feedback-container {
+        padding: 32px 24px;
+      }
+      
+      .feedback-form-container {
+        padding: 24px 16px;
+      }
+      
+      .feedback-button {
+        padding: 14px 24px;
+        font-size: 1rem;
+      }
+      
+      .feedback-footer > div {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+ </style>
+ <!-- Facebook Pixel for Landlords -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'YOUR_PIXEL_ID'); // Replace with your Facebook Pixel ID
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- End Facebook Pixel -->
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">
+      <img src="img/logo.jpg" alt="SichrPlace Logo">
+      SichrPlace
+    </a>
+    <nav>
+      <a href="apartments-listing.html">Apartments</a>
+      <a href="chat.html">Messages</a>
+      <a href="login.html">Login</a>
+      <a href="create-account.html">Create Account</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="viewing-request.html">View</a>
+      <span class="notification-bell" id="notification-bell" tabindex="0" aria-label="Show notifications">
+        <i class="fa fa-bell"></i>
+        <span class="notification-badge" id="notification-badge">2</span>
+        <div class="notification-dropdown" id="notification-dropdown">
+          <ul>
+            <li>
+              <i class="fa fa-envelope" style="color:#2563eb;"></i>
+              New message from Markus R.
+              <span class="notification-deadline">Reply within 24h</span>
+            </li>
+            <li>
+              <i class="fa fa-envelope" style="color:#2563eb;"></i>
+              New message from Anna S.
+              <span class="notification-deadline">Reply within 12h</span>
+            </li>
+            <li>
+              <button class="viewing-request-btn" onclick="openViewingRequestModal()" style="background:var(--primary);color:#fff;padding:6px 18px;border-radius:8px;border:none;font-weight:600;cursor:pointer;margin-top:8px;">
+                View
+              </button>
+            </li>
+          </ul>
+        </div>
+      </span>
+    </nav>
+  </header>
+
+  <!-- Viewing Request Modal -->
+  <div id="viewing-request-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center;">
+    <div style="background:#fff;border-radius:18px;max-width:400px;width:90vw;padding:32px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.12);position:relative;">
+      <div style="font-family:'Poppins',sans-serif;font-size:1.3rem;font-weight:700;color:#2563eb;text-align:center;margin-bottom:18px;">
+        View
+      </div>
+      <button onclick="closeViewingRequestModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:1.5rem;color:#e11d48;cursor:pointer;">&times;</button>
+      <div style="margin-bottom:18px;text-align:center;">
+        <i class="fa fa-eye" style="font-size:2rem;color:#2563eb;margin-bottom:8px;"></i>
+        <p style="margin:0;color:#374151;">You have a new viewing request. Please check your admin dashboard for details and to attend the request.</p>
+      </div>
+      <a href="admin.html#viewings" style="display:block;background:#2563eb;color:#fff;text-align:center;padding:10px 0;border-radius:8px;font-weight:600;text-decoration:none;">Go to Viewing Requests</a>
+    </div>
+  </div>
+
+  <main>
+    <!-- Hero Section (Landing) -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Find Your Next Apartment<br>with Confidence</h1>
+        <p>Secure, transparent, and easy apartment search for students and professionals in Germany.</p>
+        <form class="search-bar" action="apartments-listing.html" method="get">
+          <input type="text" name="q" placeholder="Search by city, address, or keyword..." aria-label="Search apartments">
+          <button type="submit"><i class="fa fa-search"></i> Search</button>
+        </form>
+        <div class="hero-cta">
+          <a href="create-account.html" class="primary">Get Started</a>
+          <a href="apartments-listing.html">Browse Apartments</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+      <div class="feature-card">
+        <i class="fa fa-shield-alt"></i>
+        <h3>Verified Listings</h3>
+        <p>All apartments are checked for authenticity to protect you from scams.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fa fa-comments"></i>
+        <h3>Secure Messaging</h3>
+        <p>Chat safely with landlords and renters using our built-in messaging system.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fa fa-filter"></i>
+        <h3>Advanced Filters</h3>
+        <p>Find your perfect home with filters for price, location, facilities, and more.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fa fa-star"></i>
+        <h3>Top Rated Apartments</h3>
+        <p>See the best-rated apartments and reviews from real tenants.</p>
+      </div>
+    </section>
+
+    <!-- Customer Service, FAQ, and Viewing Service Section -->
+    <section class="customer-service-faq-section">
+      <div class="customer-service-faq-container">
+        <h2><i class="fa fa-headset"></i> Customer Service, FAQ & Viewing Service</h2>
+        <div class="customer-service-faq-flex">
+          <!-- FAQ -->
+          <div>
+            <h3>Frequently Asked Questions</h3>
+            <ul>
+              <li><strong>How do I list a new apartment?</strong><br>Go to your dashboard and click "Create Apartment Offer".</li>
+              <li><strong>How do I schedule a viewing?</strong><br>Approve a viewing request in your dashboard and follow the prompts.</li>
+              <li><strong>How do I generate a digital contract?</strong><br>Use the "Viewing & Contract" card on your dashboard after a successful viewing.</li>
+              <li><strong>How do I contact support?</strong><br>Email us at <a href="mailto:support@SichrPlace.com">support@SichrPlace.com</a> or call +49 123 456789.</li>
+            </ul>
+          </div>
+          <!-- Viewing Service -->
+          <div>
+            <h3>Viewing Service</h3>
+            <p>
+              Our customer managers can conduct viewings on your behalf, record apartment videos, and assist with digital contract generation.<br>
+              To use this service, simply proceed with a viewing and select "Generate Contract" when ready.
+            </p>
+            <h3>Contact Customer Service</h3>
+            <form id="customer-service-form">
+              <input type="text" id="cs-name" name="cs-name" placeholder="Your Name" required>
+              <input type="email" id="cs-email" name="cs-email" placeholder="Your Email" required>
+              <textarea id="cs-message" name="cs-message" rows="3" placeholder="Your Message" required></textarea>
+              <button type="submit">Send Message</button>
+            </form>
+            <div id="customer-service-status"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slider Section: Top Rated, Applicants, Opinions, Marketplace, Scam Stories -->
+    <section class="slider-section">
+      <div class="slider-container">
+        <div class="slides" id="slides">
+          <!-- Slide 1: Top Rated Apartments -->
+          <div class="slide">
+            <h2>Top Rated Apartments</h2>
+            <div class="top-apartments-list">
+              <div class="apartment-card">
+                <img src="img/apartment1.jpg" alt="Apartment 1">
+                <div class="apartment-info">
+                  <strong>123 Main St</strong>
+                  <span>⭐ 4.8 (32 reviews)</span>
+                  <span class="badge">12 applicants</span>
+                  <span class="interview"><i class="fa fa-user-check"></i> Interview Required</span>
+                </div>
+                <button class="wishlist-btn" onclick="toggleWishlist(this)" title="Add to wishlist"><i class="fa fa-heart"></i></button>
+              </div>
+              <div class="apartment-card">
+                <img src="img/apartment2.jpg" alt="Apartment 2">
+                <div class="apartment-info">
+                  <strong>456 Elm St</strong>
+                  <span>⭐ 4.7 (21 reviews)</span>
+                  <span class="badge">7 applicants</span>
+                </div>
+                <button class="wishlist-btn" onclick="toggleWishlist(this)" title="Add to wishlist"><i class="fa fa-heart"></i></button>
+              </div>
+              <div class="apartment-card">
+                <img src="img/apartment3.jpg" alt="Apartment 3">
+                <div class="apartment-info">
+                  <strong>789 Oak Ave</strong>
+                  <span>⭐ 4.9 (18 reviews)</span>
+                  <span class="badge">3 applicants</span>
+                  <span class="interview"><i class="fa fa-user-check"></i> Interview Required</span>
+                </div>
+                <button class="wishlist-btn" onclick="toggleWishlist(this)" title="Add to wishlist"><i class="fa fa-heart"></i></button>
+              </div>
+            </div>
+          </div>
+          <!-- Slide 2: User Opinions -->
+          <div class="slide">
+            <div class="user-opinions">
+              <h2>User Opinions</h2>
+              <form id="opinion-form">
+                <textarea id="opinion-text" placeholder="Share your opinion..." required></textarea>
+                <button type="submit">Submit</button>
+              </form>
+              <div id="opinions-list"></div>
+            </div>
+          </div>
+          <!-- Slide 3: Marketplace -->
+          <div class="slide">
+            <h2>Everyday Apartment Tools Marketplace</h2>
+            <p>Find and offer useful tools and services for your apartment life. <br>
+              <a href="marketplace.html" style="color:var(--primary);font-weight:600;">Visit Marketplace</a>
+            </p>
+          </div>
+          <!-- Slide 4: Scam Story Chat Group -->
+          <div class="slide">
+            <h2>Tell Your Scam Story</h2>
+            <p>Join our public chat group to share and read scam stories. <br>
+              <a href="scam-stories.html" style="color:var(--primary);font-weight:600;">Go to Scam Stories</a>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="slider-nav" id="slider-nav">
+        <button class="slider-dot active" onclick="showSlide(0)"></button>
+        <button class="slider-dot" onclick="showSlide(1)"></button>
+        <button class="slider-dot" onclick="showSlide(2)"></button>
+        <button class="slider-dot" onclick="showSlide(3)"></button>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section" style="max-width:950px;margin:60px auto 0 auto;">
+      <h2 style="font-family:var(--heading-font);color:var(--primary);text-align:center;margin-bottom:32px;font-size:2rem;font-weight:700;">What Our Users Say</h2>
+      <div class="testimonials" style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
+        <div class="testimonial" style="background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 22px;max-width:320px;flex:1 1 260px;display:flex;flex-direction:column;align-items:center;text-align:center;">
+          <p style="font-size:1.08rem;color:var(--text);margin-bottom:18px;font-style:italic;">"SichrPlace helped me find a safe apartment in Cologne. The process was smooth and transparent!"</p>
+          <div class="user" style="display:flex;align-items:center;gap:12px;">
+            <img src="img/user1.jpg" alt="User 1" style="width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+            <div class="user-info" style="font-family:var(--heading-font);font-weight:600;color:var(--primary);">
+              Anna S.<br>
+              <span style="font-size:0.95rem;font-weight:400;color:var(--muted);">Student</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial" style="background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 22px;max-width:320px;flex:1 1 260px;display:flex;flex-direction:column;align-items:center;text-align:center;">
+          <p style="font-size:1.08rem;color:var(--text);margin-bottom:18px;font-style:italic;">"As a landlord, I appreciate the verification and messaging tools. Highly recommended!"</p>
+          <div class="user" style="display:flex;align-items:center;gap:12px;">
+            <img src="img/user2.jpg" alt="User 2" style="width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+            <div class="user-info" style="font-family:var(--heading-font);font-weight:600;color:var(--primary);">
+              Markus R.<br>
+              <span style="font-size:0.95rem;font-weight:400;color:var(--muted);">Landlord</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial" style="background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 22px;max-width:320px;flex:1 1 260px;display:flex;flex-direction:column;align-items:center;text-align:center;">
+          <p style="font-size:1.08rem;color:var(--text);margin-bottom:18px;font-style:italic;">"The advanced filters made it easy to find exactly what I needed. Great platform!"</p>
+          <div class="user" style="display:flex;align-items:center;gap:12px;">
+            <img src="img/user3.jpg" alt="User 3" style="width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+            <div class="user-info" style="font-family:var(--heading-font);font-weight:600;color:var(--primary);">
+              Fatima K.<br>
+              <span style="font-size:0.95rem;font-weight:400;color:var(--muted);">Young Professional</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- User Feedback Section -->
+    <section class="feedback-section" style="max-width:950px;margin:60px auto 0 auto;padding:0 20px;">
+      <div class="feedback-container" style="background:linear-gradient(135deg,var(--secondary) 0%,#ffffff 100%);border-radius:var(--radius);box-shadow:var(--shadow);padding:48px 40px;text-align:center;border:1px solid rgba(37,99,235,0.08);">
+        <div class="feedback-header" style="margin-bottom:32px;">
+          <div class="feedback-icon" style="width:64px;height:64px;background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);border-radius:50%;margin:0 auto 20px auto;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(37,99,235,0.15);">
+            <i class="fas fa-comments" style="color:white;font-size:24px;"></i>
+          </div>
+          <h2 style="font-family:var(--heading-font);color:var(--primary);font-size:2rem;font-weight:700;margin-bottom:12px;">Share Your Experience</h2>
+          <p style="color:var(--muted);font-size:1.1rem;line-height:1.6;max-width:600px;margin:0 auto;">Help us improve SichrPlace by sharing your feedback. Your insights help us create a better platform for everyone in the community.</p>
+        </div>
+
+        <div class="feedback-form-container" style="background:var(--card);border-radius:16px;padding:32px;box-shadow:0 4px 12px rgba(0,0,0,0.05);border:1px solid rgba(37,99,235,0.06);">
+          <div class="form-preview" style="margin-bottom:24px;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px;">
+              <div style="width:8px;height:8px;background:var(--primary);border-radius:50%;"></div>
+              <span style="color:var(--primary);font-weight:600;font-family:var(--heading-font);">Quick Feedback Form</span>
+              <div style="width:8px;height:8px;background:var(--accent);border-radius:50%;"></div>
+            </div>
+            <p style="color:var(--text);font-size:0.95rem;">Share your thoughts about our platform, features, and overall experience</p>
+          </div>
+
+          <!-- Primary CTA Button -->
+          <div class="feedback-cta-primary" style="margin-bottom:32px;">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSd11S_WSXvhxQgUlksFdZfvErbBZgaiKA484lsp9-sYIYK_IA/viewform" 
+               target="_blank" 
+               class="feedback-button"
+               style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);color:white;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:600;font-family:var(--heading-font);font-size:1.1rem;box-shadow:0 8px 20px rgba(37,99,235,0.25);transition:all 0.3s ease;border:none;cursor:pointer;">
+              <i class="fas fa-external-link-alt" style="font-size:16px;"></i>
+              <span>Open Feedback Form</span>
+            </a>
+          </div>
+
+          <!-- Embedded Form -->
+          <div class="embedded-form" style="position:relative;">
+            <iframe 
+              src="https://docs.google.com/forms/d/e/1FAIpQLSd11S_WSXvhxQgUlksFdZfvErbBZgaiKA484lsp9-sYIYK_IA/viewform?embedded=true" 
+              width="100%" 
+              height="600" 
+              frameborder="0" 
+              marginheight="0" 
+              marginwidth="0"
+              style="border-radius:12px;background:#ffffff;box-shadow:inset 0 2px 8px rgba(0,0,0,0.02);"
+              title="SichrPlace User Feedback Form">
+              Yükleniyor…
+            </iframe>
+            
+            <!-- Error fallback -->
+            <div class="form-error" style="display:none;text-align:center;padding:40px;background:#f8f9fa;border-radius:12px;border:2px dashed #e9ecef;">
+              <i class="fas fa-exclamation-triangle" style="color:#ffc107;font-size:24px;margin-bottom:12px;"></i>
+              <p style="color:var(--text);margin-bottom:16px;">Unable to load the embedded form.</p>
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSd11S_WSXvhxQgUlksFdZfvErbBZgaiKA484lsp9-sYIYK_IA/viewform" 
+                 target="_blank" 
+                 style="color:var(--primary);font-weight:600;text-decoration:none;border-bottom:2px solid var(--accent);">
+                Click here to open the feedback form in a new tab
+              </a>
+            </div>
+          </div>
+
+          <div class="feedback-footer" style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(37,99,235,0.08);">
+            <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <i class="fas fa-shield-alt" style="color:var(--accent);font-size:16px;"></i>
+                <span style="color:var(--muted);font-size:0.9rem;">100% Anonymous</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <i class="fas fa-clock" style="color:var(--primary);font-size:16px;"></i>
+                <span style="color:var(--muted);font-size:0.9rem;">Takes 2-3 minutes</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <i class="fas fa-heart" style="color:#e74c3c;font-size:16px;"></i>
+                <span style="color:var(--muted);font-size:0.9rem;">Helps improve our platform</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feedback-cta" style="margin-top:32px;">
+          <p style="color:var(--text);font-size:0.95rem;margin-bottom:16px;">
+            <strong>Have a specific issue or suggestion?</strong> 
+            <a href="customer-service.html" style="color:var(--primary);text-decoration:none;font-weight:600;border-bottom:2px solid var(--accent);">Contact our support team</a>
+          </p>
+          <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:20px;">
+            <div style="width:32px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>
+            <span style="color:var(--accent);font-size:0.9rem;font-weight:500;">Thank you for helping us grow!</span>
+            <div style="width:32px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Smart Matching & Secure Payments Section at the bottom -->
+    <section class="matching-section">
+      <h2><i class="fa fa-handshake"></i> Smart Matching & Secure Payments</h2>
+      <ul class="matching-features-list">
+        <li>
+          <i class="fa fa-filter"></i>
+          <span>
+            <strong>Detailed Preferences:</strong> Both apartment searchers and landlords specify detailed preferences. Only compatible parties are matched and can see each other, ensuring relevant and efficient connections.
+          </span>
+        </li>
+        <li>
+          <i class="fa fa-clock"></i>
+          <span>
+            <strong>Auto-Deactivation:</strong> If a landlord does not interact with their offer within a set period, the listing is automatically deactivated to keep results fresh and reliable.
+          </span>
+        </li>
+        <li>
+          <i class="fa fa-euro-sign"></i>
+          <span>
+            <strong>Platform Payments:</strong> All payments—including searcher-to-company, company-to-landlord, and landlord-to-renter deposit returns—are processed exclusively through SichrPlace for maximum security and transparency.
+          </span>
+        </li>
+      </ul>
+      <div class="info">
+        <i class="fa fa-info-circle"></i>
+        <span>
+          Matching and payment flows are fully automated. Conflicting or non-matching parties will not see each other, and all transactions are securely handled by the platform.
+        </span>
+      </div>
+      <div class="payment-flow">
+        <strong>How it works:</strong>
+        <ol style="margin:10px 0 0 18px;">
+          <li>Apartment searchers pay the platform for booking or deposit.</li>
+          <li>Landlords receive payments from the platform after successful rental agreements.</li>
+          <li>Deposit repayments from landlords to renters are managed and released by SichrPlace after move-out.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+ <!-- Social CTA Bar for Instagram/TikTok/Facebook (BOTTOM) -->
+  <div class="social-cta-bar" style="margin-top:40px;">
+    <span>
+      <strong>Are you a landlord?</strong> <a href="apartments-listing.html" target="_blank" style="color:#2563eb;text-decoration:underline;">List your apartment with us and reach verified tenants!</a>
+      <br>
+      <strong>Students &amp; Young Professionals:</strong> Follow us for apartment tips, stories, and offers!
+    </span>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/sichrplace" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/sichrplace" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.tiktok.com/@sichrplace" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+    </div>
+  </div>
+
+<!-- SEO & Content Marketing: Hidden for SEO, not visible to users -->
+  <div style="display:none">
+    student apartments Cologne, safe student housing Aachen, verified student rentals Germany, young professional apartments Cologne, secure rentals for professionals Aachen, digital nomad housing Germany, list my apartment Cologne, safe landlord platform Germany, tenant screening Germany, apartments near University of Cologne, Aachen student flats, How to Avoid Rental Scams as a Student in Germany, Top 5 Student Neighborhoods in Cologne, How to Avoid Rental Scams as a Landlord, The Benefits of Verified Tenants, rental safety, moving tips, city-specific advice, reviews from tenants and landlords, SichrPlace verification system, automated tenant screening, digital onboarding, streamlined communication, owner portal, property performance, rental income, tenant communications, background checks, document verification, digital contracts, automated reminders, paperless processes, prompt support, local real estate agents Köln Aachen, landlord associations, university housing offices, student influencers, university social media, free trials for landlords, listing credits, loyalty schemes, success stories, testimonials, virtual demos, webinars, referral programs, brand identity, trademark registration, MVP security features, landlord verification, property authentication, transparent pricing, university partnerships, pilot marketing campaigns, GDPR, German rental law, Series A funding, product development, technical solutions, business development, marketing, customer service, apartment checking, finances, fund allocation, investor relations, users create profiles, advanced filters, booking requests, viewing requests, GoPro video tour, digital contract, GDPR-compliant servers, Rent Securely. SichrPlace., Transparency and Trust for Landlords., Find Your Next Home—Safe, Simple, Student-Friendly., Rent stress-free with SichrPlace: Verified tenants, digital processes, maximum security. Try it free!, 5 Reasons to Trust SichrPlace With Your Rental, How SichrPlace Verifies Tenants and Apartments, Digital Renting in Germany: Security and Simplicity for Landlords, How Students Can Avoid Rental Scams in Germany
+  </div>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SichrPlace",
+    "url": "https://sichrplace.com/",
+    "description": "Find safe, verified apartments for students and young professionals in Germany. Secure messaging, trusted landlords, and exclusive offers for AIESEC and university students.",
+    "keywords": [
+      "student apartments Cologne",
+      "safe student housing Aachen",
+      "verified student rentals Germany",
+      "young professional apartments Cologne",
+      "secure rentals for professionals Aachen",
+      "digital nomad housing Germany",
+      "list my apartment Cologne",
+      "safe landlord platform Germany",
+      "tenant screening Germany"
+    ]
+  }
+  </script>
+
+
+  <footer>
+    <div class="footer-links">
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+      <a href="customer-service.html">Customer Service</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="scam-stories.html">Scam Stories</a>
+    </div>
+    <div class="footer-social">
+      <a href="https://www.linkedin.com/company/sichrplace/" target="_blank"><i class="fab fa-linkedin"></i></a>
+      <a href="https://www.facebook.com/sichrplace" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/sichrplace" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.tiktok.com/@sichrplace" target="_blank"><i class="fab fa-tiktok"></i></a>
+    </div>
+    <p style="margin-top:16px;">&copy; 2025 SichrPlace. All rights reserved.<br>
+      Created by <a href="https://www.linkedin.com/in/z%C3%A9t%C3%A9ny-dobos/?originalSubdomain=hu" style="color:#40E0D0;">Zétény Dobos</a> and <a href="https://www.linkedin.com/in/%C3%B6mer-%C3%BC%C3%A7kale-482787202/" style="color:#40E0D0;">Ömer Üçkale</a>.
+    </p>
+  </footer>
+  <script>
+    // Simple slider logic
+    let currentSlide = 0;
+    function showSlide(idx) {
+      const slides = document.getElementById('slides');
+      const dots = document.querySelectorAll('.slider-dot');
+      currentSlide = idx;
+      slides.style.transform = `translateX(-${idx * 100}%)`;
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
+    }
+
+    // Wishlist button logic
+    function toggleWishlist(btn) {
+      btn.classList.toggle('active');
+    }
+    
+     // Viewing Request Modal logic
+    function openViewingRequestModal() {
+      document.getElementById('viewing-request-modal').style.display = 'flex';
+    }
+    function closeViewingRequestModal() {
+      document.getElementById('viewing-request-modal').style.display = 'none';
+    }
+
+     // --- CSRF Protection: fetch token and use in protected requests ---
+    async function getCsrfToken() {
+      const res = await fetch('/api/csrf-token', { credentials: 'include' });
+      const data = await res.json();
+      return data.csrfToken;
+    }
+
+    async function sendProtectedRequest(url, method, body) {
+      const csrfToken = await getCsrfToken();
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
+        credentials: 'include',
+        body: JSON.stringify(body)
+      });
+      return res.json();
+    }
+    // --- End CSRF Protection helpers ---
+
+
+// User opinions logic
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('opinion-form');
+      if (form) {
+        form.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const text = document.getElementById('opinion-text').value.trim();
+          if (text) {
+            // Example: send opinion to backend with CSRF protection
+            // await sendProtectedRequest('/api/opinions', 'POST', { opinion: text });
+            const div = document.createElement('div');
+            div.className = 'opinion-item';
+            div.textContent = text;
+            document.getElementById('opinions-list').prepend(div);
+            document.getElementById('opinion-text').value = '';
+          }
+        });
+      }
+
+    // Customer Service form logic
+      const csForm = document.getElementById('customer-service-form');
+      if (csForm) {
+        csForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          // Example: send customer service message to backend with CSRF protection
+          // await sendProtectedRequest('/api/customer-service', 'POST', {
+          //   name: csForm['cs-name'].value,
+          //   email: csForm['cs-email'].value,
+          //   message: csForm['cs-message'].value
+          // });
+          document.getElementById('customer-service-status').textContent =
+            'Your message has been sent. Our team will contact you soon!';
+          csForm.reset();
+        });
+      }
+
+      // Notification bell logic
+      const bell = document.getElementById('notification-bell');
+      const dropdown = document.getElementById('notification-dropdown');
+      if (bell && dropdown) {
+        bell.addEventListener('click', function(e) {
+          dropdown.classList.toggle('active');
+          e.stopPropagation();
+        });
+        bell.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            dropdown.classList.toggle('active');
+            e.preventDefault();
+          }
+        });
+        document.addEventListener('click', function(e) {
+          if (!bell.contains(e.target)) {
+            dropdown.classList.remove('active');
+          }
+        });
+      }
+    });
+  </script>
+  
+  <!-- GDPR Cookie Consent System -->
+  <script src="js/cookie-consent.js"></script>
+  
+  <!-- Consent Manager (Third-party Cookie Consent) -->
+  <script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/02bebe9642911.js" data-cmp-host="b.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="16"></script>
+  
+  <!-- Consent Manager Bridge (Integrates with our analytics) -->
+  <script src="js/consent-manager-bridge.js"></script>
+  
+  <!-- Microsoft Clarity GDPR Integration (Hybrid Version) -->
+  <script src="js/clarity-config-hybrid.js"></script>
+  
+  <!-- Google Analytics 4 GDPR Integration -->
+  <script src="js/google-analytics-config.js"></script>
+  
+  <!-- Analytics Verification Script (for testing) -->
+  <script src="js/analytics-verification.js"></script>
+  
+  <script>
+    // Initialize analytics systems with Consent Manager integration
+    document.addEventListener('DOMContentLoaded', function() {
+      // Note: Consent Manager Bridge handles consent, no need for custom CookieConsent
+      console.log('🔗 Consent Manager integration active');
+      
+      // Test event tracking (only works if user consents via Consent Manager)
+      setTimeout(() => {
+        // Test Microsoft Clarity tracking
+        if (window.clarityGDPRManagerHybrid && window.clarityGDPRManagerHybrid.getConsentStatus()) {
+          window.clarityGDPRManagerHybrid.trackEvent('page_loaded_with_cm', {
+            page: 'index',
+            consent_source: 'consent_manager',
+            timestamp: new Date().toISOString()
+          });
+        }
+        
+        // Test Google Analytics tracking
+        if (window.GoogleAnalyticsManager && window.GoogleAnalyticsManager.isTrackingActive()) {
+          window.GoogleAnalyticsManager.trackEvent('page_loaded_with_cm', {
+            event_category: 'page_interaction',
+            event_label: 'index_page_consent_manager',
+            consent_source: 'consent_manager',
+            page: 'index'
+          });
+        }
+        
+        // Log consent manager status
+        if (window.ConsentManagerBridge) {
+          console.log('📊 Consent Manager Bridge Status:');
+          console.log('- Analytics enabled:', window.ConsentManagerBridge.isAnalyticsEnabled());
+          console.log('- Marketing enabled:', window.ConsentManagerBridge.isMarketingEnabled());
+        }
+      }, 3000); // Wait longer for Consent Manager to fully initialize
+      
+      console.log('GDPR-compliant tracking systems with Consent Manager initialized');
+      console.log('Clarity implementation:', window.clarityGDPRManagerHybrid?.getImplementationType());
+      console.log('Google Analytics active:', window.GoogleAnalyticsManager?.isTrackingActive());
+      console.log('Consent Manager bridge active:', !!window.ConsentManagerBridge);
+    });
+  </script>
+</body>
+</html>

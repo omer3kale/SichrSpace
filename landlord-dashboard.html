@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+    <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landlord Dashboard</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+      background: #f4f6fa;
+      color: #222;
+    }
+    .dashboard-root {
+      display: flex;
+      flex: 1 0 auto;
+      min-height: 0;
+    }
+    /* Sidebar styles */
+    .sidebar {
+      width: 240px;
+      background: #fff;
+      border-right: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 32px 0 0 0;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+      min-height: 100vh;
+    }
+
+    .sidebar h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #2563eb;
+      margin: 0 0 32px 32px;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-nav {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 32px;
+      color: #374151;
+      text-decoration: none;
+      font-size: 16px;
+      border-radius: 0 24px 24px 0;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .sidebar-nav a.active, .sidebar-nav a:hover {
+      background: #e0e7ff;
+      color: #2563eb;
+      font-weight: 600;
+    }
+
+    /* Main content styles */
+    .main-content {
+      flex: 1;
+      padding: 40px 48px;
+      background: #f4f6fa;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .dashboard-cards {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .dashboard-card {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      padding: 28px 32px;
+      flex: 1 1 320px;
+      min-width: 320px;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .dashboard-card h3 {
+      margin: 0 0 8px 0;
+      font-size: 20px;
+      color: #2563eb;
+      font-weight: 600;
+    }
+    .dashboard-card p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 15px;
+    }
+
+    .form-container, .messages-container {
+      background: #fff;
+      padding: 32px;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 32px;
+    }
+
+    .form-container h2 {
+      font-size: 20px;
+      color: #2563EB;
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 15px;
+    }
+
+    input[type="file"] {
+      padding: 5px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #10B981;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background-color: #059669;
+    }
+
+    .offer-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .offer-actions button {
+      flex: 1;
+      padding: 10px;
+      background-color: #2563EB;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .offer-actions button:hover {
+      background-color: #1E3A8A;
+    }
+
+    /* Messages Section */
+    .messages-container {
+      display: flex;
+      gap: 24px;
+      padding: 32px;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      background: #fff;
+      margin-bottom: 32px;
+    }
+    .message-list {
+      width: 32%;
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      min-width: 180px;
+    }
+    .message-list h2 {
+      margin: 0 0 12px 0;
+      font-size: 18px;
+      color: #2563eb;
+    }
+    .message-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .message-list li {
+      padding: 10px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #374151;
+      transition: background 0.2s;
+    }
+    .message-list li:hover, .message-list li.active {
+      background: #e0e7ff;
+      color: #2563eb;
+    }
+    .message-box {
+      flex: 1;
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      min-width: 260px;
+    }
+    .chat-window {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      background: #fff;
+      min-height: 120px;
+    }
+    .message {
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+    .message.sent {
+      text-align: right;
+      color: #2563eb;
+    }
+    .message.received {
+      text-align: left;
+      color: #374151;
+    }
+    #message-input {
+      width: calc(100% - 80px);
+      padding: 10px;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      font-size: 15px;
+    }
+    #message-form {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    #message-form button {
+      width: 70px;
+      padding: 10px;
+      background-color: #2563EB;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    #message-form button:hover {
+      background-color: #1E3A8A;
+    }
+
+    /* Viewing & Contract Generation styles */
+    .viewing-actions {
+      margin-top: 18px;
+    }
+    .viewing-actions button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .viewing-actions button:disabled {
+      background: #a5b4fc;
+      cursor: not-allowed;
+    }
+    .viewing-actions .status-message {
+      margin-bottom: 10px;
+      color: #2563eb;
+      font-weight: 500;
+    }
+    .viewing-actions .contract-message {
+      margin-top: 10px;
+      color: #10B981;
+      font-weight: 500;
+    }
+
+    /* Applicants Table */
+    .applicants-section {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    .applicants-section h2 {
+      color: #2563EB;
+      margin-bottom: 18px;
+      font-size: 22px;
+    }
+    .applicants-section label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .applicants-section input[type="text"] {
+      width: 240px;
+      padding: 8px;
+      margin-right: 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 15px;
+    }
+    .applicants-section button {
+      width: auto;
+      padding: 8px 18px;
+      margin-top: 0;
+      background-color: #2563EB;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .applicants-section button:hover {
+      background-color: #1E3A8A;
+    }
+    .applicants-section table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+    }
+    .applicants-section th, .applicants-section td {
+      border: 1px solid #e5e7eb;
+      padding: 10px 8px;
+      text-align: left;
+    }
+    .applicants-section th {
+      background: #f3f4f6;
+      color: #2563EB;
+    }
+    .applicants-section tr:nth-child(even) {
+      background: #f9fafb;
+    }
+    .applicants-section tr:hover {
+      background: #e0f2fe;
+    }
+    .applicants-section #status {
+      margin-top: 10px;
+      color: #2563EB;
+      font-size: 15px;
+    }
+
+    /* Compare Applicants Modal */
+    .compare-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .compare-modal.active {
+      display: flex;
+    }
+    .compare-content {
+      background: #fff;
+      max-width: 700px;
+      min-width: 320px;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .compare-header {
+      background: #2563EB;
+      color: #fff;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      position: relative;
+      border-radius: 20px 20px 0 0;
+      text-align: center;
+    }
+    .compare-header .close-button {
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+    }
+    .compare-header .close-button:hover {
+      color: #F87171;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.98rem;
+    }
+    .compare-table th, .compare-table td {
+      border: 1px solid #e5e7eb;
+      padding: 8px 6px;
+      text-align: left;
+    }
+    .compare-table th {
+      background: #f3f4f6;
+      color: #2563eb;
+    }
+    .compare-table tr:nth-child(even) {
+      background: #f9fafb;
+    }
+    .compare-table tr:hover {
+      background: #e0f2fe;
+    }
+
+    /* Footer styles (match index page) */
+    .footer {
+      background: #fff;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      padding: 28px 10px 18px 10px;
+      font-size: 16px;
+      color: #6b7280;
+      margin-top: auto;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.03);
+    }
+    .footer a {
+      color: #2563eb;
+      text-decoration: none;
+      margin: 0 8px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .footer a:hover {
+      color: #134cca;
+      text-decoration: underline;
+    }
+    @media (max-width: 900px) {
+      .dashboard-cards {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .main-content {
+        padding: 24px 8px;
+      }
+      .sidebar {
+        width: 100px;
+        padding: 16px 0 0 0;
+      }
+      .sidebar h2 {
+        font-size: 16px;
+        margin-left: 12px;
+      }
+      .sidebar-nav a {
+        font-size: 13px;
+        padding: 10px 12px;
+        gap: 8px;
+      }
+      .applicants-section input[type="text"] {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+      .footer {
+        font-size: 14px;
+        padding: 18px 4px 12px 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-root">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>SichrPlace</h2>
+      <nav class="sidebar-nav">
+        <a href="#" id="profile-link" class="active"><i class="fa fa-user"></i> Profile</a>
+        <a href="#" id="listedApartments-link"><i class="fa fa-building"></i> Listed Apartments</a>
+        <a href="#" id="messages-link"><i class="fa fa-comments"></i> Messages</a>
+        <a href="#" id="viewingRequests-link"><i class="fa fa-calendar-check"></i> Viewing Requests</a>
+        <a href="#" id="applicants-link"><i class="fa fa-users"></i> Applicants</a>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+      <div class="dashboard-cards">
+        <div class="dashboard-card">
+          <h3><i class="fa fa-building"></i> Listed Apartments</h3>
+          <p>Manage your current apartment listings and create new offers.</p>
+        </div>
+        <div class="dashboard-card">
+          <h3><i class="fa fa-calendar-check"></i> Viewing Requests</h3>
+          <p>Review and respond to apartment viewing requests from applicants.</p>
+        </div>
+        <div class="dashboard-card">
+          <h3><i class="fa fa-comments"></i> Messages</h3>
+          <p>Communicate with applicants and manage your conversations.</p>
+        </div>
+        <!-- Viewing Agreement & Contract Generation for Landlord -->
+        <div class="dashboard-card">
+          <h3><i class="fa fa-handshake"></i> Viewing & Contract</h3>
+          <p>When you and the renter agree to a viewing, assign a customer manager and generate a digital contract.</p>
+          <div class="viewing-actions">
+            <button id="proceed-viewing-btn">
+              Proceed to Viewing
+            </button>
+            <div id="viewing-status"></div>
+          </div>
+        </div>
+      </div>
+      <h1>Profile</h1>
+        <div class="form-container">
+        <h2>Update Your Profile</h2>
+        <form id="profile-form" action="/api/update-landlord-profile" method="POST" enctype="multipart/form-data">
+          <label for="photo">Profile Photo:</label>
+          <input type="file" id="photo" name="photo" accept="image/*">
+
+          <label for="full-name">Full Name:</label>
+          <input type="text" id="full-name" name="full-name" placeholder="Enter your full name" required>
+
+          <label for="email">Email Address:</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+
+          <label for="platform-id">Platform ID:</label>
+          <input type="text" id="platform-id" name="platform-id" value="LLD-654321" readonly style="background:#f3f4f6;">
+
+          <label for="id-document">Upload ID Document (PDF, JPG, PNG):</label>
+          <input type="file" id="id-document" name="id-document" accept=".pdf,image/*" required>
+
+          <label for="selfie">Upload Selfie or Video for Verification:</label>
+          <input type="file" id="selfie" name="selfie" accept="image/*,video/*" required>
+
+          <label for="telefon">Telephone Number:</label>
+          <input type="tel" id="telefon" name="telefon" placeholder="Enter your phone number" required>
+
+          <label for="company">Company (if applicable):</label>
+          <input type="text" id="company" name="company" placeholder="Enter your company name">
+
+          <label for="address">Address:</label>
+          <input type="text" id="address" name="address" placeholder="Enter your address">
+
+          <button type="submit">Save Changes</button>
+        </form>
+      </div>
+      <!-- Applicants Table Section -->
+      <div class="applicants-section" id="applicants-section">
+        <h2>Applicants for Apartment</h2>
+        <label for="apartment-id">Apartment ID:</label>
+        <input type="text" id="apartment-id" placeholder="Enter Apartment ID">
+        <button onclick="loadApplicants()">Load Applicants</button>
+        <!-- Compare Applicants Button -->
+        <button id="compare-applicants-btn" style="margin-bottom:12px;background:#2563EB;color:#fff;border:none;border-radius:4px;padding:10px 18px;font-size:15px;cursor:pointer;">
+          <i class="fa fa-users"></i> Compare Applicants
+        </button>
+        <table id="applicants-table">
+          <thead>
+            <tr>
+              <th>Name(s)</th>
+              <th>Move-in</th>
+              <th>Move-out</th>
+              <th>Reason</th>
+              <th>Habits/Personality</th>
+              <th>Payer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
+        <div id="status"></div>
+      </div>
+      <!-- Compare Applicants Modal -->
+      <div id="compare-modal" class="compare-modal">
+        <div class="compare-content">
+          <div class="compare-header">
+            Compare Applicants
+            <button class="close-button" onclick="closeCompareModal()">&times;</button>
+          </div>
+          <table class="compare-table" id="compare-table">
+            <thead>
+              <tr>
+                <th>Name(s)</th>
+                <th>Move-in</th>
+                <th>Move-out</th>
+                <th>Reason</th>
+                <th>Habits/Personality</th>
+                <th>Payer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Messages Section -->
+      <div class="messages-section" id="messages-section" style="display:none;">
+        <div class="dashboard-cards">
+          <div class="dashboard-card">
+            <h3><i class="fa fa-comments"></i> Messages</h3>
+            <p>Communicate with applicants and manage your conversations.</p>
+          </div>
+        </div>
+        <h1>Messages</h1>
+        <div class="messages-container">
+          <div class="message-list">
+            <h2>Conversations</h2>
+            <ul id="conversation-list">
+              <!-- Conversations will be dynamically loaded here -->
+            </ul>
+          </div>
+          <div class="message-box">
+            <h2>Chat</h2>
+            <div id="chat-window" class="chat-window">
+              <!-- Messages will be dynamically loaded here -->
+            </div>
+            <form id="message-form">
+              <input type="text" id="message-input" placeholder="Type your message..." required>
+              <button type="submit">Send</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="footer">
+    <p>&copy; 2025 SichrPlace. All rights reserved.</p>
+    <p>
+      <a href="https://sichrplace.com/privacy-policy">Privacy Policy</a> |
+      <a href="https://sichrplace.com/terms-of-service">Terms of Service</a>
+    </p>
+  </footer>
+  <script>
+    // Content for each section
+    const content = {
+      profile: document.querySelector('.main-content').innerHTML,
+      listedApartments: `
+        <div class="dashboard-cards">
+          <div class="dashboard-card">
+            <h3><i class="fa fa-building"></i> Listed Apartments</h3>
+            <p>Manage your current apartment listings and create new offers.</p>
+          </div>
+        </div>
+        <h1>Listed Apartments</h1>
+        <div class="offer-actions">
+          <button id="browse-apartments">Browse Apartments</button>
+          <button id="create-apartment">Create Apartment Offer</button>
+        </div>
+      `,
+      messages: document.getElementById('messages-section').outerHTML,
+      viewingRequests: `
+        <div class="dashboard-cards">
+          <div class="dashboard-card">
+            <h3><i class="fa fa-calendar-check"></i> Viewing Requests</h3>
+            <p>Review and respond to apartment viewing requests from applicants.</p>
+          </div>
+        </div>
+        <h1>Viewing Requests</h1>
+        <div class="form-container">
+          <h2>Manage Viewing Requests</h2>
+          <ul id="viewing-requests-list">
+            <!-- Viewing requests will be dynamically loaded here -->
+            <li>Request 1: Applicant Name - Date/Time <button>Approve</button> <button>Reject</button></li>
+            <li>Request 2: Applicant Name - Date/Time <button>Approve</button> <button>Reject</button></li>
+          </ul>
+        </div>
+      `,
+      applicants: `
+        <div class="applicants-section" id="applicants-section">
+          <h2>Applicants for Apartment</h2>
+          <label for="apartment-id">Apartment ID:</label>
+          <input type="text" id="apartment-id" placeholder="Enter Apartment ID">
+          <button onclick="loadApplicants()">Load Applicants</button>
+          <button id="compare-applicants-btn" style="margin-bottom:12px;background:#2563EB;color:#fff;border:none;border-radius:4px;padding:10px 18px;font-size:15px;cursor:pointer;">
+            <i class="fa fa-users"></i> Compare Applicants
+          </button>
+          <table id="applicants-table">
+            <thead>
+              <tr>
+                <th>Name(s)</th>
+                <th>Move-in</th>
+                <th>Move-out</th>
+                <th>Reason</th>
+                <th>Habits/Personality</th>
+                <th>Payer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+          <div id="status"></div>
+        </div>
+        <div id="compare-modal" class="compare-modal">
+          <div class="compare-content">
+            <div class="compare-header">
+              Compare Applicants
+              <button class="close-button" onclick="closeCompareModal()">&times;</button>
+            </div>
+            <table class="compare-table" id="compare-table">
+              <thead>
+                <tr>
+                  <th>Name(s)</th>
+                  <th>Move-in</th>
+                  <th>Move-out</th>
+                  <th>Reason</th>
+                  <th>Habits/Personality</th>
+                  <th>Payer</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Filled by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `
+    };
+
+    // Add click event listeners to sidebar links
+    const links = document.querySelectorAll('.sidebar-nav a');
+    const mainContent = document.getElementById('main-content');
+
+    links.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Remove active class from all links
+        links.forEach(l => l.classList.remove('active'));
+
+        // Add active class to the clicked link
+        link.classList.add('active');
+
+        // Update main content based on the clicked link
+        const section = link.id.replace('-link', '');
+        if (section === 'messages') {
+          // Show messages section and hide others
+          document.getElementById('messages-section').style.display = '';
+          document.querySelectorAll('.main-content > :not(.messages-section)').forEach(el => el.style.display = 'none');
+          loadConversations();
+        } else {
+          // Hide messages section and show others
+          document.getElementById('messages-section').style.display = 'none';
+          document.querySelectorAll('.main-content > :not(.messages-section)').forEach(el => el.style.display = '');
+          if (content[section]) {
+            mainContent.innerHTML = content[section];
+          }
+        }
+
+        // Initialize functionality for specific sections
+        if (section === 'listedApartments') {
+          document.getElementById('browse-apartments').addEventListener('click', () => {
+            window.location.href = 'apartments-listing.html';
+          });
+          document.getElementById('create-apartment').addEventListener('click', () => {
+            window.location.href = 'apartment-offers.html';
+          });
+        }
+
+        // Re-initialize Viewing Agreement & Contract Generation logic if on dashboard
+        if (section === 'profile' || section === '') {
+          setupViewingAgreement();
+        }
+
+        // Initialize applicants table logic if on applicants section
+        if (section === 'applicants' || section === 'profile') {
+          setTimeout(() => {
+            setupApplicantsTable();
+            setupCompareApplicants();
+          }, 0);
+        }
+      });
+    });
+
+    // Viewing Agreement & Contract Generation logic
+    function setupViewingAgreement() {
+      const proceedBtn = document.getElementById('proceed-viewing-btn');
+      const viewingStatus = document.getElementById('viewing-status');
+      if (proceedBtn && viewingStatus) {
+        proceedBtn.disabled = false;
+        viewingStatus.innerHTML = '';
+        proceedBtn.addEventListener('click', function handler() {
+          proceedBtn.disabled = true;
+          viewingStatus.innerHTML = `
+            <div class="status-message">
+              <i class="fa fa-user-tie"></i>
+              <span style="margin-left:6px;">Customer manager assigned. Apartment video will be created and sent to the applicant.</span>
+            </div>
+            <button id="generate-contract-btn" style="background:#10B981;color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-weight:600;">
+              Generate Contract
+            </button>
+            <div id="contract-status"></div>
+          `;
+          const generateBtn = document.getElementById('generate-contract-btn');
+          const contractStatus = document.getElementById('contract-status');
+          if (generateBtn && contractStatus) {
+            generateBtn.addEventListener('click', function() {
+              generateBtn.disabled = true;
+              contractStatus.innerHTML = `
+                <div class="contract-message">
+                  <i class="fa fa-file-signature"></i>
+                  <span style="margin-left:6px;">Digital contract generated! Both parties can now sign online.</span>
+                </div>
+              `;
+            });
+          }
+          // Remove this handler after first click to prevent multiple event bindings
+          proceedBtn.removeEventListener('click', handler);
+        });
+      }
+    }
+
+    // Applicants Table Logic
+    function setupApplicantsTable() {
+      const loadBtn = document.querySelector('#applicants-section button');
+      if (loadBtn) {
+        loadBtn.onclick = loadApplicants;
+      }
+    }
+
+    async function loadApplicants() {
+      const apartmentIdInput = document.getElementById('apartment-id');
+      const status = document.getElementById('status');
+      const tbody = document.querySelector('#applicants-table tbody');
+      tbody.innerHTML = '';
+      const apartmentId = apartmentIdInput.value.trim();
+      if (!apartmentId) {
+        status.textContent = "Please enter an Apartment ID.";
+        return;
+      }
+      status.textContent = "Loading...";
+      try {
+        const res = await fetch(`http://localhost:3000/api/booking-requests/${apartmentId}`);
+        const applicants = await res.json();
+        if (!Array.isArray(applicants) || applicants.length === 0) {
+          status.textContent = "No applicants found for this apartment.";
+          return;
+        }
+        status.textContent = "";
+        applicants.forEach(app => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${app.tenant_names || ''}</td>
+            <td>${app.move_in || ''}</td>
+            <td>${app.move_out || ''}</td>
+            <td>${app.reason || ''}</td>
+            <td>${app.habits || ''}</td>
+            <td>${app.payer || ''}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        status.textContent = "Error loading applicants.";
+      }
+    }
+
+    // Compare Applicants Logic
+    function setupCompareApplicants() {
+      const compareBtn = document.getElementById('compare-applicants-btn');
+      const compareModal = document.getElementById('compare-modal');
+      if (compareBtn && compareModal) {
+        compareBtn.onclick = function() {
+          compareModal.classList.add('active');
+          renderCompareTable();
+        };
+      }
+    }
+
+    function closeCompareModal() {
+      const compareModal = document.getElementById('compare-modal');
+      if (compareModal) {
+        compareModal.classList.remove('active');
+      }
+    }
+
+    function renderCompareTable() {
+      const tbody = document.getElementById('compare-table').querySelector('tbody');
+      tbody.innerHTML = '';
+      // Use the same applicants loaded in your applicants table
+      const applicants = [];
+      document.querySelectorAll('#applicants-table tbody tr').forEach(tr => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length) {
+          applicants.push(Array.from(tds).map(td => td.textContent));
+        }
+      });
+      if (applicants.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 6;
+        td.textContent = "No applicants to compare.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+      applicants.forEach(app => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = app.map(val => `<td>${val}</td>`).join('');
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Messaging logic (frontend integration)
+    function loadConversations() {
+      const conversationList = document.getElementById('conversation-list');
+      const chatWindow = document.getElementById('chat-window');
+      const messageForm = document.getElementById('message-form');
+      const messageInput = document.getElementById('message-input');
+
+      // For demo, use a static landlordId. Replace with actual user session/userId in production.
+      const userId = "landlord1";
+
+      async function fetchConversations() {
+        try {
+          const response = await fetch(`/api/conversations/${userId}`);
+          if (!response.ok) throw new Error('Failed to load conversations');
+          const conversations = await response.json();
+          if (!Array.isArray(conversations) || conversations.length === 0) {
+            conversationList.innerHTML = '<li>No conversations found.</li>';
+            chatWindow.innerHTML = '';
+            return;
+          }
+          conversationList.innerHTML = conversations.map(convo => `
+            <li data-id="${convo.id}" class="conversation-item">${convo.name}</li>
+          `).join('');
+          document.querySelectorAll('.conversation-item').forEach(item => {
+            item.addEventListener('click', () => {
+              document.querySelectorAll('.conversation-item').forEach(i => i.classList.remove('active'));
+              item.classList.add('active');
+              loadMessages(item.getAttribute('data-id'));
+            });
+          });
+          // Auto-select the first conversation
+          const first = document.querySelector('.conversation-item');
+          if (first) {
+            first.classList.add('active');
+            loadMessages(first.getAttribute('data-id'));
+          }
+        } catch (error) {
+          conversationList.innerHTML = '<li>Failed to load conversations.</li>';
+          chatWindow.innerHTML = '';
+        }
+      }
+
+      async function loadMessages(conversationId) {
+        try {
+          const response = await fetch(`/api/messages/${conversationId}`);
+          if (!response.ok) throw new Error('Failed to load messages');
+          const messages = await response.json();
+          chatWindow.innerHTML = messages.map(msg => `
+            <div class="message ${msg.sender === userId ? 'sent' : 'received'}">
+              <p><strong>${msg.sender}:</strong> ${msg.message}</p>
+            </div>
+          `).join('');
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        } catch (error) {
+          chatWindow.innerHTML = '<p>Failed to load messages. Please try again later.</p>';
+        }
+      }
+
+      if (messageForm) {
+        messageForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const newMessage = messageInput.value.trim();
+          const activeConversation = document.querySelector('.conversation-item.active');
+          const conversationId = activeConversation ? activeConversation.getAttribute('data-id') : null;
+          if (newMessage && conversationId) {
+            // Optimistically add message to chat
+            chatWindow.innerHTML += `
+              <div class="message sent">
+                <p><strong>${userId}:</strong> ${newMessage}</p>
+              </div>
+            `;
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            messageInput.value = '';
+            try {
+              const response = await fetch('/api/send-message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  conversationId,
+                  sender: userId,
+                  message: newMessage,
+                }),
+              });
+              if (!response.ok) throw new Error('Failed to send the message');
+              // Optionally reload messages to get the latest from server
+              // await loadMessages(conversationId);
+            } catch (error) {
+              alert('Failed to send the message. Please try again.');
+            }
+          }
+        };
+      }
+
+      fetchConversations();
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      setupViewingAgreement();
+      setupApplicantsTable();
+      setupCompareApplicants();
+      // If messages section is visible on load, initialize messaging
+      if (document.getElementById('messages-section').style.display !== 'none') {
+        loadConversations();
+      }
+      // Also setup compare applicants for initial load
+      setupCompareApplicants();
+    });
+  </script>
+</body>
+</html>
