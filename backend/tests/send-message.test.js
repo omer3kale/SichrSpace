@@ -6,8 +6,9 @@ const User = require('../models/User');
 
 const testUser = {
   username: 'msgsender',
-  email: 'msgsender@example.com',
-  password: 'MsgSender@1234'
+  email: 'sichrplace@gmail.com',
+  password: 'Test123!',
+  role: 'tenant'
 };
 
 let userToken;

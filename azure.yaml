@@ -1,0 +1,15 @@
+name: sichrplace
+metadata:
+  template: containerapp@1.0.0
+infra:
+  provider: bicep
+  path: infra
+  
+services:
+  sichrplace-web:
+    project: ./
+    host: containerapp
+    language: js
+    docker:
+      path: Dockerfile
+      context: ./

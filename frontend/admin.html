@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SichrPlace Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563EB;
+      --primary-dark: #1D4ED8;
+      --primary-hover: #5484ef;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --text: #222;
+      --muted: #6b7280;
+      --card: #fff;
+      --border: #E5E7EB;
+      --radius: 18px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+      --danger: #EF4444;
+      --danger-hover: #F87171;
+    }
+
+    body { font-family: var(--body-font); background: var(--secondary); color: var(--text); margin: 0; }
+    header { 
+      background: var(--primary); 
+      color: #fff; 
+      padding: 24px; 
+      font-family: var(--heading-font); 
+      font-size: 1.5rem; 
+      font-weight: 600;
+    }
+    nav { 
+      background: var(--card); 
+      padding: 12px 24px; 
+      box-shadow: var(--shadow); 
+    }
+    nav a { 
+      color: var(--primary); 
+      margin-right: 24px; 
+      text-decoration: none; 
+      font-weight: 600; 
+      transition: color 0.2s ease;
+    }
+    nav a:hover { color: var(--accent); }
+    .admin-section { 
+      max-width: 1100px; 
+      margin: 32px auto; 
+      background: var(--card); 
+      border-radius: var(--radius); 
+      box-shadow: var(--shadow); 
+      padding: 32px; 
+    }
+    h2 { 
+      color: var(--primary); 
+      font-family: var(--heading-font); 
+      font-weight: 600;
+    }
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: 18px; 
+    }
+    th, td { 
+      padding: 12px; 
+      border-bottom: 1px solid var(--border); 
+    }
+    th { 
+      background: var(--secondary); 
+      color: var(--primary); 
+      font-family: var(--heading-font);
+      font-weight: 600;
+    }
+    button { 
+      background: var(--primary); 
+      color: #fff; 
+      border: none; 
+      border-radius: 8px; 
+      padding: 8px 18px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      transition: all 0.2s ease;
+      font-family: var(--body-font);
+    }
+    button:hover { 
+      background: var(--primary-hover); 
+      transform: translateY(-1px);
+    }
+    .logout-btn { 
+      float: right; 
+      background: var(--danger); 
+      margin-left: 24px; 
+    }
+    .logout-btn:hover { 
+      background: var(--danger-hover); 
+    }
+    .error-msg { 
+      color: var(--danger); 
+      font-weight: 600; 
+      margin: 32px auto; 
+      text-align: center; 
+    }
+    /* --- Enhanced styling for forms and buttons --- */
+    .top-row {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 32px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .top-row button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .top-row button:hover {
+      background: var(--primary-dark);
+    }
+    .form-container {
+      background: var(--card);
+      padding: 32px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .search-btn {
+      background: var(--primary) !important;
+      color: white !important;
+      border: none !important;
+      padding: 8px 15px !important;
+      border-radius: 8px !important;
+      margin-left: 5px !important;
+      cursor: pointer !important;
+    }
+    .action-btn {
+      background: var(--primary) !important;
+      color: white !important;
+      border: none !important;
+      padding: 10px !important;
+      border-radius: 8px !important;
+      cursor: pointer !important;
+      font-weight: 600 !important;
+    }
+    .form-container {
+      box-shadow: var(--shadow);
+      margin-bottom: 32px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .form-container h2 {
+      font-size: 20px;
+      color: #2563EB;
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 15px;
+    }
+    textarea {
+      resize: vertical;
+    }
+    button[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #10B981;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button[type="submit"]:hover {
+      background-color: #059669;
+    }
+    .confirmation-message {
+      background: #e0f7fa;
+      color: #2563eb;
+      padding: 18px;
+      border-radius: 8px;
+      margin-top: 18px;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <i class="fa fa-user-shield"></i> SichrPlace Admin Dashboard
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+  <nav>
+    <a href="#users">Users</a>
+    <a href="#offers">Offers</a>
+    <a href="#viewings">Viewing Requests</a>
+    <a href="#messages">Messages</a>
+    <a href="#videos">Video Management</a>
+    <a href="#emails">Email Management</a>
+    <a href="#analytics">Analytics</a>
+    <a href="advanced-gdpr-dashboard.html">🛡️ GDPR Dashboard</a>
+    <a href="index.html">Back to Site</a>
+  </nav>
+  <!-- --- Added Top Row Buttons for Quick Actions --- -->
+  <div class="top-row" style="max-width:1100px;margin:32px auto 0 auto;">
+    <button onclick="scrollToSection('offers')"><i class="fa fa-box"></i> Offers</button>
+    <button onclick="showViewingRequestForm()"><i class="fa fa-calendar-check"></i> Viewing Request</button>
+    <button onclick="scrollToSection('videos')"><i class="fa fa-video"></i> Video Management</button>
+    <button onclick="scrollToSection('emails')"><i class="fa fa-envelope"></i> Email Management</button>
+    <button onclick="window.location.href='advanced-gdpr-dashboard.html'"><i class="fa fa-shield-alt"></i> GDPR Management</button>
+  </div>
+  <!-- --- Viewing Request Form (hidden by default) --- -->
+  <div class="form-container" id="viewing-request-form" style="display:none;">
+    <h2>Submit a Viewing Request</h2>
+    <form id="admin-viewing-form">
+      <label for="apartment-id">Apartment ID</label>
+      <input type="text" id="apartment-id" name="apartment-id" required placeholder="Enter Apartment ID">
+
+      <label for="viewing-date">Date</label>
+      <input type="date" id="viewing-date" name="viewing-date" required>
+
+      <label for="viewing-time">Time (hh:mm)</label>
+      <input type="time" id="viewing-time" name="viewing-time" required>
+
+      <label for="questions">Questions</label>
+      <textarea id="questions" name="questions" rows="2" placeholder="Any questions?"></textarea>
+
+      <label for="attention">What should we pay attention to?</label>
+      <textarea id="attention" name="attention" rows="2" placeholder="Details to pay attention to"></textarea>
+
+      <button type="submit">Send Viewing Request</button>
+    </form>
+    <div id="confirmation-message" class="confirmation-message" style="display:none;">
+      Your viewing request has been submitted!<br>
+      A confirmation email will be sent.<br>
+      Our team will contact you for further steps.
+    </div>
+  </div>
+  <div id="admin-content">
+    <div class="admin-section" id="users">
+      <h2><i class="fa fa-users"></i> User Management</h2>
+      <table>
+        <tr><th>Username</th><th>Email</th><th>Status</th><th>Actions</th></tr>
+        <tr><td>zeteny</td><td>sichrplace@gmail.com</td><td>Admin</td><td><button disabled>Admin</button></td></tr>
+        <tr><td>omer</td><td>sichrplace@gmail.com</td><td>User</td><td><button>Block</button> <button>Delete</button></td></tr>
+        <!-- More users loaded from backend -->
+      </table>
+    </div>
+    <div class="admin-section" id="offers">
+      <h2><i class="fa fa-box"></i> Offer Management</h2>
+      <table>
+        <tr><th>Item</th><th>Owner</th><th>Status</th><th>Actions</th></tr>
+        <tr><td>Double Bed Frame</td><td>omer</td><td>Active</td><td><button>Edit</button> <button>Remove</button></td></tr>
+        <!-- More offers loaded from backend -->
+      </table>
+    </div>
+    <!-- Viewing Requests Section -->
+    <div class="admin-section" id="viewings">
+      <h2><i class="fa fa-eye"></i> Viewing Requests</h2>
+      <table>
+        <tr>
+          <th>Request ID</th>
+          <th>Apartment</th>
+          <th>Requested By</th>
+          <th>Date Requested</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+        <!-- Viewing requests loaded from backend -->
+      </table>
+    </div>
+    <div class="admin-section" id="messages">
+      <h2><i class="fa fa-envelope"></i> Support Messages</h2>
+      <table>
+        <tr><th>User</th><th>Message</th><th>Date</th><th>Actions</th></tr>
+        <tr><td>omer</td><td>How do I reset my password?</td><td>2025-06-15</td><td><button>Reply</button></td></tr>
+        <!-- More messages loaded from backend -->
+      </table>
+    </div>
+    <!-- Video Management Section -->
+    <div class="admin-section" id="videos">
+      <h2><i class="fa fa-video"></i> Video Management</h2>
+      
+      <!-- Video Upload Section -->
+      <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <h3>📹 Upload Viewing Video</h3>
+        <form id="videoUploadForm" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+          <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Apartment Address:</label>
+            <input type="text" id="videoApartmentAddress" placeholder="Musterstraße 123, Köln" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">User Email (who requested viewing):</label>
+            <input type="email" id="videoUserEmail" placeholder="sichrplace@gmail.com" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Video Title:</label>
+            <input type="text" id="videoTitle" placeholder="Apartment Viewing - Living Room & Kitchen" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Video File (.mp4, .mov, .avi - Max 500MB):</label>
+            <input type="file" id="videoFile" accept="video/*" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+              Supported formats: MP4, MOV, AVI. Maximum file size: 500MB
+            </div>
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Viewing Notes/Feedback:</label>
+            <textarea id="videoNotes" rows="3" placeholder="Add notes about the apartment, any issues found, or additional feedback..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+          </div>
+          <button type="button" onclick="uploadSecureVideo()" style="background: #28a745; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            <i class="fa fa-upload"></i> Upload Secure Video
+          </button>
+        </form>
+        <div id="videoUploadResult"></div>
+        <div id="uploadProgress" style="display: none; margin-top: 15px;">
+          <div style="background: #e9ecef; border-radius: 10px; overflow: hidden;">
+            <div id="progressBar" style="background: #28a745; height: 20px; width: 0%; transition: width 0.3s; text-align: center; color: white; font-size: 12px; line-height: 20px;"></div>
+          </div>
+          <div id="progressText" style="text-align: center; margin-top: 5px; font-size: 14px; color: #666;"></div>
+        </div>
+      </div>
+
+      <!-- Video Library -->
+      <div style="background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <h3>📚 Video Library</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <div>
+            <input type="text" id="videoSearchInput" placeholder="Search by apartment address or user..." style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
+            <button onclick="searchVideos()" class="search-btn">Search</button>
+          </div>
+          <button onclick="loadAllVideos()" style="background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 4px;">Refresh List</button>
+        </div>
+        <div id="videoLibrary">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr style="background: #F3F4F6;">
+              <th style="padding: 10px; text-align: left;">Apartment</th>
+              <th style="padding: 10px; text-align: left;">User Email</th>
+              <th style="padding: 10px; text-align: left;">Video Title</th>
+              <th style="padding: 10px; text-align: left;">Upload Date</th>
+              <th style="padding: 10px; text-align: left;">Status</th>
+              <th style="padding: 10px; text-align: left;">Actions</th>
+            </tr>
+            <tr>
+              <td style="padding: 10px;">Musterstraße 123, Köln</td>
+              <td style="padding: 10px;">sichrplace@gmail.com</td>
+              <td style="padding: 10px;">Complete Apartment Tour</td>
+              <td style="padding: 10px;">2025-07-31 16:30</td>
+              <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Ready</span></td>
+              <td style="padding: 10px;">
+                <button onclick="previewVideo('video_001')" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-right: 5px;">Preview</button>
+                <button onclick="sendVideoEmail('video_001')" style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-right: 5px;">Send Email</button>
+                <button onclick="deleteVideo('video_001')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px;">Delete</button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Video Preview Modal -->
+      <div id="videoPreviewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; max-width: 800px; width: 90%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 id="previewVideoTitle">Video Preview</h3>
+            <button onclick="closeVideoPreview()" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px;">✕ Close</button>
+          </div>
+          <div id="videoPreviewContent">
+            <!-- Secure video player will be inserted here -->
+          </div>
+          <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+            <strong>⚠️ Security Notice:</strong> This video is protected against downloading. It can only be viewed through our secure player.
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Email Management Section -->
+    <div class="admin-section" id="emails">
+      <h2><i class="fa fa-mail-bulk"></i> Email Management</h2>
+      
+      <!-- Email Configuration Test -->
+      <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <h3>🔧 Email Configuration Test</h3>
+        <p>Test your Gmail SMTP connection:</p>
+        <button onclick="testEmailConfig()">Test Email Configuration</button>
+        <div id="configTestResult"></div>
+      </div>
+
+      <!-- Email Flow Overview -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0;">
+        <div style="border: 2px solid #28a745; border-radius: 10px; padding: 20px; border-left: 5px solid #28a745;">
+          <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">📨 Email #1: Request Confirmation</div>
+          <div style="padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 10px 0; background: #d4edda; color: #155724;">AUTOMATIC</div>
+          <p><strong>Trigger:</strong> When viewing request is submitted</p>
+          <p><strong>Subject:</strong> "We've Received Your Apartment Viewing Request!"</p>
+        </div>
+
+        <div style="border: 2px solid #ffc107; border-radius: 10px; padding: 20px; border-left: 5px solid #ffc107;">
+          <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">💳 Email #2: Viewing + Payment</div>
+          <div style="padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 10px 0; background: #fff3cd; color: #856404;">MANUAL</div>
+          <p><strong>Trigger:</strong> When viewer is assigned</p>
+          <p><strong>Subject:</strong> "Your Viewing is Booked! Meet Your Apartment Viewer"</p>
+        </div>
+
+        <div style="border: 2px solid #6f42c1; border-radius: 10px; padding: 20px; border-left: 5px solid #6f42c1;">
+          <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">🎥 Email #3: Results Ready</div>
+          <div style="padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 10px 0; background: #cce7ff; color: #004085;">MANUAL</div>
+          <p><strong>Trigger:</strong> When viewing is completed</p>
+          <p><strong>Subject:</strong> "Your Apartment Viewing Video & Feedback Are Here"</p>
+        </div>
+      </div>
+
+      <!-- Quick Send Email Forms -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin: 30px 0;">
+        <!-- Send Viewing Confirmation Email -->
+        <div style="background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
+          <h3>💳 Send Viewing Confirmation Email (#2)</h3>
+          <form id="viewingConfirmationForm" style="display: flex; flex-direction: column; gap: 15px;">
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">User Email:</label>
+              <input type="email" id="userEmail2" placeholder="sichrplace@gmail.com" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">User First Name:</label>
+              <input type="text" id="firstName2" placeholder="John" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">Apartment Address:</label>
+              <input type="text" id="apartmentAddress2" placeholder="Musterstraße 123, Köln" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">Viewer Name:</label>
+              <input type="text" id="viewerName" placeholder="Anna Schmidt" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">Viewing Date & Time:</label>
+              <input type="text" id="viewingDate" placeholder="2025-08-15 at 14:00" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">Payment Link:</label>
+              <input type="url" id="paymentLink" placeholder="https://paypal.com/payment/xyz123" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">Amount (EUR):</label>
+              <input type="number" id="amount" value="25.00" step="0.01" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <button type="button" onclick="sendViewingConfirmation()" class="action-btn">
+              Send Viewing Confirmation Email
+            </button>
+          </form>
+          <div id="viewingConfirmationResult"></div>
+        </div>
+
+        <!-- Send Viewing Results Email -->
+        <div style="background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
+          <h3>🎥 Send Viewing Results Email (#3)</h3>
+          <form id="viewingResultsForm" style="display: flex; flex-direction: column; gap: 15px;">
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">User Email:</label>
+              <input type="email" id="userEmail3" placeholder="sichrplace@gmail.com" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">User First Name:</label>
+              <input type="text" id="firstName3" placeholder="John" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">Apartment Address:</label>
+              <input type="text" id="apartmentAddress3" placeholder="Musterstraße 123, Köln" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">Select Video:</label>
+              <select id="videoSelect" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                <option value="">Choose a video...</option>
+                <option value="video_001">Complete Apartment Tour - Musterstraße 123</option>
+              </select>
+              <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                Videos are securely hosted and cannot be downloaded by recipients
+              </div>
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: bold;">Additional Notes (Optional):</label>
+              <textarea id="emailNotes" rows="3" placeholder="Add any additional feedback or notes about the viewing..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+            </div>
+            <button type="button" onclick="sendViewingResults()" class="action-btn">
+              Send Viewing Results Email
+            </button>
+          </form>
+          <div id="viewingResultsResult"></div>
+        </div>
+      </div>
+
+      <!-- Recent Email Activity -->
+      <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <h3>📋 Recent Email Activity</h3>
+        <button onclick="loadRecentEmails()">Load Recent Email Activity</button>
+        <div id="recentEmailsList">
+          <table style="width: 100%; margin-top: 15px;">
+            <tr style="background: #F3F4F6;">
+              <th style="padding: 10px; text-align: left;">Email Type</th>
+              <th style="padding: 10px; text-align: left;">Recipient</th>
+              <th style="padding: 10px; text-align: left;">Subject</th>
+              <th style="padding: 10px; text-align: left;">Date</th>
+              <th style="padding: 10px; text-align: left;">Status</th>
+            </tr>
+            <tr>
+              <td style="padding: 10px;">Request Confirmation</td>
+              <td style="padding: 10px;">sichrplace@gmail.com</td>
+              <td style="padding: 10px;">We've Received Your Apartment Viewing Request!</td>
+              <td style="padding: 10px;">2025-07-31 14:30</td>
+              <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Sent</span></td>
+            </tr>
+            <tr>
+              <td style="padding: 10px;">Viewing Confirmation</td>
+              <td style="padding: 10px;">sichrplace@gmail.com</td>
+              <td style="padding: 10px;">Your Viewing is Booked! Meet Your Apartment Viewer</td>
+              <td style="padding: 10px;">2025-07-31 15:45</td>
+              <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Sent</span></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="admin-section" id="analytics">
+      <h2><i class="fa fa-chart-bar"></i> Analytics</h2>
+      <ul>
+        <li>Total Users: <strong>102</strong></li>
+        <li>Active Offers: <strong>37</strong></li>
+        <li>Completed Sales: <strong>14</strong></li>
+        <!-- More analytics loaded from backend -->
+      </ul>
+    </div>
+  </div>
+  <div id="error-msg" class="error-msg" style="display:none;"></div>
+  <script>
+    // --- Restrict Access to Admins Only ---
+    if (!localStorage.getItem('sichrplace_admin') || localStorage.getItem('sichrplace_admin') !== 'true') {
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('admin-content').style.display = 'none';
+        document.getElementById('error-msg').style.display = '';
+        document.getElementById('error-msg').textContent = "Access denied. Admins only. Please log in as an admin.";
+        setTimeout(() => window.location.href = 'login.html', 2000);
+      });
+    }
+    // Replace this with a real backend check in production!
+    async function checkAdminStatus() {
+      try {
+        const response = await fetch('/api/check-admin', { credentials: 'include' });
+        if (!response.ok) throw new Error('Network error');
+        const data = await response.json();
+        if (!data.isAdmin) {
+          document.getElementById('admin-content').style.display = 'none';
+          document.getElementById('error-msg').style.display = '';
+          document.getElementById('error-msg').textContent = "Access denied. Admins only. Please log in as an admin.";
+          setTimeout(() => window.location.href = 'login.html', 2000);
+        }
+      } catch (err) {
+        document.getElementById('admin-content').style.display = 'none';
+        document.getElementById('error-msg').style.display = '';
+        document.getElementById('error-msg').textContent = "Error verifying admin status. Please try again.";
+      }
+    }
+    document.addEventListener('DOMContentLoaded', checkAdminStatus);
+    async function isAdmin() {
+      try {
+        const response = await fetch('/api/check-admin', { credentials: 'include' });
+        if (!response.ok) return false;
+        const data = await response.json();
+        return data.isAdmin === true;
+      } catch (err) {
+        return false;
+      }
+      return localStorage.getItem('sichrplace_admin') === 'true';
+    }
+
+    function logout() {
+      localStorage.removeItem('sichrplace_admin');
+      window.location.href = 'login.html';
+    }
+
+    // --- Added: Scroll to Offers Section ---
+    function scrollToSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+      // Hide viewing request form if open
+      document.getElementById('viewing-request-form').style.display = 'none';
+    }
+
+    // --- Added: Show Viewing Request Form ---
+    function showViewingRequestForm() {
+      document.getElementById('viewing-request-form').style.display = '';
+      window.scrollTo({ top: document.getElementById('viewing-request-form').offsetTop - 40, behavior: 'smooth' });
+    }
+
+    // --- Added: Handle Viewing Request Form Submission ---
+    document.addEventListener('DOMContentLoaded', function() {
+      // Viewing Request Form Submission
+      const viewingForm = document.getElementById('admin-viewing-form');
+      if (viewingForm) {
+        viewingForm.onsubmit = function(e) {
+          e.preventDefault();
+          // In production, send data to backend and trigger email automation
+          document.getElementById('confirmation-message').style.display = '';
+          setTimeout(() => {
+            document.getElementById('confirmation-message').style.display = 'none';
+            viewingForm.reset();
+            document.getElementById('viewing-request-form').style.display = 'none';
+          }, 3500);
+        };
+      }
+
+      // --- Fetch and render users ---
+      fetch('/api/admin/users', { credentials: 'include' })
+        .then(res => res.json())
+        .then(users => {
+          const usersTable = document.querySelector('#users table');
+          usersTable.querySelectorAll('tr:not(:first-child)').forEach(tr => tr.remove());
+          users.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${user.username}</td>
+              <td>${user.email}</td>
+              <td>${user.role === 'admin' ? 'Admin' : 'User'}</td>
+              <td>
+                ${user.role === 'admin'
+                ? '<button disabled>Admin</button>'
+                : `<button onclick="blockUser('${user.username}')">Block</button>
+                   <button onclick="deleteUser('${user.username}')">Delete</button>`}
+              </td>
+            `;
+            usersTable.appendChild(tr);
+          });
+        });
+
+      // --- Fetch and render offers ---
+      fetch('/api/admin/offers', { credentials: 'include' })
+        .then(res => res.json())
+        .then(offers => {
+          const offersTable = document.querySelector('#offers table');
+          offersTable.querySelectorAll('tr:not(:first-child)').forEach(tr => tr.remove());
+          offers.forEach(offer => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${offer.item}</td>
+              <td>${offer.owner}</td>
+              <td>${offer.status}</td>
+              <td>
+                <button onclick="editOffer('${offer.id}')">Edit</button>
+                <button onclick="removeOffer('${offer.id}')">Remove</button>
+              </td>
+            `;
+            offersTable.appendChild(tr);
+          });
+        });
+
+      // --- Fetch and render viewing requests ---
+      fetch('/api/admin/viewing-requests', { credentials: 'include' })
+        .then(res => res.json())
+        .then(viewings => {
+          const viewingsTable = document.querySelector('#viewings table');
+          viewingsTable.querySelectorAll('tr:not(:first-child)').forEach(tr => tr.remove());
+          viewings.forEach(req => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${req.id}</td>
+              <td>${req.apartment}</td>
+              <td>${req.requestedBy}</td>
+              <td>${req.dateRequested}</td>
+              <td>${req.status}</td>
+              <td>
+                <button onclick="attendViewing('${req.id}')">Attend</button>
+                <button onclick="markViewingDone('${req.id}')">Mark as Done</button>
+              </td>
+            `;
+            viewingsTable.appendChild(tr);
+          });
+        });
+
+      // --- Fetch and render messages ---
+      fetch('/api/admin/messages', { credentials: 'include' })
+        .then(res => res.json())
+        .then(messages => {
+          const messagesTable = document.querySelector('#messages table');
+          messagesTable.querySelectorAll('tr:not(:first-child)').forEach(tr => tr.remove());
+          messages.forEach(msg => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${msg.user}</td>
+              <td>${msg.message}</td>
+              <td>${msg.date}</td>
+              <td><button onclick="replyMessage('${msg.id}')">Reply</button></td>
+            `;
+            messagesTable.appendChild(tr);
+          });
+        });
+
+      // --- Fetch and render analytics ---
+      fetch('/api/admin/analytics', { credentials: 'include' })
+        .then(res => res.json())
+        .then(analytics => {
+          const analyticsSection = document.querySelector('#analytics ul');
+          analyticsSection.innerHTML = `
+            <li>Total Users: <strong>${analytics.totalUsers}</strong></li>
+            <li>Active Offers: <strong>${analytics.activeOffers}</strong></li>
+            <li>Completed Sales: <strong>${analytics.completedSales}</strong></li>
+          `;
+        });
+
+      // --- Action handlers (implement API calls as needed) ---
+      window.blockUser = async function(username) {
+        if (!confirm(`Block user ${username}?`)) return;
+        try {
+          const res = await fetch(`/api/admin/users/${encodeURIComponent(username)}/block`, {
+            method: 'POST',
+            credentials: 'include'
+          });
+          if (res.ok) location.reload();
+          else alert('Failed to block user');
+        } catch (err) {
+          alert('Network error while blocking user');
+        }
+      };
+      window.deleteUser = async function(username) {
+        if (!confirm(`Delete user ${username}?`)) return;
+        try {
+          const res = await fetch(`/api/admin/users/${encodeURIComponent(username)}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+          if (res.ok) location.reload();
+          else alert('Failed to delete user');
+        } catch (err) {
+          alert('Network error while deleting user');
+        }
+      };
+      window.editOffer = function(offerId) {
+        alert('Edit offer: ' + offerId);
+      };
+      window.removeOffer = async function(offerId) {
+        if (!confirm(`Remove offer ${offerId}?`)) return;
+        try {
+          const res = await fetch(`/api/admin/offers/${encodeURIComponent(offerId)}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+          if (res.ok) location.reload();
+          else alert('Failed to remove offer');
+        } catch (err) {
+          alert('Network error while removing offer');
+        }
+      };
+      window.replyMessage = function(messageId) {
+        alert('Reply to message: ' + messageId);
+      };
+      // --- Viewing request actions ---
+      window.attendViewing = function(requestId) {
+        alert('Attend viewing request: ' + requestId);
+      };
+      window.markViewingDone = async function(requestId) {
+        if (!confirm(`Mark viewing request ${requestId} as done?`)) return;
+        try {
+          const res = await fetch(`/api/admin/viewing-requests/${encodeURIComponent(requestId)}/done`, {
+            method: 'POST',
+            credentials: 'include'
+          });
+          if (res.ok) location.reload();
+          else alert('Failed to mark as done');
+        } catch (err) {
+          alert('Network error while marking as done');
+        }
+      };
+
+      // --- Email Management Functions ---
+      window.testEmailConfig = async function() {
+        const resultDiv = document.getElementById('configTestResult');
+        resultDiv.innerHTML = '<p style="color: #666; margin: 10px 0;">Testing email configuration...</p>';
+
+        try {
+          const response = await fetch('/api/emails/test-email-config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+
+          const result = await response.json();
+          
+          if (result.success) {
+            resultDiv.innerHTML = '<p style="color: #28a745; font-weight: bold; margin: 10px 0;">✅ Email configuration is working! Test email sent.</p>';
+          } else {
+            resultDiv.innerHTML = `<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Email configuration failed: ${result.details}</p>`;
+          }
+        } catch (error) {
+          resultDiv.innerHTML = `<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Error testing email: ${error.message}</p>`;
+        }
+      };
+
+      window.sendViewingConfirmation = async function() {
+        const resultDiv = document.getElementById('viewingConfirmationResult');
+        resultDiv.innerHTML = '<p style="color: #666; margin: 10px 0;">Sending viewing confirmation email...</p>';
+
+        const userData = {
+          firstName: document.getElementById('firstName2').value,
+          apartmentAddress: document.getElementById('apartmentAddress2').value
+        };
+
+        const viewerData = {
+          name: document.getElementById('viewerName').value,
+          description: 'Professional apartment viewer',
+          date: document.getElementById('viewingDate').value
+        };
+
+        const paymentData = {
+          paymentLink: document.getElementById('paymentLink').value,
+          amount: document.getElementById('amount').value
+        };
+
+        try {
+          const response = await fetch('/api/emails/send-viewing-confirmation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userEmail: document.getElementById('userEmail2').value,
+              userData,
+              viewerData,
+              paymentData
+            })
+          });
+
+          const result = await response.json();
+          
+          if (result.success) {
+            resultDiv.innerHTML = '<p style="color: #28a745; font-weight: bold; margin: 10px 0;">✅ Viewing confirmation email sent successfully!</p>';
+            document.getElementById('viewingConfirmationForm').reset();
+          } else {
+            resultDiv.innerHTML = `<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Failed to send email: ${result.error}</p>`;
+          }
+        } catch (error) {
+          resultDiv.innerHTML = `<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Error sending email: ${error.message}</p>`;
+        }
+      };
+
+      window.sendViewingResults = async function() {
+        const resultDiv = document.getElementById('viewingResultsResult');
+        resultDiv.innerHTML = '<p style="color: #666; margin: 10px 0;">Sending viewing results email...</p>';
+
+        const userData = {
+          firstName: document.getElementById('firstName3').value,
+          apartmentAddress: document.getElementById('apartmentAddress3').value
+        };
+
+        const videoId = document.getElementById('videoSelect').value;
+        const emailNotes = document.getElementById('emailNotes').value;
+
+        try {
+          const response = await fetch('/api/emails/send-viewing-results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userEmail: document.getElementById('userEmail3').value,
+              userData,
+              videoId,
+              emailNotes
+            })
+          });
+
+          const result = await response.json();
+          
+          if (result.success) {
+            resultDiv.innerHTML = '<p style="color: #28a745; font-weight: bold; margin: 10px 0;">✅ Viewing results email sent successfully!</p>';
+            document.getElementById('viewingResultsForm').reset();
+          } else {
+            resultDiv.innerHTML = `<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Failed to send email: ${result.error}</p>`;
+          }
+        } catch (error) {
+          resultDiv.innerHTML = `<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Error sending email: ${error.message}</p>`;
+        }
+      };
+
+      // --- Video Management Functions ---
+      window.uploadSecureVideo = async function() {
+        const resultDiv = document.getElementById('videoUploadResult');
+        const progressDiv = document.getElementById('uploadProgress');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        
+        const videoFile = document.getElementById('videoFile').files[0];
+        
+        if (!videoFile) {
+          resultDiv.innerHTML = '<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Please select a video file</p>';
+          return;
+        }
+
+        // File size check (500MB = 524288000 bytes)
+        if (videoFile.size > 524288000) {
+          resultDiv.innerHTML = '<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ File size exceeds 500MB limit</p>';
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('video', videoFile);
+        formData.append('apartmentAddress', document.getElementById('videoApartmentAddress').value);
+        formData.append('userEmail', document.getElementById('videoUserEmail').value);
+        formData.append('title', document.getElementById('videoTitle').value);
+        formData.append('notes', document.getElementById('videoNotes').value);
+
+        progressDiv.style.display = 'block';
+        resultDiv.innerHTML = '';
+
+        try {
+          const xhr = new XMLHttpRequest();
+          
+          xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) {
+              const percentComplete = (e.loaded / e.total) * 100;
+              progressBar.style.width = percentComplete + '%';
+              progressBar.textContent = Math.round(percentComplete) + '%';
+              progressText.textContent = `Uploading... ${Math.round(percentComplete)}% (${(e.loaded / 1024 / 1024).toFixed(1)}MB / ${(e.total / 1024 / 1024).toFixed(1)}MB)`;
+            }
+          });
+
+          xhr.onload = function() {
+            if (xhr.status === 200) {
+              const result = JSON.parse(xhr.responseText);
+              if (result.success) {
+                resultDiv.innerHTML = '<p style="color: #28a745; font-weight: bold; margin: 10px 0;">✅ Video uploaded successfully! Secure link generated.</p>';
+                document.getElementById('videoUploadForm').reset();
+                loadAllVideos(); // Refresh video library
+                loadVideoOptions(); // Refresh email form video options
+              } else {
+                resultDiv.innerHTML = `<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Upload failed: ${result.error}</p>`;
+              }
+            } else {
+              resultDiv.innerHTML = '<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Upload failed. Please try again.</p>';
+            }
+            progressDiv.style.display = 'none';
+          };
+
+          xhr.onerror = function() {
+            resultDiv.innerHTML = '<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Network error during upload</p>';
+            progressDiv.style.display = 'none';
+          };
+
+          xhr.open('POST', '/api/videos/upload-secure');
+          xhr.send(formData);
+
+        } catch (error) {
+          resultDiv.innerHTML = `<p style="color: #dc3545; font-weight: bold; margin: 10px 0;">❌ Error uploading video: ${error.message}</p>`;
+          progressDiv.style.display = 'none';
+        }
+      };
+
+      window.loadAllVideos = async function() {
+        try {
+          const response = await fetch('/api/videos/list');
+          const videos = await response.json();
+          
+          const libraryDiv = document.getElementById('videoLibrary');
+          let tableHTML = `
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr style="background: #F3F4F6;">
+                <th style="padding: 10px; text-align: left;">Apartment</th>
+                <th style="padding: 10px; text-align: left;">User Email</th>
+                <th style="padding: 10px; text-align: left;">Video Title</th>
+                <th style="padding: 10px; text-align: left;">Upload Date</th>
+                <th style="padding: 10px; text-align: left;">Status</th>
+                <th style="padding: 10px; text-align: left;">Actions</th>
+              </tr>
+          `;
+
+          videos.forEach(video => {
+            tableHTML += `
+              <tr>
+                <td style="padding: 10px;">${video.apartmentAddress}</td>
+                <td style="padding: 10px;">${video.userEmail}</td>
+                <td style="padding: 10px;">${video.title}</td>
+                <td style="padding: 10px;">${new Date(video.uploadDate).toLocaleString()}</td>
+                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">${video.status}</span></td>
+                <td style="padding: 10px;">
+                  <button onclick="previewVideo('${video.id}')" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-right: 5px;">Preview</button>
+                  <button onclick="sendVideoEmail('${video.id}')" style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-right: 5px;">Send Email</button>
+                  <button onclick="deleteVideo('${video.id}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px;">Delete</button>
+                </td>
+              </tr>
+            `;
+          });
+
+          tableHTML += '</table>';
+          libraryDiv.innerHTML = tableHTML;
+
+        } catch (error) {
+          document.getElementById('videoLibrary').innerHTML = `<p style="color: #dc3545; font-weight: bold;">❌ Error loading videos: ${error.message}</p>`;
+        }
+      };
+
+      window.loadVideoOptions = async function() {
+        try {
+          const response = await fetch('/api/videos/list');
+          const videos = await response.json();
+          
+          const videoSelect = document.getElementById('videoSelect');
+          videoSelect.innerHTML = '<option value="">Choose a video...</option>';
+          
+          videos.forEach(video => {
+            const option = document.createElement('option');
+            option.value = video.id;
+            option.textContent = `${video.title} - ${video.apartmentAddress}`;
+            videoSelect.appendChild(option);
+          });
+
+        } catch (error) {
+          console.error('Error loading video options:', error);
+        }
+      };
+
+      window.searchVideos = async function() {
+        const searchTerm = document.getElementById('videoSearchInput').value.toLowerCase();
+        
+        try {
+          const response = await fetch(`/api/videos/search?q=${encodeURIComponent(searchTerm)}`);
+          const videos = await response.json();
+          
+          // Update video library display with search results
+          loadAllVideos(); // For now, reload all. In production, filter client-side or server-side
+          
+        } catch (error) {
+          console.error('Error searching videos:', error);
+        }
+      };
+
+      window.previewVideo = async function(videoId) {
+        try {
+          const response = await fetch(`/api/videos/${videoId}/preview`);
+          const videoData = await response.json();
+          
+          if (videoData.success) {
+            document.getElementById('previewVideoTitle').textContent = videoData.title;
+            document.getElementById('videoPreviewContent').innerHTML = `
+              <div style="background: #000; border-radius: 8px; overflow: hidden; position: relative;">
+                <video controls style="width: 100%; height: 400px;" controlsList="nodownload" oncontextmenu="return false;">
+                  <source src="${videoData.secureUrl}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;"></div>
+              </div>
+              <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                <strong>Notes:</strong> ${videoData.notes || 'No additional notes'}
+              </div>
+            `;
+            document.getElementById('videoPreviewModal').style.display = 'block';
+          }
+        } catch (error) {
+          alert('Error loading video preview: ' + error.message);
+        }
+      };
+
+      window.closeVideoPreview = function() {
+        document.getElementById('videoPreviewModal').style.display = 'none';
+        // Stop video playback
+        const video = document.querySelector('#videoPreviewContent video');
+        if (video) {
+          video.pause();
+          video.currentTime = 0;
+        }
+      };
+
+      window.sendVideoEmail = async function(videoId) {
+        try {
+          const response = await fetch(`/api/videos/${videoId}`);
+          const videoData = await response.json();
+          
+          if (videoData.success) {
+            // Pre-fill the email form with video data
+            document.getElementById('userEmail3').value = videoData.userEmail;
+            document.getElementById('apartmentAddress3').value = videoData.apartmentAddress;
+            document.getElementById('videoSelect').value = videoId;
+            
+            // Scroll to email section
+            scrollToSection('emails');
+            
+            // Highlight the results email form
+            const form = document.getElementById('viewingResultsForm').parentElement;
+            form.style.border = '2px solid #28a745';
+            setTimeout(() => {
+              form.style.border = '1px solid #ddd';
+            }, 3000);
+          }
+        } catch (error) {
+          alert('Error preparing email: ' + error.message);
+        }
+      };
+
+      window.deleteVideo = async function(videoId) {
+        if (!confirm('Are you sure you want to delete this video? This action cannot be undone.')) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`/api/videos/${videoId}`, {
+            method: 'DELETE'
+          });
+
+          const result = await response.json();
+          
+          if (result.success) {
+            alert('Video deleted successfully');
+            loadAllVideos(); // Refresh video library
+            loadVideoOptions(); // Refresh email form video options
+          } else {
+            alert('Failed to delete video: ' + result.error);
+          }
+        } catch (error) {
+          alert('Error deleting video: ' + error.message);
+        }
+      };
+
+      window.loadRecentEmails = async function() {
+        const listDiv = document.getElementById('recentEmailsList');
+        
+        try {
+          // This would connect to your email logs API
+          // For now, updating with dynamic content
+          listDiv.innerHTML = `
+            <table style="width: 100%; margin-top: 15px;">
+              <tr style="background: #F3F4F6;">
+                <th style="padding: 10px; text-align: left;">Email Type</th>
+                <th style="padding: 10px; text-align: left;">Recipient</th>
+                <th style="padding: 10px; text-align: left;">Subject</th>
+                <th style="padding: 10px; text-align: left;">Date</th>
+                <th style="padding: 10px; text-align: left;">Status</th>
+              </tr>
+              <tr>
+                <td style="padding: 10px;">Request Confirmation</td>
+                <td style="padding: 10px;">sichrplace@gmail.com</td>
+                <td style="padding: 10px;">We've Received Your Apartment Viewing Request!</td>
+                <td style="padding: 10px;">${new Date().toLocaleString()}</td>
+                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Sent</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px;">Viewing Confirmation</td>
+                <td style="padding: 10px;">sichrplace@gmail.com</td>
+                <td style="padding: 10px;">Your Viewing is Booked! Meet Your Apartment Viewer</td>
+                <td style="padding: 10px;">${new Date(Date.now() - 3600000).toLocaleString()}</td>
+                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Sent</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px;">Results Email</td>
+                <td style="padding: 10px;">sichrplace@gmail.com</td>
+                <td style="padding: 10px;">Your Apartment Viewing Video & Feedback Are Here</td>
+                <td style="padding: 10px;">${new Date(Date.now() - 7200000).toLocaleString()}</td>
+                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Sent</span></td>
+              </tr>
+            </table>
+          `;
+        } catch (error) {
+          listDiv.innerHTML = `<p style="color: #dc3545; font-weight: bold;">❌ Error loading emails: ${error.message}</p>`;
+        }
+      };
+
+      // Initialize video management when page loads
+      loadAllVideos();
+      loadVideoOptions();
+    });
+  </script>
+</body>
+</html>

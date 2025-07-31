@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - SichrPlace</title>
+    <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563EB;
+            --secondary: #F9FAFB;
+            --accent: #40E0D0;
+            --text: #222;
+            --muted: #6b7280;
+            --card: #fff;
+            --radius: 18px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --heading-font: "Poppins", sans-serif;
+            --body-font: "Roboto", sans-serif;
+        }
+
+        body {
+            font-family: var(--body-font);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: var(--secondary);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+
+        /* Header matching index.html */
+        header {
+            background: var(--card);
+            box-shadow: var(--shadow);
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--heading-font);
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        nav {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            position: relative;
+        }
+
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-family: var(--heading-font);
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: var(--card);
+            padding: 3rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        h1 { 
+            color: var(--primary); 
+            border-bottom: 3px solid var(--accent); 
+            padding-bottom: 15px; 
+            font-family: var(--heading-font);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+        
+        h2 { 
+            color: var(--primary); 
+            margin-top: 2.5rem; 
+            font-family: var(--heading-font);
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        
+        h3 { 
+            color: var(--primary); 
+            font-family: var(--heading-font);
+            font-weight: 600;
+            margin-top: 1.5rem;
+        }
+        
+        .effective-date { 
+            background: var(--secondary); 
+            padding: 1.5rem; 
+            border-radius: var(--radius); 
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .highlight { 
+            background: #fff3cd; 
+            padding: 1.5rem; 
+            border-left: 4px solid var(--accent); 
+            margin: 2rem 0; 
+            border-radius: 8px;
+        }
+        
+        .contact-info { 
+            background: #d4edda; 
+            padding: 1.5rem; 
+            border-radius: var(--radius); 
+            margin-top: 2rem; 
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 2rem 0; 
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 1rem; 
+            text-align: left; 
+        }
+        
+        th { 
+            background-color: var(--primary); 
+            color: white;
+            font-family: var(--heading-font);
+            font-weight: 600;
+        }
+        
+        .back-link { 
+            display: inline-block; 
+            margin-bottom: 2rem; 
+            color: var(--primary); 
+            text-decoration: none; 
+            font-family: var(--heading-font);
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            background: var(--secondary);
+            border-radius: 40px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover { 
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Footer matching index.html */
+        footer {
+            background: var(--primary);
+            color: #fff;
+            padding: 32px 0 16px 0;
+            text-align: center;
+            margin-top: 60px;
+            flex-shrink: 0;
+        }
+
+        .footer-links {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            font-family: var(--heading-font);
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .footer-social {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .footer-social a {
+            color: #fff;
+            font-size: 1.3rem;
+            transition: color 0.2s;
+        }
+
+        .footer-social a:hover {
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 0 20px;
+            }
+            
+            .container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">
+            <img src="img/logo.jpg" alt="SichrPlace Logo">
+            SichrPlace
+        </a>
+        <nav>
+            <a href="apartments-listing.html">Apartments</a>
+            <a href="login.html">Login</a>
+            <a href="create-account.html">Create Account</a>
+            <a href="marketplace.html">Marketplace</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to SichrPlace</a>
+        
+        <h1>Privacy Policy</h1>
+        
+        <div class="effective-date">
+            <strong>Effective Date:</strong> January 1, 2024<br>
+            <strong>Last Updated:</strong> January 1, 2024<br>
+            <strong>Version:</strong> 1.0
+        </div>
+
+        <div class="highlight">
+            <strong>Your Privacy Matters:</strong> SichrPlace is committed to protecting your personal data and respecting your privacy rights under the General Data Protection Regulation (GDPR) and other applicable privacy laws.
+        </div>
+
+        <h2>1. Who We Are</h2>
+        <p><strong>Data Controller:</strong> SichrPlace<br>
+        <strong>Contact:</strong> sichrplace@gmail.com<br>
+        <strong>Address:</strong> [Your Address]<br>
+        <strong>Data Protection Officer:</strong> sichrplace@gmail.com</p>
+
+        <h2>2. What Personal Data We Collect</h2>
+        
+        <h3>2.1 Information You Provide</h3>
+        <ul>
+            <li><strong>Account Information:</strong> Username, email address, password (encrypted)</li>
+            <li><strong>Profile Data:</strong> Name, contact details, preferences</li>
+            <li><strong>Property Listings:</strong> Property details, images, descriptions</li>
+            <li><strong>Communications:</strong> Messages, viewing requests, feedback</li>
+            <li><strong>Viewing Requests:</strong> Name, email, phone number, preferred dates</li>
+        </ul>
+
+        <h3>2.2 Information We Collect Automatically</h3>
+        <ul>
+            <li><strong>Technical Data:</strong> IP address, browser type, device information</li>
+            <li><strong>Usage Data:</strong> Pages visited, time spent, interaction patterns</li>
+            <li><strong>Cookies:</strong> Essential, functional, analytics, and marketing cookies</li>
+        </ul>
+
+        <h2>3. Legal Basis for Processing</h2>
+        <table>
+            <tr>
+                <th>Purpose</th>
+                <th>Legal Basis</th>
+                <th>Data Categories</th>
+            </tr>
+            <tr>
+                <td>Account management</td>
+                <td>Contract performance</td>
+                <td>Identity, contact data</td>
+            </tr>
+            <tr>
+                <td>Property matching</td>
+                <td>Contract performance</td>
+                <td>Profile data, preferences</td>
+            </tr>
+            <tr>
+                <td>Communication facilitation</td>
+                <td>Contract performance</td>
+                <td>Contact data, messages</td>
+            </tr>
+            <tr>
+                <td>Platform security</td>
+                <td>Legitimate interests</td>
+                <td>Technical data, usage patterns</td>
+            </tr>
+            <tr>
+                <td>Marketing communications</td>
+                <td>Consent</td>
+                <td>Contact data, preferences</td>
+            </tr>
+            <tr>
+                <td>Analytics</td>
+                <td>Consent</td>
+                <td>Usage data, technical data</td>
+            </tr>
+        </table>
+
+        <h2>4. How We Use Your Data</h2>
+        <ul>
+            <li>Provide and maintain our rental platform services</li>
+            <li>Match tenants with suitable properties</li>
+            <li>Facilitate communication between users</li>
+            <li>Process viewing requests and bookings</li>
+            <li>Ensure platform security and prevent fraud</li>
+            <li>Improve our services through analytics</li>
+            <li>Send service-related notifications</li>
+            <li>Send marketing communications (with consent)</li>
+        </ul>
+
+        <h2>5. Data Sharing and Disclosure</h2>
+        <p>We may share your data with:</p>
+        <ul>
+            <li><strong>Other Users:</strong> Limited profile information for platform functionality</li>
+            <li><strong>Service Providers:</strong> Cloud hosting, email services, analytics providers</li>
+            <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
+            <li><strong>Business Transfers:</strong> In case of merger, acquisition, or sale</li>
+        </ul>
+        <p><strong>We never sell your personal data to third parties.</strong></p>
+
+        <h2>6. International Data Transfers</h2>
+        <p>Your data may be processed in countries outside the European Economic Area (EEA). We ensure adequate protection through:</p>
+        <ul>
+            <li>European Commission adequacy decisions</li>
+            <li>Standard Contractual Clauses (SCCs)</li>
+            <li>Certification schemes and codes of conduct</li>
+        </ul>
+
+        <h2>7. Data Retention</h2>
+        <table>
+            <tr>
+                <th>Data Type</th>
+                <th>Retention Period</th>
+                <th>Reason</th>
+            </tr>
+            <tr>
+                <td>Account data</td>
+                <td>Until account deletion</td>
+                <td>Service provision</td>
+            </tr>
+            <tr>
+                <td>Property listings</td>
+                <td>2 years after removal</td>
+                <td>Legal compliance</td>
+            </tr>
+            <tr>
+                <td>Messages/Communications</td>
+                <td>3 years</td>
+                <td>Dispute resolution</td>
+            </tr>
+            <tr>
+                <td>Technical logs</td>
+                <td>1 year</td>
+                <td>Security and debugging</td>
+            </tr>
+            <tr>
+                <td>Marketing consent</td>
+                <td>Until withdrawn</td>
+                <td>Consent management</td>
+            </tr>
+        </table>
+
+        <h2>8. Your Rights Under GDPR</h2>
+        <p>You have the following rights regarding your personal data:</p>
+        
+        <h3>8.1 Right of Access</h3>
+        <p>Request a copy of all personal data we hold about you.</p>
+        
+        <h3>8.2 Right of Rectification</h3>
+        <p>Request correction of inaccurate or incomplete data.</p>
+        
+        <h3>8.3 Right of Erasure ("Right to be Forgotten")</h3>
+        <p>Request deletion of your personal data under certain circumstances.</p>
+        
+        <h3>8.4 Right to Data Portability</h3>
+        <p>Request a copy of your data in a machine-readable format.</p>
+        
+        <h3>8.5 Right to Restrict Processing</h3>
+        <p>Request limitation of how we process your data.</p>
+        
+        <h3>8.6 Right to Object</h3>
+        <p>Object to processing based on legitimate interests or for marketing purposes.</p>
+        
+        <h3>8.7 Rights Related to Automated Decision-Making</h3>
+        <p>Rights regarding automated profiling and decision-making processes.</p>
+
+        <div class="highlight">
+            <strong>How to Exercise Your Rights:</strong><br>
+            • Log into your account and visit the Privacy Settings page<br>
+            • Email us at sichrplace@gmail.com<br>
+            • Use our online GDPR request form<br>
+            <strong>Response Time:</strong> We will respond within 30 days of receiving your request.
+        </div>
+
+        <h2>9. Cookies and Tracking</h2>
+        <p>We use cookies and similar technologies for:</p>
+        
+        <h3>9.1 Essential Cookies</h3>
+        <p>Required for basic site functionality and security. These cannot be disabled.</p>
+        
+        <h3>9.2 Functional Cookies</h3>
+        <p>Enhance user experience with personalized features.</p>
+        
+        <h3>9.3 Analytics Cookies</h3>
+        <p>Help us understand how users interact with our platform. We use the following analytics services:</p>
+        
+        <div class="highlight">
+            <h4>Microsoft Clarity</h4>
+            <p><strong>Purpose:</strong> User behavior analytics and website optimization</p>
+            <p><strong>Data Collected:</strong> Page views, clicks, scrolls, form interactions (masked), session recordings</p>
+            <p><strong>Legal Basis:</strong> Your consent (GDPR Article 6(1)(a))</p>
+            <p><strong>Data Retention:</strong> 90 days maximum</p>
+            <p><strong>Data Sharing:</strong> Data is processed by Microsoft Corporation (Privacy Shield certified)</p>
+            <p><strong>Your Rights:</strong> You can withdraw consent, request data deletion, or export your data anytime</p>
+            <p><strong>Privacy Settings:</strong> <a href="privacy-settings.html">Manage your tracking preferences</a></p>
+            <p><strong>Microsoft's Privacy Policy:</strong> <a href="https://privacy.microsoft.com/en-us/privacystatement" target="_blank">View Microsoft Privacy Statement</a></p>
+        </div>
+        
+        <p><strong>Data Minimization:</strong> We have configured our analytics tools to:</p>
+        <ul>
+            <li>Automatically mask sensitive form fields (passwords, SSN, payment info)</li>
+            <li>Anonymize IP addresses</li>
+            <li>Respect "Do Not Track" browser settings</li>
+            <li>Limit data retention to the minimum necessary period</li>
+        </ul>
+        
+        <h3>9.4 Marketing Cookies</h3>
+        <p>Used for targeted advertising and measuring campaign effectiveness.</p>
+        
+        <p><strong>Cookie Management:</strong> You can manage your cookie preferences through our Cookie Settings panel or your browser settings.</p>
+
+        <h2>10. Data Security</h2>
+        <p>We implement appropriate technical and organizational measures to protect your data:</p>
+        <ul>
+            <li>Encryption in transit and at rest</li>
+            <li>Regular security assessments and audits</li>
+            <li>Access controls and authentication</li>
+            <li>Employee training on data protection</li>
+            <li>Incident response procedures</li>
+        </ul>
+
+        <h2>11. Children's Privacy</h2>
+        <p>Our services are not intended for individuals under 16 years of age. We do not knowingly collect personal data from children under 16. If we become aware of such collection, we will delete the data promptly.</p>
+
+        <h2>12. Changes to This Policy</h2>
+        <p>We may update this privacy policy from time to time. We will:</p>
+        <ul>
+            <li>Notify you of significant changes via email or platform notification</li>
+            <li>Update the "Last Updated" date at the top of this policy</li>
+            <li>Obtain fresh consent where required by law</li>
+        </ul>
+
+        <h2>13. Contact Information & Complaints</h2>
+        <div class="contact-info">
+            <h3>Data Protection Contact</h3>
+            <p><strong>Email:</strong> sichrplace@gmail.com<br>
+            <strong>Response Time:</strong> Within 72 hours<br>
+            <strong>Data Protection Officer:</strong> sichrplace@gmail.com</p>
+            
+            <h3>Supervisory Authority</h3>
+            <p>You have the right to lodge a complaint with your local data protection authority:</p>
+            <p><strong>Germany:</strong> Federal Commissioner for Data Protection and Freedom of Information (BfDI)<br>
+            <strong>Website:</strong> https://www.bfdi.bund.de/<br>
+            <strong>Email:</strong> poststelle@bfdi.bund.de</p>
+        </div>
+
+        <h2>14. Specific Provisions for German Users</h2>
+        <p>In accordance with German data protection law (BDSG) and GDPR:</p>
+        <ul>
+            <li>We process personal data in accordance with Art. 6 GDPR</li>
+            <li>Data processing is limited to the specified purposes</li>
+            <li>We implement appropriate technical and organizational measures per Art. 32 GDPR</li>
+            <li>Data protection by design and by default is implemented per Art. 25 GDPR</li>
+        </ul>
+
+        <div class="highlight">
+            <strong>Questions?</strong> If you have any questions about this privacy policy or our data practices, please contact us at sichrplace@gmail.com. We're here to help ensure your privacy rights are protected.
+        </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="about.html">About</a>
+            <a href="faq.html">FAQ</a>
+            <a href="customer-service.html">Customer Service</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="privacy-settings.html">Privacy Settings</a>
+        </div>
+        <div class="footer-social">
+            <a href="https://www.linkedin.com/company/sichrplace/" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.facebook.com/sichrplace" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/sichrplace" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.tiktok.com/@sichrplace" target="_blank"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <p style="margin-top:16px;">&copy; 2025 SichrPlace. All rights reserved.<br>
+            Created by <a href="https://www.linkedin.com/in/z%C3%A9t%C3%A9ny-dobos/?originalSubdomain=hu" style="color:#40E0D0;">Zétény Dobos</a> and <a href="https://www.linkedin.com/in/%C3%B6mer-%C3%BC%C3%A7kale-482787202/" style="color:#40E0D0;">Ömer Üçkale</a>.
+        </p>
+    </footer>
+</body>
+</html>

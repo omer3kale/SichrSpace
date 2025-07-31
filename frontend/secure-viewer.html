@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SichrPlace - Secure Video Viewer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563EB;
+      --primary-dark: #1D4ED8;
+      --primary-hover: #5484ef;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --text: #222;
+      --muted: #6b7280;
+      --card: #fff;
+      --border: #E5E7EB;
+      --radius: 18px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+      --warning: #FFC107;
+      --warning-bg: #FFF3CD;
+      --danger: #EF4444;
+      --danger-bg: #F8D7DA;
+    }
+
+    body { 
+      font-family: var(--body-font); 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: var(--text); 
+      margin: 0; 
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .viewer-container {
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      padding: 40px;
+      max-width: 900px;
+      width: 90%;
+      text-align: center;
+    }
+    .sichrplace-logo {
+      color: var(--primary);
+      font-family: var(--heading-font);
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+    .video-container {
+      background: #000;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+      margin: 30px 0;
+    }
+    .secure-video {
+      width: 100%;
+      height: 500px;
+      object-fit: contain;
+    }
+    .security-notice {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 5px solid var(--warning);
+    }
+    .video-info {
+      text-align: left;
+      background: var(--secondary);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .error-message {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger);
+      border-radius: 10px;
+      padding: 20px;
+      color: var(--danger);
+      margin: 20px 0;
+    }
+    .loading {
+      color: var(--muted);
+      font-size: 18px;
+      padding: 40px;
+    }
+    .back-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 20px;
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="sichrplace-logo">
+      <i class="fa fa-home"></i> SichrPlace
+    </div>
+    
+    <div id="loading" class="loading">
+      <i class="fa fa-spinner fa-spin"></i> Loading your apartment viewing video...
+    </div>
+
+    <div id="video-content" style="display: none;">
+      <h2 id="video-title">Your Apartment Viewing Video</h2>
+      
+      <div class="video-container">
+        <video id="secure-video" class="secure-video" controls controlsList="nodownload" oncontextmenu="return false;" preload="metadata">
+          <p>Your browser does not support video playback. Please use a modern browser to view this content.</p>
+        </video>
+      </div>
+
+      <div class="security-notice">
+        <h4><i class="fa fa-shield-alt"></i> Security Notice</h4>
+        <p><strong>This video is protected and cannot be downloaded.</strong> It's hosted securely on our servers and can only be viewed through this protected player. The link expires in 7 days for your security.</p>
+      </div>
+
+      <div class="video-info" id="video-info">
+        <!-- Video information will be populated here -->
+      </div>
+
+      <a href="index.html" class="back-btn">
+        <i class="fa fa-arrow-left"></i> Back to SichrPlace
+      </a>
+    </div>
+
+    <div id="error-content" style="display: none;">
+      <div class="error-message">
+        <h3><i class="fa fa-exclamation-triangle"></i> Access Denied</h3>
+        <p id="error-message">This video link is invalid or has expired. Please contact SichrPlace for a new link.</p>
+      </div>
+      <a href="index.html" class="back-btn">
+        <i class="fa fa-arrow-left"></i> Back to SichrPlace
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Extract video ID and token from URL
+    const urlPath = window.location.pathname;
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoId = urlPath.split('/').pop();
+    const token = urlParams.get('token');
+
+    if (!videoId || !token) {
+      showError('Invalid video link. Please check the link and try again.');
+    } else {
+      loadSecureVideo();
+    }
+
+    async function loadSecureVideo() {
+      try {
+        // Verify token and get video metadata
+        const metadataResponse = await fetch(`/api/videos/${videoId}`);
+        
+        if (!metadataResponse.ok) {
+          throw new Error('Video not found');
+        }
+
+        const videoData = await metadataResponse.json();
+
+        if (!videoData.success) {
+          throw new Error(videoData.error || 'Failed to load video');
+        }
+
+        // Generate secure streaming URL
+        const streamUrl = `/api/videos/${videoId}/stream?token=${token}`;
+        
+        // Set up video element
+        const videoElement = document.getElementById('secure-video');
+        videoElement.src = streamUrl;
+        
+        // Populate video information
+        document.getElementById('video-title').textContent = videoData.title;
+        document.getElementById('video-info').innerHTML = `
+          <h4><i class="fa fa-info-circle"></i> Viewing Details</h4>
+          <p><strong>Apartment:</strong> ${videoData.apartmentAddress}</p>
+          <p><strong>Video Title:</strong> ${videoData.title}</p>
+          <p><strong>Upload Date:</strong> ${new Date(videoData.uploadDate).toLocaleDateString()}</p>
+          ${videoData.notes ? `<p><strong>Additional Notes:</strong> ${videoData.notes}</p>` : ''}
+        `;
+
+        // Handle video loading
+        videoElement.addEventListener('loadedmetadata', function() {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('video-content').style.display = 'block';
+        });
+
+        videoElement.addEventListener('error', function() {
+          showError('Failed to load video content. The link may have expired.');
+        });
+
+        // Add additional security measures
+        addSecurityMeasures();
+
+      } catch (error) {
+        console.error('Error loading video:', error);
+        showError(error.message || 'Failed to load video. Please try again.');
+      }
+    }
+
+    function showError(message) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('video-content').style.display = 'none';
+      document.getElementById('error-message').textContent = message;
+      document.getElementById('error-content').style.display = 'block';
+    }
+
+    function addSecurityMeasures() {
+      // Disable right-click context menu
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+      });
+
+      // Disable text selection
+      document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+        return false;
+      });
+
+      // Disable drag and drop
+      document.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+        return false;
+      });
+
+      // Disable F12 and other developer tools shortcuts
+      document.addEventListener('keydown', function(e) {
+        // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+        if (e.keyCode === 123 || 
+            (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+            (e.ctrlKey && e.keyCode === 85)) {
+          e.preventDefault();
+          return false;
+        }
+      });
+
+      // Add overlay to prevent direct video access
+      const videoContainer = document.querySelector('.video-container');
+      const overlay = document.createElement('div');
+      overlay.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 10;
+        background: transparent;
+      `;
+      videoContainer.style.position = 'relative';
+      videoContainer.appendChild(overlay);
+    }
+
+    // Track video viewing analytics
+    window.addEventListener('beforeunload', function() {
+      // Send viewing analytics (optional)
+      const video = document.getElementById('secure-video');
+      if (video && video.currentTime > 0) {
+        navigator.sendBeacon('/api/videos/analytics', JSON.stringify({
+          videoId: videoId,
+          watchTime: video.currentTime,
+          totalDuration: video.duration
+        }));
+      }
+    });
+  </script>
+</body>
+</html>

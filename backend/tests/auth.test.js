@@ -5,8 +5,9 @@ const User = require('../models/User');
 
 const testUser = {
   username: 'testuser',
-  email: 'testuser@example.com',
-  password: 'Test@1234'
+  email: 'sichrplace@gmail.com',
+  password: 'Test123!',
+  role: 'tenant'
 };
 
 beforeAll(async () => {

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - SichrPlace</title>
+    <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563EB;
+            --secondary: #F9FAFB;
+            --accent: #40E0D0;
+            --text: #222;
+            --muted: #6b7280;
+            --card: #fff;
+            --radius: 18px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --heading-font: "Poppins", sans-serif;
+            --body-font: "Roboto", sans-serif;
+        }
+
+        body {
+            font-family: var(--body-font);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: var(--secondary);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+
+        /* Header matching index.html */
+        header {
+            background: var(--card);
+            box-shadow: var(--shadow);
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--heading-font);
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        nav {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            position: relative;
+        }
+
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-family: var(--heading-font);
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: var(--card);
+            padding: 3rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-family: var(--heading-font);
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: var(--heading-font);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 2.5rem 0 1rem 0;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-family: var(--heading-font);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+            margin: 2rem 0 1rem 0;
+        }
+
+        p, li {
+            color: var(--muted);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .intro-text {
+            text-align: center;
+            color: var(--muted);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .effective-date {
+            background: var(--secondary);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .highlight {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 1.5rem;
+            border-left: 4px solid #f59e0b;
+            margin: 2rem 0;
+            border-radius: var(--radius);
+        }
+
+        .contact-info {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-top: 2rem;
+            border-left: 4px solid #10b981;
+        }
+
+        .warning {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 1.5rem;
+            border-left: 4px solid #ef4444;
+            margin: 2rem 0;
+            border-radius: var(--radius);
+        }
+
+        ul {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-family: var(--heading-font);
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        /* Footer matching index.html */
+        footer {
+            background: var(--text);
+            color: var(--card);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: auto;
+            flex-shrink: 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--card);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .social-links a {
+            color: var(--card);
+            font-size: 1.5rem;
+            transition: color 0.2s;
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 0 20px;
+            }
+            
+            nav {
+                gap: 16px;
+            }
+            
+            .container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">
+            <img src="img/logo.jpg" alt="SichrPlace Logo">
+            SichrPlace
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="apartments-listing.html">Apartments</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="privacy-policy.html">Privacy</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1>Terms of Service</h1>
+            <p class="intro-text">Legal terms and conditions for using SichrPlace platform</p>
+            
+            <div class="effective-date">
+                <strong>Effective Date:</strong> January 1, 2024<br>
+                <strong>Last Updated:</strong> January 1, 2024<br>
+                <strong>Version:</strong> 1.0
+            </div>
+
+            <div class="highlight">
+                <strong>Important:</strong> These Terms of Service govern your access to and use of SichrPlace. By using our platform, you agree to be bound by these terms. Please read them carefully.
+            </div>
+
+        <h2>1. About SichrPlace</h2>
+        <p>SichrPlace is a digital platform that connects property owners (landlords) with potential tenants, facilitating secure and transparent rental transactions. Our platform operates under German law and complies with all applicable regulations including GDPR and German rental law (Mietrecht).</p>
+
+        <h2>2. Acceptance of Terms</h2>
+        <p>By accessing or using SichrPlace, you agree to:</p>
+        <ul>
+            <li>Be bound by these Terms of Service</li>
+            <li>Comply with our Privacy Policy</li>
+            <li>Follow all applicable laws and regulations</li>
+            <li>Provide accurate and truthful information</li>
+        </ul>
+
+        <h2>3. User Accounts and Eligibility</h2>
+        
+        <h3>3.1 Eligibility Requirements</h3>
+        <p>To use SichrPlace, you must:</p>
+        <ul>
+            <li>Be at least 18 years old</li>
+            <li>Have legal capacity to enter into contracts</li>
+            <li>Provide accurate, current, and complete information</li>
+            <li>Not be prohibited from using our services under applicable law</li>
+        </ul>
+
+        <h3>3.2 Account Registration</h3>
+        <ul>
+            <li>You must create an account to access most features</li>
+            <li>You are responsible for maintaining account security</li>
+            <li>You must notify us immediately of any unauthorized use</li>
+            <li>Each person may have only one active account</li>
+        </ul>
+
+        <h3>3.3 Account Verification</h3>
+        <p>We may require identity verification for certain services. This helps ensure platform security and compliance with legal requirements.</p>
+
+        <h2>4. Platform Services</h2>
+        
+        <h3>4.1 For Landlords</h3>
+        <ul>
+            <li>Create and manage property listings</li>
+            <li>Screen and communicate with potential tenants</li>
+            <li>Schedule property viewings</li>
+            <li>Access tenant verification tools</li>
+            <li>Manage rental applications and bookings</li>
+        </ul>
+
+        <h3>4.2 For Tenants</h3>
+        <ul>
+            <li>Search and browse property listings</li>
+            <li>Submit viewing requests and rental applications</li>
+            <li>Communicate with landlords through our platform</li>
+            <li>Access verified property information</li>
+            <li>Receive support throughout the rental process</li>
+        </ul>
+
+        <h2>5. User Responsibilities and Conduct</h2>
+        
+        <h3>5.1 Prohibited Activities</h3>
+        <p>You agree not to:</p>
+        <ul>
+            <li>Provide false, misleading, or fraudulent information</li>
+            <li>Impersonate another person or entity</li>
+            <li>Engage in discriminatory practices</li>
+            <li>Harass, abuse, or threaten other users</li>
+            <li>Violate any applicable laws or regulations</li>
+            <li>Attempt to circumvent platform security measures</li>
+            <li>Use automated tools to access our services</li>
+            <li>Post spam, malware, or harmful content</li>
+        </ul>
+
+        <h3>5.2 Content Standards</h3>
+        <p>All content you post must be:</p>
+        <ul>
+            <li>Accurate and truthful</li>
+            <li>Legal and not infringing on others' rights</li>
+            <li>Appropriate and not offensive</li>
+            <li>Relevant to rental property transactions</li>
+        </ul>
+
+        <h3>5.3 Compliance with German Rental Law</h3>
+        <p>All users must comply with German rental regulations, including:</p>
+        <ul>
+            <li>Anti-discrimination laws (AGG)</li>
+            <li>Rental price regulations (Mietpreisbremse)</li>
+            <li>Property condition disclosure requirements</li>
+            <li>Tenant rights and landlord obligations</li>
+        </ul>
+
+        <h2>6. Financial Terms</h2>
+        
+        <h3>6.1 Service Fees</h3>
+        <ul>
+            <li>Basic account registration is free</li>
+            <li>Premium features may require subscription fees</li>
+            <li>Transaction fees may apply to successful rentals</li>
+            <li>All fees are clearly disclosed before charging</li>
+        </ul>
+
+        <h3>6.2 Payment Terms</h3>
+        <ul>
+            <li>Payments are processed securely through approved providers</li>
+            <li>Fees are non-refundable unless specified otherwise</li>
+            <li>You authorize us to charge your payment method</li>
+            <li>All prices include applicable taxes (VAT)</li>
+        </ul>
+
+        <h3>6.3 Refund Policy</h3>
+        <p>Refunds are available in limited circumstances:</p>
+        <ul>
+            <li>Technical issues preventing service access</li>
+            <li>Billing errors on our part</li>
+            <li>Cancelled services within specified timeframes</li>
+            <li>As required by consumer protection laws</li>
+        </ul>
+
+        <h2>7. Intellectual Property</h2>
+        
+        <h3>7.1 SichrPlace Content</h3>
+        <p>We own all rights to:</p>
+        <ul>
+            <li>The SichrPlace platform and technology</li>
+            <li>Our trademarks, logos, and branding</li>
+            <li>Platform design and user interface</li>
+            <li>Proprietary algorithms and features</li>
+        </ul>
+
+        <h3>7.2 User Content</h3>
+        <p>You retain ownership of content you post, but grant us:</p>
+        <ul>
+            <li>Right to display your content on our platform</li>
+            <li>Right to use content for platform operation</li>
+            <li>Right to moderate and remove inappropriate content</li>
+            <li>Right to use aggregated data for analytics</li>
+        </ul>
+
+        <h2>8. Privacy and Data Protection</h2>
+        <p>Your privacy is important to us. Our data processing practices are governed by:</p>
+        <ul>
+            <li>Our comprehensive Privacy Policy</li>
+            <li>General Data Protection Regulation (GDPR)</li>
+            <li>German Federal Data Protection Act (BDSG)</li>
+            <li>Other applicable privacy laws</li>
+        </ul>
+        <p>By using our services, you consent to data processing as described in our Privacy Policy.</p>
+
+        <h2>9. Platform Availability and Modifications</h2>
+        
+        <h3>9.1 Service Availability</h3>
+        <ul>
+            <li>We strive for high availability but cannot guarantee 100% uptime</li>
+            <li>Maintenance may temporarily limit access</li>
+            <li>We reserve the right to modify or discontinue features</li>
+            <li>Critical updates may be applied without prior notice</li>
+        </ul>
+
+        <h3>9.2 Platform Updates</h3>
+        <p>We may update our platform to:</p>
+        <ul>
+            <li>Improve functionality and user experience</li>
+            <li>Add new features and services</li>
+            <li>Enhance security and stability</li>
+            <li>Comply with legal requirements</li>
+        </ul>
+
+        <h2>10. Limitation of Liability</h2>
+        
+        <div class="warning">
+            <strong>Important Legal Notice:</strong> Please read this section carefully as it limits our liability to you.
+        </div>
+
+        <h3>10.1 Platform as Intermediary</h3>
+        <p>SichrPlace acts as an intermediary platform. We:</p>
+        <ul>
+            <li>Do not own, manage, or control properties listed</li>
+            <li>Are not a party to rental agreements</li>
+            <li>Cannot guarantee the accuracy of all user content</li>
+            <li>Are not responsible for user conduct or disputes</li>
+        </ul>
+
+        <h3>10.2 Limitation of Damages</h3>
+        <p>To the maximum extent permitted by law, we are not liable for:</p>
+        <ul>
+            <li>Indirect, incidental, or consequential damages</li>
+            <li>Loss of profits, data, or business opportunities</li>
+            <li>Damages exceeding fees paid to us in the past 12 months</li>
+            <li>Issues arising from user-to-user transactions</li>
+        </ul>
+
+        <h3>10.3 User Indemnification</h3>
+        <p>You agree to indemnify us against claims arising from:</p>
+        <ul>
+            <li>Your violation of these terms</li>
+            <li>Your use of our platform</li>
+            <li>Content you post or actions you take</li>
+            <li>Violation of third-party rights</li>
+        </ul>
+
+        <h2>11. Dispute Resolution</h2>
+        
+        <h3>11.1 Internal Resolution</h3>
+        <p>We encourage users to:</p>
+        <ul>
+            <li>First attempt direct communication</li>
+            <li>Use our platform messaging system</li>
+            <li>Contact our support team for assistance</li>
+            <li>Utilize our mediation services where available</li>
+        </ul>
+
+        <h3>11.2 Legal Disputes</h3>
+        <p>For legal disputes:</p>
+        <ul>
+            <li>German law governs these terms</li>
+            <li>Courts in Germany have exclusive jurisdiction</li>
+            <li>EU consumers retain rights under consumer protection laws</li>
+            <li>Mediation may be required before litigation</li>
+        </ul>
+
+        <h2>12. Account Termination</h2>
+        
+        <h3>12.1 Termination by You</h3>
+        <ul>
+            <li>You may close your account at any time</li>
+            <li>Use privacy settings to request data deletion</li>
+            <li>Some information may be retained as required by law</li>
+            <li>Active bookings must be completed or cancelled</li>
+        </ul>
+
+        <h3>12.2 Termination by Us</h3>
+        <p>We may suspend or terminate accounts for:</p>
+        <ul>
+            <li>Violation of these terms</li>
+            <li>Illegal or harmful activity</li>
+            <li>Extended periods of inactivity</li>
+            <li>Non-payment of fees</li>
+            <li>Risk to platform security or integrity</li>
+        </ul>
+
+        <h2>13. Changes to Terms</h2>
+        <p>We may update these terms to:</p>
+        <ul>
+            <li>Reflect changes in our services</li>
+            <li>Comply with legal requirements</li>
+            <li>Improve user protection</li>
+            <li>Address new platform features</li>
+        </ul>
+        
+        <p><strong>Notice of Changes:</strong></p>
+        <ul>
+            <li>Significant changes: 30 days advance notice</li>
+            <li>Minor changes: Updated terms posted online</li>
+            <li>Continued use constitutes acceptance</li>
+            <li>Right to terminate if you disagree</li>
+        </ul>
+
+        <h2>14. Miscellaneous</h2>
+        
+        <h3>14.1 Entire Agreement</h3>
+        <p>These terms, together with our Privacy Policy, constitute the entire agreement between you and SichrPlace.</p>
+
+        <h3>14.2 Severability</h3>
+        <p>If any provision is found unenforceable, the remainder of these terms will remain in effect.</p>
+
+        <h3>14.3 Language</h3>
+        <p>These terms are provided in English. In case of conflicts with translations, the English version prevails.</p>
+
+        <h3>14.4 Assignment</h3>
+        <p>We may assign these terms in connection with a merger, acquisition, or sale of assets. You may not assign your rights without our consent.</p>
+
+        <div class="contact-info">
+            <h2>15. Contact Information</h2>
+            <p><strong>SichrPlace</strong><br>
+            Email: sichrplace@gmail.com<br>
+            Support: sichrplace@gmail.com<br>
+            Address: [Your Company Address]<br>
+            Phone: [Your Phone Number]</p>
+            
+            <p><strong>Business Hours:</strong> Monday-Friday, 9:00 AM - 5:00 PM CET</p>
+            
+            <p><strong>For Legal Notices:</strong> sichrplace@gmail.com</p>
+        </div>
+
+        <div class="highlight">
+            <strong>Questions about these Terms?</strong> Contact us at sichrplace@gmail.com. We're committed to transparency and will address your concerns promptly.
+        </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="apartments-listing.html">Apartments</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="privacy-settings.html">Privacy Settings</a>
+            </div>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            </div>
+            <p>&copy; 2024 SichrPlace. All rights reserved. | Making housing secure and accessible.</p>
+        </div>
+    </footer>
+
+</html>

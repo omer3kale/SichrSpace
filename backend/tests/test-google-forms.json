@@ -1,0 +1,12 @@
+{
+  "tenant_name": "Jane Smith",
+  "tenant_email": "sichrplace@gmail.com",
+  "tenant_phone": "+49 987 654321",
+  "apartment_address": "Teststraße 456, 50667 Köln",
+  "apartment_id": "test-apartment-456",
+  "requested_date": "2025-07-31",
+  "preferred_time_range": "10:00-12:00",
+  "additional_info": "Looking forward to viewing this apartment",
+  "budget_range": "€1000-1500",
+  "google_form_id": "test_form_456"
+}

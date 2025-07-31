@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
  */
 async function sendMail({ to, subject, html, text }) {
   const mailOptions = {
-    from: process.env.MAIL_FROM || '"SichrPlace Team" <no-reply@sichrplace.com>',
+    from: process.env.MAIL_FROM || '"SichrPlace Team" <sichrplace@gmail.com>',
     to,
     subject,
     html,

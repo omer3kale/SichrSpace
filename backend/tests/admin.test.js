@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const app = require('../server');
 const User = require('../models/User');
 
-const adminUser = {
+const testUser = {
   username: 'adminuser',
-  email: 'adminuser@example.com',
-  password: 'Admin@1234',
+  email: 'sichrplace@gmail.com',
+  password: 'Test123!',
   role: 'admin'
 };
 

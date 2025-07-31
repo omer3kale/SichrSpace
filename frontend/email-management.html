@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SichrPlace - Email Management</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .content {
+            padding: 30px;
+        }
+        .email-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .email-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .email-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        .email-card.email-1 { border-left: 5px solid #28a745; }
+        .email-card.email-2 { border-left: 5px solid #ffc107; }
+        .email-card.email-3 { border-left: 5px solid #6f42c1; }
+        .email-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .email-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .status-sent { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-ready { background: #cce7ff; color: #004085; }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .success { color: #28a745; font-weight: bold; }
+        .error { color: #dc3545; font-weight: bold; }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .viewing-request {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        .request-id {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📧 SichrPlace Email Management</h1>
+            <p>Manage your automated email communications</p>
+        </div>
+
+        <div class="content">
+            <!-- Email Configuration Test -->
+            <div class="test-section">
+                <h3>🔧 Email Configuration Test</h3>
+                <p>Test your Gmail SMTP connection:</p>
+                <button class="btn" onclick="testEmailConfig()">Test Email Configuration</button>
+                <div id="configTestResult"></div>
+            </div>
+
+            <!-- Test Viewing Request Email Integration -->
+            <div class="test-section">
+                <h3>🏠 Test Viewing Request Email (Auto Email #1)</h3>
+                <p>Test the automatic confirmation email that gets sent when someone submits a viewing request:</p>
+                <form id="testViewingRequestForm">
+                    <div class="form-group">
+                        <label>Test User Email:</label>
+                        <input type="email" id="testUserEmail" placeholder="sichrplace@gmail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>User Name:</label>
+                        <input type="text" id="testUserName" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Apartment Address:</label>
+                        <input type="text" id="testApartmentAddress" placeholder="Musterstraße 123, Köln" required>
+                    </div>
+                    <button type="button" class="btn" onclick="testViewingRequestEmail()">
+                        Send Test Viewing Request Confirmation
+                    </button>
+                </form>
+                <div id="testViewingRequestResult"></div>
+            </div>
+
+            <!-- Email Flow Overview -->
+            <h2>📬 Email Flow Overview</h2>
+            <div class="email-flow">
+                <div class="email-card email-1">
+                    <div class="email-title">📨 Email #1: Request Confirmation</div>
+                    <div class="status-sent email-status">AUTOMATIC</div>
+                    <p><strong>Trigger:</strong> When viewing request is submitted</p>
+                    <p><strong>Subject:</strong> "We've Received Your Apartment Viewing Request!"</p>
+                    <p><strong>Content:</strong> Welcome message with request details</p>
+                </div>
+
+                <div class="email-card email-2">
+                    <div class="email-title">💳 Email #2: Viewing + Payment</div>
+                    <div class="status-pending email-status">MANUAL</div>
+                    <p><strong>Trigger:</strong> When viewer is assigned</p>
+                    <p><strong>Subject:</strong> "Your Viewing is Booked! Meet Your Apartment Viewer"</p>
+                    <p><strong>Content:</strong> Viewer details + PayPal payment link</p>
+                </div>
+
+                <div class="email-card email-3">
+                    <div class="email-title">🎥 Email #3: Results Ready</div>
+                    <div class="status-ready email-status">MANUAL</div>
+                    <p><strong>Trigger:</strong> When viewing is completed</p>
+                    <p><strong>Subject:</strong> "Your Apartment Viewing Video & Feedback Are Here"</p>
+                    <p><strong>Content:</strong> Video link + feedback + next steps</p>
+                </div>
+            </div>
+
+            <!-- Send Email #2: Viewing Confirmation -->
+            <div class="test-section">
+                <h3>💳 Send Viewing Confirmation Email (#2)</h3>
+                <form id="viewingConfirmationForm">
+                    <div class="form-group">
+                        <label>User Email:</label>
+                        <input type="email" id="userEmail2" placeholder="sichrplace@gmail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>User First Name:</label>
+                        <input type="text" id="firstName2" placeholder="John" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Apartment Address:</label>
+                        <input type="text" id="apartmentAddress2" placeholder="Musterstraße 123, Köln" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Viewer Name:</label>
+                        <input type="text" id="viewerName" placeholder="Anna Schmidt" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Viewer Description:</label>
+                        <textarea id="viewerDescription" placeholder="Local expert with 5+ years experience in Köln"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Viewing Date & Time:</label>
+                        <input type="text" id="viewingDate" placeholder="2025-08-15 at 14:00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Link:</label>
+                        <input type="url" id="paymentLink" placeholder="https://paypal.com/payment/xyz123" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (EUR):</label>
+                        <input type="number" id="amount" value="25.00" step="0.01" required>
+                    </div>
+                    <button type="button" class="btn" onclick="sendViewingConfirmation()">
+                        Send Viewing Confirmation Email
+                    </button>
+                </form>
+                <div id="viewingConfirmationResult"></div>
+            </div>
+
+            <!-- Send Email #3: Viewing Results -->
+            <div class="test-section">
+                <h3>🎥 Send Viewing Results Email (#3)</h3>
+                <form id="viewingResultsForm">
+                    <div class="form-group">
+                        <label>User Email:</label>
+                        <input type="email" id="userEmail3" placeholder="sichrplace@gmail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>User First Name:</label>
+                        <input type="text" id="firstName3" placeholder="John" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Apartment Address:</label>
+                        <input type="text" id="apartmentAddress3" placeholder="Musterstraße 123, Köln" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Video Link:</label>
+                        <input type="url" id="videoLink" placeholder="https://your-storage.com/video/xyz123.mp4" required>
+                    </div>
+                    <button type="button" class="btn" onclick="sendViewingResults()">
+                        Send Viewing Results Email
+                    </button>
+                </form>
+                <div id="viewingResultsResult"></div>
+            </div>
+
+            <!-- Recent Viewing Requests -->
+            <div class="test-section">
+                <h3>📋 Recent Viewing Requests</h3>
+                <button class="btn" onclick="loadViewingRequests()">Load Recent Requests</button>
+                <div id="viewingRequestsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test email configuration
+        async function testEmailConfig() {
+            const resultDiv = document.getElementById('configTestResult');
+            resultDiv.innerHTML = '<p>Testing email configuration...</p>';
+
+            try {
+                const response = await fetch('/api/emails/test-email-config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = '<p class="success">✅ Email configuration is working! Test email sent.</p>';
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ Email configuration failed: ${result.details}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error testing email: ${error.message}</p>`;
+            }
+        }
+
+        // Test viewing request confirmation email
+        async function testViewingRequestEmail() {
+            const resultDiv = document.getElementById('testViewingRequestResult');
+            resultDiv.innerHTML = '<p>Sending test viewing request confirmation email...</p>';
+
+            const testData = {
+                userEmail: document.getElementById('testUserEmail').value,
+                userData: {
+                    firstName: document.getElementById('testUserName').value.split(' ')[0],
+                    fullName: document.getElementById('testUserName').value,
+                    apartmentAddress: document.getElementById('testApartmentAddress').value,
+                    apartmentId: 'TEST-' + Date.now(),
+                    phoneNumber: '+49 123 456 7890',
+                    preferredDate: '2025-08-15',
+                    preferredTime: '14:00',
+                    budgetRange: '€800-1200',
+                    additionalInfo: 'Test submission from email management panel',
+                    additionalGuests: '1',
+                    requestId: 'TEST-VR-' + Date.now()
+                }
+            };
+
+            try {
+                const response = await fetch('/api/emails/send-request-confirmation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = '<p class="success">✅ Test viewing request confirmation email sent successfully!</p>';
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ Failed to send test email: ${result.error}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error sending test email: ${error.message}</p>`;
+            }
+        }
+
+        // Send viewing confirmation email (#2)
+        async function sendViewingConfirmation() {
+            const resultDiv = document.getElementById('viewingConfirmationResult');
+            resultDiv.innerHTML = '<p>Sending viewing confirmation email...</p>';
+
+            const userData = {
+                firstName: document.getElementById('firstName2').value,
+                apartmentAddress: document.getElementById('apartmentAddress2').value
+            };
+
+            const viewerData = {
+                name: document.getElementById('viewerName').value,
+                description: document.getElementById('viewerDescription').value,
+                date: document.getElementById('viewingDate').value
+            };
+
+            const paymentData = {
+                paymentLink: document.getElementById('paymentLink').value,
+                amount: document.getElementById('amount').value
+            };
+
+            try {
+                const response = await fetch('/api/emails/send-viewing-confirmation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userEmail: document.getElementById('userEmail2').value,
+                        userData,
+                        viewerData,
+                        paymentData
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = '<p class="success">✅ Viewing confirmation email sent successfully!</p>';
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ Failed to send email: ${result.error}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error sending email: ${error.message}</p>`;
+            }
+        }
+
+        // Send viewing results email (#3)
+        async function sendViewingResults() {
+            const resultDiv = document.getElementById('viewingResultsResult');
+            resultDiv.innerHTML = '<p>Sending viewing results email...</p>';
+
+            const userData = {
+                firstName: document.getElementById('firstName3').value,
+                apartmentAddress: document.getElementById('apartmentAddress3').value
+            };
+
+            const resultsData = {
+                videoLink: document.getElementById('videoLink').value
+            };
+
+            try {
+                const response = await fetch('/api/emails/send-viewing-results', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userEmail: document.getElementById('userEmail3').value,
+                        userData,
+                        resultsData
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = '<p class="success">✅ Viewing results email sent successfully!</p>';
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ Failed to send email: ${result.error}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error sending email: ${error.message}</p>`;
+            }
+        }
+
+        // Load recent viewing requests (placeholder)
+        async function loadViewingRequests() {
+            const listDiv = document.getElementById('viewingRequestsList');
+            listDiv.innerHTML = '<p>Loading viewing requests...</p>';
+
+            try {
+                // This would connect to your viewing requests API
+                // For now, showing example data
+                listDiv.innerHTML = `
+                    <div class="viewing-request">
+                        <h4>John Doe - sichrplace@gmail.com</h4>
+                        <p><strong>Apartment:</strong> Musterstraße 123, Köln</p>
+                        <p><strong>Request ID:</strong> <span class="request-id">507f1f77bcf86cd799439011</span></p>
+                        <p><strong>Status:</strong> <span class="status-pending email-status">Pending Payment</span></p>
+                        <button class="btn" onclick="sendEmailForRequest('507f1f77bcf86cd799439011', 2)">Send Payment Email</button>
+                        <button class="btn" onclick="sendEmailForRequest('507f1f77bcf86cd799439011', 3)">Send Results Email</button>
+                    </div>
+                    <div class="viewing-request">
+                        <h4>Anna Schmidt - sichrplace@gmail.com</h4>
+                        <p><strong>Apartment:</strong> Deutzer Straße 456, Köln</p>
+                        <p><strong>Request ID:</strong> <span class="request-id">507f1f77bcf86cd799439012</span></p>
+                        <p><strong>Status:</strong> <span class="status-ready email-status">Ready for Results</span></p>
+                        <button class="btn" disabled>Payment Email Sent</button>
+                        <button class="btn" onclick="sendEmailForRequest('507f1f77bcf86cd799439012', 3)">Send Results Email</button>
+                    </div>
+                `;
+            } catch (error) {
+                listDiv.innerHTML = `<p class="error">❌ Error loading requests: ${error.message}</p>`;
+            }
+        }
+
+        // Send email for specific request
+        function sendEmailForRequest(requestId, emailType) {
+            alert(`This would send email type ${emailType} for request ${requestId}. Connect this to your viewing request management system.`);
+        }
+
+        // Load requests on page load
+        window.addEventListener('load', loadViewingRequests);
+    </script>
+</body>
+</html>

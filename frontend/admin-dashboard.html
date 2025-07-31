@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - SichrPlace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&family=Roboto:300,400,500,700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --radius: 18px;
+      --card: #FFFFFF;
+      --background: #FFFFFF;
+      --foreground: #222222;
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+    }
+
+    body { font-family: var(--body-font); background: var(--secondary); margin: 0; color: var(--foreground); }
+    header { background: var(--primary); color: #fff; padding: 24px; font-size: 1.5rem; font-family: var(--heading-font); }
+    .dashboard-root { max-width: 1200px; margin: 32px auto; }
+    .overview-cards { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px; }
+    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px 32px; flex: 1 1 220px; min-width: 220px; }
+    .card h3 { margin: 0 0 8px 0; color: var(--primary); font-size: 18px; font-family: var(--heading-font); }
+    .card .stat { font-size: 2.2rem; font-weight: 700; margin-bottom: 6px; font-family: var(--heading-font); }
+    .section { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 32px; padding: 24px; }
+    .section h2 { color: var(--primary); margin-top: 0; font-family: var(--heading-font); }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-family: var(--body-font); }
+    th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { background: var(--secondary); color: var(--primary); font-family: var(--heading-font); }
+    .actions button { margin-right: 8px; }
+    .highlight { background: #e0e7ff; }
+    .filter-bar { margin-bottom: 12px; }
+    .filter-bar input, .filter-bar select { margin-right: 10px; padding: 6px; }
+    .queue-list { list-style: none; padding: 0; }
+    .queue-list li { padding: 8px 0; border-bottom: 1px solid #eee; }
+    @media (max-width: 900px) {
+      .overview-cards { flex-direction: column; }
+      .card { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <i class="fa fa-user-shield"></i> SichrPlace Admin Dashboard
+  </header>
+  <div class="dashboard-root">
+    <!-- Quick Overview Cards -->
+    <div class="overview-cards">
+      <div class="card">
+        <h3><i class="fa fa-building"></i> Active Listings</h3>
+        <div class="stat" id="active-listings">0</div>
+        <div>Total: <span id="total-listings">0</span> | Verified: <span id="verified-listings">0</span> | Expired: <span id="expired-listings">0</span></div>
+      </div>
+      <div class="card">
+        <h3><i class="fa fa-users"></i> User Stats</h3>
+        <div class="stat"><span id="new-renters">0</span> / <span id="new-landlords">0</span></div>
+        <div>New Renters / Landlords (this week)</div>
+      </div>
+      <div class="card">
+        <h3><i class="fa fa-video"></i> Apartment Checks</h3>
+        <div class="stat"><span id="checks-requested">0</span> / <span id="checks-delivered">0</span></div>
+        <div>Requested / Delivered</div>
+      </div>
+      <div class="card">
+        <h3><i class="fa fa-star"></i> User Satisfaction</h3>
+        <div class="stat" id="satisfaction-score">0</div>
+        <div>Score (1-5)</div>
+      </div>
+    </div>
+
+    <!-- Renters Table -->
+    <div class="section">
+      <h2>Renters</h2>
+      <div class="filter-bar">
+        <input type="text" placeholder="Search renter..." id="search-renter">
+        <select id="renter-status-filter">
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="pending">Pending</option>
+          <option value="suspended">Suspended</option>
+        </select>
+        <button>Filter</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Profile Status</th><th>Activity</th><th>Docs</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="renters-table">
+          <!-- Data loaded by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Landlords Table -->
+    <div class="section">
+      <h2>Landlords</h2>
+      <div class="filter-bar">
+        <input type="text" placeholder="Search landlord..." id="search-landlord">
+        <select id="landlord-verification-filter">
+          <option value="">All</option>
+          <option value="verified">Verified</option>
+          <option value="unverified">Unverified</option>
+        </select>
+        <button>Filter</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Verification</th><th>Listings</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="landlords-table">
+          <!-- Data loaded by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Listings Table -->
+    <div class="section">
+      <h2>All Listings</h2>
+      <div class="filter-bar">
+        <select id="listing-status-filter">
+          <option value="">All</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="expired">Expired</option>
+        </select>
+        <button>Filter</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th><th>Owner</th><th>Status</th><th>Highlight</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="listings-table">
+          <!-- Data loaded by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Upload Queue -->
+    <div class="section">
+      <h2>Upload Queue (Video Footage)</h2>
+      <ul class="queue-list" id="upload-queue">
+        <!-- Data loaded by JS -->
+      </ul>
+      <div style="margin-top:16px;">
+        <h3>Secure Viewing Links</h3>
+        <p style="color:#2563EB; margin-bottom:8px;">Video footages are available for streaming only (no download), via expiring links. Each link is valid for 48h after first click.</p>
+        <table style="width:100%; margin-top:8px;">
+          <thead>
+            <tr><th>Apartment</th><th>Recipient</th><th>Secure Link</th><th>Status</th></tr>
+          </thead>
+          <tbody id="video-links-table">
+            <!-- Data loaded by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Account Rep Tracker & Analytics -->
+    <div class="section">
+      <h2>Assigned Account Rep Tracker & Turnaround Analytics</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Account Rep</th><th>Assigned Cases</th><th>Avg. Turnaround (days)</th>
+          </tr>
+        </thead>
+        <tbody id="rep-tracker-table">
+          <!-- Data loaded by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Messaging / Support Center -->
+    <div class="section">
+      <h2><i class="fa fa-envelope"></i> Messaging / Support Center</h2>
+      <div class="overview-cards" style="gap:16px; margin-bottom:18px;">
+        <div class="card" style="min-width:180px;">
+          <h3><i class="fa fa-flag"></i> Flagged Conversations</h3>
+          <div class="stat" id="flagged-convos">0</div>
+          <div>Require Review</div>
+        </div>
+        <div class="card" style="min-width:180px;">
+          <h3><i class="fa fa-ticket"></i> Open Tickets</h3>
+          <div class="stat" id="open-tickets">0</div>
+          <div>Customer Issues</div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Type</th><th>User</th><th>Landlord</th><th>Subject</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="support-center-table">
+          <!-- Data loaded by JS -->
+        </tbody>
+      </table>
+      <div style="margin-top:18px;">
+        <h3>FAQ & Macro Response Manager</h3>
+        <ul id="faq-list" class="queue-list"></ul>
+      </div>
+    </div>
+
+    <!-- Payments & Transactions -->
+    <div class="section">
+      <h2><i class="fa fa-credit-card"></i> Payments & Transactions</h2>
+      <div class="overview-cards" style="gap:16px; margin-bottom:18px;">
+        <div class="card" style="min-width:180px;">
+          <h3><i class="fa fa-money-bill"></i> Revenue (This Month)</h3>
+          <div class="stat" id="revenue-month">€0</div>
+        </div>
+        <div class="card" style="min-width:180px;">
+          <h3><i class="fa fa-exclamation-triangle"></i> Fraud Flags</h3>
+          <div class="stat" id="fraud-flags">0</div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Date</th><th>User</th><th>Type</th><th>Amount</th><th>Status</th><th>Gateway</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="payments-table">
+          <!-- Data loaded by JS -->
+        </tbody>
+      </table>
+      <div style="margin-top:18px;">
+        <h3>Refund & Dispute Management</h3>
+        <ul id="refund-list" class="queue-list"></ul>
+      </div>
+    </div>
+
+    <!-- Trust & Safety Tools -->
+    <div class="section">
+      <h2><i class="fa fa-shield"></i> Trust & Safety Tools</h2>
+      <div class="overview-cards" style="gap:16px; margin-bottom:18px;">
+        <div class="card" style="min-width:180px;">
+          <h3><i class="fa fa-user-slash"></i> Reported Users</h3>
+          <div class="stat" id="reported-users">0</div>
+        </div>
+        <div class="card" style="min-width:180px;">
+          <h3><i class="fa fa-building-slash"></i> Reported Listings</h3>
+          <div class="stat" id="reported-listings">0</div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Type</th><th>Target</th><th>Reason</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="trust-safety-table">
+          <!-- Data loaded by JS -->
+        </tbody>
+      </table>
+      <div style="margin-top:18px;">
+        <h3>GDPR Requests</h3>
+        <ul id="gdpr-list" class="queue-list"></ul>
+      </div>
+      <div style="margin-top:18px;">
+        <h3>Flag Pattern Tracker</h3>
+        <ul id="flag-pattern-list" class="queue-list"></ul>
+      </div>
+    </div>
+
+    <!-- Analytics & Insights -->
+    <div class="section">
+      <h2><i class="fa fa-chart-line"></i> Analytics & Insights</h2>
+      <div class="overview-cards" style="gap:16px; margin-bottom:18px;">
+        <div class="card" style="min-width:180px;">
+          <h3><i class="fa fa-map-marker-alt"></i> User Heatmap</h3>
+          <div class="stat" id="heatmap-users">0</div>
+        </div>
+        <div class="card" style="min-width:180px;">
+          <h3><i class="fa fa-clock"></i> Peak Usage</h3>
+          <div class="stat" id="peak-usage">--:--</div>
+        </div>
+        <div class="card" style="min-width:180px;">
+          <h3><i class="fa fa-comments"></i> Top Queries</h3>
+          <div class="stat" id="top-queries">0</div>
+        </div>
+        <div class="card" style="min-width:180px;">
+          <h3><i class="fa fa-brain"></i> Match Success</h3>
+          <div class="stat" id="match-success">0%</div>
+        </div>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:32px;">
+        <div style="flex:1; min-width:320px;">
+          <h3>Geographical User Heatmap</h3>
+          <div id="heatmap" style="height:180px; background:#e0e7ff; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#2563EB;">[Heatmap Placeholder]</div>
+        </div>
+        <div style="flex:1; min-width:320px;">
+          <h3>Common User Queries</h3>
+          <ul id="common-queries-list" class="queue-list"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // --- AUTH CHECK ---
+    (async function() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+      const res = await fetch('/api/admin/login-check', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (!res.ok) {
+        window.location.href = 'login.html';
+        return;
+      }
+    })();
+
+    // --- DASHBOARD DATA FETCH ---
+    async function fetchWithAuth(url) {
+      const token = localStorage.getItem('token');
+      return fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+    }
+
+    // Overview Cards
+    (async function() {
+      // Listings analytics
+      const res = await fetchWithAuth('/api/admin/dashboard');
+      if (res.ok) {
+        const data = await res.json();
+        document.getElementById('active-listings').textContent = data.analytics?.activeOffers ?? '-';
+        document.getElementById('total-listings').textContent = data.analytics?.totalListings ?? '-';
+        document.getElementById('verified-listings').textContent = data.analytics?.verifiedListings ?? '-';
+        document.getElementById('expired-listings').textContent = data.analytics?.expiredListings ?? '-';
+        document.getElementById('new-renters').textContent = data.analytics?.newRenters ?? '-';
+        document.getElementById('new-landlords').textContent = data.analytics?.newLandlords ?? '-';
+        document.getElementById('checks-requested').textContent = data.analytics?.checksRequested ?? '-';
+        document.getElementById('checks-delivered').textContent = data.analytics?.checksDelivered ?? '-';
+        document.getElementById('satisfaction-score').textContent = data.analytics?.satisfactionScore ?? '-';
+      }
+    })();
+
+    // Renters Table
+    (async function() {
+      const res = await fetchWithAuth('/api/admin/users');
+      if (res.ok) {
+        const users = await res.json();
+        document.getElementById('renters-table').innerHTML = users.filter(u => u.role === 'applicant').map(u => `
+          <tr data-username="${u.username}">
+            <td>${u.name || u.username || '-'}</td><td>${u.email}</td><td>${u.status || '-'}</td><td>${u.activity || '-'}</td><td>${u.docs || '-'}</td>
+            <td class="actions">
+              <button class="verify-btn">Verify</button>
+              <button class="suspend-btn">Suspend</button>
+              <button class="deactivate-btn">Deactivate</button>
+            </td>
+          </tr>
+        `).join('');
+        document.getElementById('landlords-table').innerHTML = users.filter(u => u.role === 'landlord').map(u => `
+          <tr data-username="${u.username}">
+            <td>${u.name || u.username || '-'}</td><td>${u.email}</td><td>${u.verified ? 'Verified' : 'Unverified'}</td><td>${u.listings || 0}</td>
+            <td class="actions">
+              <button class="verify-btn">Verify</button>
+              <button class="suspend-btn">Suspend</button>
+            </td>
+          </tr>
+        `).join('');
+
+        // Add event listeners for user actions
+        document.querySelectorAll('#renters-table .verify-btn, #landlords-table .verify-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const username = this.closest('tr').dataset.username;
+            await fetchWithAuth(`/api/admin/users/${username}/verify`, { method: 'POST' });
+            location.reload();
+          });
+        });
+        document.querySelectorAll('#renters-table .suspend-btn, #landlords-table .suspend-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const username = this.closest('tr').dataset.username;
+            await fetchWithAuth(`/api/admin/users/${username}/suspend`, { method: 'POST' });
+            location.reload();
+          });
+        });
+        document.querySelectorAll('#renters-table .deactivate-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const username = this.closest('tr').dataset.username;
+            await fetchWithAuth(`/api/admin/users/${username}/deactivate`, { method: 'POST' });
+            location.reload();
+          });
+        });
+      }
+    })();
+
+    // Listings Table
+    (async function() {
+      const res = await fetchWithAuth('/api/admin/offers');
+      if (res.ok) {
+        const offers = await res.json();
+        document.getElementById('listings-table').innerHTML = offers.map(o => `
+          <tr data-offer-id="${o._id}">
+            <td>${o.title || o.item || '-'}</td><td>${o.owner || (o.landlord && o.landlord.username) || '-'}</td><td>${o.status || '-'}</td>
+            <td><button class="highlight-btn">Highlight</button></td>
+            <td class="actions">
+              <button>View</button>
+              <button class="${o.status === 'Active' ? 'deactivate-offer-btn' : 'activate-offer-btn'}">${o.status === 'Active' ? 'Deactivate' : 'Activate'}</button>
+            </td>
+          </tr>
+        `).join('');
+
+        // Add event listeners for offer actions
+        document.querySelectorAll('#listings-table .highlight-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const offerId = this.closest('tr').dataset.offerId;
+            await fetchWithAuth(`/api/admin/offers/${offerId}/highlight`, { method: 'POST' });
+            location.reload();
+          });
+        });
+        document.querySelectorAll('#listings-table .deactivate-offer-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const offerId = this.closest('tr').dataset.offerId;
+            await fetchWithAuth(`/api/admin/offers/${offerId}/deactivate`, { method: 'POST' });
+            location.reload();
+          });
+        });
+        document.querySelectorAll('#listings-table .activate-offer-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const offerId = this.closest('tr').dataset.offerId;
+            await fetchWithAuth(`/api/admin/offers/${offerId}/activate`, { method: 'POST' });
+            location.reload();
+          });
+        });
+      }
+    })();
+
+    // Upload Queue & Secure Video Links
+    (async function() {
+      // Upload Queue
+      const uploadRes = await fetchWithAuth('/api/admin/upload-queue');
+      if (uploadRes.ok) {
+        const queue = await uploadRes.json();
+        document.getElementById('upload-queue').innerHTML = queue.map(item => `<li>${item.apartment} - ${item.status}</li>`).join('');
+      }
+      // Secure Video Links
+      const videoRes = await fetchWithAuth('/api/admin/video-links');
+      if (videoRes.ok) {
+        const links = await videoRes.json();
+        document.getElementById('video-links-table').innerHTML = links.map(link => `
+          <tr><td>${link.apartment}</td><td>${link.recipient}</td><td><a href="${link.url}" target="_blank">Watch Video</a></td><td>${link.status}</td></tr>
+        `).join('');
+      }
+    })();
+
+    // Account Rep Tracker
+    (async function() {
+      const res = await fetchWithAuth('/api/admin/account-reps');
+      if (res.ok) {
+        const reps = await res.json();
+        document.getElementById('rep-tracker-table').innerHTML = reps.map(rep => `
+          <tr><td>${rep.name}</td><td>${rep.assignedCases}</td><td>${rep.avgTurnaround}</td></tr>
+        `).join('');
+      }
+    })();
+
+    // Messaging / Support Center
+    (async function() {
+      const res = await fetchWithAuth('/api/admin/messages');
+      if (res.ok) {
+        const messages = await res.json();
+        document.getElementById('flagged-convos').textContent = messages.filter(m => m.flagged).length;
+        document.getElementById('open-tickets').textContent = messages.filter(m => m.type === 'ticket' && m.status !== 'Closed').length;
+        document.getElementById('support-center-table').innerHTML = messages.map(m => `
+          <tr data-msg-idx="${i}"><td>${m.type || (m.flagged ? 'Flagged' : 'Ticket')}</td><td>${m.user || '-'} </td><td>${m.landlord || '-'}</td><td>${m.subject || m.message || '-'}</td><td>${m.status || '-'}</td><td><button class="review-ticket-btn">Review</button> <button class="resolve-ticket-btn">Resolve</button></td></tr>
+        `).join('');
+
+        // Add event listeners for support actions
+        document.querySelectorAll('#support-center-table .review-ticket-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const idx = this.closest('tr').dataset.msgIdx;
+            alert('Ticket reviewed (placeholder)');
+          });
+        });
+        document.querySelectorAll('#support-center-table .resolve-ticket-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const idx = this.closest('tr').dataset.msgIdx;
+            await fetchWithAuth(`/api/admin/messages/${idx}/resolve`, { method: 'POST' });
+            location.reload();
+          });
+        });
+      }
+      // FAQ & Macro Response Manager (mocked)
+      document.getElementById('faq-list').innerHTML = `<li>How do I verify my account? <button>Edit</button></li><li>How do I request a refund? <button>Edit</button></li>`;
+    })();
+
+    // Payments & Transactions
+    (async function() {
+      const res = await fetchWithAuth('/api/admin/payments');
+      if (res.ok) {
+        const payments = await res.json();
+        document.getElementById('revenue-month').textContent = payments.revenueMonth || '€0';
+        document.getElementById('fraud-flags').textContent = payments.fraudFlags || 0;
+        document.getElementById('payments-table').innerHTML = (payments.logs || []).map(p => `
+          <tr data-payment-id="${p.id}"><td>${p.date}</td><td>${p.user}</td><td>${p.type}</td><td>${p.amount}</td><td>${p.status}</td><td>${p.gateway}</td><td><button class="refund-btn">Refund</button></td></tr>
+        `).join('');
+
+        // Add event listeners for refund actions
+        document.querySelectorAll('#payments-table .refund-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const paymentId = this.closest('tr').dataset.paymentId;
+            await fetchWithAuth(`/api/admin/payments/${paymentId}/refund`, { method: 'POST' });
+            location.reload();
+          });
+        });
+        document.getElementById('refund-list').innerHTML = (payments.refunds || []).map(r => `
+          <li data-refund-idx="${i}">Refund requested by ${r.user} for ${r.type} <button class="approve-refund-btn">Approve</button> <button class="deny-refund-btn">Deny</button></li>
+        `).join('');
+
+        // Add event listeners for refund actions
+        document.querySelectorAll('#refund-list .approve-refund-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const idx = this.closest('li').dataset.refundIdx;
+            await fetchWithAuth(`/api/admin/refunds/${idx}/approve`, { method: 'POST' });
+            location.reload();
+          });
+        });
+        document.querySelectorAll('#refund-list .deny-refund-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const idx = this.closest('li').dataset.refundIdx;
+            await fetchWithAuth(`/api/admin/refunds/${idx}/deny`, { method: 'POST' });
+            location.reload();
+          });
+        });
+      }
+    })();
+
+    // Trust & Safety Tools
+    (async function() {
+      const res = await fetchWithAuth('/api/admin/reports');
+      if (res.ok) {
+        const reports = await res.json();
+        document.getElementById('reported-users').textContent = reports.users || 0;
+        document.getElementById('reported-listings').textContent = reports.listings || 0;
+        document.getElementById('trust-safety-table').innerHTML = (reports.items || []).map(r => `
+          <tr data-report-idx="${i}"><td>${r.type}</td><td>${r.target}</td><td>${r.reason}</td><td>${r.status}</td><td><button class="review-report-btn">Review</button> <button class="resolve-report-btn">Resolve</button></td></tr>
+        `).join('');
+
+        // Add event listeners for trust & safety actions
+        document.querySelectorAll('#trust-safety-table .review-report-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const idx = this.closest('tr').dataset.reportIdx;
+            alert('Report reviewed (placeholder)');
+          });
+        });
+        document.querySelectorAll('#trust-safety-table .resolve-report-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const idx = this.closest('tr').dataset.reportIdx;
+            await fetchWithAuth(`/api/admin/reports/${idx}/resolve`, { method: 'POST' });
+            location.reload();
+          });
+        });
+        document.getElementById('gdpr-list').innerHTML = (reports.gdpr || []).map(g => `
+          <li data-gdpr-idx="${i}">${g.type} request by ${g.user} <button class="gdpr-action-btn">${g.type === 'Access' ? 'View' : 'Delete'}</button></li>
+        `).join('');
+
+        // Add event listeners for GDPR actions
+        document.querySelectorAll('#gdpr-list .gdpr-action-btn').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const idx = this.closest('li').dataset.gdprIdx;
+            await fetchWithAuth(`/api/admin/gdpr/${idx}/action`, { method: 'POST' });
+            location.reload();
+          });
+        });
+        document.getElementById('flag-pattern-list').innerHTML = (reports.flags || []).map(f => `
+          <li>${f.user} - ${f.count} offenses (${f.patterns.join(', ')})</li>
+        `).join('');
+      }
+    })();
+
+    // Analytics & Insights
+    (async function() {
+      const res = await fetchWithAuth('/api/admin/analytics');
+      if (res.ok) {
+        const analytics = await res.json();
+        document.getElementById('heatmap-users').textContent = analytics.heatmapUsers || 0;
+        document.getElementById('peak-usage').textContent = analytics.peakUsage || '--:--';
+        document.getElementById('top-queries').textContent = analytics.topQueries || 0;
+        document.getElementById('match-success').textContent = analytics.matchSuccess || '0%';
+        document.getElementById('common-queries-list').innerHTML = (analytics.commonQueries || []).map(q => `<li>${q}</li>`).join('');
+      }
+    })();
+  </script>
+</body>
+</html>

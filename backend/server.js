@@ -9,8 +9,7 @@ const lusca = require('lusca'); // switched from csurf to lusca for CSRF protect
 const cookieParser = require('cookie-parser');
 const session = require('express-session'); // required for lusca CSRF
 const morgan = require('morgan');
-require('dotenv').config();
-
+require('dotenv').config({ path: __dirname + '/.env' });
 
 // Import your admin routes and models
 const sendMessageRoute = require('./api/send-message');
@@ -27,17 +26,60 @@ const gdprTrackingRoutes = require('./routes/gdpr-tracking');
 const advancedGdprRoutes = require('./routes/advancedGdpr');
 const errorHandler = require('./middleware/errorHandler');
 const messagesRoutes = require('./routes/messages');
+const emailRoutes = require('./routes/emails');
+const googleFormsRoutes = require('./routes/googleForms');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
 const app = express();
-const PORT = process.env.PORT || 3001; // Hardcoded port
+const PORT = process.env.PORT || 3000; // Changed to match the running port
 
 // --- LOGGING MIDDLEWARE ---
 app.use(morgan('combined'));
 
 // --- SECURITY MIDDLEWARE ---
-app.use(helmet());
+// Configure helmet with relaxed CSP for development
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'", 
+        "'unsafe-inline'", 
+        "'unsafe-eval'",
+        "https://www.paypal.com",
+        "https://www.paypalobjects.com",
+        "https://cdnjs.cloudflare.com",
+        "https://fonts.googleapis.com"
+      ],
+      styleSrc: [
+        "'self'", 
+        "'unsafe-inline'", 
+        "https://cdnjs.cloudflare.com",
+        "https://fonts.googleapis.com"
+      ],
+      fontSrc: [
+        "'self'", 
+        "https://cdnjs.cloudflare.com",
+        "https://fonts.gstatic.com",
+        "data:"
+      ],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      connectSrc: [
+        "'self'", 
+        "https://api.paypal.com",
+        "https://api.sandbox.paypal.com",
+        "https://sichrplace-production.up.railway.app"
+      ],
+      frameSrc: [
+        "'self'",
+        "https://www.paypal.com"
+      ],
+      formAction: ["'self'"]
+    },
+  },
+}));
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -48,28 +90,37 @@ app.use(limiter);
 
 // --- CORS CONFIGURATION ---
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ['https://your-frontend-domain.com']
-  : ['http://localhost:3001'];
+  ? ['https://sichrplace-production.up.railway.app', 'https://www.sichrplace.com']
+  : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
 app.use(bodyParser.json());
 
-// Serve static files from the parent directory (where HTML files are located)
+// Serve frontend static files from parent directory
 app.use(express.static(path.join(__dirname, '..')));
-app.use('/js', express.static(path.join(__dirname, '..', 'js')));
-app.use('/img', express.static(path.join(__dirname, '..', 'img')));
 
-// Serve the main HTML files
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'index.html'));
-});
+// Serve frontend files from frontend directory
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 // Serve uploaded images statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve frontend images from parent img directory
+app.use('/img', express.static(path.join(__dirname, '..', 'img')));
 
 // --- COOKIE PARSER (required for session/lusca) ---
 app.use(cookieParser());
@@ -90,14 +141,51 @@ if (process.env.ENABLE_CSRF === 'true') {
   app.use('/api/csrf-token', csrfTokenRoute);
 }
 
-// MongoDB connection
+// MongoDB connection with improved error handling
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/sichrplace';
+
+console.log('🔌 Attempting to connect to MongoDB...');
+console.log('📍 MongoDB URI:', mongoUri.replace(/\/\/.*@/, '//***:***@')); // Hide credentials in logs
+
+// Detect connection type
+const isAtlas = mongoUri.includes('mongodb+srv://');
+const isLocal = mongoUri.includes('localhost') || mongoUri.includes('127.0.0.1');
+
 mongoose
-  .connect(process.env.MONGO_URI || 'mongodb://localhost:27017/SichrPlace', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+  .connect(mongoUri, {
+    // Remove deprecated options
+    serverSelectionTimeoutMS: 10000, // 10 seconds timeout for Atlas
+    socketTimeoutMS: 45000, // 45 seconds socket timeout
   })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('Failed to connect to MongoDB:', err));
+  .then(() => {
+    console.log('✅ Connected to MongoDB successfully');
+    if (isAtlas) {
+      console.log('🌐 Using MongoDB Atlas (SichrPlace cluster)');
+    } else if (isLocal) {
+      console.log('🏠 Using local MongoDB instance');
+    }
+  })
+  .catch((err) => {
+    console.error('❌ Failed to connect to MongoDB:', err.message);
+    
+    if (isAtlas) {
+      console.log('🌐 MongoDB Atlas Connection Failed');
+      console.log('📋 Check these Atlas settings:');
+      console.log('   • Database user credentials in connection string');
+      console.log('   • IP address whitelist (Network Access)');
+      console.log('   • Cluster is running (not paused)');
+      console.log('📖 See MONGODB_ATLAS_SETUP.md for detailed instructions');
+    } else if (isLocal) {
+      console.log('🏠 Local MongoDB Connection Failed');
+      console.log('💡 Make sure MongoDB is running on your system');
+      console.log('🔧 Start MongoDB with: mongod');
+      console.log('📖 Or switch to MongoDB Atlas - see MONGODB_ATLAS_SETUP.md');
+    }
+    
+    // Don't exit the process, let the app run without MongoDB for frontend testing
+    console.log('⚠️  Continuing without MongoDB connection...');
+    console.log('🌐 Frontend will still work at http://localhost:3000');
+  });
 
 // BookingRequest Schema and Model (legacy, keep if used)
 const bookingRequestSchema = new mongoose.Schema({
@@ -136,7 +224,7 @@ app.get('/api/booking-requests/:apartmentId', async (req, res) => {
 
 // Existing routes
 app.use('/api/send-message', sendMessageRoute);
-app.use('/api/viewing-request', viewingRequestRoute);
+app.use('/api', viewingRequestRoute); // Updated to mount at /api level for new endpoints
 app.use('/api/viewing-confirmed', viewingConfirmedRoute);
 app.use('/api/viewing-ready', viewingReadyRoute);
 app.use('/api/viewing-didnt-work-out', viewingDidntWorkOutRoute);
@@ -153,6 +241,12 @@ app.use('/api/admin/advanced-gdpr', advancedGdprRoutes);
 
 // --- MESSAGES ROUTES ---
 app.use('/api', messagesRoutes);
+
+// --- EMAIL ROUTES ---
+app.use('/api/emails', emailRoutes);
+
+// --- GOOGLE FORMS INTEGRATION ---
+app.use('/api/google-forms', googleFormsRoutes);
 
 // --- CHECK ADMIN ROUTE ---
 app.get('/api/check-admin', auth, (req, res) => {

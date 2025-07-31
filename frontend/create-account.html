@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="img/logo.jpg" type="image/jpeg"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account - SichrPlace</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --muted: #6b7280;
+      --danger: #EF4444;
+      --background: #FFFFFF;
+      --card: #fff;
+      --text: #222;
+      --border: #E5E7EB;
+      --radius: 18px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--body-font);
+      background: url('./img/koeln2.jpg') no-repeat center center fixed;
+      background-size: cover;
+      background-color: var(--secondary);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: var(--text);
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(249,250,251,0.85);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    header {
+      background: var(--card);
+      color: var(--primary);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: 600;
+      font-family: var(--heading-font);
+    }
+
+    .logo img {
+      height: 40px;
+      border-radius: 8px;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-family: var(--heading-font);
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+    .form-container {
+      background: #FFFFFF; /* Secondary: White */
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      margin-top: auto;
+      margin-bottom: auto;
+      text-align: center;
+      border: 1px solid #E5E7EB; /* Secondary: Soft Gray Border */
+    }
+    .form-container h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #2563EB; /* Primary: Blue */
+    }
+    .form-container label {
+      display: block;
+      margin-bottom: 5px;
+      text-align: left;
+      color: #374151; /* Neutral Gray for Text */
+    }
+    .form-container input, .form-container select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #E5E7EB; /* Secondary: Soft Gray Border */
+      border-radius: 5px;
+      font-size: 14px;
+      background-color: #F9FAFB; /* Secondary: Soft Gray Background */
+    }
+    .form-container input:focus, .form-container select:focus {
+      border-color: #2563EB; /* Primary: Blue Focus */
+      outline: none;
+      box-shadow: 0 0 5px rgba(37, 99, 235, 0.5); /* Blue Glow */
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #10B981; /* Accent: Emerald */
+      color: #FFFFFF; /* Secondary: White */
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .form-container button:hover {
+      background-color: #059669; /* Darker Emerald on Hover */
+    }
+    .form-container .info {
+      font-size: 12px;
+      color: #6B7280; /* Neutral Gray for Subtext */
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">&larr; Back to Homepage</a>
+  </header>
+
+  <div class="form-container">
+    <h1>Create Account</h1>
+    
+    <!-- Enhanced Features Section -->
+    <div class="features-section" style="margin-bottom: 2rem;">
+      <h3 style="text-align: center; margin-bottom: 1rem; color: #2563EB;">
+        <i class="fas fa-star"></i> What you get with SichrPlace
+      </h3>
+      <div class="features-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div class="feature-item" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: #F0F9FF; border-radius: 8px;">
+          <i class="fas fa-shield-alt" style="color: #10B981;"></i>
+          <span style="font-size: 0.875rem;">Verified Properties</span>
+        </div>
+        <div class="feature-item" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: #F0F9FF; border-radius: 8px;">
+          <i class="fas fa-comments" style="color: #10B981;"></i>
+          <span style="font-size: 0.875rem;">Direct Messaging</span>
+        </div>
+        <div class="feature-item" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: #F0F9FF; border-radius: 8px;">
+          <i class="fas fa-calendar-check" style="color: #10B981;"></i>
+          <span style="font-size: 0.875rem;">Easy Scheduling</span>
+        </div>
+        <div class="feature-item" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: #F0F9FF; border-radius: 8px;">
+          <i class="fas fa-heart" style="color: #10B981;"></i>
+          <span style="font-size: 0.875rem;">Save Favorites</span>
+        </div>
+      </div>
+    </div>
+
+    <form id="create-account-form">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="surname">Surname:</label>
+      <input type="text" id="surname" name="surname" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="telefon">Phone:</label>
+      <input type="tel" id="telefon" name="telefon" required placeholder="+49 123 456 7890">
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required minlength="6" 
+             placeholder="Minimum 6 characters">
+
+      <label for="confirmPassword">Confirm Password:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" required 
+             placeholder="Re-enter your password">
+
+      <label for="role">I am a:</label>
+      <select id="role" name="role" required>
+        <option value="" disabled selected>Select your role</option>
+        <option value="tenant">Tenant - Looking for a place</option>
+        <option value="landlord">Landlord - Have properties to rent</option>
+      </select>
+
+      <!-- Terms and conditions -->
+      <div style="margin: 1rem 0;">
+        <label style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.875rem;">
+          <input type="checkbox" id="terms" name="terms" required style="width: auto; margin: 0;">
+          <span>I agree to the <a href="#" style="color: #2563EB;">Terms of Service</a> and <a href="#" style="color: #2563EB;">Privacy Policy</a></span>
+        </label>
+      </div>
+
+      <!-- Marketing consent -->
+      <div style="margin: 1rem 0;">
+        <label style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.875rem;">
+          <input type="checkbox" id="marketing" name="marketing" style="width: auto; margin: 0;">
+          <span>Send me updates about new properties and platform features (optional)</span>
+        </label>
+      </div>
+
+      <button type="submit">
+        <i class="fas fa-user-plus"></i> Create Account
+      </button>
+    </form>
+
+    <div class="info">
+      Already have an account? <a href="login.html" style="color: #2563EB;">Sign in here</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('create-account-form');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent default form submission
+
+      // Validate passwords match
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+
+      // Check terms acceptance
+      const termsAccepted = document.getElementById('terms').checked;
+      if (!termsAccepted) {
+        alert('Please accept the Terms of Service and Privacy Policy to continue.');
+        return;
+      }
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      
+      // Remove confirmPassword from data sent to server
+      delete data.confirmPassword;
+
+      try {
+        // Show loading state
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+        submitButton.disabled = true;
+
+        // Send form data to the server
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          
+          // Store token and user info
+          if (result.token) {
+            localStorage.setItem('sichrplace_token', result.token);
+            localStorage.setItem('sichrplace_user', JSON.stringify(result.user));
+          }
+
+          // Show success message
+          alert('Account created successfully! Welcome to SichrPlace!');
+          
+          // Redirect based on role
+          if (data.role === 'tenant') {
+            window.location.href = 'applicant-dashboard.html';
+          } else if (data.role === 'landlord') {
+            window.location.href = 'landlord-dashboard.html';
+          }
+        } else {
+          const error = await response.json();
+          alert(`Error: ${error.message || 'Failed to create account'}`);
+          
+          // Reset button
+          submitButton.innerHTML = originalText;
+          submitButton.disabled = false;
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        alert('An error occurred. Please try again.');
+        
+        // Reset button
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+        submitButton.disabled = false;
+      }
+    });
+
+    // Real-time password validation
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = this.value;
+      
+      if (password && confirmPassword && password !== confirmPassword) {
+        this.style.borderColor = '#EF4444';
+        this.setCustomValidity('Passwords do not match');
+      } else {
+        this.style.borderColor = '#E5E7EB';
+        this.setCustomValidity('');
+      }
+    });
+  </script>
+</body>
+</html>
