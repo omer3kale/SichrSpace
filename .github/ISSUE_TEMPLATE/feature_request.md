@@ -1,9 +1,10 @@
 ---
-name: ✨ Feature Request
+name: "✨ Feature Request"
 about: Suggest an idea for SichrPlace
-title: '[FEATURE] '
-labels: 'enhancement, needs-discussion'
-assignees: 'omer3kale'
+title: "[FEATURE] "
+labels: enhancement
+assignees: omer3kale
+
 ---
 
 ## 🚀 Feature Summary
