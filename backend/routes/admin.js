@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const GdprService = require('../utils/gdprService');
-const GdprRequest = require('../models/GdprRequest');
+const { GdprService, FeedbackService } = require('../services/GdprService');
+const UserService = require('../services/UserService');
+const ApartmentService = require('../services/ApartmentService');
+const ViewingRequestService = require('../services/ViewingRequestService');
+const { supabase } = require('../config/supabase');
 
 // Admin middleware to check if user is admin
 const adminOnly = (req, res, next) => {
@@ -11,6 +14,35 @@ const adminOnly = (req, res, next) => {
     }
     next();
 };
+
+/**
+ * GET /api/admin/stats
+ * Get admin dashboard statistics
+ */
+router.get('/stats', auth, adminOnly, async (req, res) => {
+  try {
+    // Get user statistics
+    const users = await UserService.list();
+    const apartments = await ApartmentService.list();
+    const viewingRequests = await ViewingRequestService.list();
+    const feedback = await FeedbackService.list();
+
+    const stats = {
+      totalUsers: users.length,
+      totalApartments: apartments.length,
+      totalViewingRequests: viewingRequests.length,
+      totalFeedback: feedback.length,
+      recentUsers: users.slice(-5).reverse(),
+      recentApartments: apartments.slice(-5).reverse(),
+      feedbackStats: await FeedbackService.getStatistics()
+    };
+
+    res.json(stats);
+  } catch (error) {
+    console.error('Error getting admin stats:', error);
+    res.status(500).json({ error: 'Failed to get admin statistics' });
+  }
+});
 
 /**
  * POST /api/admin/messages/:idx/resolve
@@ -252,19 +284,34 @@ router.get('/login-check', auth, adminOnly, (req, res) => {
 router.get('/users', auth, adminOnly, async (req, res) => {
   try {
     const { role, status, q } = req.query;
-    let filter = {};
-    if (role) filter.role = role;
-    if (status) filter.status = status;
-    if (q) {
-      filter.$or = [
-        { username: { $regex: q, $options: 'i' } },
-        { email: { $regex: q, $options: 'i' } },
-        { name: { $regex: q, $options: 'i' } }
-      ];
+    
+    let query = supabase
+      .from('users')
+      .select('id, username, email, first_name, last_name, role, email_verified, created_at, account_status')
+      .order('created_at', { ascending: false });
+    
+    if (role) {
+      query = query.eq('role', role);
     }
-    const users = await User.find(filter).lean();
+    
+    if (status) {
+      query = query.eq('account_status', status);
+    }
+    
+    if (q) {
+      query = query.or(`username.ilike.%${q}%,email.ilike.%${q}%,first_name.ilike.%${q}%,last_name.ilike.%${q}%`);
+    }
+    
+    const { data: users, error } = await query;
+    
+    if (error) {
+      console.error('Error fetching users:', error);
+      return res.status(500).json({ error: 'Failed to fetch users.' });
+    }
+    
     res.json(users);
   } catch (err) {
+    console.error('Error in /users route:', err);
     res.status(500).json({ error: 'Failed to fetch users.' });
   }
 });

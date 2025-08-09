@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-    <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+    <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Apartments Listing</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
@@ -50,7 +50,7 @@
     }
     .logo img {
       height: 40px;
-      border-radius: 8px;
+      "
     }
     nav {
       display: flex;
@@ -90,7 +90,7 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      border-radius: 40px;
+      "
       padding: 10px 28px;
       font-family: var(--heading-font);
       font-weight: 600;
@@ -120,7 +120,7 @@
     }
     .filters-modal {
       background: var(--card);
-      border-radius: var(--radius);
+      "
       box-shadow: var(--shadow);
       padding: 32px 28px;
       width: 90vw;
@@ -176,7 +176,7 @@
       width: 100%;
       padding: 10px;
       border: 1px solid #d1d5db;
-      border-radius: 4px;
+      "
       font-family: var(--body-font);
       font-size: 1rem;
       margin-bottom: 10px;
@@ -187,7 +187,7 @@
       background-color: #10B981;
       color: white;
       border: none;
-      border-radius: 40px;
+      "
       cursor: pointer;
       font-family: var(--heading-font);
       font-weight: 600;
@@ -209,7 +209,7 @@
     }
     .listing {
       background: var(--card);
-      border-radius: var(--radius);
+      "
       box-shadow: var(--shadow);
       padding: 24px 20px;
       display: flex;
@@ -229,7 +229,7 @@
       height: 130px;
       background-size: cover;
       background-position: center;
-      border-radius: 12px;
+      "
     }
     .listing-details {
       flex: 1;
@@ -251,7 +251,7 @@
       background-color: #10B981;
       color: white;
       border: none;
-      border-radius: 40px;
+      "
       cursor: pointer;
       font-family: var(--heading-font);
       font-weight: 600;
@@ -284,18 +284,102 @@
 <body>
   <header>
     <a href="index.html" class="logo">
-      <img src="img/logo.jpg" alt="SichrPlace Logo">
-      SichrPlace
+      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px;">
     </a>
-    <nav>
+    <nav id="main-nav">
       <a href="apartments-listing.html" style="color: var(--accent);">Apartments</a>
       <a href="add-property.html">Rent</a>
-      <a href="login.html">Login</a>
-      <a href="create-account.html">Create Account</a>
+      <!-- Dynamic navigation based on login status -->
+      <span id="user-nav-section">
+        <a href="login-new.html">Login</a>
+        <a href="create-account.html">Create Account</a>
+      </span>
     </nav>
   </header>
 
-  <div class="page-title">Apartments Listing</div>
+  <div class="page-title">🏠 Available Apartments</div>
+  
+  <!-- Enhanced Search and Filters -->
+  <div style="max-width: 900px; margin: 0 auto 32px auto; padding: 0 20px;">
+    <div style="background: white; padding: 24px; " box-shadow: var(--shadow); margin-bottom: 20px;">
+      <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+        <!-- Search Input -->
+        <div style="flex: 1; min-width: 250px;">
+          <input type="text" id="search-input" placeholder="Search by location, price, or description..." style="
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            "
+            font-size: 16px;
+            transition: border-color 0.2s;
+          " oninput="handleSearch()" onkeyup="if(event.key==='Enter') handleSearch()">
+        </div>
+        
+        <!-- Price Range -->
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <label style="font-weight: 600; color: var(--text); white-space: nowrap;">Price:</label>
+          <input type="number" id="min-price" placeholder="Min" style="
+            width: 80px;
+            padding: 8px 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+          " oninput="handlePriceFilter()">
+          <span style="color: var(--text);">-</span>
+          <input type="number" id="max-price" placeholder="Max" style="
+            width: 80px;
+            padding: 8px 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+          " oninput="handlePriceFilter()">
+        </div>
+        
+        <!-- Bedrooms Filter -->
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <label style="font-weight: 600; color: var(--text); white-space: nowrap;">Bedrooms:</label>
+          <select id="bedrooms-filter" style="
+            padding: 8px 12px;
+            border: 2px solid #e1e5e9;
+            "
+            font-size: 14px;
+            background: white;
+          " onchange="handleBedroomsFilter()">
+            <option value="">Any</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+            <option value="4">4+</option>
+          </select>
+        </div>
+        
+        <!-- Clear Filters -->
+        <button onclick="clearFilters()" style="
+          background: #6c757d;
+          color: white;
+          border: none;
+          padding: 10px 16px;
+          "
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.2s;
+        " onmouseover="this.style.background='#5a6268'" onmouseout="this.style.background='#6c757d'">
+          <i class="fa fa-times"></i> Clear
+        </button>
+      </div>
+      
+      <!-- Results Summary -->
+      <div id="results-summary" style="
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #e1e5e9;
+        font-size: 14px;
+        color: var(--text);
+        text-align: center;
+      "></div>
+    </div>
+  </div>
   <div class="filters-bar">
     <button onclick="toggleFilters()"><i class="fa fa-filter"></i> Filters</button>
   </div>
@@ -371,43 +455,20 @@
     </div>
   </div>
 
-  <div class="listings">
-    <!-- First Listing -->
-    <a href="offer.html?id=1" style="text-decoration:none;">
-      <div class="listing">
-        <div class="listing-image" style="background-image: url('./img/apartment1.jpg');"></div>
-        <div class="listing-details">
-          <p><strong>123 Main St, City</strong></p>
-          <p>Price: €800/month</p>
-          <p>Deposit: €1600</p>
-          <p>Property Type: Private Room</p>
-          <p>Size: 50m²</p>
-          <p>Single Beds: 1</p>
-          <p>Double Beds: 0</p>
-          <p>Move-in: 01/05/2025</p>
-          <p>Move-out: 01/08/2025</p>
-        </div>
-        <button class="favorite-button" onclick="toggleFavorite(event, 1)"><i class="fa fa-heart"></i> Add to Favorites</button>
-      </div>
-    </a>
-    <!-- Second Listing -->
-    <a href="offer.html?id=2" style="text-decoration:none;">
-      <div class="listing">
-        <div class="listing-image" style="background-image: url('./img/apartment2.jpg');"></div>
-        <div class="listing-details">
-          <p><strong>456 Elm St, City</strong></p>
-          <p>Price: €1200/month</p>
-          <p>Deposit: €2400</p>
-          <p>Property Type: Studio</p>
-          <p>Size: 70m²</p>
-          <p>Single Beds: 0</p>
-          <p>Double Beds: 2</p>
-          <p>Move-in: 01/06/2025</p>
-          <p>Move-out: 01/12/2025</p>
-        </div>
-        <button class="favorite-button" onclick="toggleFavorite(event, 2)"><i class="fa fa-heart"></i> Add to Favorites</button>
-      </div>
-    </a>
+    <div class="listings" id="listings-container">
+    <!-- Loading message -->
+    <div id="loading-message" style="text-align: center; padding: 40px; color: var(--muted);">
+      <i class="fa fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 16px;"></i>
+      <p>Loading apartments...</p>
+    </div>
+    
+    <!-- Error message (hidden by default) -->
+    <div id="error-message" style="display: none; text-align: center; padding: 40px; color: #F87171;">
+      <i class="fa fa-exclamation-circle" style="font-size: 24px; margin-bottom: 16px;"></i>
+      <p>Failed to load apartments. Please try again later.</p>
+    </div>
+    
+    <!-- Dynamic apartments will be loaded here -->
   </div>
 
   <footer style="background: var(--primary); color: #fff; padding: 32px 0 16px 0; text-align: center; margin-top: 60px;">
@@ -429,129 +490,675 @@
   </footer>
 
   <script>
+    // ================================
+    // 🎯 REAL-TIME APARTMENT DATA LOADING
+    // ================================
+    
+    let apartmentsData = []; // Global storage for apartment data
+    const favoriteOffers = new Set();
+    const API_BASE_URL = 'http://localhost:3000'; // Your working backend
+    
+    // Load apartments from backend API on page load
+    async function loadApartments() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/apartments`);
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          apartmentsData = data.data;
+          renderApartments(apartmentsData);
+          hideLoadingMessage();
+        } else {
+          showErrorMessage('Failed to load apartments');
+        }
+      } catch (error) {
+        console.error('Failed to load apartments:', error);
+        showErrorMessage('Connection error. Please check if the server is running.');
+      }
+    }
+    
+    // Render apartments in the listings container
+    function renderApartments(apartments) {
+      const container = document.getElementById('listings-container');
+      
+      if (!apartments || apartments.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--muted);">
+            <i class="fa fa-home" style="font-size: 24px; margin-bottom: 16px;"></i>
+            <p>No apartments found matching your criteria.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = apartments.map(apartment => `
+        <div class="listing" onclick="openOfferDetails('${apartment.id}')" style="cursor: pointer;">
+          <div class="listing-image" style="background-image: url('${getApartmentImage(apartment)}');"></div>
+          <div class="listing-details">
+            <p><strong>${apartment.title || apartment.address}</strong></p>
+            <p>Price: €${apartment.price}/month</p>
+            <p>Deposit: €${apartment.deposit || (apartment.price * 2)}</p>
+            <p>Property Type: ${formatPropertyType(apartment.property_type)}</p>
+            <p>Size: ${apartment.size}m²</p>
+            <p>Rooms: ${apartment.rooms || 'N/A'}</p>
+            <p>Bathrooms: ${apartment.bathrooms || 'N/A'}</p>
+            <p>Move-in: ${formatDate(apartment.move_in_date)}</p>
+            <p>Move-out: ${formatDate(apartment.move_out_date) || 'Flexible'}</p>
+            ${apartment.average_rating ? `
+              <p>Rating: ${renderStars(apartment.average_rating)} (${apartment.review_count || 0} reviews)</p>
+            ` : ''}
+          </div>
+          <button class="favorite-button" onclick="toggleFavorite(event, '${apartment.id}')">
+            <i class="fa fa-heart"></i> Add to Favorites
+          </button>
+        </div>
+      `).join('');
+    }
+    
+    // Helper functions for data formatting
+    function getApartmentImage(apartment) {
+      if (apartment.images && apartment.images.length > 0) {
+        return apartment.images[0];
+      }
+      // Fallback to default images
+      const defaultImages = ['apartment1.jpg', 'apartment2.jpg', 'koeln.jpg', 'koeln2.jpg'];
+      const randomImage = defaultImages[Math.floor(Math.random() * defaultImages.length)];
+      return `./img/${randomImage}`;
+    }
+    
+    function formatPropertyType(type) {
+      if (!type) return 'N/A';
+      return type.split('_').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' ');
+    }
+    
+    function formatDate(dateString) {
+      if (!dateString) return null;
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit', 
+        year: 'numeric'
+      });
+    }
+    
+    function renderStars(rating) {
+      const stars = [];
+      const fullStars = Math.floor(rating);
+      const hasHalfStar = rating % 1 >= 0.5;
+      
+      for (let i = 0; i < fullStars; i++) {
+        stars.push('<i class="fa fa-star" style="color: #FFD700;"></i>');
+      }
+      if (hasHalfStar) {
+        stars.push('<i class="fa fa-star-half-alt" style="color: #FFD700;"></i>');
+      }
+      const emptyStars = 5 - Math.ceil(rating);
+      for (let i = 0; i < emptyStars; i++) {
+        stars.push('<i class="fa fa-star" style="color: #E5E7EB;"></i>');
+      }
+      
+      return stars.join('');
+    }
+    
+    function hideLoadingMessage() {
+      const loading = document.getElementById('loading-message');
+      if (loading) loading.style.display = 'none';
+    }
+    
+    function showErrorMessage(message) {
+      hideLoadingMessage();
+      const errorDiv = document.getElementById('error-message');
+      if (errorDiv) {
+        errorDiv.querySelector('p').textContent = message;
+        errorDiv.style.display = 'block';
+      }
+    }
+    
+    // ================================
+    // 🔄 EXISTING FUNCTIONALITY (Updated)
+    // ================================
+    
     function toggleFilters() {
       const filtersContainer = document.getElementById('filters-container');
       filtersContainer.classList.toggle('active');
     }
   
-    function openOfferDetails(offerId) {
-      const modal = document.getElementById('offer-modal');
-      modal.setAttribute('data-offer-id', offerId);
+    function openOfferDetails(apartmentId) {
+      // Find the apartment data
+      const apartment = apartmentsData.find(apt => apt.id.toString() === apartmentId.toString());
+      
+      if (apartment) {
+        // Store apartment data in URL for offer.html
+        const params = new URLSearchParams({
+          id: apartment.id,
+          title: apartment.title || apartment.address,
+          price: apartment.price,
+          size: apartment.size,
+          rooms: apartment.rooms,
+          bathrooms: apartment.bathrooms
+        });
+        
+        window.location.href = `offer.html?${params.toString()}`;
+      } else {
+        alert('Apartment details not found!');
+      }
+    }
   
-      // Example data (replace with backend data)
-      const offers = {
-        1: {
-          image: 'apartment1.jpg',
-          title: 'Apartment 1',
-          address: '123 Main St, City',
-          price: '€800/month',
-          deposit: '€1600',
-          details: '50m², Private Room, Furnished, 2 Rooms, 1 Single Bed',
-          amenities: 'Washing Machine, WiFi, Heating',
-          description: 'A cozy apartment in the city center.',
-          areaDescription: 'Close to public transport and parks.',
-          availability: 'Min Stay: 3 months, Move-in: 01/05/2025, Move-out: 01/08/2025',
-          landlord: 'John Doe'
-        },
-        2: {
-          image: 'apartment2.jpg',
-          title: 'Apartment 2',
-          address: '456 Elm St, City',
-          price: '€1200/month',
-          deposit: '€2400',
-          details: '70m², Studio, Unfurnished, 3 Rooms, 2 Double Beds',
-          amenities: 'Dishwasher, TV, Air Conditioning',
-          description: 'A spacious studio with modern amenities.',
-          areaDescription: 'Located in a quiet neighborhood.',
-          availability: 'Min Stay: 6 months, Move-in: 01/06/2025, Move-out: 01/12/2025',
-          landlord: 'Jane Smith'
+    // Enhanced favorite system with backend integration
+    async function toggleFavorite(event, apartmentId) {
+      event.stopPropagation(); // Prevent modal from opening
+      
+      // Check if user is logged in
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        alert('Please login to save favorites');
+        window.location.href = 'login-new.html';
+        return;
+      }
+      
+      const button = event.target.closest('.favorite-button');
+      const icon = button.querySelector('i');
+      
+      try {
+        // Show loading state
+        button.disabled = true;
+        icon.className = 'fa fa-spinner fa-spin';
+        
+        const response = await fetch(`${API_BASE_URL}/api/favorites`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ apartmentId })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+          // Update local state and UI
+          if (data.action === 'added') {
+            favoriteOffers.add(apartmentId);
+            icon.className = 'fa fa-heart';
+            button.innerHTML = '<i class="fa fa-heart"></i> Remove from Favorites';
+            button.style.background = '#EF4444';
+            showNotification('Apartment added to favorites!', 'success');
+          } else {
+            favoriteOffers.delete(apartmentId);
+            icon.className = 'fa fa-heart-o';
+            button.innerHTML = '<i class="fa fa-heart-o"></i> Add to Favorites';
+            button.style.background = '';
+            showNotification('Apartment removed from favorites.', 'info');
+          }
+          // Update favorites counter
+          updateFavoritesCounter();
+        } else {
+          showNotification(data.error || 'Failed to update favorites', 'error');
         }
-      };
-  
-      const offer = offers[offerId];
-      if (offer) {
-        document.getElementById('offer-image').src = offer.image;
-        document.getElementById('offer-title').textContent = offer.title;
-        document.getElementById('offer-address').textContent = offer.address;
-        document.getElementById('offer-price').textContent = offer.price;
-        document.getElementById('offer-deposit').textContent = `Deposit: ${offer.deposit}`;
-        document.getElementById('offer-details').textContent = offer.details;
-        document.getElementById('offer-amenities').textContent = offer.amenities;
-        document.getElementById('offer-description').textContent = offer.description;
-        document.getElementById('offer-area-description').textContent = offer.areaDescription;
-        document.getElementById('offer-availability').textContent = offer.availability;
-        document.getElementById('landlord-name').textContent = offer.landlord;
-  
-        updateFavoriteButton(offerId);
-  
-        modal.classList.add('active');
+      } catch (error) {
+        console.error('Failed to toggle favorite:', error);
+        showNotification('Failed to update favorites. Please try again.', 'error');
+      } finally {
+        // Reset button state
+        button.disabled = false;
+        if (!button.innerHTML.includes('spin')) {
+          // Only reset if still in loading state
+          updateFavoriteButtonState(button, apartmentId);
+        }
+      }
+    }
+    
+    // Load user favorites from backend
+    async function loadUserFavorites() {
+      const token = localStorage.getItem('userToken');
+      if (!token) return;
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/favorites`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            // Clear existing favorites
+            favoriteOffers.clear();
+            // Add current favorites
+            data.data.forEach(fav => {
+              favoriteOffers.add(fav.apartment_id);
+            });
+            // Update all favorite buttons
+            updateAllFavoriteButtons();
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load user favorites:', error);
+      }
+    }
+    
+    // Update favorite button state
+    function updateFavoriteButtonState(button, apartmentId) {
+      const icon = button.querySelector('i');
+      if (favoriteOffers.has(apartmentId)) {
+        icon.className = 'fa fa-heart';
+        button.innerHTML = '<i class="fa fa-heart"></i> Remove from Favorites';
+        button.style.background = '#EF4444';
       } else {
-        alert('Offer not found!');
+        icon.className = 'fa fa-heart-o';
+        button.innerHTML = '<i class="fa fa-heart-o"></i> Add to Favorites';
+        button.style.background = '';
+      }
+    }
+    
+    // Update all favorite buttons
+    function updateAllFavoriteButtons() {
+      document.querySelectorAll('.favorite-button').forEach(button => {
+        const apartmentId = button.getAttribute('onclick').match(/'([^']+)'/)[1];
+        updateFavoriteButtonState(button, apartmentId);
+      });
+      // Update favorites counter
+      updateFavoritesCounter();
+    }
+    
+    // Update favorites counter in navigation
+    function updateFavoritesCounter() {
+      const counter = document.querySelector('#favorites-counter');
+      if (counter) {
+        const count = favoriteOffers.size;
+        counter.textContent = count > 0 ? `${count}` : '';
+        counter.style.display = count > 0 ? 'inline' : 'none';
+      }
+    }
+    
+    // Show notification helper
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        background: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#3B82F6'};
+        color: white;
+        "
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1000;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+      `;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      // Animate in
+      setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+      }, 100);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+          const data = await response.json();
+          if (data.success && data.data) {
+            // Update local favorites set
+            favoriteOffers.clear();
+            data.data.forEach(fav => {
+              favoriteOffers.add(fav.apartment_id.toString());
+            });
+            
+            // Update all favorite buttons
+            favoriteOffers.forEach(apartmentId => {
+              updateFavoriteButton(apartmentId);
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load user favorites:', error);
       }
     }
   
-    function closeModal() {
-      const modal = document.getElementById('offer-modal');
-      modal.classList.remove('active');
+    function updateFavoriteButton(apartmentId) {
+      const buttons = document.querySelectorAll(`button[onclick*="${apartmentId}"]`);
+      buttons.forEach(button => {
+        const icon = button.querySelector('i');
+        if (favoriteOffers.has(apartmentId)) {
+          button.innerHTML = '<i class="fa fa-heart" style="color: #F87171;"></i> Remove from Favorites';
+          button.style.background = '#FEE2E2';
+          button.style.color = '#F87171';
+        } else {
+          button.innerHTML = '<i class="fa fa-heart"></i> Add to Favorites';
+          button.style.background = '#10B981';
+          button.style.color = 'white';
+        }
+      });
     }
-  
-    // Request to Book Modal
-    function openRequestModal() {
-      const requestModal = document.getElementById('request-modal');
-      requestModal.classList.add('active');
-    }
-  
-    function closeRequestModal() {
-      const requestModal = document.getElementById('request-modal');
-      requestModal.classList.remove('active');
-    }
-  
-    document.getElementById('request-form').addEventListener('submit', function (event) {
-      event.preventDefault();
-      alert('Your request has been submitted!');
-      closeRequestModal();
+    
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 Loading apartments from backend...');
+      loadApartments();
+      updateNavigation();
+      
+      // Check authentication status
+      const token = localStorage.getItem('userToken');
+      if (token) {
+        console.log('✅ User authenticated - loading favorites...');
+        loadUserFavorites();
+      }
     });
-  
-    // Store favorite offers in a Set
-    const favoriteOffers = new Set();
-  
-    // Toggle favorite status from the listing
-    function toggleFavorite(event, offerId) {
-      event.stopPropagation(); // Prevent triggering the modal
-      if (favoriteOffers.has(offerId)) {
-        favoriteOffers.delete(offerId);
-        alert(`Offer ${offerId} removed from favorites.`);
+    
+    // Update navigation based on login status
+    function updateNavigation() {
+      const token = localStorage.getItem('userToken');
+      const userName = localStorage.getItem('userName');
+      const userNavSection = document.getElementById('user-nav-section');
+      
+      if (token && userName) {
+        const userRole = localStorage.getItem('userRole');
+        const roleDisplay = userRole === 'admin' ? ' (Admin)' : '';
+        userNavSection.innerHTML = `
+          <span style="color: var(--primary); font-weight: 600;">Welcome, ${userName}${roleDisplay}!</span>
+          <a href="#" onclick="showUserMenu(event)" style="position: relative;">
+            <i class="fa fa-user-circle"></i> Menu
+          </a>
+          <div id="user-menu" style="display: none; position: absolute; right: 0; top: 100%; background: white; box-shadow: var(--shadow); " padding: 10px; min-width: 150px; z-index: 1000;">
+            <a href="#" onclick="viewFavorites()" style="display: block; padding: 8px; text-decoration: none; color: var(--text);">
+              <i class="fa fa-heart"></i> My Favorites
+              <span id="favorites-counter" style="display: none; background: #e74c3c; color: white; padding: 2px 6px; " font-size: 11px; margin-left: 8px;"></span>
+            </a>
+            <a href="#" onclick="viewProfile()" style="display: block; padding: 8px; text-decoration: none; color: var(--text);">
+              <i class="fa fa-user"></i> Profile
+            </a>
+            <hr style="margin: 8px 0;">
+            <a href="#" onclick="logout()" style="display: block; padding: 8px; text-decoration: none; color: var(--danger);">
+              <i class="fa fa-sign-out-alt"></i> Logout
+            </a>
+          </div>
+        `;
       } else {
-        favoriteOffers.add(offerId);
-        alert(`Offer ${offerId} added to favorites.`);
+        userNavSection.innerHTML = `
+          <a href="login-new.html">Login</a>
+          <a href="create-account.html">Create Account</a>
+        `;
       }
-      updateFavoriteButton(offerId);
     }
-  
-    // Toggle favorite status from the modal
-    function toggleFavoriteFromModal() {
-      const offerId = parseInt(document.getElementById('offer-modal').getAttribute('data-offer-id'));
-      if (favoriteOffers.has(offerId)) {
-        favoriteOffers.delete(offerId);
-        alert(`Offer ${offerId} removed from favorites.`);
+    
+    // Show/hide user menu
+    function showUserMenu(event) {
+      event.preventDefault();
+      const menu = document.getElementById('user-menu');
+      menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      
+      // Close menu when clicking outside
+      document.addEventListener('click', function closeMenu(e) {
+        if (!e.target.closest('#user-menu') && !e.target.closest('[onclick="showUserMenu(event)"]')) {
+          menu.style.display = 'none';
+          document.removeEventListener('click', closeMenu);
+        }
+      });
+    }
+    
+    // View user favorites
+    function viewFavorites() {
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        showNotification('Please login to view favorites', 'error');
+        return;
+      }
+      
+      // Filter and display only favorited apartments
+      const favoriteApartments = apartmentsData.filter(apt => favoriteOffers.has(apt.id));
+      
+      if (favoriteApartments.length === 0) {
+        showNotification('You have no favorite apartments yet!', 'info');
       } else {
-        favoriteOffers.add(offerId);
-        alert(`Offer ${offerId} added to favorites.`);
+        // Scroll to top and highlight favorites
+        window.scrollTo(0, 0);
+        renderApartments(favoriteApartments);
+        showNotification(`Showing ${favoriteApartments.length} favorite apartments`, 'success');
+        
+        // Add a "Show All" button
+        const container = document.getElementById('listings-container');
+        const showAllBtn = document.createElement('div');
+        showAllBtn.style.cssText = 'text-align: center; margin: 20px 0;';
+        showAllBtn.innerHTML = `
+          <button onclick="showAllApartments()" style="
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            " 
+            cursor: pointer;
+            font-weight: 600;
+          ">
+            <i class="fa fa-list"></i> Show All Apartments
+          </button>
+        `;
+        container.appendChild(showAllBtn);
       }
-      updateFavoriteButton(offerId);
+      
+      document.getElementById('user-menu').style.display = 'none';
     }
-  
-    // Update the favorite button text
-    function updateFavoriteButton(offerId) {
-      const favoriteButton = document.querySelector(`.listing[onclick="openOfferDetails(${offerId})"] .favorite-button`);
-      if (favoriteButton) {
-        favoriteButton.textContent = favoriteOffers.has(offerId) ? 'Remove from Favorites' : 'Add to Favorites';
+    
+    // Show all apartments again
+    function showAllApartments() {
+      renderApartments(apartmentsData);
+      showNotification('Showing all apartments', 'info');
+    }
+    
+    // View user profile
+    function viewProfile() {
+      const userName = localStorage.getItem('userName');
+      const userEmail = localStorage.getItem('userEmail');
+      const userRole = localStorage.getItem('userRole');
+      
+      alert(`Profile Information:\n\nName: ${userName}\nEmail: ${userEmail}\nRole: ${userRole}\n\nNote: Full profile management coming soon!`);
+      document.getElementById('user-menu').style.display = 'none';
+    }
+    
+    // Logout function
+    function logout() {
+      localStorage.removeItem('userToken');
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userEmail');
+      
+      // Clear favorites
+      favoriteOffers.clear();
+      
+      // Update navigation
+      updateNavigation();
+      
+      // Refresh apartments to remove favorite states
+      renderApartments(apartmentsData);
+      
+      showNotification('Successfully logged out', 'info');
+      
+      document.getElementById('user-menu').style.display = 'none';
+    }
+    
+    // ================================
+    // 🔍 ENHANCED SEARCH AND FILTER SYSTEM
+    // ================================
+    
+    let filteredApartments = [];
+    
+    // Handle search input
+    function handleSearch() {
+      applyFilters();
+    }
+    
+    // Handle price range filter
+    function handlePriceFilter() {
+      applyFilters();
+    }
+    
+    // Handle bedrooms filter
+    function handleBedroomsFilter() {
+      applyFilters();
+    }
+    
+    // Apply all filters and search
+    function applyFilters() {
+      const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+      const minPrice = parseFloat(document.getElementById('min-price').value) || 0;
+      const maxPrice = parseFloat(document.getElementById('max-price').value) || Infinity;
+      const minBedrooms = parseInt(document.getElementById('bedrooms-filter').value) || 0;
+      
+      filteredApartments = apartmentsData.filter(apartment => {
+        // Search term filter
+        const matchesSearch = !searchTerm || 
+          apartment.title.toLowerCase().includes(searchTerm) ||
+          apartment.description.toLowerCase().includes(searchTerm) ||
+          apartment.location.toLowerCase().includes(searchTerm) ||
+          apartment.price.toString().includes(searchTerm);
+        
+        // Price range filter
+        const matchesPrice = apartment.price >= minPrice && apartment.price <= maxPrice;
+        
+        // Bedrooms filter
+        const matchesBedrooms = minBedrooms === 0 || apartment.bedrooms >= minBedrooms;
+        
+        return matchesSearch && matchesPrice && matchesBedrooms;
+      });
+      
+      // Update display
+      renderApartments(filteredApartments);
+      updateResultsSummary(filteredApartments.length, apartmentsData.length);
+    }
+    
+    // Update results summary
+    function updateResultsSummary(filtered, total) {
+      const summary = document.getElementById('results-summary');
+      if (filtered === total) {
+        summary.innerHTML = `<i class="fa fa-home"></i> Showing all ${total} apartments`;
+      } else {
+        summary.innerHTML = `<i class="fa fa-filter"></i> Showing ${filtered} of ${total} apartments`;
       }
-  
-      const modalFavoriteButton = document.getElementById('favorite-modal-button');
-      if (modalFavoriteButton) {
-        modalFavoriteButton.textContent = favoriteOffers.has(offerId) ? 'Remove from Favorites' : 'Add to Favorites';
+      
+      // Add filter indicators
+      const activeFilters = [];
+      const searchTerm = document.getElementById('search-input').value.trim();
+      const minPrice = document.getElementById('min-price').value;
+      const maxPrice = document.getElementById('max-price').value;
+      const bedrooms = document.getElementById('bedrooms-filter').value;
+      
+      if (searchTerm) activeFilters.push(`Search: "${searchTerm}"`);
+      if (minPrice || maxPrice) activeFilters.push(`Price: ${minPrice || '0'}-${maxPrice || '∞'}€`);
+      if (bedrooms) activeFilters.push(`${bedrooms}+ bedrooms`);
+      
+      if (activeFilters.length > 0) {
+        summary.innerHTML += `<br><small style="color: var(--primary); font-weight: 600;">Active filters: ${activeFilters.join(', ')}</small>`;
       }
+    }
+    
+    // Clear all filters
+    function clearFilters() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('min-price').value = '';
+      document.getElementById('max-price').value = '';
+      document.getElementById('bedrooms-filter').value = '';
+      
+      renderApartments(apartmentsData);
+      updateResultsSummary(apartmentsData.length, apartmentsData.length);
+      
+      showNotification('Filters cleared', 'info');
+    }
+    
+    // Enhanced apartment rendering with search highlighting
+    function renderApartments(apartments) {
+      const container = document.getElementById('listings-container');
+      const searchTerm = document.getElementById('search-input')?.value.toLowerCase().trim() || '';
+      
+      if (!apartments || apartments.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--text);">
+            <i class="fa fa-search" style="font-size: 3rem; color: #ccc; margin-bottom: 16px;"></i>
+            <h3>No apartments found</h3>
+            <p>Try adjusting your search criteria or clearing filters</p>
+            <button onclick="clearFilters()" style="margin-top: 16px; background: var(--primary); color: white; border: none; padding: 12px 24px; " cursor: pointer;">
+              Clear All Filters
+            </button>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = apartments.map(apartment => {
+        const isLoggedIn = !!localStorage.getItem('userToken');
+        const isFavorite = favoriteOffers.has(apartment.id);
+        
+        // Highlight search terms
+        let highlightedTitle = apartment.title;
+        let highlightedDescription = apartment.description;
+        if (searchTerm) {
+          const regex = new RegExp(`(${searchTerm})`, 'gi');
+          highlightedTitle = apartment.title.replace(regex, '<mark style="background: #fff3cd; padding: 1px 3px; "">$1</mark>');
+          highlightedDescription = apartment.description.replace(regex, '<mark style="background: #fff3cd; padding: 1px 3px; "">$1</mark>');
+        }
+        
+        return `
+          <div class="listing-card" style="position: relative;">
+            ${isLoggedIn ? `
+              <button class="favorite-button" onclick="toggleFavorite('${apartment.id}', event)" style="
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                background: ${isFavorite ? '#e74c3c' : 'rgba(255,255,255,0.9)'};
+                color: ${isFavorite ? 'white' : '#666'};
+                border: none;
+                width: 40px;
+                height: 40px;
+                "
+                cursor: pointer;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                transition: all 0.2s;
+                z-index: 10;
+              ">
+                <i class="fa ${isFavorite ? 'fa-heart' : 'fa-heart-o'}" style="font-size: 16px;"></i>
+              </button>
+            ` : ''}
+            
+            <img src="${apartment.images}" alt="${apartment.title}">
+            <div class="listing-details">
+              <div class="listing-title">${highlightedTitle}</div>
+              <div class="listing-location">📍 ${apartment.location}</div>
+              <div class="listing-price">€${apartment.price}/month</div>
+              <div class="listing-features">
+                <span><i class="fa fa-bed"></i> ${apartment.bedrooms} bed${apartment.bedrooms !== 1 ? 's' : ''}</span>
+                <span><i class="fa fa-bath"></i> ${apartment.bathrooms} bath${apartment.bathrooms !== 1 ? 's' : ''}</span>
+                <span><i class="fa fa-expand-arrows-alt"></i> ${apartment.size}m²</span>
+              </div>
+              <div class="listing-description">${highlightedDescription}</div>
+              
+              <div class="listing-actions">
+                <a href="viewing-request.html?id=${apartment.id}" class="btn-primary">
+                  <i class="fa fa-calendar"></i> Schedule Viewing
+                </a>
+                <button onclick="contactLandlord('${apartment.id}')" class="btn-secondary">
+                  <i class="fa fa-envelope"></i> Contact
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
   </script>
 </body>

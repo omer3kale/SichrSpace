@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Admin Dashboard - SichrPlace</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&family=Roboto:300,400,500,700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -26,10 +27,10 @@
     header { background: var(--primary); color: #fff; padding: 24px; font-size: 1.5rem; font-family: var(--heading-font); }
     .dashboard-root { max-width: 1200px; margin: 32px auto; }
     .overview-cards { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px; }
-    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px 32px; flex: 1 1 220px; min-width: 220px; }
+    .card { background: var(--card); " box-shadow: var(--shadow); padding: 28px 32px; flex: 1 1 220px; min-width: 220px; }
     .card h3 { margin: 0 0 8px 0; color: var(--primary); font-size: 18px; font-family: var(--heading-font); }
     .card .stat { font-size: 2.2rem; font-weight: 700; margin-bottom: 6px; font-family: var(--heading-font); }
-    .section { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 32px; padding: 24px; }
+    .section { background: var(--card); " box-shadow: var(--shadow); margin-bottom: 32px; padding: 24px; }
     .section h2 { color: var(--primary); margin-top: 0; font-family: var(--heading-font); }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; font-family: var(--body-font); }
     th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -48,7 +49,14 @@
 </head>
 <body>
   <header>
-    <i class="fa fa-user-shield"></i> SichrPlace Admin Dashboard
+    <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: #2563EB; font-weight: 700;">
+      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px; "">
+      SichrPlace
+    </a>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <i class="fa fa-user-shield"></i> 
+      <span>Admin Dashboard</span>
+    </div>
   </header>
   <div class="dashboard-root">
     <!-- Quick Overview Cards -->

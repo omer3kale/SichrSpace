@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-    <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+    <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Applicant Dashboard</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&family=Roboto:300,400,500,700&display=swap">
@@ -64,7 +64,7 @@
       color: var(--foreground);
       text-decoration: none;
       font-size: 16px;
-      border-radius: 0 24px 24px 0;
+      "
       transition: background 0.2s, color 0.2s;
       font-family: var(--body-font);
     }
@@ -88,7 +88,7 @@
     }
     .dashboard-card {
       background: var(--card);
-      border-radius: var(--radius);
+      "
       box-shadow: var(--shadow);
       padding: 28px 32px;
       flex: 1 1 320px;
@@ -113,7 +113,7 @@
     }
     .profile-section, .messages-section, .wishlist-section, .applications-section {
       background: var(--card);
-      border-radius: var(--radius);
+      "
       box-shadow: var(--shadow);
       padding: 32px;
       margin-bottom: 32px;
@@ -136,7 +136,7 @@
     .message-list {
       width: 32%;
       background: var(--secondary);
-      border-radius: 12px;
+      "
       padding: 16px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.04);
       min-width: 180px;
@@ -154,7 +154,7 @@
     }
     .message-list li {
       padding: 10px 8px;
-      border-radius: 8px;
+      "
       cursor: pointer;
       color: var(--foreground);
       transition: background 0.2s;
@@ -167,7 +167,7 @@
     .message-box {
       flex: 1;
       background: var(--secondary);
-      border-radius: 12px;
+      "
       padding: 16px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.04);
       display: flex;
@@ -180,7 +180,7 @@
       margin-bottom: 10px;
       padding: 10px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      "
       background: var(--card);
       min-height: 120px;
     }
@@ -201,7 +201,7 @@
       width: calc(100% - 80px);
       padding: 10px;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
+      "
       font-size: 15px;
       font-family: var(--body-font);
       background: var(--background);
@@ -218,7 +218,7 @@
       background-color: var(--primary);
       color: white;
       border: none;
-      border-radius: var(--radius);
+      "
       cursor: pointer;
       font-size: 15px;
       font-family: var(--body-font);
@@ -230,7 +230,7 @@
     .wishlist-item {
       padding: 10px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      "
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
@@ -252,7 +252,7 @@
       background-color: #EF4444;
       color: white;
       border: none;
-      border-radius: 4px;
+      "
       cursor: pointer;
     }
     .wishlist-item button:hover {
@@ -312,7 +312,9 @@
 <body>
   <!-- Sidebar -->
   <div class="sidebar">
-    <h2>SichrPlace</h2>
+    <h2 style="display: flex; align-items: center; gap: 8px; margin-left: 12px;">
+      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 32px; "">
+    </h2>
     <nav class="sidebar-nav">
       <a href="#" id="profile-link" class="active"><i class="fa fa-user"></i> Profile</a>
       <a href="#" id="applications-link"><i class="fa fa-home"></i> My Applications</a>

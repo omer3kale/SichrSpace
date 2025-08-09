@@ -1,0 +1,23 @@
+<!-- Blue Shield Logo SVG for SichrPlace -->
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Shield -->
+  <path d="M50 5 C65 5, 85 15, 85 15 C85 15, 85 35, 85 50 C85 65, 65 85, 50 95 C35 85, 15 65, 15 50 C15 35, 15 15, 15 15 C15 15, 35 5, 50 5 Z" 
+        fill="#2563EB" stroke="#1D4ED8" stroke-width="2"/>
+  
+  <!-- Inner Shield -->
+  <path d="M50 15 C60 15, 75 22, 75 22 C75 22, 75 38, 75 50 C75 62, 60 75, 50 85 C40 75, 25 62, 25 50 C25 38, 25 22, 25 22 C25 22, 40 15, 50 15 Z" 
+        fill="white"/>
+        
+  <!-- Inner Blue House Shape -->
+  <path d="M50 25 C57 25, 65 30, 65 30 C65 30, 65 42, 65 50 C65 58, 57 65, 50 70 C43 65, 35 58, 35 50 C35 42, 35 30, 35 30 C35 30, 43 25, 50 25 Z" 
+        fill="#2563EB"/>
+        
+  <!-- Magnifying Glass Circle -->
+  <circle cx="50" cy="45" r="8" fill="none" stroke="white" stroke-width="3"/>
+  
+  <!-- Magnifying Glass Handle -->
+  <line x1="56" y1="51" x2="60" y2="55" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Small Square in Magnifying Glass -->
+  <rect x="47" y="42" width="6" height="6" fill="white" rx="1"/>
+</svg>

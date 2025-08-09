@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const ViewingRequest = require('../models/ViewingRequest');
+const ViewingRequestService = require('../services/ViewingRequestService');
 const EmailService = require('../services/emailService');
 
 // Initialize email service
@@ -15,7 +15,7 @@ const emailService = new EmailService();
  * 2. Google Sheets receives response
  * 3. Google Apps Script sends webhook to this endpoint
  * 4. System processes request and sends Email #1
- * 5. Data is stored in MongoDB
+ * 5. Data is stored in Supabase PostgreSQL
  */
 
 /**

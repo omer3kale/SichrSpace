@@ -4,9 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Messages - SichrPlace</title>
-  <link rel="icon" type="image/png" href="img/logo.jpg">
+  <link rel="icon" type="image/svg+xml" href="img/logo-shield.svg">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Supabase Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Real-time Chat Service -->
+  <script src="js/realtime-chat.js"></script>
   
   <!-- Microsoft Clarity -->
   <script type="text/javascript">
@@ -38,6 +44,8 @@
       --text: #222;
       --muted: #6b7280;
       --card: #fff;
+      --surface: #F9FAFB;
+      --border: #E5E7EB;
       --radius: 18px;
       --shadow: 0 2px 12px rgba(0,0,0,0.06);
       --heading-font: "Poppins", sans-serif;
@@ -52,18 +60,77 @@
 
     body {
       font-family: var(--body-font);
-      background: var(--surface);
+      background: var(--secondary);
+      color: var(--text);
       height: 100vh;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1 0 auto;
+      overflow: hidden;
+    }
+
+    /* Header Navigation (matching index.html) */
+    header {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    
+    .logo img {
+      height: 40px;
+      "
+    }
+    
+    nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    
+    nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-family: var(--heading-font);
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    
+    nav a:hover,
+    nav a.active {
+      color: var(--accent);
     }
 
     .chat-container {
       display: flex;
-      height: 100vh;
+      height: calc(100vh - 70px);
       max-width: 1400px;
       margin: 0 auto;
       background: white;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow);
+      "
     }
 
     /* Sidebar Styles */
@@ -101,7 +168,7 @@
       color: white;
       border: none;
       padding: 10px 16px;
-      border-radius: 8px;
+      "
       cursor: pointer;
       font-weight: 600;
       display: flex;
@@ -125,7 +192,7 @@
       width: 100%;
       padding: 10px 12px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      "
       font-size: 0.9rem;
       background: var(--surface);
     }
@@ -155,7 +222,7 @@
       height: 20px;
       border: 2px solid var(--border);
       border-top: 2px solid var(--primary);
-      border-radius: 50%;
+      "
       animation: spin 1s linear infinite;
     }
 
@@ -193,7 +260,7 @@
     .avatar {
       width: 44px;
       height: 44px;
-      border-radius: 50%;
+      "
       background: var(--primary);
       color: white;
       display: flex;
@@ -208,7 +275,7 @@
     .avatar img {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
+      "
       object-fit: cover;
     }
 
@@ -220,7 +287,7 @@
       height: 12px;
       background: var(--accent);
       border: 2px solid white;
-      border-radius: 50%;
+      "
     }
 
     .conversation-info {
@@ -241,7 +308,7 @@
       background: var(--accent);
       color: white;
       padding: 2px 6px;
-      border-radius: 4px;
+      "
       font-size: 0.7rem;
       font-weight: 500;
     }
@@ -270,7 +337,7 @@
     .unread-badge {
       background: var(--danger);
       color: white;
-      border-radius: 10px;
+      "
       padding: 2px 6px;
       font-size: 0.7rem;
       font-weight: 600;
@@ -363,7 +430,7 @@
       background: none;
       border: 1px solid var(--border);
       padding: 8px 10px;
-      border-radius: 6px;
+      "
       cursor: pointer;
       color: var(--muted);
       transition: all 0.2s;
@@ -427,7 +494,7 @@
     .message-avatar {
       width: 32px;
       height: 32px;
-      border-radius: 50%;
+      "
       background: var(--primary);
       color: white;
       display: flex;
@@ -451,7 +518,7 @@
     .message-bubble {
       background: white;
       padding: 12px 16px;
-      border-radius: 16px;
+      "
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       position: relative;
     }
@@ -477,7 +544,7 @@
       gap: 6px;
       background: rgba(0, 0, 0, 0.1);
       padding: 6px 10px;
-      border-radius: 8px;
+      "
       text-decoration: none;
       color: inherit;
       font-size: 0.85rem;
@@ -534,7 +601,7 @@
     .typing-dot {
       width: 6px;
       height: 6px;
-      border-radius: 50%;
+      "
       background: var(--muted);
       animation: typing 1.4s infinite ease-in-out;
     }
@@ -564,7 +631,7 @@
       align-items: flex-end;
       gap: 12px;
       background: var(--surface);
-      border-radius: 12px;
+      "
       padding: 8px;
     }
 
@@ -574,7 +641,7 @@
       color: var(--muted);
       cursor: pointer;
       padding: 8px;
-      border-radius: 6px;
+      "
       transition: all 0.2s;
     }
 
@@ -606,7 +673,7 @@
       color: white;
       border: none;
       padding: 8px 10px;
-      border-radius: 6px;
+      "
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
@@ -686,14 +753,131 @@
         max-width: 85%;
       }
     }
+
+    /* Real-time Chat Features */
+    .message.animate-in {
+      animation: slideInMessage 0.3s ease-out;
+    }
+
+    @keyframes slideInMessage {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Online Status Indicators */
+    .online-indicator {
+      width: 8px;
+      height: 8px;
+      "
+      background: #6b7280;
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      border: 2px solid white;
+      transition: background-color 0.3s ease;
+    }
+
+    .online-indicator.online {
+      background: #10b981;
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
+    }
+
+    .online-indicator.offline {
+      background: #6b7280;
+    }
+
+    /* Typing Indicator */
+    #typing-indicator {
+      display: none;
+      padding: 12px 20px;
+      background: var(--secondary);
+      "
+      margin: 10px 0;
+    }
+
+    .typing-message {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 3px;
+    }
+
+    .typing-dots span {
+      width: 4px;
+      height: 4px;
+      "
+      background: var(--primary);
+      animation: typingPulse 1.4s infinite;
+    }
+
+    .typing-dots span:nth-child(1) { animation-delay: 0ms; }
+    .typing-dots span:nth-child(2) { animation-delay: 200ms; }
+    .typing-dots span:nth-child(3) { animation-delay: 400ms; }
+
+    @keyframes typingPulse {
+      0%, 60%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+      }
+      30% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+
+    /* Read Receipts */
+    .read-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      "
+      background: var(--muted);
+      margin-left: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .read-indicator.read {
+      background: var(--primary);
+      transform: scale(1.1);
+    }
   </style>
 </head>
 <body>
-  <div class="chat-container">
+  <!-- Header Navigation (matching index.html design) -->
+  <header>
+    <a href="index.html" class="logo">
+      <img src="img/logo-shield.svg" alt="SichrPlace" style="height: 40px;">
+    </a>
+    <nav>
+      <a href="apartments-listing.html">Browse</a>
+      <a href="add-property.html">List Property</a>
+      <a href="chat.html" class="active">Messages</a>
+      <a href="landlord-dashboard.html">Dashboard</a>
+      <a href="javascript:void(0)" onclick="logout()">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="chat-container">
     <!-- Sidebar - Conversations List -->
     <div class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <h1><i class="fas fa-comments"></i> Messages</h1>
+        <h1 style="display: flex; align-items: center; gap: 10px;">
+          <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 28px;">
+          <i class="fas fa-comments"></i> Messages
+        </h1>
         <button class="new-message-btn" onclick="openNewMessageModal()">
           <i class="fas fa-plus"></i> New
         </button>
@@ -759,17 +943,12 @@
       <!-- Messages Container (hidden initially) -->
       <div class="messages-container" id="messages-container" style="display: none;">
         <!-- Messages will be loaded here -->
-      </div>
-
-      <!-- Typing Indicator (hidden initially) -->
-      <div class="typing-indicator" id="typing-indicator" style="display: none;">
-        <div class="avatar">
-          <span id="typing-avatar-text"></span>
+        
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" style="display: none;">
+          <!-- Typing indicator content will be inserted here -->
         </div>
-        <div>
-          <span id="typing-user-name">Someone</span> is typing
-          <div class="typing-dots">
-            <div class="typing-dot"></div>
+      </div>
             <div class="typing-dot"></div>
             <div class="typing-dot"></div>
           </div>
@@ -803,11 +982,11 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
   <!-- New Message Modal -->
   <div id="new-message-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: white; border-radius: 16px; padding: 24px; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto;">
+    <div style="background: white; " padding: 24px; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="margin: 0; font-family: var(--heading-font);">New Message</h3>
         <button onclick="closeNewMessageModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted);">×</button>
@@ -817,28 +996,28 @@
         <div style="margin-bottom: 16px;">
           <label style="display: block; margin-bottom: 6px; font-weight: 500;">To:</label>
           <input type="email" id="recipient-email" placeholder="Enter email address" 
-                 style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;" required>
+                 style="width: 100%; padding: 10px; border: 1px solid #d1d5db; "" required>
         </div>
         
         <div style="margin-bottom: 16px;">
           <label style="display: block; margin-bottom: 6px; font-weight: 500;">Subject:</label>
           <input type="text" id="message-subject" placeholder="What's this about?" 
-                 style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+                 style="width: 100%; padding: 10px; border: 1px solid #d1d5db; "">
         </div>
         
         <div style="margin-bottom: 16px;">
           <label style="display: block; margin-bottom: 6px; font-weight: 500;">Message:</label>
           <textarea id="initial-message" placeholder="Write your message..." rows="4" 
-                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;" required></textarea>
+                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; "" required></textarea>
         </div>
         
         <div style="display: flex; gap: 12px; justify-content: flex-end;">
           <button type="button" onclick="closeNewMessageModal()" 
-                  style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; border-radius: 8px; cursor: pointer;">
+                  style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; " cursor: pointer;">
             Cancel
           </button>
           <button type="submit" 
-                  style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                  style="padding: 10px 20px; background: var(--primary); color: white; border: none; " cursor: pointer;">
             Send Message
           </button>
         </div>
@@ -855,6 +1034,16 @@
     let typingTimeout = null;
     let selectedFiles = [];
     let lastTypingNotification = 0;
+
+    // Initialize Supabase client (configuration should come from environment)
+    let supabase;
+    try {
+      // These values should be loaded from your backend API or environment
+      // For now, we'll initialize it when needed
+      console.log('Supabase will be initialized when real-time features are used');
+    } catch (error) {
+      console.warn('Supabase initialization failed:', error);
+    }
 
     // Initialize the app
     document.addEventListener('DOMContentLoaded', function() {
@@ -942,7 +1131,7 @@
           <div style="padding: 20px; text-align: center; color: var(--muted);">
             <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
             Failed to load conversations
-            <br><button onclick="loadConversations()" style="margin-top: 10px; padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Retry</button>
+            <br><button onclick="loadConversations()" style="margin-top: 10px; padding: 8px 16px; background: var(--primary); color: white; border: none; " cursor: pointer;">Retry</button>
           </div>
         `;
       }
@@ -956,7 +1145,7 @@
           <div style="padding: 20px; text-align: center; color: var(--muted);">
             <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
             No conversations yet
-            <br><button onclick="openNewMessageModal()" style="margin-top: 10px; padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Start a conversation</button>
+            <br><button onclick="openNewMessageModal()" style="margin-top: 10px; padding: 8px 16px; background: var(--primary); color: white; border: none; " cursor: pointer;">Start a conversation</button>
           </div>
         `;
         return;
@@ -1099,7 +1288,7 @@
           <div class="message ${isOwn ? 'own' : ''}">
             <div class="message-avatar">
               ${sender.profilePicture ? 
-                `<img src="${sender.profilePicture}" alt="${sender.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">` : 
+                `<img src="${sender.profilePicture}" alt="${sender.name}" style="width: 100%; height: 100%; " object-fit: cover;">` : 
                 initials
               }
             </div>
@@ -1273,7 +1462,7 @@
       
       container.style.display = 'block';
       list.innerHTML = selectedFiles.map((file, index) => `
-        <div style="display: flex; align-items: center; gap: 8px; background: var(--secondary); padding: 8px 12px; border-radius: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; background: var(--secondary); padding: 8px 12px; "">
           <i class="fas fa-${getFileIcon(file.type)}"></i>
           <span style="font-size: 0.85rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${file.name}</span>
           <button onclick="removeFile(${index})" style="background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px;">
@@ -1394,9 +1583,241 @@
     }
 
     function setupRealTimeUpdates() {
-      // Implement WebSocket or Server-Sent Events for real-time updates
-      // This is a placeholder for future implementation
-      console.log('Real-time updates would be set up here');
+      // Initialize Supabase Realtime Chat
+      initializeSupabaseAndRealtime();
+    }
+
+    // Navigation functions
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('sichrplace_token');
+        window.location.href = 'index.html';
+      }
+    }
+
+    async function initializeSupabaseAndRealtime() {
+      try {
+        // Get client configuration from backend
+        const configResponse = await fetch('/api/config/client', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('sichrplace_token')}`
+          }
+        });
+
+        if (!configResponse.ok) {
+          console.warn('⚠️ Could not load client configuration, real-time features disabled');
+          return;
+        }
+
+        const { config } = await configResponse.json();
+        
+        // Initialize Supabase with credentials from backend
+        if (config.supabase && config.supabase.url && config.supabase.anonKey) {
+          supabase = window.supabase.createClient(
+            config.supabase.url,
+            config.supabase.anonKey
+          );
+
+          // Initialize real-time chat
+          if (currentUser && config.features.realTimeChat) {
+            window.realtimeChat = new FrontendRealtimeChat(supabase);
+            
+            // Initialize with current user
+            await realtimeChat.initialize(currentUser.id);
+            
+            // Request notification permission
+            await realtimeChat.requestNotificationPermission();
+            
+            // Set up typing handler
+            handleMessageInputTyping();
+            
+            console.log('✅ Real-time chat system initialized');
+            
+            // If there's a current conversation, join it
+            if (currentConversation) {
+              await joinRealtimeConversation(currentConversation.id);
+            }
+          } else {
+            console.warn('⚠️ Real-time chat features disabled in configuration');
+          }
+        } else {
+          console.warn('⚠️ Supabase configuration missing, real-time features disabled');
+        }
+      } catch (error) {
+        console.error('❌ Failed to initialize real-time features:', error);
+        console.log('💬 Chat will work in standard mode without real-time updates');
+      }
+    }
+
+    async function joinRealtimeConversation(conversationId) {
+      if (!window.realtimeChat) {
+        console.warn('Real-time chat not available');
+        return;
+      }
+
+      try {
+        await realtimeChat.joinConversation(conversationId, {
+          onMessage: (message) => {
+            // Add new message to UI
+            displayRealtimeMessage(message);
+            
+            // Update conversation list
+            updateConversationLastMessage(conversationId, message);
+            
+            // Scroll to bottom
+            scrollToBottom();
+          },
+          onTyping: (userId, isTyping) => {
+            showTypingIndicator(userId, isTyping);
+          },
+          onUserOnline: (userId) => {
+            updateUserOnlineStatus(userId, true);
+          },
+          onUserOffline: (userId) => {
+            updateUserOnlineStatus(userId, false);
+          },
+          onMessageRead: (message) => {
+            updateMessageReadStatus(message);
+          }
+        });
+        
+        console.log('🔗 Joined real-time conversation:', conversationId);
+      } catch (error) {
+        console.error('Failed to join real-time conversation:', error);
+      }
+    }
+
+    function displayRealtimeMessage(message) {
+      // Create message element
+      const messageEl = document.createElement('div');
+      messageEl.className = `message ${message.sender_id === currentUser?.id ? 'sent' : 'received'}`;
+      messageEl.innerHTML = `
+        <div class="message-content">
+          <div class="message-text">${escapeHtml(message.content)}</div>
+          <div class="message-time">${formatTime(message.created_at)}</div>
+        </div>
+      `;
+      
+      // Add to messages container
+      const messagesContainer = document.getElementById('messages-container');
+      messagesContainer.appendChild(messageEl);
+      
+      // Add entrance animation
+      setTimeout(() => messageEl.classList.add('animate-in'), 10);
+      
+      // Play notification sound (optional)
+      if (message.sender_id !== currentUser?.id) {
+        playNotificationSound();
+      }
+      
+      // Scroll to bottom
+      scrollToBottom();
+    }
+
+    function updateConversationLastMessage(conversationId, message) {
+      const conversationEl = document.querySelector(`[data-conversation-id="${conversationId}"]`);
+      if (conversationEl) {
+        const lastMessageEl = conversationEl.querySelector('.last-message');
+        const timeEl = conversationEl.querySelector('.time');
+        
+        if (lastMessageEl) {
+          lastMessageEl.textContent = message.content.length > 50 
+            ? message.content.substring(0, 50) + '...' 
+            : message.content;
+        }
+        
+        if (timeEl) {
+          timeEl.textContent = formatTime(message.created_at);
+        }
+        
+        // Move conversation to top
+        conversationEl.parentNode.insertBefore(conversationEl, conversationEl.parentNode.firstChild);
+      }
+    }
+
+    function showTypingIndicator(userId, isTyping) {
+      const typingContainer = document.getElementById('typing-indicator');
+      if (!typingContainer) return;
+
+      if (isTyping) {
+        typingContainer.innerHTML = `
+          <div class="typing-message">
+            <div class="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <span class="typing-text">Someone is typing...</span>
+          </div>
+        `;
+        typingContainer.style.display = 'block';
+        scrollToBottom();
+      } else {
+        typingContainer.style.display = 'none';
+      }
+    }
+
+    function updateUserOnlineStatus(userId, isOnline) {
+      // Update online indicators
+      document.querySelectorAll(`[data-user-id="${userId}"]`).forEach(el => {
+        const indicator = el.querySelector('.online-indicator');
+        if (indicator) {
+          indicator.classList.toggle('online', isOnline);
+          indicator.classList.toggle('offline', !isOnline);
+        }
+      });
+    }
+
+    function updateMessageReadStatus(message) {
+      const messageEl = document.querySelector(`[data-message-id="${message.id}"]`);
+      if (messageEl) {
+        const readIndicator = messageEl.querySelector('.read-indicator');
+        if (readIndicator) {
+          readIndicator.classList.add('read');
+          readIndicator.title = `Read at ${formatTime(message.read_at)}`;
+        }
+      }
+    }
+
+    function playNotificationSound() {
+      // Optional: Play a subtle notification sound
+      try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+HyvW');
+        audio.volume = 0.1;
+        audio.play().catch(() => {}); // Ignore errors
+      } catch (error) {
+        // Ignore sound errors
+      }
+    }
+
+    // Handle typing in message input
+    function handleMessageInputTyping() {
+      const messageInput = document.getElementById('message-input');
+      if (!messageInput || !window.realtimeChat) return;
+
+      let typingTimer;
+      let isTyping = false;
+
+      messageInput.addEventListener('input', () => {
+        if (!isTyping) {
+          isTyping = true;
+          realtimeChat.sendTyping(true);
+        }
+
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+          isTyping = false;
+          realtimeChat.sendTyping(false);
+        }, 1000);
+      });
+
+      messageInput.addEventListener('blur', () => {
+        if (isTyping) {
+          isTyping = false;
+          realtimeChat.sendTyping(false);
+          clearTimeout(typingTimer);
+        }
+      });
     }
 
     // Utility functions
@@ -1459,7 +1880,7 @@
         background: ${colors[type]};
         color: white;
         padding: 16px 20px;
-        border-radius: 12px;
+        "
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         z-index: 10000;
         max-width: 300px;

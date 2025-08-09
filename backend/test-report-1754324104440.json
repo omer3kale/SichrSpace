@@ -1,0 +1,190 @@
+{
+  "timestamp": "2025-08-04T16:15:04.440Z",
+  "duration": 2.835,
+  "summary": {
+    "passed": 17,
+    "failed": 11,
+    "skipped": 4,
+    "total": 32,
+    "details": [
+      {
+        "name": "Server Health Check",
+        "status": "PASS",
+        "details": "Server is responding"
+      },
+      {
+        "name": "CORS Configuration",
+        "status": "FAIL",
+        "details": "CORS not properly configured"
+      },
+      {
+        "name": "User Registration",
+        "status": "PASS",
+        "details": "User ID: 321b9feb-9075-4c3f-bc0f-1c1e874bb1b4"
+      },
+      {
+        "name": "User Login",
+        "status": "PASS",
+        "details": "Token received: eyJhbGciOiJIUzI1NiIs..."
+      },
+      {
+        "name": "Admin Authentication",
+        "status": "PASS",
+        "details": "Admin user created and logged in"
+      },
+      {
+        "name": "Protected Route Access",
+        "status": "PASS",
+        "details": "Authentication middleware working"
+      },
+      {
+        "name": "Apartment Creation",
+        "status": "FAIL",
+        "details": "{\"error\":\"Missing required fields.\"}"
+      },
+      {
+        "name": "Apartment Listing",
+        "status": "PASS",
+        "details": "Apartment listing endpoint accessible"
+      },
+      {
+        "name": "Apartment Retrieval",
+        "status": "SKIP",
+        "details": "No apartment ID available"
+      },
+      {
+        "name": "Apartment Search/Filter",
+        "status": "PASS",
+        "details": "Search parameters accepted"
+      },
+      {
+        "name": "Booking Tests",
+        "status": "SKIP",
+        "details": "No apartment ID available"
+      },
+      {
+        "name": "PayPal Configuration",
+        "status": "FAIL",
+        "details": "PayPal config not accessible"
+      },
+      {
+        "name": "PayPal Payment Creation",
+        "status": "FAIL",
+        "details": "\"<!DOCTYPE html>\\n<html lang=\\\"en\\\">\\n<head>\\n<meta charset=\\\"utf-8\\\">\\n<title>Error</title>\\n</head>\\n<body>\\n<pre>Cannot POST /api/paypal/create</pre>\\n</body>\\n</html>\\n\""
+      },
+      {
+        "name": "PayPal Webhook Processing",
+        "status": "FAIL",
+        "details": "Webhook processing failed"
+      },
+      {
+        "name": "Messaging Tests",
+        "status": "SKIP",
+        "details": "Missing required data (apartment or user ID)"
+      },
+      {
+        "name": "GDPR Data Request",
+        "status": "FAIL",
+        "details": "{\"success\":false,\"message\":\"Internal server error\"}"
+      },
+      {
+        "name": "Consent Management",
+        "status": "FAIL",
+        "details": "Consent management failed"
+      },
+      {
+        "name": "Data Export",
+        "status": "FAIL",
+        "details": "Data export failed"
+      },
+      {
+        "name": "Privacy Policy Access",
+        "status": "PASS",
+        "details": "Privacy policy endpoint accessible"
+      },
+      {
+        "name": "Feedback Submission",
+        "status": "PASS",
+        "details": "Feedback ID: 6c2931f8-deaa-4a34-9724-ddec240bfbb5"
+      },
+      {
+        "name": "Feedback Retrieval (Admin)",
+        "status": "PASS",
+        "details": "Admin feedback access working"
+      },
+      {
+        "name": "Admin Dashboard Stats",
+        "status": "PASS",
+        "details": "Admin stats endpoint accessible"
+      },
+      {
+        "name": "User Management",
+        "status": "FAIL",
+        "details": "User management failed"
+      },
+      {
+        "name": "Advanced GDPR Dashboard",
+        "status": "PASS",
+        "details": "Advanced GDPR features accessible"
+      },
+      {
+        "name": "Email Sending",
+        "status": "FAIL",
+        "details": "\"<!DOCTYPE html>\\n<html lang=\\\"en\\\">\\n<head>\\n<meta charset=\\\"utf-8\\\">\\n<title>Error</title>\\n</head>\\n<body>\\n<pre>Cannot POST /api/emails/send</pre>\\n</body>\\n</html>\\n\""
+      },
+      {
+        "name": "Email Templates",
+        "status": "PASS",
+        "details": "Email templates endpoint accessible"
+      },
+      {
+        "name": "Google Forms Integration",
+        "status": "PASS",
+        "details": "Google Forms endpoint accessible"
+      },
+      {
+        "name": "API Documentation",
+        "status": "PASS",
+        "details": "Swagger docs accessible"
+      },
+      {
+        "name": "CSRF Protection",
+        "status": "PASS",
+        "details": "CSRF token endpoint accessible"
+      },
+      {
+        "name": "Rate Limiting",
+        "status": "SKIP",
+        "details": "Rate limiting not triggered (may be configured for higher limits)"
+      },
+      {
+        "name": "Unauthorized Access Protection",
+        "status": "FAIL",
+        "details": "Protected routes accessible without auth"
+      },
+      {
+        "name": "SQL Injection Protection",
+        "status": "PASS",
+        "details": "Malicious input properly handled"
+      }
+    ]
+  },
+  "testData": {
+    "authToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMyMWI5ZmViLTkwNzUtNGMzZi1iYzBmLTFjMWU4NzRiYjFiNCIsImlhdCI6MTc1NDMyNDEwMiwiZXhwIjoxNzU0OTI4OTAyfQ.HQBbQ5WsIT7RxKIvuF0E3-8Rl4jSM_RQFDiC2mju-j8",
+    "adminToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImIyNzg1ZjNiLTgzODAtNDI2OC1iMzMwLTFjZDI4Mzg2MzBlNyIsImlhdCI6MTc1NDMyNDEwMywiZXhwIjoxNzU0OTI4OTAzfQ.YJ0BBzwbkDAgsCYLsf8X-t4WCk_DeUNq9u48TKhHfzc",
+    "userId": "321b9feb-9075-4c3f-bc0f-1c1e874bb1b4",
+    "adminUserId": "b2785f3b-8380-4268-b330-1cd2838630e7",
+    "apartmentId": "",
+    "viewingRequestId": "",
+    "conversationId": "",
+    "messageId": "",
+    "paymentId": "",
+    "gdprRequestId": "",
+    "feedbackId": "6c2931f8-deaa-4a34-9724-ddec240bfbb5"
+  },
+  "environment": {
+    "baseUrl": "http://localhost:3000",
+    "nodeVersion": "v22.14.0",
+    "platform": "darwin"
+  }
+}

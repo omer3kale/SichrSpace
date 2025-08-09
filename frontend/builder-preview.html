@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>SichrPlace Workspace Builder Preview</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&family=Roboto:300,400,500,700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -24,7 +25,7 @@
 
     body { font-family: var(--body-font); background: var(--secondary); margin: 0; color: var(--foreground); }
     header { background: var(--primary); color: #fff; padding: 24px; font-size: 1.5rem; font-family: var(--heading-font); }
-    .preview-root { max-width: 700px; margin: 40px auto; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; }
+    .preview-root { max-width: 700px; margin: 40px auto; background: var(--card); " box-shadow: var(--shadow); padding: 32px; }
     h2 { color: var(--primary); margin-top: 0; font-family: var(--heading-font); }
     ul { list-style: none; padding: 0; }
     li { margin-bottom: 18px; }
@@ -36,7 +37,12 @@
 </head>
 <body>
   <header>
-    <i class="fa fa-cubes"></i> SichrPlace Workspace Builder Preview
+    <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: #2563EB; font-weight: 700;">
+      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px;">
+    </a>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span><i class="fa fa-cubes"></i> Workspace Builder Preview</span>
+    </div>
     <div id="test-mode-banner" style="display:none;background:#facc15;color:#222;padding:10px 0;text-align:center;font-weight:600;font-size:1.1em;letter-spacing:0.5px;position:relative;z-index:1001;">
       <i class="fa fa-flask"></i> TEST MODE ENABLED: You are viewing a safe, read-only preview. All actions are disabled.
       <span id="test-session-timer" style="margin-left:18px;font-weight:400;font-size:0.98em;color:#7c4700;"></span>
@@ -317,7 +323,7 @@
         <li><a href="Archive/img/koeln4.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/koeln4.jpg</a></li>
         <li><a href="Archive/img/koeln5.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/koeln5.jpg</a></li>
         <li><a href="Archive/img/koeln6.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/koeln6.jpg</a></li>
-        <li><a href="Archive/img/logo.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/logo.jpg</a></li>
+        <li><a href="Archive/img/logo-shield.svg" target="_blank"><i class="fa fa-image"></i> Archive/img/logo-shield.svg</a></li>
       </ul>
       </ul>
     </div>
@@ -332,7 +338,7 @@
         <li><a href="img/koeln4.jpg" target="_blank"><i class="fa fa-image"></i> koeln4.jpg</a></li>
         <li><a href="img/koeln5.jpg" target="_blank"><i class="fa fa-image"></i> koeln5.jpg</a></li>
         <li><a href="img/koeln6.jpg" target="_blank"><i class="fa fa-image"></i> koeln6.jpg</a></li>
-        <li><a href="img/logo.jpg" target="_blank"><i class="fa fa-image"></i> logo.jpg</a></li>
+        <li><a href="img/logo-shield.svg" target="_blank"><i class="fa fa-image"></i> logo.jpg</a></li>
       </ul>
     </div>
     <div class="section">

@@ -143,3 +143,19 @@ config/local.json
 .cache/
 .npm/
 .eslintcache
+
+# Video and documentation files (temporary/generated)
+*VIDEO_SCRIPT*.md
+*_VIDEO_*.md
+VIDEO_PRODUCTION_PLAN.md
+CHAT_INTEGRATION_GUIDE.md
+FREE_AI_VIDEO_GUIDE.md
+QUICK_RECORDING_CHECKLIST.md
+PLATFORM_OVERVIEW_VIDEO_GUIDE.md
+generate_mvp_video.sh
+record-video-demo.sh
+simple-video-generator.html
+video-generator.html
+
+# Migration documentation (keep in repo)
+# SUPABASE_MIGRATION.md

@@ -1,25 +1,9 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const mongoose = require('mongoose');
 const router = express.Router();
-
-// --- Apartment Offer Schema ---
-const apartmentOfferSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  address: { type: String, required: true },
-  postalCode: { type: String, required: true },
-  price: { type: Number, required: true },
-  moveInDate: { type: Date, required: true },
-  moveOutDate: { type: Date },
-  numberOfRooms: { type: Number, required: true },
-  deposit: { type: Number, required: true },
-  images: [String],
-  createdAt: { type: Date, default: Date.now }
-});
-
-const ApartmentOffer = mongoose.models.ApartmentOffer || mongoose.model('ApartmentOffer', apartmentOfferSchema);
+const ApartmentService = require('../services/ApartmentService');
+const auth = require('../middleware/auth');
 
 // --- Multer Storage Setup ---
 const storage = multer.diskStorage({
@@ -44,10 +28,28 @@ const upload = multer({
 });
 
 // --- POST /upload-apartment ---
-router.post('/', upload.array('apartment-images', 10), async (req, res) => {
+// Handle both multipart and urlencoded data
+router.post('/', (req, res, next) => {
+  const contentType = req.headers['content-type'];
+  console.log('Content-Type:', contentType);
+  
+  if (contentType && contentType.startsWith('multipart/form-data')) {
+    // Use multer for multipart form data (with file uploads)
+    return upload.array('apartment-images', 10)(req, res, next);
+  } else {
+    // Skip multer for JSON and URL-encoded data
+    return next();
+  }
+}, async (req, res) => {
   try {
-    // Extract form fields
+    console.log('=== APARTMENT UPLOAD DEBUG ===');
+    console.log('Request body:', req.body);
+    console.log('Request files:', req.files);
+    console.log('Content-Type:', req.headers['content-type']);
+    
+    // Extract form fields - flexible field names for compatibility with Google Forms
     const {
+      // Standard form fields
       'apartment-title': title,
       'apartment-description': description,
       'apartment-address': address,
@@ -56,34 +58,59 @@ router.post('/', upload.array('apartment-images', 10), async (req, res) => {
       'move-in-date': moveInDate,
       'move-out-date': moveOutDate,
       'number-of-rooms': numberOfRooms,
-      'deposit-required': deposit
+      'deposit-required': deposit,
+      // Alternative field names for API compatibility
+      title: apiTitle,
+      description: apiDescription,
+      location: apiLocation,
+      address: apiAddress,
+      apartment_address: googleAddress,
+      price: apiPrice,
+      rooms: apiRooms,
+      size: apiSize,
+      deposit: apiDeposit,
+      // Google Forms compatible fields
+      apartment_id: apartmentId,
+      budget_range: budgetRange,
+      move_in_date: googleMoveInDate
     } = req.body;
 
-    // Validate required fields
-    if (!title || !description || !address || !postalCode || !price || !moveInDate || !numberOfRooms || !deposit) {
-      return res.status(400).json({ error: 'Missing required fields.' });
+    // Use flexible field mapping with Google Forms compatibility
+    const apartmentData = {
+      title: title || apiTitle || 'Untitled Apartment',
+      description: description || apiDescription || 'No description provided',
+      location: address || apiAddress || googleAddress || apiLocation || 'Location not specified',
+      postal_code: postalCode || '00000',
+      price: parseFloat(price || apiPrice || (budgetRange ? budgetRange.replace(/[^\d.]/g, '') : 0)),
+      rooms: parseInt(numberOfRooms || apiRooms || 1),
+      size: parseInt(apiSize || 50),
+      deposit: parseFloat(deposit || apiDeposit || 0),
+      available_from: moveInDate || googleMoveInDate ? 
+        new Date(moveInDate || googleMoveInDate).toISOString().split('T')[0] : 
+        new Date().toISOString().split('T')[0],
+      available_to: moveOutDate ? new Date(moveOutDate).toISOString().split('T')[0] : null,
+      owner_id: req.user.id,
+      status: 'available',
+      furnished: false,
+      pet_friendly: false,
+      images: []
+    };
+
+    // Basic validation for essential fields only
+    if (!apartmentData.title || apartmentData.price <= 0) {
+      return res.status(400).json({ error: 'Title and valid price are required.' });
     }
 
     // Handle images
     const images = req.files ? req.files.map(file => file.filename) : [];
+    apartmentData.images = images;
 
-    // Create and save the offer
-    const offer = new ApartmentOffer({
-      title,
-      description,
-      address,
-      postalCode,
-      price: Number(price),
-      moveInDate: new Date(moveInDate),
-      moveOutDate: moveOutDate ? new Date(moveOutDate) : null,
-      numberOfRooms: Number(numberOfRooms),
-      deposit: Number(deposit),
-      images
-    });
+    // Create and save the apartment
+    console.log('Creating apartment with data:', apartmentData);
 
-    await offer.save();
+    const apartment = await ApartmentService.create(apartmentData);
 
-    res.status(200).json({ success: true, message: 'Apartment offer uploaded!', offerId: offer._id });
+    res.status(200).json({ success: true, message: 'Apartment uploaded!', apartmentId: apartment.id });
   } catch (err) {
     console.error('Error uploading apartment offer:', err);
     res.status(500).json({ error: 'Failed to upload apartment offer.' });

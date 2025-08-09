@@ -46,8 +46,7 @@ SichrPlace is a comprehensive apartment viewing platform that connects apartment
 ### Backend
 - **Node.js** - Runtime environment
 - **Express.js** - Web application framework
-- **MongoDB Atlas** - Cloud database
-- **Mongoose** - Object modeling for MongoDB
+- **Supabase** - Backend-as-a-Service with PostgreSQL database
 - **JWT** - Authentication and authorization
 - **Nodemailer** - Email service integration
 - **Multer** - File upload handling
@@ -60,7 +59,7 @@ SichrPlace is a comprehensive apartment viewing platform that connects apartment
 
 ### Infrastructure
 - **Railway** - Cloud deployment platform
-- **MongoDB Atlas** - Database hosting
+- **Supabase** - Database and backend services
 - **Gmail SMTP** - Email delivery service
 - **PayPal Standard** - Payment processing
 - **Docker** - Containerization
@@ -77,7 +76,7 @@ SichrPlace is a comprehensive apartment viewing platform that connects apartment
 
 ### Prerequisites
 - Node.js 18.x or higher
-- MongoDB Atlas account
+- Supabase account
 - Railway account (for deployment)
 - Gmail account (for email service)
 
@@ -115,8 +114,9 @@ SichrPlace is a comprehensive apartment viewing platform that connects apartment
 Create a `.env.local` file in the backend directory:
 
 ```env
-# Database
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/sichrplace
+# Database - Configured in backend/.env
+# SUPABASE_URL=your-supabase-project-url
+# SUPABASE_ANON_KEY=your-supabase-anon-key
 
 # JWT Configuration
 JWT_SECRET=your-super-secure-jwt-secret
@@ -268,7 +268,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - **Railway** - For excellent deployment platform
-- **MongoDB Atlas** - For reliable database hosting
+- **Supabase** - For reliable backend services and database
 - **PayPal** - For secure payment processing
 - **Gmail** - For email delivery service
 - **Open Source Community** - For amazing tools and libraries
@@ -285,7 +285,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ **Frontend UI**: Responsive design
 - ✅ **Email Service**: Gmail integration
 - ✅ **Payment System**: PayPal integration
-- ✅ **Database**: MongoDB Atlas
+- ✅ **Database**: Supabase PostgreSQL
 - ✅ **Deployment**: Railway platform
 - 🔄 **Mobile App**: In development
 - 🔄 **Analytics**: Planned

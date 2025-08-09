@@ -1,94 +1,115 @@
-const mongoose = require('mongoose');
+const { supabase } = require('../config/supabase');
+const bcrypt = require('bcrypt');
 
-const UserSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true,
-    minlength: 3,
-    maxlength: 32
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true,
-    lowercase: true,
-    maxlength: 64
-  },
-  password: {
-    type: String,
-    required: true // Store hashed password
-  },
-  role: {
-    type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
-  },
-  blocked: {
-    type: Boolean,
-    default: false
-  },
-  failedLoginAttempts: {
-    type: Number,
-    default: 0
-  },
-  lockUntil: {
-    type: Date
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  lastLoginAt: {
-    type: Date
-  },
-  gdprConsent: {
-    type: Boolean,
-    default: false
-  },
-  dataProcessingConsent: {
-    type: Date // When user gave consent for data processing
-  },
-  privacyPolicyAccepted: {
-    version: {
-      type: String,
-      default: '1.0'
-    },
-    acceptedAt: {
-      type: Date
-    }
+class User {
+  constructor(data) {
+    Object.assign(this, data);
   }
-});
 
-// Helper method to check if account is locked
-UserSchema.methods.isLocked = function () {
-  return this.lockUntil && this.lockUntil > Date.now();
-};
+  static async create(userData) {
+    // Hash password if provided
+    if (userData.password) {
+      userData.password = await bcrypt.hash(userData.password, 10);
+    }
+    
+    const { data, error } = await supabase
+      .from('users')
+      .insert({
+        ...userData,
+        created_at: new Date().toISOString(),
+        gdpr_consent: userData.gdprConsent || false,
+        failed_login_attempts: 0,
+        blocked: false
+      })
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return new User(data);
+  }
 
-// GDPR-related methods
-UserSchema.methods.hasValidConsent = function () {
-  return this.gdprConsent && this.dataProcessingConsent;
-};
+  static async findAll() {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*');
+    
+    if (error) throw error;
+    return data.map(item => new User(item));
+  }
 
-UserSchema.methods.acceptPrivacyPolicy = function (version = '1.0') {
-  this.privacyPolicyAccepted = {
-    version: version,
-    acceptedAt: new Date()
-  };
-  this.gdprConsent = true;
-  this.dataProcessingConsent = new Date();
-  return this.save();
-};
+  static async findById(id) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) throw error;
+    return data ? new User(data) : null;
+  }
 
-UserSchema.methods.getRetentionPeriod = function () {
-  // Users data is kept until account deletion
-  // Inactive accounts after 5 years may be subject to deletion
-  return {
-    type: 'until_deletion',
-    inactiveThreshold: 5 * 365 * 24 * 60 * 60 * 1000 // 5 years in milliseconds
-  };
-};
+  static async findByEmail(email) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email.toLowerCase())
+      .single();
+    
+    if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
+    return data ? new User(data) : null;
+  }
 
-module.exports = mongoose.model('User', UserSchema);
+  static async findByUsername(username) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') throw error;
+    return data ? new User(data) : null;
+  }
+
+  static async update(id, updates) {
+    // Hash password if being updated
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
+    }
+
+    const { data, error } = await supabase
+      .from('users')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return new User(data);
+  }
+
+  static async delete(id) {
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
+    return true;
+  }
+
+  async validatePassword(plainPassword) {
+    return bcrypt.compare(plainPassword, this.password);
+  }
+
+  static async updateLoginAttempts(id, attempts) {
+    return this.update(id, { 
+      failed_login_attempts: attempts,
+      last_login_at: attempts === 0 ? new Date().toISOString() : undefined
+    });
+  }
+}
+
+module.exports = User;

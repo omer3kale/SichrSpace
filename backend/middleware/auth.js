@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const UserService = require('../services/UserService');
 
 /**
  * Authentication middleware for Express.
@@ -19,7 +19,7 @@ module.exports = async function (req, res, next) {
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
+    const user = await UserService.findById(decoded.id);
 
     if (!user)
       return res.status(401).json({ error: 'User not found' });

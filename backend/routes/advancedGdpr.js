@@ -2,14 +2,40 @@ const express = require('express');
 const router = express.Router();
 const AdvancedGdprService = require('../utils/advancedGdprService');
 const PrivacyComplianceScanner = require('../utils/privacyComplianceScanner');
-const ConsentPurpose = require('../models/ConsentPurpose');
-const DataBreach = require('../models/DataBreach');
-const DPIA = require('../models/DPIA');
-const DataProcessingLog = require('../models/DataProcessingLog');
+const GdprService = require('../services/GdprService');
 
 /**
  * Advanced Consent Management Routes
  */
+
+// Create GDPR request endpoint
+router.post('/requests', async (req, res) => {
+  try {
+    const { request_type, description } = req.body;
+    
+    if (!request_type) {
+      return res.status(400).json({ error: 'Request type is required' });
+    }
+
+    const requestData = {
+      request_type,
+      description: description || `GDPR ${request_type} request`,
+      status: 'pending',
+      created_at: new Date().toISOString()
+    };
+
+    const result = await GdprService.createRequest(requestData);
+
+    res.status(201).json({
+      success: true,
+      message: 'GDPR request created successfully',
+      data: result
+    });
+  } catch (error) {
+    console.error('Error creating GDPR request:', error);
+    res.status(500).json({ error: 'Failed to create GDPR request', details: error.message });
+  }
+});
 
 // Get all consent purposes with statistics
 router.get('/consent-purposes', async (req, res) => {
@@ -18,26 +44,11 @@ router.get('/consent-purposes', async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const consents = await ConsentPurpose.find()
-      .populate('userId', 'username email')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const total = await ConsentPurpose.countDocuments();
+    const consents = await GdprService.getConsentPurposes({ skip, limit });
+    const total = await GdprService.countConsentPurposes();
 
     // Get consent statistics
-    const stats = await ConsentPurpose.aggregate([
-      {
-        $group: {
-          _id: '$purpose',
-          total: { $sum: 1 },
-          consented: { $sum: { $cond: ['$consented', 1, 0] } },
-          withdrawn: { $sum: { $cond: ['$withdrawalTimestamp', 1, 0] } },
-          expired: { $sum: { $cond: [{ $lt: ['$expiryDate', new Date()] }, 1, 0] } }
-        }
-      }
-    ]);
+    const stats = await GdprService.getConsentStatistics();
 
     res.json({
       consents,

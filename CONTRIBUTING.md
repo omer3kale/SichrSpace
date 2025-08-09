@@ -20,7 +20,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 ### Prerequisites
 - Node.js 18.x or higher
 - npm 8.x or higher
-- MongoDB Atlas account (for database)
+- Supabase account (for database and backend services)
 - Railway account (for deployment)
 - Gmail account (for email service)
 

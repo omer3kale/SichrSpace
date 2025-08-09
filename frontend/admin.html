@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <title>SichrPlace Admin Dashboard</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+  <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -52,7 +52,7 @@
       max-width: 1100px; 
       margin: 32px auto; 
       background: var(--card); 
-      border-radius: var(--radius); 
+      border-radius: var(--radius);
       box-shadow: var(--shadow); 
       padding: 32px; 
     }
@@ -80,7 +80,7 @@
       background: var(--primary); 
       color: #fff; 
       border: none; 
-      border-radius: 8px; 
+      " 
       padding: 8px 18px; 
       font-weight: 600; 
       cursor: pointer; 
@@ -118,7 +118,7 @@
       color: #fff;
       border: none;
       padding: 12px 28px;
-      border-radius: 8px;
+      "
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
@@ -130,7 +130,7 @@
     .form-container {
       background: var(--card);
       padding: 32px;
-      border-radius: var(--radius);
+      "
       box-shadow: var(--shadow);
     }
     .search-btn {
@@ -138,7 +138,7 @@
       color: white !important;
       border: none !important;
       padding: 8px 15px !important;
-      border-radius: 8px !important;
+      "
       margin-left: 5px !important;
       cursor: pointer !important;
     }
@@ -147,7 +147,7 @@
       color: white !important;
       border: none !important;
       padding: 10px !important;
-      border-radius: 8px !important;
+      "
       cursor: pointer !important;
       font-weight: 600 !important;
     }
@@ -173,7 +173,7 @@
       padding: 10px;
       margin-top: 5px;
       border: 1px solid #d1d5db;
-      border-radius: 4px;
+      "
       font-family: inherit;
       font-size: 15px;
     }
@@ -187,7 +187,7 @@
       background-color: #10B981;
       color: white;
       border: none;
-      border-radius: 4px;
+      "
       cursor: pointer;
       font-size: 15px;
     }
@@ -198,7 +198,7 @@
       background: #e0f7fa;
       color: #2563eb;
       padding: 18px;
-      border-radius: 8px;
+      "
       margin-top: 18px;
       font-size: 16px;
       font-weight: 500;
@@ -208,8 +208,13 @@
 </head>
 <body>
   <header>
-    <i class="fa fa-user-shield"></i> SichrPlace Admin Dashboard
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: #2563EB; font-weight: 700;">
+      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px; "">
+    </a>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span><i class="fa fa-user-shield"></i> Admin Dashboard</span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </header>
   <nav>
     <a href="#users">Users</a>
@@ -303,39 +308,39 @@
       <h2><i class="fa fa-video"></i> Video Management</h2>
       
       <!-- Video Upload Section -->
-      <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <div style="background: #f8f9fa; " padding: 20px; margin: 20px 0;">
         <h3>📹 Upload Viewing Video</h3>
         <form id="videoUploadForm" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
           <div>
             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Apartment Address:</label>
-            <input type="text" id="videoApartmentAddress" placeholder="Musterstraße 123, Köln" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" id="videoApartmentAddress" placeholder="Musterstraße 123, Köln" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
           </div>
           <div>
             <label style="display: block; margin-bottom: 5px; font-weight: bold;">User Email (who requested viewing):</label>
-            <input type="email" id="videoUserEmail" placeholder="sichrplace@gmail.com" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="email" id="videoUserEmail" placeholder="sichrplace@gmail.com" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
           </div>
           <div>
             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Video Title:</label>
-            <input type="text" id="videoTitle" placeholder="Apartment Viewing - Living Room & Kitchen" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="text" id="videoTitle" placeholder="Apartment Viewing - Living Room & Kitchen" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
           </div>
           <div>
             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Video File (.mp4, .mov, .avi - Max 500MB):</label>
-            <input type="file" id="videoFile" accept="video/*" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="file" id="videoFile" accept="video/*" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             <div style="font-size: 12px; color: #666; margin-top: 5px;">
               Supported formats: MP4, MOV, AVI. Maximum file size: 500MB
             </div>
           </div>
           <div>
             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Viewing Notes/Feedback:</label>
-            <textarea id="videoNotes" rows="3" placeholder="Add notes about the apartment, any issues found, or additional feedback..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+            <textarea id="videoNotes" rows="3" placeholder="Add notes about the apartment, any issues found, or additional feedback..." style="width: 100%; padding: 8px; border: 1px solid #ddd; ""></textarea>
           </div>
-          <button type="button" onclick="uploadSecureVideo()" style="background: #28a745; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+          <button type="button" onclick="uploadSecureVideo()" style="background: #28a745; color: white; border: none; padding: 12px; " cursor: pointer; font-weight: bold;">
             <i class="fa fa-upload"></i> Upload Secure Video
           </button>
         </form>
         <div id="videoUploadResult"></div>
         <div id="uploadProgress" style="display: none; margin-top: 15px;">
-          <div style="background: #e9ecef; border-radius: 10px; overflow: hidden;">
+          <div style="background: #e9ecef; " overflow: hidden;">
             <div id="progressBar" style="background: #28a745; height: 20px; width: 0%; transition: width 0.3s; text-align: center; color: white; font-size: 12px; line-height: 20px;"></div>
           </div>
           <div id="progressText" style="text-align: center; margin-top: 5px; font-size: 14px; color: #666;"></div>
@@ -343,14 +348,14 @@
       </div>
 
       <!-- Video Library -->
-      <div style="background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <div style="background: #fff; border: 1px solid #ddd; " padding: 20px; margin: 20px 0;">
         <h3>📚 Video Library</h3>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <div>
-            <input type="text" id="videoSearchInput" placeholder="Search by apartment address or user..." style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
+            <input type="text" id="videoSearchInput" placeholder="Search by apartment address or user..." style="padding: 8px; border: 1px solid #ddd; " width: 300px;">
             <button onclick="searchVideos()" class="search-btn">Search</button>
           </div>
-          <button onclick="loadAllVideos()" style="background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 4px;">Refresh List</button>
+          <button onclick="loadAllVideos()" style="background: #6c757d; color: white; border: none; padding: 8px 15px; "">Refresh List</button>
         </div>
         <div id="videoLibrary">
           <table style="width: 100%; border-collapse: collapse;">
@@ -367,11 +372,11 @@
               <td style="padding: 10px;">sichrplace@gmail.com</td>
               <td style="padding: 10px;">Complete Apartment Tour</td>
               <td style="padding: 10px;">2025-07-31 16:30</td>
-              <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Ready</span></td>
+              <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; " font-size: 12px;">Ready</span></td>
               <td style="padding: 10px;">
-                <button onclick="previewVideo('video_001')" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-right: 5px;">Preview</button>
-                <button onclick="sendVideoEmail('video_001')" style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-right: 5px;">Send Email</button>
-                <button onclick="deleteVideo('video_001')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px;">Delete</button>
+                <button onclick="previewVideo('video_001')" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; " margin-right: 5px;">Preview</button>
+                <button onclick="sendVideoEmail('video_001')" style="background: #28a745; color: white; border: none; padding: 5px 10px; " margin-right: 5px;">Send Email</button>
+                <button onclick="deleteVideo('video_001')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; "">Delete</button>
               </td>
             </tr>
           </table>
@@ -380,15 +385,15 @@
 
       <!-- Video Preview Modal -->
       <div id="videoPreviewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; max-width: 800px; width: 90%;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; " max-width: 800px; width: 90%;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3 id="previewVideoTitle">Video Preview</h3>
-            <button onclick="closeVideoPreview()" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px;">✕ Close</button>
+            <button onclick="closeVideoPreview()" style="background: #dc3545; color: white; border: none; padding: 5px 10px; "">✕ Close</button>
           </div>
           <div id="videoPreviewContent">
             <!-- Secure video player will be inserted here -->
           </div>
-          <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+          <div style="margin-top: 15px; padding: 10px; background: #fff3cd; " border-left: 4px solid #ffc107;">
             <strong>⚠️ Security Notice:</strong> This video is protected against downloading. It can only be viewed through our secure player.
           </div>
         </div>
@@ -399,7 +404,7 @@
       <h2><i class="fa fa-mail-bulk"></i> Email Management</h2>
       
       <!-- Email Configuration Test -->
-      <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <div style="background: #f8f9fa; " padding: 20px; margin: 20px 0;">
         <h3>🔧 Email Configuration Test</h3>
         <p>Test your Gmail SMTP connection:</p>
         <button onclick="testEmailConfig()">Test Email Configuration</button>
@@ -408,23 +413,23 @@
 
       <!-- Email Flow Overview -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0;">
-        <div style="border: 2px solid #28a745; border-radius: 10px; padding: 20px; border-left: 5px solid #28a745;">
+        <div style="border: 2px solid #28a745; " padding: 20px; border-left: 5px solid #28a745;">
           <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">📨 Email #1: Request Confirmation</div>
-          <div style="padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 10px 0; background: #d4edda; color: #155724;">AUTOMATIC</div>
+          <div style="padding: 5px 10px; " font-size: 12px; font-weight: bold; margin: 10px 0; background: #d4edda; color: #155724;">AUTOMATIC</div>
           <p><strong>Trigger:</strong> When viewing request is submitted</p>
           <p><strong>Subject:</strong> "We've Received Your Apartment Viewing Request!"</p>
         </div>
 
-        <div style="border: 2px solid #ffc107; border-radius: 10px; padding: 20px; border-left: 5px solid #ffc107;">
+        <div style="border: 2px solid #ffc107; " padding: 20px; border-left: 5px solid #ffc107;">
           <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">💳 Email #2: Viewing + Payment</div>
-          <div style="padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 10px 0; background: #fff3cd; color: #856404;">MANUAL</div>
+          <div style="padding: 5px 10px; " font-size: 12px; font-weight: bold; margin: 10px 0; background: #fff3cd; color: #856404;">MANUAL</div>
           <p><strong>Trigger:</strong> When viewer is assigned</p>
           <p><strong>Subject:</strong> "Your Viewing is Booked! Meet Your Apartment Viewer"</p>
         </div>
 
-        <div style="border: 2px solid #6f42c1; border-radius: 10px; padding: 20px; border-left: 5px solid #6f42c1;">
+        <div style="border: 2px solid #6f42c1; " padding: 20px; border-left: 5px solid #6f42c1;">
           <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">🎥 Email #3: Results Ready</div>
-          <div style="padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 10px 0; background: #cce7ff; color: #004085;">MANUAL</div>
+          <div style="padding: 5px 10px; " font-size: 12px; font-weight: bold; margin: 10px 0; background: #cce7ff; color: #004085;">MANUAL</div>
           <p><strong>Trigger:</strong> When viewing is completed</p>
           <p><strong>Subject:</strong> "Your Apartment Viewing Video & Feedback Are Here"</p>
         </div>
@@ -433,36 +438,36 @@
       <!-- Quick Send Email Forms -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin: 30px 0;">
         <!-- Send Viewing Confirmation Email -->
-        <div style="background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
+        <div style="background: #fff; border: 1px solid #ddd; " padding: 20px;">
           <h3>💳 Send Viewing Confirmation Email (#2)</h3>
           <form id="viewingConfirmationForm" style="display: flex; flex-direction: column; gap: 15px;">
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">User Email:</label>
-              <input type="email" id="userEmail2" placeholder="sichrplace@gmail.com" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="email" id="userEmail2" placeholder="sichrplace@gmail.com" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">User First Name:</label>
-              <input type="text" id="firstName2" placeholder="John" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="text" id="firstName2" placeholder="John" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">Apartment Address:</label>
-              <input type="text" id="apartmentAddress2" placeholder="Musterstraße 123, Köln" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="text" id="apartmentAddress2" placeholder="Musterstraße 123, Köln" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">Viewer Name:</label>
-              <input type="text" id="viewerName" placeholder="Anna Schmidt" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="text" id="viewerName" placeholder="Anna Schmidt" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">Viewing Date & Time:</label>
-              <input type="text" id="viewingDate" placeholder="2025-08-15 at 14:00" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="text" id="viewingDate" placeholder="2025-08-15 at 14:00" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">Payment Link:</label>
-              <input type="url" id="paymentLink" placeholder="https://paypal.com/payment/xyz123" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="url" id="paymentLink" placeholder="https://paypal.com/payment/xyz123" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">Amount (EUR):</label>
-              <input type="number" id="amount" value="25.00" step="0.01" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="number" id="amount" value="25.00" step="0.01" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             </div>
             <button type="button" onclick="sendViewingConfirmation()" class="action-btn">
               Send Viewing Confirmation Email
@@ -472,24 +477,24 @@
         </div>
 
         <!-- Send Viewing Results Email -->
-        <div style="background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
+        <div style="background: #fff; border: 1px solid #ddd; " padding: 20px;">
           <h3>🎥 Send Viewing Results Email (#3)</h3>
           <form id="viewingResultsForm" style="display: flex; flex-direction: column; gap: 15px;">
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">User Email:</label>
-              <input type="email" id="userEmail3" placeholder="sichrplace@gmail.com" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="email" id="userEmail3" placeholder="sichrplace@gmail.com" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">User First Name:</label>
-              <input type="text" id="firstName3" placeholder="John" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="text" id="firstName3" placeholder="John" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">Apartment Address:</label>
-              <input type="text" id="apartmentAddress3" placeholder="Musterstraße 123, Köln" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="text" id="apartmentAddress3" placeholder="Musterstraße 123, Köln" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">Select Video:</label>
-              <select id="videoSelect" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <select id="videoSelect" required style="width: 100%; padding: 8px; border: 1px solid #ddd; "">
                 <option value="">Choose a video...</option>
                 <option value="video_001">Complete Apartment Tour - Musterstraße 123</option>
               </select>
@@ -499,7 +504,7 @@
             </div>
             <div>
               <label style="display: block; margin-bottom: 5px; font-weight: bold;">Additional Notes (Optional):</label>
-              <textarea id="emailNotes" rows="3" placeholder="Add any additional feedback or notes about the viewing..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+              <textarea id="emailNotes" rows="3" placeholder="Add any additional feedback or notes about the viewing..." style="width: 100%; padding: 8px; border: 1px solid #ddd; ""></textarea>
             </div>
             <button type="button" onclick="sendViewingResults()" class="action-btn">
               Send Viewing Results Email
@@ -510,7 +515,7 @@
       </div>
 
       <!-- Recent Email Activity -->
-      <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <div style="background: #f8f9fa; " padding: 20px; margin: 20px 0;">
         <h3>📋 Recent Email Activity</h3>
         <button onclick="loadRecentEmails()">Load Recent Email Activity</button>
         <div id="recentEmailsList">
@@ -527,14 +532,14 @@
               <td style="padding: 10px;">sichrplace@gmail.com</td>
               <td style="padding: 10px;">We've Received Your Apartment Viewing Request!</td>
               <td style="padding: 10px;">2025-07-31 14:30</td>
-              <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Sent</span></td>
+              <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; " font-size: 12px;">Sent</span></td>
             </tr>
             <tr>
               <td style="padding: 10px;">Viewing Confirmation</td>
               <td style="padding: 10px;">sichrplace@gmail.com</td>
               <td style="padding: 10px;">Your Viewing is Booked! Meet Your Apartment Viewer</td>
               <td style="padding: 10px;">2025-07-31 15:45</td>
-              <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Sent</span></td>
+              <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; " font-size: 12px;">Sent</span></td>
             </tr>
           </table>
         </div>
@@ -994,11 +999,11 @@
                 <td style="padding: 10px;">${video.userEmail}</td>
                 <td style="padding: 10px;">${video.title}</td>
                 <td style="padding: 10px;">${new Date(video.uploadDate).toLocaleString()}</td>
-                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">${video.status}</span></td>
+                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; " font-size: 12px;">${video.status}</span></td>
                 <td style="padding: 10px;">
-                  <button onclick="previewVideo('${video.id}')" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-right: 5px;">Preview</button>
-                  <button onclick="sendVideoEmail('${video.id}')" style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-right: 5px;">Send Email</button>
-                  <button onclick="deleteVideo('${video.id}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px;">Delete</button>
+                  <button onclick="previewVideo('${video.id}')" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; " margin-right: 5px;">Preview</button>
+                  <button onclick="sendVideoEmail('${video.id}')" style="background: #28a745; color: white; border: none; padding: 5px 10px; " margin-right: 5px;">Send Email</button>
+                  <button onclick="deleteVideo('${video.id}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; "">Delete</button>
                 </td>
               </tr>
             `;
@@ -1055,14 +1060,14 @@
           if (videoData.success) {
             document.getElementById('previewVideoTitle').textContent = videoData.title;
             document.getElementById('videoPreviewContent').innerHTML = `
-              <div style="background: #000; border-radius: 8px; overflow: hidden; position: relative;">
+              <div style="background: #000; " overflow: hidden; position: relative;">
                 <video controls style="width: 100%; height: 400px;" controlsList="nodownload" oncontextmenu="return false;">
                   <source src="${videoData.secureUrl}" type="video/mp4">
                   Your browser does not support the video tag.
                 </video>
                 <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;"></div>
               </div>
-              <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+              <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; "">
                 <strong>Notes:</strong> ${videoData.notes || 'No additional notes'}
               </div>
             `;
@@ -1153,21 +1158,21 @@
                 <td style="padding: 10px;">sichrplace@gmail.com</td>
                 <td style="padding: 10px;">We've Received Your Apartment Viewing Request!</td>
                 <td style="padding: 10px;">${new Date().toLocaleString()}</td>
-                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Sent</span></td>
+                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; " font-size: 12px;">Sent</span></td>
               </tr>
               <tr>
                 <td style="padding: 10px;">Viewing Confirmation</td>
                 <td style="padding: 10px;">sichrplace@gmail.com</td>
                 <td style="padding: 10px;">Your Viewing is Booked! Meet Your Apartment Viewer</td>
                 <td style="padding: 10px;">${new Date(Date.now() - 3600000).toLocaleString()}</td>
-                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Sent</span></td>
+                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; " font-size: 12px;">Sent</span></td>
               </tr>
               <tr>
                 <td style="padding: 10px;">Results Email</td>
                 <td style="padding: 10px;">sichrplace@gmail.com</td>
                 <td style="padding: 10px;">Your Apartment Viewing Video & Feedback Are Here</td>
                 <td style="padding: 10px;">${new Date(Date.now() - 7200000).toLocaleString()}</td>
-                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; font-size: 12px;">Sent</span></td>
+                <td style="padding: 10px;"><span style="background: #d4edda; color: #155724; padding: 3px 8px; " font-size: 12px;">Sent</span></td>
               </tr>
             </table>
           `;

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Messages - SichrPlace</title>
-  <link rel="icon" type="image/png" href="img/logo.jpg">
+  <link rel="icon" type="image/svg+xml" href="img/logo-shield.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Microsoft Clarity -->
@@ -101,7 +101,7 @@
       color: white;
       border: none;
       padding: 10px 16px;
-      border-radius: 8px;
+      "
       cursor: pointer;
       font-weight: 600;
       display: flex;
@@ -125,7 +125,7 @@
       width: 100%;
       padding: 10px 12px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      "
       font-size: 0.9rem;
       background: var(--surface);
     }
@@ -155,7 +155,7 @@
       height: 20px;
       border: 2px solid var(--border);
       border-top: 2px solid var(--primary);
-      border-radius: 50%;
+      "
       animation: spin 1s linear infinite;
     }
 
@@ -193,7 +193,7 @@
     .avatar {
       width: 44px;
       height: 44px;
-      border-radius: 50%;
+      "
       background: var(--primary);
       color: white;
       display: flex;
@@ -208,7 +208,7 @@
     .avatar img {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
+      "
       object-fit: cover;
     }
 
@@ -220,7 +220,7 @@
       height: 12px;
       background: var(--accent);
       border: 2px solid white;
-      border-radius: 50%;
+      "
     }
 
     .conversation-info {
@@ -241,7 +241,7 @@
       background: var(--accent);
       color: white;
       padding: 2px 6px;
-      border-radius: 4px;
+      "
       font-size: 0.7rem;
       font-weight: 500;
     }
@@ -270,7 +270,7 @@
     .unread-badge {
       background: var(--danger);
       color: white;
-      border-radius: 10px;
+      "
       padding: 2px 6px;
       font-size: 0.7rem;
       font-weight: 600;
@@ -363,7 +363,7 @@
       background: none;
       border: 1px solid var(--border);
       padding: 8px 10px;
-      border-radius: 6px;
+      "
       cursor: pointer;
       color: var(--muted);
       transition: all 0.2s;
@@ -427,7 +427,7 @@
     .message-avatar {
       width: 32px;
       height: 32px;
-      border-radius: 50%;
+      "
       background: var(--primary);
       color: white;
       display: flex;
@@ -451,7 +451,7 @@
     .message-bubble {
       background: white;
       padding: 12px 16px;
-      border-radius: 16px;
+      "
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       position: relative;
     }
@@ -477,7 +477,7 @@
       gap: 6px;
       background: rgba(0, 0, 0, 0.1);
       padding: 6px 10px;
-      border-radius: 8px;
+      "
       text-decoration: none;
       color: inherit;
       font-size: 0.85rem;
@@ -534,7 +534,7 @@
     .typing-dot {
       width: 6px;
       height: 6px;
-      border-radius: 50%;
+      "
       background: var(--muted);
       animation: typing 1.4s infinite ease-in-out;
     }
@@ -564,7 +564,7 @@
       align-items: flex-end;
       gap: 12px;
       background: var(--surface);
-      border-radius: 12px;
+      "
       padding: 8px;
     }
 
@@ -574,7 +574,7 @@
       color: var(--muted);
       cursor: pointer;
       padding: 8px;
-      border-radius: 6px;
+      "
       transition: all 0.2s;
     }
 
@@ -606,7 +606,7 @@
       color: white;
       border: none;
       padding: 8px 10px;
-      border-radius: 6px;
+      "
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
@@ -693,7 +693,10 @@
     <!-- Sidebar - Conversations List -->
     <div class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <h1><i class="fas fa-comments"></i> Messages</h1>
+        <h1 style="display: flex; align-items: center; gap: 10px;">
+          <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 28px; "">
+          <i class="fas fa-comments"></i> Messages
+        </h1>
         <button class="new-message-btn" onclick="openNewMessageModal()">
           <i class="fas fa-plus"></i> New
         </button>
@@ -807,7 +810,7 @@
 
   <!-- New Message Modal -->
   <div id="new-message-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: white; border-radius: 16px; padding: 24px; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto;">
+    <div style="background: white; " padding: 24px; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="margin: 0; font-family: var(--heading-font);">New Message</h3>
         <button onclick="closeNewMessageModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted);">×</button>
@@ -817,28 +820,28 @@
         <div style="margin-bottom: 16px;">
           <label style="display: block; margin-bottom: 6px; font-weight: 500;">To:</label>
           <input type="email" id="recipient-email" placeholder="Enter email address" 
-                 style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;" required>
+                 style="width: 100%; padding: 10px; border: 1px solid #d1d5db; "" required>
         </div>
         
         <div style="margin-bottom: 16px;">
           <label style="display: block; margin-bottom: 6px; font-weight: 500;">Subject:</label>
           <input type="text" id="message-subject" placeholder="What's this about?" 
-                 style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+                 style="width: 100%; padding: 10px; border: 1px solid #d1d5db; "">
         </div>
         
         <div style="margin-bottom: 16px;">
           <label style="display: block; margin-bottom: 6px; font-weight: 500;">Message:</label>
           <textarea id="initial-message" placeholder="Write your message..." rows="4" 
-                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;" required></textarea>
+                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; "" required></textarea>
         </div>
         
         <div style="display: flex; gap: 12px; justify-content: flex-end;">
           <button type="button" onclick="closeNewMessageModal()" 
-                  style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; border-radius: 8px; cursor: pointer;">
+                  style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; " cursor: pointer;">
             Cancel
           </button>
           <button type="submit" 
-                  style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                  style="padding: 10px 20px; background: var(--primary); color: white; border: none; " cursor: pointer;">
             Send Message
           </button>
         </div>
@@ -942,7 +945,7 @@
           <div style="padding: 20px; text-align: center; color: var(--muted);">
             <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
             Failed to load conversations
-            <br><button onclick="loadConversations()" style="margin-top: 10px; padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Retry</button>
+            <br><button onclick="loadConversations()" style="margin-top: 10px; padding: 8px 16px; background: var(--primary); color: white; border: none; " cursor: pointer;">Retry</button>
           </div>
         `;
       }
@@ -956,7 +959,7 @@
           <div style="padding: 20px; text-align: center; color: var(--muted);">
             <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
             No conversations yet
-            <br><button onclick="openNewMessageModal()" style="margin-top: 10px; padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Start a conversation</button>
+            <br><button onclick="openNewMessageModal()" style="margin-top: 10px; padding: 8px 16px; background: var(--primary); color: white; border: none; " cursor: pointer;">Start a conversation</button>
           </div>
         `;
         return;
@@ -1099,7 +1102,7 @@
           <div class="message ${isOwn ? 'own' : ''}">
             <div class="message-avatar">
               ${sender.profilePicture ? 
-                `<img src="${sender.profilePicture}" alt="${sender.name}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">` : 
+                `<img src="${sender.profilePicture}" alt="${sender.name}" style="width: 100%; height: 100%; " object-fit: cover;">` : 
                 initials
               }
             </div>
@@ -1273,7 +1276,7 @@
       
       container.style.display = 'block';
       list.innerHTML = selectedFiles.map((file, index) => `
-        <div style="display: flex; align-items: center; gap: 8px; background: var(--secondary); padding: 8px 12px; border-radius: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; background: var(--secondary); padding: 8px 12px; "">
           <i class="fas fa-${getFileIcon(file.type)}"></i>
           <span style="font-size: 0.85rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${file.name}</span>
           <button onclick="removeFile(${index})" style="background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px;">
@@ -1459,7 +1462,7 @@
         background: ${colors[type]};
         color: white;
         padding: 16px 20px;
-        border-radius: 12px;
+        "
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         z-index: 10000;
         max-width: 300px;

@@ -1,17 +1,28 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const mongoose = require('mongoose');
+const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 const app = express();
 
+// Supabase configuration
+const supabaseUrl = process.env.SUPABASE_URL || 'https://cgkumwtibknfrhyiicoo.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNna3Vtd3RpYmtuZnJoeWlpY29vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDMwMTc4NiwiZXhwIjoyMDY5ODc3Nzg2fQ.5piAC3CPud7oRvA1Rtypn60dfz5J1ydqoG2oKj-Su3M';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Make supabase available to all routes
+app.locals.supabase = supabase;
+
 // Import routes
 const messagesRoutes = require('./routes/messages');
-const uploadApartmentRoute = require('./api/upload-apartment'); // Adjust path if needed
+const uploadApartmentRoute = require('./api/upload-apartment');
 const adminRoutes = require('./routes/admin');
 const feedbackApi = require('./api/feedback');
 const secureVideosApi = require('./api/secure-videos');
+const authRoutes = require('./routes/auth');
+const apartmentRoutes = require('./routes/apartments');
+const favoritesApi = require('./api/favorites');
 const auth = require('./middleware/auth');
 
 // Middleware for parsing JSON bodies
@@ -21,39 +32,44 @@ app.use(cors());
 // Serve uploaded images statically
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Start server first, then connect to MongoDB (non-blocking)
+// Start server first, then test Supabase connection (non-blocking)
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log('📹 Secure Video Management System Ready!');
 });
 
-// MongoDB connection (non-blocking, runs in background)
-const connectMongoDB = async () => {
+// Test Supabase connection (non-blocking, runs in background)
+const testSupabaseConnection = async () => {
   try {
-    console.log('🔄 Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/SichrPlace', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000, // 5 second timeout
-      connectTimeoutMS: 10000, // 10 second timeout
-    });
-    console.log('✅ MongoDB connected successfully');
+    console.log('🔄 Testing Supabase connection...');
+    const { data, error } = await supabase.from('apartments').select('count').limit(1);
+    if (error) throw error;
+    console.log('✅ Supabase connected successfully');
   } catch (err) {
-    console.error('❌ MongoDB connection error:', err.message);
+    console.error('❌ Supabase connection error:', err.message);
     console.log('⚠️  Server will continue running without database functionality');
-    console.log('💡 Please check your MongoDB connection string in .env file');
+    console.log('💡 Please check your Supabase connection settings in .env file');
   }
 };
 
-// Connect to MongoDB in background
-connectMongoDB();
+// Test Supabase connection in background
+testSupabaseConnection();
 
 // Mount the messages routes under /api
 app.use('/api', messagesRoutes);
 
 // Mount the apartment upload route
 app.use('/upload-apartment', uploadApartmentRoute);
+
+// --- AUTH ROUTES ---
+app.use('/api/auth', authRoutes);
+
+// --- APARTMENT ROUTES ---
+app.use('/api/apartments', apartmentRoutes);
+
+// --- FAVORITES API ---
+app.use('/api/favorites', favoritesApi);
 
 // --- ADMIN ROUTES ---
 app.use('/api/admin', adminRoutes);
@@ -127,3 +143,63 @@ app.get('/api/check-admin', auth, (req, res) => {
 
 // --- HEALTH CHECK ---
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+
+// --- TEMPORARY LOGIN ENDPOINT FOR TESTING ---
+app.post('/api/auth/login-test', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Test user accounts
+    const testUsers = {
+      'sichrplace@gmail.com': {
+        password: 'Gokhangulec29*',
+        user: {
+          id: 'e7532cfc-493c-4bf1-9458-a3f11fa6602a',
+          email: 'sichrplace@gmail.com',
+          username: 'sichrplace',
+          role: 'admin',
+          first_name: 'SichrPlace',
+          last_name: 'Admin'
+        }
+      },
+      'omer3kale@gmail.com': {
+        password: 'Gokhangulec29*',
+        user: {
+          id: 'bbd03609-d3a6-49e4-8701-fa84445b3cab',
+          email: 'omer3kale@gmail.com',
+          username: 'omer3kale',
+          role: 'user',
+          first_name: 'Omer',
+          last_name: 'Kale'
+        }
+      }
+    };
+
+    const testUser = testUsers[email];
+    if (testUser && testUser.password === password) {
+      const jwt = require('jsonwebtoken');
+      const token = jwt.sign(
+        testUser.user,
+        process.env.JWT_SECRET || 'fNcgmCwu7lIbCYoxUy3zbDNyWFpfjmJrUtLLAhPq+2mDNyN/p//FnxhSmTgvnp2Fh51+eJJKAIkqJnFu/xf93Q==',
+        { expiresIn: '24h' }
+      );
+      
+      res.json({
+        success: true,
+        token,
+        user: testUser.user
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
+    }
+  } catch (error) {
+    console.error('Login test error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// --- FRONTEND SERVING ---
+app.use(express.static(path.join(__dirname, '../frontend')));

@@ -1,87 +1,45 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const { supabase } = require('../config/supabase');
 const authenticateToken = require('../middleware/auth');
 
 /**
- * GDPR Tracking Log Model
+ * GDPR Tracking Log - Using Supabase PostgreSQL
  * Stores audit trail of tracking activities for compliance
  */
-const mongoose = require('mongoose');
 
-const trackingLogSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: false // Some logs may be anonymous
-    },
-    sessionId: {
-        type: String,
-        required: false
-    },
-    event: {
-        type: String,
-        required: true,
-        enum: [
-            'clarity_initialized',
-            'clarity_disabled',
-            'user_data_deleted',
-            'consent_given',
-            'consent_withdrawn',
-            'tracking_blocked',
-            'privacy_settings_accessed'
-        ]
-    },
-    service: {
-        type: String,
-        required: true,
-        default: 'microsoft_clarity'
-    },
-    data: {
-        type: mongoose.Schema.Types.Mixed,
-        required: false
-    },
-    ipAddress: {
-        type: String,
-        required: false
-    },
-    userAgent: {
-        type: String,
-        required: false
-    },
-    url: {
-        type: String,
-        required: false
-    },
-    consentVersion: {
-        type: String,
-        required: false,
-        default: '1.0'
-    },
-    legalBasis: {
-        type: String,
-        required: false,
-        enum: ['consent', 'legitimate_interest', 'legal_obligation', 'vital_interests', 'public_task', 'contract']
-    },
-    retentionDate: {
-        type: Date,
-        required: true,
-        default: function() {
-            // Default retention: 3 years from creation
-            return new Date(Date.now() + 3 * 365 * 24 * 60 * 60 * 1000);
+/**
+ * Log GDPR tracking event to Supabase
+ */
+async function logTrackingEvent(eventData) {
+    try {
+        const { data, error } = await supabase
+            .from('gdpr_tracking_logs')
+            .insert({
+                user_id: eventData.userId,
+                session_id: eventData.sessionId,
+                event: eventData.event,
+                service: eventData.service || 'microsoft_clarity',
+                data: eventData.data,
+                ip_address: eventData.ipAddress,
+                user_agent: eventData.userAgent,
+                url: eventData.url,
+                consent_version: eventData.consentVersion || '1.0',
+                legal_basis: eventData.legalBasis,
+                retention_date: eventData.retentionDate || new Date(Date.now() + 3 * 365 * 24 * 60 * 60 * 1000)
+            });
+
+        if (error) {
+            console.error('Error logging GDPR tracking event:', error);
+            return null;
         }
+
+        return data;
+    } catch (error) {
+        console.error('Error in logTrackingEvent:', error);
+        return null;
     }
-}, {
-    timestamps: true,
-    collection: 'gdpr_tracking_logs'
-});
-
-// Index for efficient querying
-trackingLogSchema.index({ userId: 1, createdAt: -1 });
-trackingLogSchema.index({ event: 1, createdAt: -1 });
-trackingLogSchema.index({ retentionDate: 1 }); // For cleanup tasks
-
-const TrackingLog = mongoose.model('TrackingLog', trackingLogSchema);
+}
 
 /**
  * POST /api/gdpr/tracking-log
@@ -121,8 +79,8 @@ router.post('/tracking-log', async (req, res) => {
                          req.socket.remoteAddress ||
                          (req.connection.socket ? req.connection.socket.remoteAddress : null);
 
-        // Create tracking log entry
-        const trackingLog = new TrackingLog({
+        // Create tracking log entry using Supabase
+        const trackingEventData = {
             userId,
             sessionId: req.sessionID || null,
             event,
@@ -139,9 +97,13 @@ router.post('/tracking-log', async (req, res) => {
             url,
             consentVersion: data?.consent_version || '1.0',
             legalBasis: this.determineLegalBasis(event)
-        });
+        };
 
-        await trackingLog.save();
+        const result = await logTrackingEvent(trackingEventData);
+
+        if (!result) {
+            throw new Error('Failed to save tracking event');
+        }
 
         // Log for audit purposes
         console.log(`GDPR Tracking Log: ${event} - User: ${userId || 'Anonymous'} - Time: ${new Date().toISOString()}`);

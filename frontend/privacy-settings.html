@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Settings - SichrPlace</title>
-    <link rel="icon" href="img/logo.jpg" type="image/jpeg">
+    <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -64,7 +64,7 @@
 
         .logo img {
             height: 40px;
-            border-radius: 8px;
+            "
         }
 
         nav {
@@ -92,7 +92,7 @@
             margin: 2rem auto;
             background: var(--card);
             padding: 3rem;
-            border-radius: var(--radius);
+            "
             box-shadow: var(--shadow);
         }
 
@@ -124,7 +124,7 @@
         .setting-group {
             background: var(--secondary);
             padding: 2rem;
-            border-radius: var(--radius);
+            "
             margin: 2rem 0;
             border-left: 4px solid var(--accent);
         }
@@ -176,7 +176,7 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
-            border-radius: 30px;
+            "
         }
 
         .slider:before {
@@ -188,7 +188,7 @@
             bottom: 4px;
             background-color: white;
             transition: .4s;
-            border-radius: 50%;
+            "
         }
         
         input:checked + .slider {
@@ -209,7 +209,7 @@
             color: white;
             border: none;
             padding: 12px 24px;
-            border-radius: var(--radius);
+            "
             cursor: pointer;
             font-size: 16px;
             margin-right: 10px;
@@ -235,7 +235,7 @@
         .alert {
             padding: 15px;
             margin: 20px 0;
-            border-radius: var(--radius);
+            "
         }
         
         .alert-success {
@@ -269,7 +269,7 @@
         .gdpr-section {
             background: var(--secondary);
             padding: 2rem;
-            border-radius: var(--radius);
+            "
             margin: 30px 0;
             border-left: 4px solid var(--accent);
         }
@@ -294,7 +294,7 @@
             width: 100%;
             padding: 12px;
             border: 2px solid #e5e7eb;
-            border-radius: var(--radius);
+            "
             box-sizing: border-box;
             font-family: var(--body-font);
             transition: border-color 0.2s;
@@ -386,7 +386,7 @@
 <body>
     <header>
         <a href="index.html" class="logo">
-            <img src="img/logo.jpg" alt="SichrPlace Logo">
+            <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px;">
             SichrPlace
         </a>
         <nav>
@@ -724,7 +724,7 @@
                         requestsContainer.innerHTML = '<p>You have no GDPR requests.</p>';
                     } else {
                         requestsContainer.innerHTML = data.requests.map(req => `
-                            <div style="background: white; padding: 15px; margin: 10px 0; border-radius: 4px; border: 1px solid #ddd;">
+                            <div style="background: white; padding: 15px; margin: 10px 0; " border: 1px solid #ddd;">
                                 <strong>${req.requestType.charAt(0).toUpperCase() + req.requestType.slice(1)}</strong> - 
                                 <span style="color: ${req.status === 'completed' ? 'green' : req.status === 'pending' ? 'orange' : 'blue'}">
                                     ${req.status.charAt(0).toUpperCase() + req.status.slice(1)}

@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Message = require('../models/Message');
-const Conversation = require('../models/Conversation');
-const User = require('../models/User');
+const { MessageService, ConversationService } = require('../services/MessageService');
+const UserService = require('../services/UserService');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
@@ -45,22 +44,12 @@ router.get('/conversations', auth, async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
     
-    const conversations = await Conversation.find({
-      'participants.user': userId,
-      status: { $ne: 'closed' }
-    })
-    .populate('participants.user', 'name email profilePicture userType')
-    .populate('apartmentId', 'title address images')
-    .populate('offerId', 'title description price')
-    .populate('lastMessage.sender', 'name')
-    .sort({ updatedAt: -1 })
-    .skip(skip)
-    .limit(limit);
+    const conversations = await ConversationService.findByUserId(userId, { skip, limit });
 
     // Get unread counts for each conversation
     const conversationsWithUnread = await Promise.all(
       conversations.map(async (conv) => {
-        const unreadCount = await Message.getUnreadCount(conv._id, userId);
+        const unreadCount = await MessageService.getUnreadCount(conv.id, userId);
         return {
           ...conv.toObject(),
           unreadCount
@@ -135,7 +124,7 @@ router.get('/conversations/:conversationId', auth, async (req, res) => {
 // POST /api/conversations - Create a new conversation
 router.post('/conversations', auth, async (req, res) => {
   try {
-    const { participantId, apartmentId, offerId, subject, type, initialMessage } = req.body;
+    const { participantId, apartmentId, subject, initialMessage } = req.body;
     const userId = req.user.id;
     
     if (!participantId || !initialMessage) {
@@ -146,57 +135,41 @@ router.post('/conversations', auth, async (req, res) => {
     }
     
     // Check if participant exists
-    const participant = await User.findById(participantId);
+    const participant = await UserService.findById(participantId);
     if (!participant) {
       return res.status(404).json({ success: false, error: 'Participant not found' });
     }
     
-    // Check if conversation already exists between these users for this apartment/offer
-    let existingConversation = null;
-    if (apartmentId || offerId) {
-      const query = {
-        'participants.user': { $all: [userId, participantId] },
-        status: { $ne: 'closed' }
-      };
-      if (apartmentId) query.apartmentId = apartmentId;
-      if (offerId) query.offerId = offerId;
-      
-      existingConversation = await Conversation.findOne(query);
-    }
-    
+    // Find or create conversation
     let conversation;
-    
-    if (existingConversation) {
-      conversation = existingConversation;
+    if (apartmentId) {
+      conversation = await ConversationService.findOrCreate(apartmentId, userId, participantId);
     } else {
-      // Create new conversation
-      conversation = new Conversation({
-        participants: [
-          { user: userId, role: req.user.userType || 'applicant' },
-          { user: participantId, role: participant.userType || 'landlord' }
-        ],
-        apartmentId,
-        offerId,
-        subject,
-        type: type || 'apartment_inquiry'
+      // Create direct conversation without apartment
+      conversation = await ConversationService.create({
+        apartment_id: null,
+        participant_1_id: userId,
+        participant_2_id: participantId
       });
-      
-      await conversation.save();
     }
     
     // Create initial message
-    const message = new Message({
-      conversationId: conversation._id,
-      sender: userId,
+    const message = await MessageService.create({
+      conversation_id: conversation.id,
+      sender_id: userId,
       content: initialMessage,
-      type: 'text'
+      message_type: 'text'
     });
     
-    await message.save();
+    // Update conversation last message time
+    await ConversationService.updateLastMessage(conversation.id);
     
-    // Update conversation with last message
-    conversation.updateLastMessage(initialMessage, userId);
-    await conversation.save();
+    // Return conversation with populated data
+    res.status(201).json({
+      success: true,
+      conversation,
+      message
+    });
     
     // Populate and return
     await conversation.populate('participants.user', 'name email profilePicture userType');

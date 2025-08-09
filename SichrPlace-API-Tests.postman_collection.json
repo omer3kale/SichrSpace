@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "12345678-1234-1234-1234-123456789012",
+		"name": "SichrPlace API Tests - 100% Migration",
+		"description": "Complete API testing suite for SichrPlace 100% migration validation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/health",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3001",
+					"path": ["health"]
+				}
+			}
+		},
+		{
+			"name": "2. Get All Apartments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/apartments",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3001",
+					"path": ["api", "apartments"]
+				}
+			}
+		},
+		{
+			"name": "3. Admin Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"omer3kale@gmail.com\",\n  \"password\": \"password\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/auth/login",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3001",
+					"path": ["api", "auth", "login"]
+				}
+			}
+		},
+		{
+			"name": "4. Register New User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"testuser123\",\n  \"email\": \"test123@example.com\",\n  \"password\": \"securePassword123\",\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"role\": \"tenant\",\n  \"gdprConsent\": true,\n  \"dataProcessingConsent\": true\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/users/register",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3001",
+					"path": ["api", "users", "register"]
+				}
+			}
+		},
+		{
+			"name": "5. Create Viewing Request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"apartmentId\": \"REPLACE_WITH_APARTMENT_ID\",\n  \"requesterId\": \"REPLACE_WITH_USER_ID\",\n  \"preferredDate1\": \"2025-08-15T14:00:00Z\",\n  \"preferredDate2\": \"2025-08-16T15:00:00Z\",\n  \"preferredDate3\": \"2025-08-17T16:00:00Z\",\n  \"message\": \"I am very interested in viewing this property.\",\n  \"contactInfo\": {\n    \"phone\": \"+49123456789\",\n    \"email\": \"test123@example.com\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/viewing-requests",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3001",
+					"path": ["api", "viewing-requests"]
+				}
+			}
+		},
+		{
+			"name": "6. Get Conversations",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/conversations",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3001",
+					"path": ["api", "conversations"]
+				}
+			}
+		},
+		{
+			"name": "7. Create PayPal Payment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"amount\": \"25.00\",\n  \"currency\": \"EUR\",\n  \"description\": \"SichrPlace Viewing Service Fee\",\n  \"returnUrl\": \"http://localhost:3001/payment-success\",\n  \"cancelUrl\": \"http://localhost:3001/payment-cancel\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/payment/create",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3001",
+					"path": ["api", "payment", "create"]
+				}
+			}
+		}
+	]
+}

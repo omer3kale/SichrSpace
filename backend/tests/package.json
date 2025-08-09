@@ -1,0 +1,40 @@
+{
+  "name": "sichrplace-gdpr-tests",
+  "version": "1.0.0",
+  "description": "GDPR Compliance Test Suite for SichrPlace",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:gdpr": "jest --testPathPattern=gdpr",
+    "test:gdpr-all": "jest gdpr.test.js advanced-gdpr.test.js frontend-gdpr.test.js routes-gdpr.test.js routes-advanced-gdpr.test.js gdpr-models.test.js cookie-consent.test.js",
+    "test:routes": "jest routes-gdpr.test.js routes-advanced-gdpr.test.js",
+    "test:models": "jest gdpr-models.test.js",
+    "test:frontend": "jest cookie-consent.test.js frontend-gdpr.test.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": ["<rootDir>/setup.js"],
+    "testMatch": [
+      "**/tests/**/*.test.js",
+      "**/tests/**/*.spec.js"
+    ],
+    "collectCoverageFrom": [
+      "../services/GdprService.js",
+      "../utils/advancedGdprService.js",
+      "../utils/privacyComplianceScanner.js",
+      "../routes/gdpr.js",
+      "../routes/advancedGdpr.js",
+      "../models/*.js",
+      "../../frontend/js/cookie-consent.js"
+    ],
+    "coverageReporters": ["text", "lcov", "html"],
+    "coverageDirectory": "coverage",
+    "verbose": true
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "supertest": "^6.3.0",
+    "jsdom": "^22.0.0"
+  }
+}

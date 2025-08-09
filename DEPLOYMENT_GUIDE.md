@@ -50,7 +50,7 @@ Azure will automatically provide a managed SSL certificate for your custom domai
 
 ## What Gets Deployed:
 - 🐳 Container App with your SichrPlace application
-- 🗄️ Azure Cosmos DB for MongoDB (database)
+- 🗄️ Supabase PostgreSQL database (external service)
 - 📦 Azure Storage Account (file storage)
 - 🔍 Application Insights (monitoring)
 - 🏗️ Container Registry (for your Docker images)

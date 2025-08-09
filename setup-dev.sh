@@ -23,12 +23,8 @@ fi
 
 echo "✅ Node.js version: $NODE_VERSION"
 
-# Check if MongoDB is running (optional)
-if command -v mongod &> /dev/null; then
-    echo "✅ MongoDB is available"
-else
-    echo "⚠️  MongoDB not found locally. Make sure you have a MongoDB connection string in .env"
-fi
+# Check if Supabase configuration is available
+echo "📊 Database: Using Supabase PostgreSQL (no MongoDB required)"
 
 # Install dependencies
 echo "📦 Installing dependencies..."
@@ -45,8 +41,8 @@ fi
 if [ ! -f .env ]; then
     echo "📝 Creating .env file..."
     cat > .env << EOL
-# Database
-MONGODB_URI=mongodb://localhost:27017/sichrplace
+# Database - Supabase PostgreSQL (configure in backend/.env)
+# No MongoDB needed - using Supabase
 
 # JWT Secret (change this in production!)
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
@@ -90,7 +86,7 @@ npm run seed
 if [ $? -eq 0 ]; then
     echo "✅ Demo data seeded successfully"
 else
-    echo "⚠️  Failed to seed demo data (this is normal if MongoDB is not running)"
+    echo "⚠️  Failed to seed demo data (this is normal if Supabase is not configured)"
 fi
 
 echo ""
@@ -98,7 +94,7 @@ echo "🎉 Setup Complete!"
 echo "=================="
 echo ""
 echo "📋 Next Steps:"
-echo "1. Update .env file with your MongoDB connection string"
+echo "1. Configure backend/.env with your Supabase credentials"
 echo "2. Start the development server: npm run dev"
 echo "3. Open your browser to: http://localhost:3000"
 echo "4. Use the testing dashboard: http://localhost:3000/testing-dashboard.html"

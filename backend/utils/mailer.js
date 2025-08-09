@@ -1,13 +1,17 @@
 const nodemailer = require('nodemailer');
 
-// Configure transporter (use real SMTP in production, ethereal for dev/testing)
+// Configure transporter for Gmail SMTP using environment variables
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.ethereal.email',
-  port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587,
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
   secure: false,
   auth: {
-    user: process.env.SMTP_USER || 'your_ethereal_user',
-    pass: process.env.SMTP_PASS || 'your_ethereal_pass'
+    user: process.env.GMAIL_USER || 'omer3kale@gmail.com', // Use env var or fallback
+    pass: process.env.GMAIL_APP_PASSWORD || 'zbtr fcsc tqyf nxhp' // Use correct app password
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
@@ -22,7 +26,7 @@ const transporter = nodemailer.createTransport({
  */
 async function sendMail({ to, subject, html, text }) {
   const mailOptions = {
-    from: process.env.MAIL_FROM || '"SichrPlace Team" <sichrplace@gmail.com>',
+    from: '"SichrPlace Team" <omer3kale@gmail.com>',
     to,
     subject,
     html,
@@ -31,13 +35,10 @@ async function sendMail({ to, subject, html, text }) {
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    // Log preview URL if using ethereal
-    if (nodemailer.getTestMessageUrl) {
-      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    }
+    console.log('📧 Email sent successfully:', info.messageId);
     return info;
   } catch (err) {
-    console.error('Error sending email:', err);
+    console.error('❌ Error sending email:', err);
     throw err;
   }
 }

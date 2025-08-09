@@ -1,0 +1,23 @@
+{
+  "name": "sichrplace-netlify",
+  "version": "1.0.0",
+  "description": "SichrPlace Netlify Functions",
+  "scripts": {
+    "build": "echo 'Building Netlify functions...'",
+    "dev": "netlify dev",
+    "deploy": "netlify deploy",
+    "deploy:prod": "netlify deploy --prod",
+    "test:functions": "node test-netlify-functions.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.7",
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^2.4.0",
+    "netlify-cli": "^17.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

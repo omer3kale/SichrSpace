@@ -1,25 +1,22 @@
 {
   "name": "sichrplace-backend",
-  "ve    "mongoose": "^8.3.5",
-    "morgan": "^1.10.1",
-    "multer": "^2.0.2",
-    "nodemailer": "^7.0.5",.0.0",
+  "version": "1.0.0",
   "description": "Backend API for SichrPlace - a property rental and management platform.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "start:supabase": "echo 'Starting SichrPlace with Supabase...' && node server.js",
     "dev": "nodemon server.js",
+    "dev:supabase": "echo 'Development mode with Supabase...' && nodemon server.js",
+    "test:connection": "node -e \"require('./config/supabase').testConnection()\"",
+    "test:db": "node -e \"const {supabase} = require('./config/supabase'); supabase.from('users').select('count').limit(1).then(r => console.log('DB OK:', !r.error)).catch(e => console.error('DB Error:', e.message))\"",
     "lint": "eslint .",
-    "test": "jest",
-    "gdpr:migrate": "node utils/gdprMigration.js migrate",
-    "gdpr:anonymize": "node utils/gdprMigration.js anonymize",
-    "gdpr:report": "node utils/gdprMigration.js report",
-    "gdpr:cleanup": "node -e \"require('./utils/gdprService').cleanupExpiredData()\""
+    "test": "jest --testTimeout=10000"
   },
   "keywords": [
     "express",
-    "mongodb",
-    "mongoose",
+    "postgresql",
+    "supabase",
     "jwt",
     "property",
     "rental",
@@ -30,6 +27,10 @@
   "license": "MIT",
   "dependencies": {
     "@microsoft/clarity": "^1.0.0",
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "@supabase/realtime-js": "^2.14.0",
+    "@supabase/supabase-js": "^2.53.0",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.7",
@@ -42,16 +43,10 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "lusca": "^1.7.0",
-    "mongoose": "^8.3.5",
-<<<<<<< HEAD
-    "morgan": "^1.10.0",
-    "multer": "^2.0.2",
-    "nodemailer": "^7.0.5",
-=======
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
-    "nodemailer": "^7.0.3",
->>>>>>> b49e59219ef71f040aa3e6d6823414db2341ced1
+    "nodemailer": "^7.0.5",
+    "pg": "^8.16.3",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
