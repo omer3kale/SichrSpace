@@ -36,6 +36,9 @@ const configRoutes = require('./routes/config');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
+// Import viewing requests routes (Step 3)
+const viewingRequestsRoutes = require('./routes/viewing-requests');
+
 const app = express();
 const PORT = process.env.PORT || 3000; // Changed to match the running port
 
@@ -210,6 +213,9 @@ app.use('/api/conversations', conversationsRoute);
 // Add favorites API
 const favoritesRoute = require('./api/favorites');
 app.use('/api/favorites', favoritesRoute);
+
+// --- VIEWING REQUESTS ROUTES (Step 3) ---
+app.use('/api/viewing-requests', viewingRequestsRoutes);
 
 app.use('/auth', authRoutes); // Fixed route path - should be /auth not /api/auth
 app.use('/api/gdpr', gdprRoutes);

@@ -20,15 +20,18 @@ class EmailService {
   async initializeTransporter() {
     try {
       // Check if OAuth2 credentials are available
-      const hasOAuth2 = process.env.GMAIL_CLIENT_ID && process.env.GMAIL_CLIENT_SECRET && process.env.GMAIL_REFRESH_TOKEN;
+      const hasOAuth2 = process.env.GMAIL_CLIENT_ID && 
+                       process.env.GMAIL_CLIENT_SECRET && 
+                       process.env.GMAIL_REFRESH_TOKEN &&
+                       process.env.GMAIL_CLIENT_ID !== 'your-google-oauth2-client-id.apps.googleusercontent.com';
       
       console.log('📧 Initializing Gmail SMTP...');
-      console.log(`🔍 OAuth2 available: ${hasOAuth2}`);
-      console.log(`🔍 App Password available: ${!!process.env.GMAIL_APP_PASSWORD}`);
+      console.log(`🔍 OAuth2 available: ${hasOAuth2 ? 'YES - Configured' : 'NO - Using App Password fallback'}`);
+      console.log(`🔍 App Password available: ${!!process.env.GMAIL_APP_PASSWORD ? 'YES' : 'NO'}`);
       console.log(`🔍 Gmail User: ${process.env.GMAIL_USER || 'omer3kale@gmail.com'}`);
       
       if (hasOAuth2) {
-        console.log('🔐 Using OAuth2 authentication');
+        console.log('🔐 Using OAuth2 authentication (Production Grade)');
         // Gmail SMTP configuration with OAuth2 (recommended for production)
         this.transporter = nodemailer.createTransport({
           service: 'gmail',
@@ -44,8 +47,8 @@ class EmailService {
             accessToken: process.env.GMAIL_ACCESS_TOKEN
           }
         });
-      } else if (process.env.GMAIL_APP_PASSWORD) {
-        console.log('🔑 Using App Password authentication');
+            } else if (process.env.GMAIL_APP_PASSWORD) {
+        console.log('🔑 Using App Password authentication (Development Mode)');
         // Fallback to App Password authentication
         this.transporter = nodemailer.createTransport({
           service: 'gmail',
@@ -59,6 +62,11 @@ class EmailService {
         });
       } else {
         console.log('❌ No Gmail authentication credentials found');
+        console.log('💡 To enable OAuth2:');
+        console.log('   1. Set up Google Cloud Console project');
+        console.log('   2. Enable Gmail API');
+        console.log('   3. Configure OAuth2 credentials');
+        console.log('   4. Update environment variables');
         throw new Error('No Gmail authentication credentials configured');
       }
 

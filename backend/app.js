@@ -23,6 +23,7 @@ const secureVideosApi = require('./api/secure-videos');
 const authRoutes = require('./routes/auth');
 const apartmentRoutes = require('./routes/apartments');
 const favoritesApi = require('./api/favorites');
+const viewingRequestsRoutes = require('./routes/viewing-requests');
 const auth = require('./middleware/auth');
 
 // Middleware for parsing JSON bodies
@@ -67,6 +68,9 @@ app.use('/api/auth', authRoutes);
 
 // --- APARTMENT ROUTES ---
 app.use('/api/apartments', apartmentRoutes);
+
+// --- VIEWING REQUESTS ROUTES ---
+app.use('/api/viewing-requests', viewingRequestsRoutes);
 
 // --- FAVORITES API ---
 app.use('/api/favorites', favoritesApi);
