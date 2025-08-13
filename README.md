@@ -1,17 +1,21 @@
 # 🏠 SichrPlace - Student Apartment Platform
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Supabase-green)](https://sichrplace.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue)](https://omer3kale.github.io/SichrPlace77/)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue)](#)
 [![GDPR Compliant](https://img.shields.io/badge/GDPR-Compliant-success)](#)
 
 Modern apartment platform for students and young professionals in Germany with secure messaging, verified listings, and digital contracts.
 
 ## 🚀 Live Demo
-**[https://sichrplace.vercel.app](https://sichrplace.vercel.app)**
+
+**[View Live Demo →](https://omer3kale.github.io/SichrPlace77/)**
+
+✨ **Interactive GitHub Pages Demo** - Experience the platform with sample apartment listings, city filtering, and responsive design. Built with Next.js and deployed automatically via GitHub Actions.
 
 ## ⚡ Key Features
 
 ### 📱 **Progressive Web App (PWA)**
+
 - Offline functionality with service worker caching
 - Push notifications for messages and apartment alerts
 - Install as native app on mobile/desktop
