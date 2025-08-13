@@ -378,7 +378,16 @@ router.get('/profile', async (req, res) => {
         phone: user.phone,
         role: user.bio || 'user', // Return original role from bio
         emailVerified: user.email_verified,
-        accountStatus: user.account_status
+        accountStatus: user.account_status,
+        profilePicture: user.profile_picture,
+        notificationPreferences: user.notification_preferences || {
+          email: true,
+          sms: false,
+          push: true,
+          marketing: false
+        },
+        createdAt: user.created_at,
+        lastLogin: user.last_login
       }
     });
 
@@ -387,6 +396,75 @@ router.get('/profile', async (req, res) => {
     res.status(401).json({
       success: false,
       message: 'Invalid token'
+    });
+  }
+});
+
+// Update user profile
+router.put('/profile', [
+  body('firstName').optional().isLength({ min: 1 }).withMessage('First name cannot be empty'),
+  body('lastName').optional().isLength({ min: 1 }).withMessage('Last name cannot be empty'),
+  body('phone').optional().isMobilePhone().withMessage('Please enter a valid phone number'),
+  body('notificationPreferences').optional().isObject().withMessage('Notification preferences must be an object')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided'
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret');
+    const { firstName, lastName, phone, notificationPreferences } = req.body;
+
+    const updateData = {};
+    if (firstName !== undefined) updateData.first_name = firstName;
+    if (lastName !== undefined) updateData.last_name = lastName;
+    if (phone !== undefined) updateData.phone = phone;
+    if (notificationPreferences !== undefined) {
+      updateData.notification_preferences = notificationPreferences;
+    }
+
+    const updatedUser = await UserService.update(decoded.userId, updateData);
+    
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: {
+        id: updatedUser.id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        firstName: updatedUser.first_name,
+        lastName: updatedUser.last_name,
+        phone: updatedUser.phone,
+        profilePicture: updatedUser.profile_picture,
+        notificationPreferences: updatedUser.notification_preferences
+      }
+    });
+
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update profile'
     });
   }
 });

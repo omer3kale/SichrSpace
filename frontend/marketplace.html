@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>SichrPlace Marketplace - Equip your new home at a discount</title>
   <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
-     <a href="index.html" class="logo">
-      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px;">
-    </a>nk rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- PayPal SDK for Marketplace Payments -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AcPYlXozR8VS9kJSk7rv5MW36lMV66ZMyqZKjM0YVuvt0dJ1cIyHRvDmGeux0qu3gBOh6XswI5gin2WO&currency=EUR&locale=de_DE&components=buttons&enable-funding=venmo,paylater"></script>
+  <script src="js/paypal-integration.js"></script>
   
   <!-- Consent Manager (Professional GDPR Compliance) -->
   <script src="https://cdn.consentmanager.net/delivery/autoblocking/02bebe9642911.js"></script>
@@ -647,10 +649,10 @@
       const platformFee = Math.round(price * 0.02 * 100) / 100;
       const total = price;
       
-      // Show payment modal
+      // Show payment modal with PayPal integration
       const modal = `
         <div id="payment-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;">
-          <div style="background:white;border-radius:16px;padding:32px;max-width:400px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+          <div style="background:white;border-radius:16px;padding:32px;max-width:450px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.3);">
             <h3 style="color:var(--primary);margin:0 0 20px 0;font-family:var(--heading-font);text-align:center;">
               <i class="fas fa-shopping-cart"></i> Secure Payment
             </h3>
@@ -666,9 +668,17 @@
               <i class="fas fa-shield-alt" style="color:var(--accent);"></i>
               Your payment is protected by SichrPlace's secure payment system
             </div>
+            
+            <!-- PayPal Payment Button Container -->
+            <div id="marketplace-paypal-button" style="margin-bottom:16px;"></div>
+            
+            <div style="text-align:center;margin-bottom:16px;color:var(--muted);font-size:0.9rem;">
+              Or use alternative payment
+            </div>
+            
             <div style="display:flex;gap:12px;">
-              <button onclick="processPayment('${itemId}', ${price})" style="flex:1;background:var(--primary);color:white;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;">
-                <i class="fas fa-credit-card"></i> Pay Now
+              <button onclick="processTraditionalPayment('${itemId}', ${price})" style="flex:1;background:var(--primary);color:white;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;">
+                <i class="fas fa-credit-card"></i> Card Payment
               </button>
               <button onclick="closePaymentModal()" style="flex:1;background:var(--muted);color:white;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;">
                 Cancel
@@ -679,10 +689,104 @@
       `;
       
       document.body.insertAdjacentHTML('beforeend', modal);
+      
+      // Initialize PayPal button for marketplace item
+      initializeMarketplacePayPal(itemId, itemTitle, total);
     }
 
-    function processPayment(itemId, price) {
-      // Track purchase completion
+    // PayPal Integration for Marketplace Items
+    function initializeMarketplacePayPal(itemId, itemTitle, amount) {
+      if (window.paypalIntegration) {
+        // Get seller info from the item card
+        const itemCard = event.target.closest('.offer-card');
+        const sellerElement = itemCard.querySelector('.offer-seller, .seller-info');
+        const sellerId = sellerElement ? sellerElement.dataset.sellerId || 'seller_' + itemId : 'seller_' + itemId;
+        const sellerEmail = sellerElement ? sellerElement.dataset.sellerEmail || 'seller@sichrplace.com' : 'seller@sichrplace.com';
+        
+        window.paypalIntegration.createMarketplacePaymentButton({
+          itemName: itemTitle,
+          amount: parseFloat(amount),
+          sellerId: sellerId,
+          sellerEmail: sellerEmail,
+          containerSelector: '#marketplace-paypal-button',
+          onSuccess: function(result, details) {
+            console.log('Marketplace payment successful:', result);
+            closePaymentModal();
+            showMarketplacePaymentSuccess(itemTitle, amount, sellerEmail);
+            
+            // Track successful purchase
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'purchase', {
+                event_category: 'marketplace',
+                transaction_id: result.orderID || details.id,
+                currency: 'EUR',
+                value: amount,
+                items: [{
+                  item_id: itemId,
+                  item_name: itemTitle,
+                  price: amount,
+                  quantity: 1
+                }]
+              });
+            }
+          },
+          onError: function(error) {
+            console.error('Marketplace payment error:', error);
+            alert('Payment failed. Please try again or contact support.');
+          }
+        });
+      } else {
+        console.warn('PayPal integration not available. Please ensure paypal-integration.js is loaded.');
+      }
+    }
+
+    function showMarketplacePaymentSuccess(itemTitle, amount, sellerEmail = '') {
+      const sellerContactInfo = sellerEmail && sellerEmail !== 'seller@sichrplace.com' 
+        ? `The seller (${sellerEmail}) will contact you within 24 hours to arrange pickup or delivery.`
+        : 'The seller will contact you within 24 hours to arrange pickup or delivery.';
+      
+      showNotification(`✅ Payment successful! You purchased ${itemTitle} for €${amount}. The seller will contact you soon.`, 'success');
+      
+      // Show detailed success modal
+      const successModal = `
+        <div id="success-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1001;display:flex;align-items:center;justify-content:center;padding:20px;">
+          <div style="background:white;border-radius:16px;padding:32px;max-width:400px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.3);text-align:center;">
+            <div style="font-size:3rem;color:#10B981;margin-bottom:16px;">🎉</div>
+            <h3 style="color:var(--primary);margin:0 0 16px 0;font-family:var(--heading-font);">
+              Purchase Successful!
+            </h3>
+            <p style="margin:0 0 16px 0;color:var(--muted);">
+              You've successfully purchased <strong>${itemTitle}</strong> for <strong>€${amount}</strong> via PayPal.
+            </p>
+            <div style="background:#f8f9fa;border-radius:8px;padding:16px;margin:16px 0;border-left:4px solid var(--accent);">
+              <p style="margin:0;color:var(--muted);font-size:0.9rem;">
+                📧 ${sellerContactInfo}
+              </p>
+              ${sellerEmail && sellerEmail !== 'seller@sichrplace.com' ? 
+                `<p style="margin:8px 0 0 0;color:var(--muted);font-size:0.85rem;">
+                  💡 <em>You'll also receive a confirmation email with all the details.</em>
+                </p>` : ''
+              }
+            </div>
+            <button onclick="closeSuccessModal()" style="background:var(--primary);color:white;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">
+              Continue Shopping
+            </button>
+          </div>
+        </div>
+      `;
+      
+      setTimeout(() => {
+        document.body.insertAdjacentHTML('beforeend', successModal);
+      }, 1000);
+    }
+
+    function closeSuccessModal() {
+      const modal = document.getElementById('success-modal');
+      if (modal) modal.remove();
+    }
+
+    function processTraditionalPayment(itemId, price) {
+      // Traditional payment processing (renamed from processPayment)
       if (typeof gtag !== 'undefined') {
         gtag('event', 'purchase', {
           event_category: 'marketplace',

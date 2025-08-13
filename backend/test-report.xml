@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1">
+  <file path="/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js">
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Google Maps Service - Core Functionality should initialize map with custom options" duration="2">
+      <failure message="TypeError: GoogleMapsService is not a constructor"><![CDATA[TypeError: GoogleMapsService is not a constructor
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:360:26)
+    at Promise.then.completed (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:444:34)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Google Maps Service - Core Functionality should handle multiple markers with custom icons" duration="0">
+      <failure message="TypeError: GoogleMapsService is not a constructor"><![CDATA[TypeError: GoogleMapsService is not a constructor
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:370:26)
+    at Promise.then.completed (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:444:34)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Google Maps Service - Core Functionality should handle info windows with rich content" duration="0">
+      <failure message="TypeError: GoogleMapsService is not a constructor"><![CDATA[TypeError: GoogleMapsService is not a constructor
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:415:26)
+    at Promise.then.completed (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:444:34)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Google Maps Service - Core Functionality should handle map bounds and viewport management" duration="1">
+      <failure message="TypeError: GoogleMapsService is not a constructor"><![CDATA[TypeError: GoogleMapsService is not a constructor
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:447:26)
+    at Promise.then.completed (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:444:34)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Google Maps Service - Core Functionality should handle map event listeners" duration="0">
+      <failure message="TypeError: GoogleMapsService is not a constructor"><![CDATA[TypeError: GoogleMapsService is not a constructor
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:472:26)
+    at Promise.then.completed (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:444:34)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Google Maps Service - Core Functionality should handle different map types and styles" duration="1">
+      <failure message="TypeError: GoogleMapsService is not a constructor"><![CDATA[TypeError: GoogleMapsService is not a constructor
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:493:26)
+    at Promise.then.completed (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:444:34)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 📍 Geocoding Service - Advanced Coverage should handle various address formats" duration="200">
+      <failure message="Error: Geocoding failed: REQUEST_DENIED"><![CDATA[Error: Geocoding failed: REQUEST_DENIED
+    at GeocodingService.geocodeAddress (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/GeocodingService.js:58:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:529:24)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 📍 Geocoding Service - Advanced Coverage should handle reverse geocoding" duration="173">
+      <failure message="Error: Reverse geocoding failed: REQUEST_DENIED"><![CDATA[Error: Reverse geocoding failed: REQUEST_DENIED
+    at GeocodingService.reverseGeocode (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/GeocodingService.js:101:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:546:24)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 📍 Geocoding Service - Advanced Coverage should handle geocoding errors gracefully" duration="230">
+      <failure message="Error: Geocoding failed: REQUEST_DENIED"><![CDATA[Error: Geocoding failed: REQUEST_DENIED
+    at GeocodingService.geocodeAddress (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/GeocodingService.js:58:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:563:25)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 📍 Geocoding Service - Advanced Coverage should implement geocoding caching" duration="59">
+      <failure message="Error: Geocoding failed: REQUEST_DENIED"><![CDATA[Error: Geocoding failed: REQUEST_DENIED
+    at GeocodingService.geocodeAddress (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/GeocodingService.js:58:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at GeocodingService.geocodeWithCache (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/GeocodingService.js:137:12)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:573:23)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 📍 Geocoding Service - Advanced Coverage should handle batch geocoding" duration="313">
+      <failure message="Error: expect(received).toBe(expected) // Object.is equality"><![CDATA[Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: true
+Received: false
+    at Object.toBe (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:594:65)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 📍 Geocoding Service - Advanced Coverage should extract location components" duration="54">
+      <failure message="Error: Geocoding failed: REQUEST_DENIED"><![CDATA[Error: Geocoding failed: REQUEST_DENIED
+    at GeocodingService.geocodeAddress (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/GeocodingService.js:58:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at GeocodingService.geocodeWithComponents (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/GeocodingService.js:144:20)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:601:22)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🏢 Places Service - Comprehensive Testing should find nearby places with filters" duration="293">
+      <failure message="Error: Places search failed: REQUEST_DENIED"><![CDATA[Error: Places search failed: REQUEST_DENIED
+    at PlacesService.findNearbyPlaces (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/PlacesService.js:62:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:623:22)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🏢 Places Service - Comprehensive Testing should perform text-based place search" duration="58">
+      <failure message="Error: Text search failed: REQUEST_DENIED"><![CDATA[Error: Text search failed: REQUEST_DENIED
+    at PlacesService.textSearch (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/PlacesService.js:103:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:639:25)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🏢 Places Service - Comprehensive Testing should get detailed place information" duration="173">
+      <failure message="Error: Place details failed: REQUEST_DENIED"><![CDATA[Error: Place details failed: REQUEST_DENIED
+    at PlacesService.getPlaceDetails (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/PlacesService.js:148:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:660:23)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🏢 Places Service - Comprehensive Testing should categorize places by type" duration="1336"/>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🏢 Places Service - Comprehensive Testing should calculate place ratings and reviews" duration="57">
+      <failure message="Error: Place details failed: REQUEST_DENIED"><![CDATA[Error: Place details failed: REQUEST_DENIED
+    at PlacesService.getPlaceDetails (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/PlacesService.js:148:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:690:23)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🏢 Places Service - Comprehensive Testing should handle place photos and media" duration="56">
+      <failure message="Error: Place details failed: REQUEST_DENIED"><![CDATA[Error: Place details failed: REQUEST_DENIED
+    at PlacesService.getPlaceDetails (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/PlacesService.js:148:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:703:23)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🏢 Places Service - Comprehensive Testing should implement place search caching" duration="59">
+      <failure message="Error: Places search failed: REQUEST_DENIED"><![CDATA[Error: Places search failed: REQUEST_DENIED
+    at PlacesService.findNearbyPlaces (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/PlacesService.js:62:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at PlacesService.searchWithCache (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/PlacesService.js:231:14)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:725:24)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🚗 Directions Service - Route Planning should calculate routes between locations" duration="61">
+      <failure message="Error: Route calculation failed: REQUEST_DENIED"><![CDATA[Error: Route calculation failed: REQUEST_DENIED
+    at DirectionsService.calculateRoute (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:49:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:744:23)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🚗 Directions Service - Route Planning should handle waypoints and complex routes" duration="56">
+      <failure message="Error: Waypoint route calculation failed: REQUEST_DENIED"><![CDATA[Error: Waypoint route calculation failed: REQUEST_DENIED
+    at DirectionsService.calculateRouteWithWaypoints (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:88:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:762:21)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🚗 Directions Service - Route Planning should calculate distance and duration matrices" duration="56">
+      <failure message="Error: Distance matrix calculation failed: REQUEST_DENIED"><![CDATA[Error: Distance matrix calculation failed: REQUEST_DENIED
+    at DirectionsService.calculateDistanceMatrix (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:126:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:786:22)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🚗 Directions Service - Route Planning should handle route optimization" duration="57">
+      <failure message="Error: Waypoint route calculation failed: REQUEST_DENIED"><![CDATA[Error: Waypoint route calculation failed: REQUEST_DENIED
+    at DirectionsService.calculateRouteWithWaypoints (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:88:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at DirectionsService.optimizeRoute (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:146:21)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:808:30)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🚗 Directions Service - Route Planning should provide step-by-step navigation" duration="57">
+      <failure message="Error: Route calculation failed: REQUEST_DENIED"><![CDATA[Error: Route calculation failed: REQUEST_DENIED
+    at DirectionsService.calculateRoute (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:49:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at DirectionsService.getStepByStepDirections (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:177:21)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:819:26)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🚗 Directions Service - Route Planning should handle route alternatives" duration="57">
+      <failure message="Error: Route calculation failed: REQUEST_DENIED"><![CDATA[Error: Route calculation failed: REQUEST_DENIED
+    at DirectionsService.calculateRoute (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:49:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at DirectionsService.getRouteAlternatives (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:221:21)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:836:28)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🚗 Directions Service - Route Planning should handle traffic and real-time data" duration="57">
+      <failure message="Error: Route calculation failed: REQUEST_DENIED"><![CDATA[Error: Route calculation failed: REQUEST_DENIED
+    at DirectionsService.calculateRoute (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:49:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at DirectionsService.getRouteWithTraffic (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/DirectionsService.js:254:21)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:853:32)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Integration Testing - Combined Services should demonstrate apartment search with maps integration" duration="58">
+      <failure message="Error: Geocoding failed: REQUEST_DENIED"><![CDATA[Error: Geocoding failed: REQUEST_DENIED
+    at GeocodingService.geocodeAddress (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/services/GeocodingService.js:58:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:872:24)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Integration Testing - Combined Services should handle location-based search filtering" duration="1">
+      <failure message="ReferenceError: mapService is not defined"><![CDATA[ReferenceError: mapService is not defined
+    at Object.mapService (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:920:34)
+    at Promise.then.completed (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:444:34)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Integration Testing - Combined Services should calculate commute scores for apartments" duration="480"/>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Integration Testing - Combined Services should handle real estate market analysis" duration="1466"/>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Integration Testing - Combined Services should demonstrate mobile-responsive map features" duration="1">
+      <failure message="TypeError: GoogleMapsService is not a constructor"><![CDATA[TypeError: GoogleMapsService is not a constructor
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:983:26)
+    at Promise.then.completed (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:444:34)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎯 Integration Testing - Combined Services should handle performance optimization" duration="1">
+      <failure message="TypeError: GoogleMapsService is not a constructor"><![CDATA[TypeError: GoogleMapsService is not a constructor
+    at Object.<anonymous> (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/tests/step9-2-comprehensive.test.js:1012:26)
+    at Promise.then.completed (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:316:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:252:3)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:126:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at _runTestsForDescribeBlock (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:121:9)
+    at run (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/run.js:71:3)
+    at runAndTransformResultsToJestFormat (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at jestAdapter (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at runTestInternal (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:367:16)
+    at runTest (/Users/omer3kale/SichrPlace77/SichrPlace77/backend/node_modules/jest-runner/build/runTest.js:444:34)]]></failure>
+    </testCase>
+    <testCase name="🗺️ STEP 9.2 GOOGLE MAPS INTEGRATION - COMPREHENSIVE COVERAGE 🎉 FINAL STEP 9.2 VALIDATION should confirm complete Google Maps integration coverage" duration="1"/>
+  </file>
+</testExecutions>

@@ -146,4 +146,4 @@ POST /auth/register with admin role
 **Use your actual admin credentials in Postman:**
 - **Email**: `sichrplace@gmail.com` 
 - **Password**: `Gokhangulec29*`
-- **Admin Token**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU3NTMyY2ZjLTQ5M2MtNGJmMS05NDU4LWEzZjExZmE2NjAyYSIsImlhdCI6MTc1NDQ3ODI2NSwiZXhwIjoxNzU1MDgzMDY1fQ.MeDOfWitmaV_064vtvrvgBRMqRlrLYjYVBTzQXs7iKM`
+- **Admin Token**: `eyJhbGciOiJIUzI1NiIsInR5cC...your-jwt-token-here`

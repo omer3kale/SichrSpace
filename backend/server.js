@@ -39,8 +39,20 @@ const swaggerDocument = require('./swagger.json');
 // Import viewing requests routes (Step 3)
 const viewingRequestsRoutes = require('./routes/viewing-requests');
 
+// Import Google Maps routes (Step 9.2)
+const mapsRoutes = require('./routes/maps');
+
+// Import Performance routes (Step 9.1)
+const performanceRoutes = require('./routes/performance');
+
+// Import Redis Cache Service (Step 9.1)
+const { cacheService, cacheMiddleware } = require('./services/RedisCacheService');
+
 const app = express();
 const PORT = process.env.PORT || 3000; // Changed to match the running port
+
+// Initialize Redis Cache Service
+console.log('🚀 Initializing Redis Cache Service...');
 
 // --- LOGGING MIDDLEWARE ---
 app.use(morgan('combined'));
@@ -214,8 +226,40 @@ app.use('/api/conversations', conversationsRoute);
 const favoritesRoute = require('./api/favorites');
 app.use('/api/favorites', favoritesRoute);
 
+// Add Step 4 Enhanced User Experience APIs
+const profileRoute = require('./api/profile');
+app.use('/api/profile', profileRoute);
+
+const savedSearchesRoute = require('./api/saved-searches');
+app.use('/api/saved-searches', savedSearchesRoute);
+
+const reviewsRoute = require('./api/reviews');
+app.use('/api/reviews', reviewsRoute);
+
+const notificationsRoute = require('./api/notifications');
+app.use('/api/notifications', notificationsRoute);
+
+const recentlyViewedRoute = require('./api/recently-viewed');
+app.use('/api/recently-viewed', recentlyViewedRoute);
+
+
+// Add Step 5 Advanced Search APIs
+const advancedSearchRoute = require('./routes/advancedSearch');
+app.use('/api/search', advancedSearchRoute);
+
+// Add Step 6 Analytics Dashboard APIs
+const analyticsDashboardRoute = require('./routes/analyticsDashboard');
+app.use('/api/analytics', analyticsDashboardRoute);
+
 // --- VIEWING REQUESTS ROUTES (Step 3) ---
 app.use('/api/viewing-requests', viewingRequestsRoutes);
+
+// --- GOOGLE MAPS ROUTES (Step 9.2) ---
+app.use('/api/maps', mapsRoutes);
+
+// --- PERFORMANCE ROUTES (Step 9.1) ---
+app.use('/api/performance', performanceRoutes);
+console.log('📊 Performance monitoring routes loaded');
 
 app.use('/auth', authRoutes); // Fixed route path - should be /auth not /api/auth
 app.use('/api/gdpr', gdprRoutes);
@@ -224,6 +268,11 @@ app.use('/api/gdpr', gdprTrackingRoutes);
 // Add missing feedback route
 const feedbackRoute = require('./api/feedback');
 app.use('/api/feedback', feedbackRoute);
+
+
+// Add Stripe/Payment Integration routes
+const paymentRoutes = require('./routes/payment');
+app.use('/api/payment', paymentRoutes);
 
 // Add PayPal payment routes
 const paypalRoutes = require('./routes/paypal');
@@ -266,8 +315,37 @@ app.get('/api/check-admin', auth, (req, res) => {
   res.json({ isAdmin: req.user.role === 'admin' });
 });
 
-// --- HEALTH CHECK ---
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+// --- HEALTH CHECK WITH ENHANCED MONITORING ---
+app.get('/api/health', async (req, res) => {
+  const healthData = {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    cache: {
+      connected: cacheService.connected,
+      status: cacheService.connected ? 'healthy' : 'disconnected'
+    }
+  };
+  
+  // Test database connection
+  try {
+    const dbConnected = await testConnection();
+    healthData.database = {
+      connected: dbConnected,
+      status: dbConnected ? 'healthy' : 'disconnected'
+    };
+  } catch (error) {
+    healthData.database = {
+      connected: false,
+      status: 'error',
+      error: error.message
+    };
+  }
+  
+  // Set appropriate status code
+  const isHealthy = healthData.cache.connected && healthData.database.connected;
+  res.status(isHealthy ? 200 : 503).json(healthData);
+});
 
 // --- SWAGGER DOCUMENTATION ---
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -275,10 +353,26 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // --- ERROR HANDLER (should be last) ---
 app.use(errorHandler);
 
+// Graceful shutdown handling for Redis
+process.on('SIGINT', async () => {
+  console.log('🛑 Shutting down gracefully...');
+  await cacheService.close();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('🛑 SIGTERM received, shutting down gracefully...');
+  await cacheService.close();
+  process.exit(0);
+});
+
 // Start the server only if not in test mode
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    console.log(`📊 Performance Dashboard: http://localhost:${PORT}/performance-dashboard.html`);
+    console.log(`📖 API Documentation: http://localhost:${PORT}/api-docs`);
+    console.log(`❤️  Health Check: http://localhost:${PORT}/api/health`);
   });
 }
 

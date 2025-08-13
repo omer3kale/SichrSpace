@@ -327,7 +327,7 @@ describe('GDPR Models Tests', () => {
     });
 
     test('should validate date formats', () => {
-      const validDate = '2025-08-06T10:30:00Z';
+      const validDate = '2025-08-06T10:30:00.000Z';
       const invalidDate = 'invalid-date';
 
       expect(new Date(validDate).toISOString()).toBe(validDate);

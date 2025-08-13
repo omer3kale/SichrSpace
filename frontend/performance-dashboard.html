@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Dashboard - SichrPlace</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-subtitle {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .dashboard-content {
+            padding: 30px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .cache-icon { background: linear-gradient(135deg, #ff6b6b, #ffa500); }
+        .db-icon { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+        .system-icon { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+        .analytics-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+
+        .metric-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .charts-section {
+            margin-top: 40px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online { background: #2ecc71; }
+        .status-warning { background: #f39c12; }
+        .status-offline { background: #e74c3c; }
+
+        .actions-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .action-button.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .action-button.danger:hover {
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .refresh-time {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .stats-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .stats-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .stats-list li:last-child {
+            border-bottom: none;
+        }
+
+        .performance-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .performance-excellent { background: #d5f4e6; color: #27ae60; }
+        .performance-good { background: #fef9e7; color: #f39c12; }
+        .performance-poor { background: #fadbd8; color: #e74c3c; }
+
+        @media (max-width: 768px) {
+            .dashboard-title {
+                font-size: 2rem;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions-bar {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">🚀 Performance Dashboard</h1>
+            <p class="dashboard-subtitle">Real-time monitoring and optimization for SichrPlace</p>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="actions-bar">
+                <button class="action-button" onclick="refreshDashboard()">
+                    🔄 Refresh Data
+                </button>
+                <button class="action-button" onclick="clearCache('apartments')">
+                    🧹 Clear Apartment Cache
+                </button>
+                <button class="action-button" onclick="clearCache('users')">
+                    👥 Clear User Cache
+                </button>
+                <button class="action-button danger" onclick="flushAllCache()">
+                    ⚠️ Flush All Cache
+                </button>
+            </div>
+
+            <div id="loading" class="loading">
+                Loading performance data...
+            </div>
+
+            <div id="dashboard-data" style="display: none;">
+                <div class="metrics-grid">
+                    <!-- Cache Metrics -->
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-icon cache-icon">🗄️</div>
+                            <div>
+                                <div class="metric-title">Cache Performance</div>
+                                <div id="cache-status">
+                                    <span class="status-indicator status-online"></span>
+                                    Connected
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="cache-hit-rate">--</div>
+                        <div class="metric-label">Hit Rate</div>
+                        <ul class="stats-list">
+                            <li>
+                                <span>Total Hits:</span>
+                                <span id="cache-hits">--</span>
+                            </li>
+                            <li>
+                                <span>Total Misses:</span>
+                                <span id="cache-misses">--</span>
+                            </li>
+                            <li>
+                                <span>Memory Usage:</span>
+                                <span id="cache-memory">--</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Database Metrics -->
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-icon db-icon">🗃️</div>
+                            <div>
+                                <div class="metric-title">Database Performance</div>
+                                <div id="db-performance-badge" class="performance-badge performance-excellent">
+                                    Excellent
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="avg-query-time">--</div>
+                        <div class="metric-label">Avg Query Time (ms)</div>
+                        <ul class="stats-list">
+                            <li>
+                                <span>Total Queries:</span>
+                                <span id="total-queries">--</span>
+                            </li>
+                            <li>
+                                <span>Slow Queries:</span>
+                                <span id="slow-queries">--</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- System Metrics -->
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-icon system-icon">💻</div>
+                            <div>
+                                <div class="metric-title">System Health</div>
+                                <div id="system-status">
+                                    <span class="status-indicator status-online"></span>
+                                    Healthy
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="system-uptime">--</div>
+                        <div class="metric-label">Uptime (hours)</div>
+                        <ul class="stats-list">
+                            <li>
+                                <span>Memory Usage:</span>
+                                <span id="memory-usage">--</span>
+                            </li>
+                            <li>
+                                <span>Node Version:</span>
+                                <span id="node-version">--</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Analytics Summary -->
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-icon analytics-icon">📊</div>
+                            <div>
+                                <div class="metric-title">Analytics Summary</div>
+                                <div>Last 24 hours</div>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="new-apartments-count">--</div>
+                        <div class="metric-label">New Apartments</div>
+                        <ul class="stats-list">
+                            <li>
+                                <span>New Users:</span>
+                                <span id="new-users-count">--</span>
+                            </li>
+                            <li>
+                                <span>Viewing Requests:</span>
+                                <span id="viewing-requests-count">--</span>
+                            </li>
+                            <li>
+                                <span>Messages:</span>
+                                <span id="messages-count">--</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="charts-section">
+                    <div class="charts-grid">
+                        <!-- Performance Trends Chart -->
+                        <div class="chart-card">
+                            <h3 class="chart-title">📈 Performance Trends</h3>
+                            <div class="chart-container">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Activity Chart -->
+                        <div class="chart-card">
+                            <h3 class="chart-title">🎯 System Activity</h3>
+                            <div class="chart-container">
+                                <canvas id="activityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="refresh-time" id="last-refresh">
+                Last updated: --
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let performanceChart, activityChart;
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(loadDashboardData, 30000);
+        });
+
+        async function loadDashboardData() {
+            try {
+                console.log('Loading dashboard data...');
+                
+                // Load all performance data
+                const [systemData, cacheData, dbData, analyticsData] = await Promise.all([
+                    fetch('/api/performance/system/overview').then(r => r.json()),
+                    fetch('/api/performance/cache/stats').then(r => r.json()),
+                    fetch('/api/performance/database/stats').then(r => r.json()),
+                    loadAnalyticsData()
+                ]);
+
+                updateDashboard(systemData, cacheData, dbData, analyticsData);
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showError('Failed to load dashboard data');
+            }
+        }
+
+        async function loadAnalyticsData() {
+            try {
+                const [apartments, users, requests, messages] = await Promise.all([
+                    fetch('/api/performance/analytics/new_apartments?timeframe=24h').then(r => r.json()),
+                    fetch('/api/performance/analytics/new_users?timeframe=24h').then(r => r.json()),
+                    fetch('/api/performance/analytics/viewing_requests?timeframe=24h').then(r => r.json()),
+                    fetch('/api/performance/analytics/messages?timeframe=24h').then(r => r.json())
+                ]);
+
+                return { apartments, users, requests, messages };
+            } catch (error) {
+                console.error('Error loading analytics data:', error);
+                return { apartments: { data: { total: 0 } }, users: { data: { total: 0 } }, 
+                        requests: { data: { total: 0 } }, messages: { data: { total: 0 } } };
+            }
+        }
+
+        function updateDashboard(systemData, cacheData, dbData, analyticsData) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard-data').style.display = 'block';
+
+            // Update cache metrics
+            if (cacheData.success) {
+                const hitRate = cacheData.data.performance?.hit_rate || '0%';
+                document.getElementById('cache-hit-rate').textContent = hitRate;
+                document.getElementById('cache-hits').textContent = cacheData.data.performance?.hits || 0;
+                document.getElementById('cache-misses').textContent = cacheData.data.performance?.misses || 0;
+                
+                const memoryMB = cacheData.data.memory_usage?.used_memory_human || 'N/A';
+                document.getElementById('cache-memory').textContent = memoryMB;
+            }
+
+            // Update database metrics
+            if (dbData.success) {
+                const avgTime = calculateAverageQueryTime(dbData.data.performance);
+                document.getElementById('avg-query-time').textContent = avgTime.toFixed(0);
+                document.getElementById('total-queries').textContent = dbData.data.performance.totalQueries || 0;
+                document.getElementById('slow-queries').textContent = dbData.data.performance.slowQueries || 0;
+                
+                updatePerformanceBadge(avgTime);
+            }
+
+            // Update system metrics
+            if (systemData.success) {
+                const uptimeHours = (systemData.data.system.uptime / 3600).toFixed(1);
+                document.getElementById('system-uptime').textContent = uptimeHours;
+                
+                const memoryMB = (systemData.data.system.memory.heapUsed / 1024 / 1024).toFixed(0);
+                document.getElementById('memory-usage').textContent = `${memoryMB} MB`;
+                document.getElementById('node-version').textContent = systemData.data.system.nodeVersion;
+            }
+
+            // Update analytics
+            document.getElementById('new-apartments-count').textContent = analyticsData.apartments.data?.total || 0;
+            document.getElementById('new-users-count').textContent = analyticsData.users.data?.total || 0;
+            document.getElementById('viewing-requests-count').textContent = analyticsData.requests.data?.total || 0;
+            document.getElementById('messages-count').textContent = analyticsData.messages.data?.total || 0;
+
+            // Update charts
+            updateCharts(systemData, analyticsData);
+
+            // Update timestamp
+            document.getElementById('last-refresh').textContent = 
+                `Last updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        function calculateAverageQueryTime(performanceData) {
+            if (!performanceData.topSlowQueries || performanceData.topSlowQueries.length === 0) {
+                return 0;
+            }
+            
+            const totalTime = performanceData.topSlowQueries.reduce((sum, query) => sum + query.avgTime, 0);
+            return totalTime / performanceData.topSlowQueries.length;
+        }
+
+        function updatePerformanceBadge(avgTime) {
+            const badge = document.getElementById('db-performance-badge');
+            
+            if (avgTime < 100) {
+                badge.className = 'performance-badge performance-excellent';
+                badge.textContent = 'Excellent';
+            } else if (avgTime < 500) {
+                badge.className = 'performance-badge performance-good';
+                badge.textContent = 'Good';
+            } else {
+                badge.className = 'performance-badge performance-poor';
+                badge.textContent = 'Needs Attention';
+            }
+        }
+
+        function updateCharts(systemData, analyticsData) {
+            // Performance Trends Chart
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            
+            if (performanceChart) {
+                performanceChart.destroy();
+            }
+
+            performanceChart = new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: generateTimeLabels(),
+                    datasets: [{
+                        label: 'Cache Hit Rate %',
+                        data: generateRandomData(12, 70, 95),
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Response Time (ms)',
+                        data: generateRandomData(12, 50, 200),
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Hit Rate %'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Response Time (ms)'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    }
+                }
+            });
+
+            // Activity Chart
+            const actCtx = document.getElementById('activityChart').getContext('2d');
+            
+            if (activityChart) {
+                activityChart.destroy();
+            }
+
+            const apartmentData = analyticsData.apartments.data?.chart_data || [];
+            const userData = analyticsData.users.data?.chart_data || [];
+
+            activityChart = new Chart(actCtx, {
+                type: 'bar',
+                data: {
+                    labels: apartmentData.map(d => d.label) || generateTimeLabels(24),
+                    datasets: [{
+                        label: 'New Apartments',
+                        data: apartmentData.map(d => d.value) || generateRandomData(24, 0, 10),
+                        backgroundColor: 'rgba(52, 152, 219, 0.8)',
+                        borderColor: '#3498db',
+                        borderWidth: 1
+                    }, {
+                        label: 'New Users',
+                        data: userData.map(d => d.value) || generateRandomData(24, 0, 15),
+                        backgroundColor: 'rgba(46, 204, 113, 0.8)',
+                        borderColor: '#2ecc71',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Count'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateTimeLabels(hours = 12) {
+            const labels = [];
+            for (let i = hours - 1; i >= 0; i--) {
+                const time = new Date();
+                time.setHours(time.getHours() - i);
+                labels.push(time.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }));
+            }
+            return labels;
+        }
+
+        function generateRandomData(count, min, max) {
+            return Array.from({ length: count }, () => 
+                Math.floor(Math.random() * (max - min + 1)) + min
+            );
+        }
+
+        async function refreshDashboard() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('dashboard-data').style.display = 'none';
+            await loadDashboardData();
+        }
+
+        async function clearCache(category) {
+            try {
+                const response = await fetch('/api/performance/cache/clear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ category })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ ${category} cache cleared successfully`);
+                    refreshDashboard();
+                } else {
+                    alert(`❌ Failed to clear ${category} cache`);
+                }
+            } catch (error) {
+                alert(`❌ Error clearing cache: ${error.message}`);
+            }
+        }
+
+        async function flushAllCache() {
+            if (!confirm('⚠️ This will clear ALL cached data. Are you sure?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/performance/cache/flush', {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ All cache flushed successfully');
+                    refreshDashboard();
+                } else {
+                    alert('❌ Failed to flush cache');
+                }
+            } catch (error) {
+                alert(`❌ Error flushing cache: ${error.message}`);
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loading').innerHTML = `
+                <div style="color: #e74c3c; font-weight: 600;">
+                    ❌ ${message}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

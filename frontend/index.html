@@ -13,9 +13,30 @@
   <meta property="og:url" content="https://sichrplace.com/">
   <meta property="og:type" content="website">
   <meta name="robots" content="index, follow">
+  
+  <!-- Favicon and Icons -->
+  <link rel="icon" href="img/favicon.ico" sizes="any">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="icon" href="img/favicon-96x96.png" sizes="96x96" type="image/png">
+  <link rel="icon" href="img/web-app-manifest-192x192.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="img/web-app-manifest-512x512.png" sizes="512x512" type="image/png">
+  
   <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563EB">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SichrPlace">
+  <link rel="apple-touch-icon" href="img/pwa-icon-192.png">
+  
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- PWA Styles -->
+  <link rel="stylesheet" href="css/pwa-styles.css">
   
   <!-- PayPal SDK - SichrPlace LIVE -->
   <script src="https://www.paypal.com/sdk/js?client-id=AcPYlXozR8VS9kJSk7rv5MW36lMV66ZMyqZKjM0YVuvt0dJ1cIyHRvDmGeux0qu3gBOh6XswI5gin2WO&currency=EUR&locale=de_DE&components=buttons&enable-funding=venmo,paylater"></script>
@@ -1358,90 +1379,68 @@
 
         async createOrder() {
           try {
-            const response = await fetch('/api/create-viewing-order', {
+            const response = await fetch('/api/paypal/create', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
+                amount: 25.00,
+                currency: 'EUR',
+                description: `SichrPlace Viewing Service - Apartment ${viewingRequestData.apartmentId}`,
                 apartmentId: viewingRequestData.apartmentId,
-                viewingDate: viewingRequestData.viewingDate,
-                viewingTime: viewingRequestData.viewingTime,
-                applicantName: viewingRequestData.applicantName,
-                applicantEmail: viewingRequestData.applicantEmail,
-                applicantPhone: viewingRequestData.applicantPhone
+                viewingRequestId: `vr_${Date.now()}`,
+                returnUrl: `${window.location.origin}/frontend/viewing-success.html`,
+                cancelUrl: `${window.location.origin}/frontend/viewing-cancelled.html`
               }),
             });
 
             const orderData = await response.json();
 
-            if (orderData.id) {
-              return orderData.id;
+            if (orderData.success && orderData.paymentId) {
+              // Store payment ID for later use
+              window.currentPaymentId = orderData.paymentId;
+              return orderData.paymentId;
             }
-            const errorDetail = orderData?.details?.[0];
-            const errorMessage = errorDetail
-              ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
-              : JSON.stringify(orderData);
-
-            throw new Error(errorMessage);
+            
+            throw new Error(orderData.error || 'Failed to create PayPal order');
           } catch (error) {
             console.error('PayPal createOrder error:', error);
-            resultMessage(`Could not initiate PayPal Checkout...<br><br>${error}`);
+            resultMessage(`Could not initiate PayPal Checkout...<br><br>${error.message}`);
           }
         },
 
         async onApprove(data, actions) {
           try {
-            const response = await fetch(`/api/capture-viewing-order/${data.orderID}`, {
+            const response = await fetch('/api/paypal/execute', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                apartmentId: viewingRequestData.apartmentId,
-                viewingDate: viewingRequestData.viewingDate,
-                viewingTime: viewingRequestData.viewingTime,
-                applicantName: viewingRequestData.applicantName,
-                applicantEmail: viewingRequestData.applicantEmail,
-                applicantPhone: viewingRequestData.applicantPhone,
-                questions: viewingRequestData.questions,
-                attentionPoints: viewingRequestData.attentionPoints
+                orderId: data.orderID,
+                payerId: data.payerID
               }),
             });
 
-            const orderData = await response.json();
+            const result = await response.json();
             
-            // Three cases to handle:
-            //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-            //   (2) Other non-recoverable errors -> Show a failure message
-            //   (3) Successful transaction -> Show confirmation or thank you message
-
-            const errorDetail = orderData?.details?.[0];
-
-            if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
-              // (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-              return actions.restart();
-            } else if (errorDetail) {
-              // (2) Other non-recoverable errors -> Show a failure message
-              throw new Error(`${errorDetail.description} (${orderData.debug_id})`);
-            } else if (orderData.success) {
-              // (3) Successful transaction -> Show confirmation
-              console.log('Viewing request successful:', orderData);
+            if (result.success && result.status === 'completed') {
+              // Payment successful - submit viewing request
+              await submitViewingRequest(result.transactionId);
+              resultMessage(`✅ Payment completed successfully! <br>Your viewing request has been submitted.<br>Transaction ID: ${result.transactionId}`);
               
-              // Close payment modal
-              closePayPalModal();
-              
-              // Show success message with enhanced details
-              showEnhancedSuccessMessage(orderData);
-              
+              // Close PayPal modal and show success
+              setTimeout(() => {
+                closePayPalModal();
+                showSuccessMessage('Your viewing request has been submitted successfully! Check your email for confirmation.');
+              }, 2000);
             } else {
-              throw new Error('Unexpected response format');
+              throw new Error(result.error || 'Payment execution failed');
             }
           } catch (error) {
             console.error('PayPal onApprove error:', error);
-            resultMessage(
-              `Sorry, your transaction could not be processed...<br><br>${error}`
-            );
+            resultMessage(`❌ Payment processing failed: ${error.message}`);
           }
         },
 
@@ -1475,7 +1474,7 @@
       `;
       
       successModal.innerHTML = `
-        <div style="background: #fff; " max-width: 600px; width: 95vw; padding: 32px 24px; text-align: center;">
+        <div style="background: #fff; border-radius: 18px; max-width: 600px; width: 95vw; padding: 32px 24px; text-align: center;">
           <div style="color: #10b981; font-size: 3rem; margin-bottom: 16px;">
             <i class="fa fa-check-circle"></i>
           </div>
@@ -1486,7 +1485,7 @@
             Your viewing request has been submitted and payment confirmed successfully.
           </p>
           
-          <div style="background: #f8fafc; padding: 20px; " margin: 20px 0; text-align: left;">
+          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
             <h4 style="margin: 0 0 12px 0; color: #374151; text-align: center;">Request Details</h4>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 14px;">
               <div><strong>Request ID:</strong></div>
@@ -1500,7 +1499,7 @@
             </div>
           </div>
           
-          <div style="background: #ecfdf5; border: 1px solid #d1fae5; padding: 16px; " margin-bottom: 20px; text-align: left;">
+          <div style="background: #ecfdf5; border: 1px solid #d1fae5; padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: left;">
             <h4 style="margin: 0 0 8px 0; color: #065f46;">Next Steps:</h4>
             <ul style="margin: 0; padding-left: 20px; color: #047857; line-height: 1.6;">
               ${orderData.nextSteps?.map(step => `<li>${step}</li>`).join('') || 
@@ -1509,12 +1508,12 @@
           </div>
           
           <div style="display: flex; gap: 12px; justify-content: center;">
-            <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" 
-                    style="padding: 12px 24px; background: #2563eb; color: white; border: none; " font-weight: 600; cursor: pointer;">
+            <button onclick="this.closest('div[style*=\\"position: fixed\\"]').remove()" 
+                    style="padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
               Got it!
             </button>
             <button onclick="window.location.reload()" 
-                    style="padding: 12px 24px; background: #f3f4f6; color: #374151; border: none; " font-weight: 600; cursor: pointer;">
+                    style="padding: 12px 24px; background: #f3f4f6; color: #374151; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
               Browse More
             </button>
           </div>
@@ -1529,6 +1528,35 @@
           successModal.remove();
         }
       }, 15000);
+    }
+
+    // Submit viewing request to backend after successful payment
+    async function submitViewingRequest(transactionId) {
+      try {
+        const response = await fetch('/api/viewing-request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...viewingRequestData,
+            transactionId: transactionId,
+            paymentStatus: 'completed'
+          }),
+        });
+
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to submit viewing request');
+        }
+        
+        console.log('Viewing request submitted successfully:', result);
+        return result;
+      } catch (error) {
+        console.error('Error submitting viewing request:', error);
+        throw error;
+      }
     }
 
     function showSuccessMessage() {
@@ -1685,5 +1713,8 @@
       console.log('Consent Manager bridge active:', !!window.ConsentManagerBridge);
     });
   </script>
+  
+  <!-- PWA Initialization -->
+  <script src="js/pwa-init.js"></script>
 </body>
 </html>

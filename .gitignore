@@ -58,6 +58,12 @@ typings/
 .env.test
 .env.local
 .env.production
+.env.staging
+.env.production.clean
+.env.staging.clean
+.env.status.clean
+.env.project
+.env.supabase.template
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -159,3 +165,9 @@ video-generator.html
 
 # Migration documentation (keep in repo)
 # SUPABASE_MIGRATION.md
+
+# Additional environment files to ignore
+.env.production
+.env.staging
+.env.supabase.template
+backend/config/*.env

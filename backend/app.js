@@ -8,7 +8,10 @@ const app = express();
 
 // Supabase configuration
 const supabaseUrl = process.env.SUPABASE_URL || 'https://cgkumwtibknfrhyiicoo.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNna3Vtd3RpYmtuZnJoeWlpY29vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDMwMTc4NiwiZXhwIjoyMDY5ODc3Nzg2fQ.5piAC3CPud7oRvA1Rtypn60dfz5J1ydqoG2oKj-Su3M';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || (() => {
+    console.error('SUPABASE_SERVICE_ROLE_KEY environment variable not set');
+    process.exit(1);
+})();
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Make supabase available to all routes
@@ -83,6 +86,10 @@ app.use('/api/feedback', feedbackApi);
 
 // --- SECURE VIDEOS API ---
 app.use('/api/videos', secureVideosApi);
+
+// --- PUSH NOTIFICATIONS API ---
+const pushNotificationsApi = require('./api/push-notifications');
+app.use('/api/push', pushNotificationsApi);
 
 // --- EMAIL API ---
 const EmailService = require('./services/emailService');

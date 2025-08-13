@@ -1,0 +1,32 @@
+{
+  "scripts": {
+    "test:step7": "mocha backend/tests/step7-integration.test.js --timeout 30000",
+    "test:step7:coverage": "nyc mocha backend/tests/step7-integration.test.js --timeout 30000",
+    "test:step7:watch": "mocha backend/tests/step7-integration.test.js --timeout 30000 --watch",
+    "test:step7:headless": "HEADLESS=true mocha backend/tests/step7-integration.test.js --timeout 30000",
+    "coverage:step7": "nyc --reporter=html --reporter=text --reporter=json mocha backend/tests/step7-integration.test.js",
+    "coverage:step7:report": "nyc report --reporter=html --reporter=text"
+  },
+  "nyc": {
+    "include": [
+      "backend/api/**/*.js",
+      "backend/routes/**/*.js",
+      "backend/middleware/**/*.js",
+      "backend/server.js",
+      "frontend/js/**/*.js"
+    ],
+    "exclude": [
+      "backend/tests/**/*.js",
+      "backend/node_modules/**",
+      "frontend/node_modules/**"
+    ],
+    "reporter": [
+      "html",
+      "text",
+      "json",
+      "lcov"
+    ],
+    "report-dir": "./coverage/step7",
+    "temp-dir": "./coverage/step7/.nyc_output"
+  }
+}

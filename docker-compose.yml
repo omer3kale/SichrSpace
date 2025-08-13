@@ -1,0 +1,141 @@
+# 🐳 SichrPlace Docker Compose - Development Environment
+version: '3.8'
+
+services:
+  # 🗄️ PostgreSQL Database
+  postgres:
+    image: postgres:13-alpine
+    container_name: sichrplace-postgres
+    environment:
+      POSTGRES_DB: sichr_place_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sichrplace-network
+
+  # 🔴 Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: sichrplace-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sichrplace-network
+
+  # 🚀 SichrPlace Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: sichrplace-backend
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      # Supabase Configuration
+      SUPABASE_URL: ${SUPABASE_URL:-https://your-project.supabase.co}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      # Google Maps API
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-your-google-maps-api-key-here}
+      # PayPal Configuration
+      PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID}
+      PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET}
+      PAYPAL_ENVIRONMENT: sandbox
+      # Redis for caching
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+      - /app/backend/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - sichrplace-network
+    restart: unless-stopped
+
+  # 🌐 Nginx Reverse Proxy (for frontend)
+  nginx:
+    image: nginx:alpine
+    container_name: sichrplace-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+    networks:
+      - sichrplace-network
+    restart: unless-stopped
+
+  # 🧪 Test Runner (for CI/CD)
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: sichrplace-tests
+    environment:
+      NODE_ENV: test
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-your-google-maps-api-key-here}
+      REDIS_URL: redis://redis:6379
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: sichr_place_test
+    command: ["npm", "run", "test:ci"]
+    volumes:
+      - ./backend:/app/backend
+      - test_coverage:/app/backend/coverage
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - sichrplace-network
+    profiles:
+      - testing
+
+# 📂 Volumes
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  test_coverage:
+    driver: local
+
+# 🌐 Networks
+networks:
+  sichrplace-network:
+    driver: bridge
+    name: sichrplace-dev

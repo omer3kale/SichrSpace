@@ -4,7 +4,10 @@
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = 'https://cgkumwtibknfrhyiicoo.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNna3Vtd3RpYmtuZnJoeWlpY29vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjQxNTg4MDksImV4cCI6MjAzOTczNDgwOX0.V6ydNKKv5EvUwR_hnKgBJJmNJ1nXMZL5FHj0d3OKz1Q';
+const supabaseKey = process.env.SUPABASE_ANON_KEY || (() => {
+    console.error('SUPABASE_ANON_KEY environment variable not set');
+    process.exit(1);
+})();
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 

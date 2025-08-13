@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-    <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apartments Listing</title>
+  <title>Apartments Listing - SichrPlace</title>
+  
+  <!-- Favicon and Icons -->
+  <link rel="icon" href="img/favicon.ico" sizes="any">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="icon" href="img/favicon-96x96.png" sizes="96x96" type="image/png">
+  <link rel="icon" href="img/web-app-manifest-192x192.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="img/web-app-manifest-512x512.png" sizes="512x512" type="image/png">
+  
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -50,7 +58,6 @@
     }
     .logo img {
       height: 40px;
-      "
     }
     nav {
       display: flex;
@@ -90,7 +97,7 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      "
+      border-radius: var(--radius);
       padding: 10px 28px;
       font-family: var(--heading-font);
       font-weight: 600;
@@ -120,7 +127,7 @@
     }
     .filters-modal {
       background: var(--card);
-      "
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 32px 28px;
       width: 90vw;
@@ -176,7 +183,7 @@
       width: 100%;
       padding: 10px;
       border: 1px solid #d1d5db;
-      "
+      border-radius: var(--radius);
       font-family: var(--body-font);
       font-size: 1rem;
       margin-bottom: 10px;
@@ -187,7 +194,7 @@
       background-color: #10B981;
       color: white;
       border: none;
-      "
+      border-radius: var(--radius);
       cursor: pointer;
       font-family: var(--heading-font);
       font-weight: 600;
@@ -209,7 +216,7 @@
     }
     .listing {
       background: var(--card);
-      "
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 24px 20px;
       display: flex;
@@ -229,7 +236,7 @@
       height: 130px;
       background-size: cover;
       background-position: center;
-      "
+      border-radius: var(--radius);
     }
     .listing-details {
       flex: 1;
@@ -251,7 +258,7 @@
       background-color: #10B981;
       color: white;
       border: none;
-      "
+      border-radius: var(--radius);
       cursor: pointer;
       font-family: var(--heading-font);
       font-weight: 600;
@@ -300,19 +307,39 @@
   <div class="page-title">🏠 Available Apartments</div>
   
   <!-- Enhanced Search and Filters -->
-  <div style="max-width: 900px; margin: 0 auto 32px auto; padding: 0 20px;">
-    <div style="background: white; padding: 24px; " box-shadow: var(--shadow); margin-bottom: 20px;">
+  <div style="max-width: 1200px; margin: 0 auto 32px auto; padding: 0 20px;">
+    <div style="background: white; padding: 24px; border-radius: 18px; box-shadow: var(--shadow); margin-bottom: 20px;">
       <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
         <!-- Search Input -->
-        <div style="flex: 1; min-width: 250px;">
+        <div style="flex: 1; min-width: 280px;">
           <input type="text" id="search-input" placeholder="Search by location, price, or description..." style="
             width: 100%;
             padding: 12px 16px;
             border: 2px solid #e1e5e9;
-            "
+            border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.2s;
           " oninput="handleSearch()" onkeyup="if(event.key==='Enter') handleSearch()">
+        </div>
+        
+        <!-- Advanced Search Button -->
+        <div>
+          <a href="advanced-search.html" style="
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+          " onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='var(--primary)'">
+            <i class="fas fa-search-plus"></i>
+            Advanced Search
+          </a>
         </div>
         
         <!-- Price Range -->
@@ -341,7 +368,7 @@
           <select id="bedrooms-filter" style="
             padding: 8px 12px;
             border: 2px solid #e1e5e9;
-            "
+            border-radius: 8px;
             font-size: 14px;
             background: white;
           " onchange="handleBedroomsFilter()">
@@ -359,7 +386,7 @@
           color: white;
           border: none;
           padding: 10px 16px;
-          "
+          border-radius: 8px;
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
@@ -451,7 +478,7 @@
           <input type="number" id="rooms" placeholder="Enter number of rooms">
         </div>
       </div>
-      <button class="apply-filters">Apply Filters</button>
+      <button class="apply-filters" onclick="applyModalFilters()">Apply Filters</button>
     </div>
   </div>
 
@@ -625,11 +652,34 @@
       filtersContainer.classList.toggle('active');
     }
   
+    // Track apartment view for recently viewed
+    async function trackApartmentView(apartmentId) {
+      const token = localStorage.getItem('userToken');
+      if (!token) return; // Only track for logged-in users
+      
+      try {
+        await fetch(`${API_BASE_URL}/api/recently-viewed`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ apartmentId })
+        });
+      } catch (error) {
+        console.log('Failed to track apartment view:', error);
+        // Don't show error to user as this is background tracking
+      }
+    }
+  
     function openOfferDetails(apartmentId) {
       // Find the apartment data
       const apartment = apartmentsData.find(apt => apt.id.toString() === apartmentId.toString());
       
       if (apartment) {
+        // Track this view for recently viewed
+        trackApartmentView(apartmentId);
+        
         // Store apartment data in URL for offer.html
         const params = new URLSearchParams({
           id: apartment.id,
@@ -859,6 +909,7 @@
       if (token) {
         console.log('✅ User authenticated - loading favorites...');
         loadUserFavorites();
+        updateNotificationCounter();
       }
     });
     
@@ -879,7 +930,14 @@
           <div id="user-menu" style="display: none; position: absolute; right: 0; top: 100%; background: white; box-shadow: var(--shadow); " padding: 10px; min-width: 150px; z-index: 1000;">
             <a href="#" onclick="viewFavorites()" style="display: block; padding: 8px; text-decoration: none; color: var(--text);">
               <i class="fa fa-heart"></i> My Favorites
-              <span id="favorites-counter" style="display: none; background: #e74c3c; color: white; padding: 2px 6px; " font-size: 11px; margin-left: 8px;"></span>
+              <span id="favorites-counter" style="display: none; background: #e74c3c; color: white; padding: 2px 6px; font-size: 11px; margin-left: 8px;"></span>
+            </a>
+            <a href="#" onclick="viewNotifications()" style="display: block; padding: 8px; text-decoration: none; color: var(--text);">
+              <i class="fa fa-bell"></i> Notifications
+              <span id="notifications-counter" style="display: none; background: #3498db; color: white; padding: 2px 6px; font-size: 11px; margin-left: 8px;"></span>
+            </a>
+            <a href="#" onclick="viewRecentlyViewed()" style="display: block; padding: 8px; text-decoration: none; color: var(--text);">
+              <i class="fa fa-history"></i> Recently Viewed
             </a>
             <a href="#" onclick="viewProfile()" style="display: block; padding: 8px; text-decoration: none; color: var(--text);">
               <i class="fa fa-user"></i> Profile
@@ -953,6 +1011,171 @@
       }
       
       document.getElementById('user-menu').style.display = 'none';
+    }
+
+    // View user notifications
+    async function viewNotifications() {
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        showNotification('Please login to view notifications', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/notifications?limit=20`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            displayNotificationsModal(data.data, data.unreadCount);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load notifications:', error);
+        showNotification('Failed to load notifications', 'error');
+      }
+      
+      document.getElementById('user-menu').style.display = 'none';
+    }
+
+    // View recently viewed apartments
+    async function viewRecentlyViewed() {
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        showNotification('Please login to view recently viewed apartments', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/recently-viewed?limit=10`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            displayRecentlyViewedApartments(data.data);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load recently viewed:', error);
+        showNotification('Failed to load recently viewed apartments', 'error');
+      }
+      
+      document.getElementById('user-menu').style.display = 'none';
+    }
+
+    // Display notifications modal
+    function displayNotificationsModal(notifications, unreadCount) {
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
+        align-items: center; justify-content: center;
+      `;
+      
+      const content = document.createElement('div');
+      content.style.cssText = `
+        background: white; border-radius: 12px; width: 90%; max-width: 600px; 
+        max-height: 80%; overflow-y: auto; padding: 20px;
+      `;
+      
+      content.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3>Notifications (${unreadCount} unread)</h3>
+          <button onclick="this.closest('.notification-modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        <div>
+          ${notifications.length > 0 ? notifications.map(notif => `
+            <div style="padding: 12px; border-bottom: 1px solid #eee; ${!notif.read ? 'background: #f8f9fa;' : ''}">
+              <h4 style="margin: 0 0 5px 0; font-size: 14px;">${notif.title}</h4>
+              <p style="margin: 0 0 5px 0; color: #666; font-size: 13px;">${notif.message}</p>
+              <small style="color: #999;">${new Date(notif.created_at).toLocaleDateString()}</small>
+            </div>
+          `).join('') : '<p>No notifications yet</p>'}
+        </div>
+      `;
+      
+      modal.className = 'notification-modal';
+      modal.appendChild(content);
+      document.body.appendChild(modal);
+      
+      // Mark notifications as read
+      if (unreadCount > 0) {
+        markAllNotificationsAsRead();
+      }
+    }
+
+    // Display recently viewed apartments
+    function displayRecentlyViewedApartments(recentApartments) {
+      if (recentApartments.length === 0) {
+        showNotification('No recently viewed apartments', 'info');
+        return;
+      }
+      
+      // Filter and display recently viewed apartments
+      const recentApartmentIds = recentApartments.map(item => item.apartment_id);
+      const recentData = apartmentsData.filter(apt => recentApartmentIds.includes(apt.id));
+      
+      if (recentData.length > 0) {
+        renderApartments(recentData);
+        showNotification(`Showing ${recentData.length} recently viewed apartments`, 'info');
+      } else {
+        showNotification('Recently viewed apartments are no longer available', 'info');
+      }
+    }
+
+    // Mark all notifications as read
+    async function markAllNotificationsAsRead() {
+      const token = localStorage.getItem('userToken');
+      if (!token) return;
+      
+      try {
+        await fetch(`${API_BASE_URL}/api/notifications/read-all`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        // Update notification counter
+        updateNotificationCounter();
+      } catch (error) {
+        console.error('Failed to mark notifications as read:', error);
+      }
+    }
+
+    // Update notification counter
+    async function updateNotificationCounter() {
+      const token = localStorage.getItem('userToken');
+      if (!token) return;
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/notifications?unreadOnly=true&limit=1`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const counter = document.getElementById('notifications-counter');
+          if (data.unreadCount > 0) {
+            counter.textContent = data.unreadCount;
+            counter.style.display = 'inline';
+          } else {
+            counter.style.display = 'none';
+          }
+        }
+      } catch (error) {
+        console.error('Failed to update notification counter:', error);
+      }
     }
     
     // Show all apartments again
@@ -1068,17 +1291,146 @@
       }
     }
     
+    // Apply modal filters
+    function applyModalFilters() {
+      const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+      const minPrice = parseFloat(document.getElementById('min-price').value) || 0;
+      const maxPrice = parseFloat(document.getElementById('max-price').value) || Infinity;
+      const minBedrooms = parseInt(document.getElementById('bedrooms-filter').value) || 0;
+      
+      // Modal filter values
+      const city = document.getElementById('city').value.toLowerCase().trim();
+      const moveIn = document.getElementById('move-in').value;
+      const moveOut = document.getElementById('move-out').value;
+      const modalPrice = parseFloat(document.getElementById('price').value) || Infinity;
+      const propertyType = document.getElementById('property-type').value;
+      const amenities = Array.from(document.getElementById('amenities').selectedOptions).map(opt => opt.value);
+      const bedTypes = Array.from(document.getElementById('bed-type').selectedOptions).map(opt => opt.value);
+      const roomsFilter = parseInt(document.getElementById('rooms').value) || 0;
+      
+      filteredApartments = apartmentsData.filter(apartment => {
+        // Quick search filters
+        const matchesSearch = !searchTerm || 
+          apartment.title.toLowerCase().includes(searchTerm) ||
+          apartment.description.toLowerCase().includes(searchTerm) ||
+          apartment.location.toLowerCase().includes(searchTerm) ||
+          apartment.price.toString().includes(searchTerm);
+        
+        const matchesPrice = apartment.price >= minPrice && apartment.price <= maxPrice && apartment.price <= modalPrice;
+        const matchesBedrooms = minBedrooms === 0 || (apartment.bedrooms && apartment.bedrooms >= minBedrooms);
+        
+        // Modal filters
+        const matchesCity = !city || apartment.location.toLowerCase().includes(city);
+        
+        const matchesMoveIn = !moveIn || !apartment.move_in_date || 
+          new Date(apartment.move_in_date) <= new Date(moveIn);
+        
+        const matchesMoveOut = !moveOut || !apartment.move_out_date || 
+          new Date(apartment.move_out_date) >= new Date(moveOut);
+        
+        const matchesPropertyType = !propertyType || apartment.property_type === propertyType;
+        
+        const matchesRooms = roomsFilter === 0 || (apartment.rooms && apartment.rooms >= roomsFilter);
+        
+        // For amenities and bed types, we'll implement a basic check
+        // In a real app, this would check against apartment amenities/bed_type fields
+        const matchesAmenities = amenities.length === 0 || true; // Placeholder - would need apartment amenities data
+        const matchesBedTypes = bedTypes.length === 0 || true; // Placeholder - would need apartment bed_type data
+        
+        return matchesSearch && matchesPrice && matchesBedrooms && matchesCity && 
+               matchesMoveIn && matchesMoveOut && matchesPropertyType && matchesRooms &&
+               matchesAmenities && matchesBedTypes;
+      });
+      
+      // Update display
+      renderApartments(filteredApartments);
+      updateModalResultsSummary();
+      
+      // Close modal
+      toggleFilters();
+      
+      showNotification(`Applied filters - showing ${filteredApartments.length} apartments`, 'success');
+    }
+    
+    // Update results summary for modal filters
+    function updateModalResultsSummary() {
+      const summary = document.getElementById('results-summary');
+      const total = apartmentsData.length;
+      const filtered = filteredApartments.length;
+      
+      if (filtered === total) {
+        summary.innerHTML = `<i class="fa fa-home"></i> Showing all ${total} apartments`;
+      } else {
+        summary.innerHTML = `<i class="fa fa-filter"></i> Showing ${filtered} of ${total} apartments`;
+      }
+      
+      // Add active filter indicators
+      const activeFilters = [];
+      
+      // Quick filters
+      const searchTerm = document.getElementById('search-input').value.trim();
+      const minPrice = document.getElementById('min-price').value;
+      const maxPrice = document.getElementById('max-price').value;
+      const bedrooms = document.getElementById('bedrooms-filter').value;
+      
+      // Modal filters
+      const city = document.getElementById('city').value.trim();
+      const moveIn = document.getElementById('move-in').value;
+      const moveOut = document.getElementById('move-out').value;
+      const modalPrice = document.getElementById('price').value;
+      const propertyType = document.getElementById('property-type').value;
+      const amenities = document.getElementById('amenities').selectedOptions;
+      const bedTypes = document.getElementById('bed-type').selectedOptions;
+      const rooms = document.getElementById('rooms').value;
+      
+      if (searchTerm) activeFilters.push(`Search: "${searchTerm}"`);
+      if (minPrice || maxPrice) activeFilters.push(`Quick Price: ${minPrice || '0'}-${maxPrice || '∞'}€`);
+      if (bedrooms) activeFilters.push(`${bedrooms}+ bedrooms`);
+      if (city) activeFilters.push(`City: "${city}"`);
+      if (moveIn) activeFilters.push(`Move-in: ${moveIn}`);
+      if (moveOut) activeFilters.push(`Move-out: ${moveOut}`);
+      if (modalPrice) activeFilters.push(`Max Price: €${modalPrice}`);
+      if (propertyType) activeFilters.push(`Type: ${propertyType.replace('-', ' ')}`);
+      if (amenities.length > 0) activeFilters.push(`${amenities.length} amenities`);
+      if (bedTypes.length > 0) activeFilters.push(`${bedTypes.length} bed types`);
+      if (rooms) activeFilters.push(`${rooms}+ rooms`);
+      
+      if (activeFilters.length > 0) {
+        summary.innerHTML += `<br><small style="color: var(--primary); font-weight: 600;">Active filters: ${activeFilters.join(', ')}</small>`;
+      }
+    }
+    
     // Clear all filters
     function clearFilters() {
+      // Quick filter fields
       document.getElementById('search-input').value = '';
       document.getElementById('min-price').value = '';
       document.getElementById('max-price').value = '';
       document.getElementById('bedrooms-filter').value = '';
       
+      // Modal filter fields
+      document.getElementById('city').value = '';
+      document.getElementById('move-in').value = '';
+      document.getElementById('move-out').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('property-type').value = '';
+      document.getElementById('rooms').value = '';
+      
+      // Clear multiple select fields
+      const amenitiesSelect = document.getElementById('amenities');
+      for (let i = 0; i < amenitiesSelect.options.length; i++) {
+        amenitiesSelect.options[i].selected = false;
+      }
+      
+      const bedTypesSelect = document.getElementById('bed-type');
+      for (let i = 0; i < bedTypesSelect.options.length; i++) {
+        bedTypesSelect.options[i].selected = false;
+      }
+      
       renderApartments(apartmentsData);
       updateResultsSummary(apartmentsData.length, apartmentsData.length);
       
-      showNotification('Filters cleared', 'info');
+      showNotification('All filters cleared', 'info');
     }
     
     // Enhanced apartment rendering with search highlighting

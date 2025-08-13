@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics & Reporting Dashboard</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f6fa;
+      margin: 0;
+      color: #222;
+    }
+    header {
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: #2563EB;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+    .dashboard-cards {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      padding: 28px 32px;
+      flex: 1 1 220px;
+      min-width: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .card .icon {
+      font-size: 2rem;
+      color: #2563EB;
+    }
+    .card .value {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #222;
+    }
+    .card .label {
+      color: #6b7280;
+      font-size: 1rem;
+    }
+    .dashboard-charts {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .chart-container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      padding: 24px 28px;
+      flex: 1 1 400px;
+      min-width: 340px;
+      margin-bottom: 32px;
+    }
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      color: #2563EB;
+    }
+    .popular-list, .location-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .popular-list li, .location-list li {
+      padding: 6px 0;
+      font-size: 1.05rem;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .popular-list li:last-child, .location-list li:last-child {
+      border-bottom: none;
+    }
+    @media (max-width: 900px) {
+      .dashboard-cards, .dashboard-charts {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="logo"><i class="fas fa-chart-line"></i> Analytics Dashboard</a>
+    <a href="apartments-listing.html" style="color:#2563EB;text-decoration:none;font-weight:500;">Back to Listings</a>
+  </header>
+  <div class="dashboard-container">
+    <div class="dashboard-cards" id="dashboard-cards">
+      <!-- Cards will be injected here -->
+    </div>
+    <div class="dashboard-charts">
+      <div class="chart-container">
+        <h2>Search Activity (Last 30 Days)</h2>
+        <canvas id="activityChart" height="120"></canvas>
+      </div>
+      <div class="chart-container">
+        <h2>Popular Search Terms</h2>
+        <ul class="popular-list" id="popular-list"></ul>
+      </div>
+      <div class="chart-container">
+        <h2>Top Locations</h2>
+        <ul class="location-list" id="location-list"></ul>
+      </div>
+    </div>
+  </div>
+  <script>
+    async function fetchJSON(url) {
+      const res = await fetch(url);
+      return res.json();
+    }
+    async function loadDashboard() {
+      // Fetch stats
+      const stats = await fetchJSON('/api/analytics/stats');
+      const cards = [
+        { icon: '🔍', value: stats.data?.total_searches || 0, label: 'Total Searches' },
+        { icon: '👤', value: stats.data?.unique_users || 0, label: 'Unique Users' },
+        { icon: '⚡', value: stats.data?.avg_response_time ? stats.data.avg_response_time + ' ms' : 'N/A', label: 'Avg Response Time' }
+      ];
+      document.getElementById('dashboard-cards').innerHTML = cards.map(card => `
+        <div class="card">
+          <span class="icon">${card.icon}</span>
+          <span class="value">${card.value}</span>
+          <span class="label">${card.label}</span>
+        </div>
+      `).join('');
+
+      // Fetch activity
+      const activity = await fetchJSON('/api/analytics/activity');
+      const days = Object.keys(activity.data || {}).sort();
+      const counts = days.map(day => activity.data[day]);
+      new Chart(document.getElementById('activityChart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: days,
+          datasets: [{
+            label: 'Searches',
+            data: counts,
+            borderColor: '#2563EB',
+            backgroundColor: 'rgba(37,99,235,0.1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: { x: { ticks: { color: '#6b7280' } }, y: { beginAtZero: true, ticks: { color: '#6b7280' } } }
+        }
+      });
+
+      // Fetch popular searches
+      const popular = await fetchJSON('/api/analytics/popular');
+      document.getElementById('popular-list').innerHTML = (popular.data || []).map(p => `<li><i class="fas fa-fire"></i> ${p.query} <span style="margin-left:auto;color:#6b7280;">${p.search_count}</span></li>`).join('');
+
+      // Fetch top locations
+      const locations = await fetchJSON('/api/analytics/locations');
+      document.getElementById('location-list').innerHTML = (locations.data || []).map(l => `<li><i class="fas fa-map-marker-alt"></i> ${l.name} <span style="margin-left:auto;color:#6b7280;">${l.popularity}</span></li>`).join('');
+    }
+    loadDashboard();
+  </script>
+</body>
+</html>

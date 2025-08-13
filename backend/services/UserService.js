@@ -259,6 +259,34 @@ class UserService {
       throw error;
     }
   }
+
+  /**
+   * Find user by ID (for compatibility with test expectations)
+   * @param {string} id - User ID
+   * @returns {Object} User data
+   */
+  static async findById(id) {
+    return await this.getById(id);
+  }
+
+  /**
+   * Update user (alias for test compatibility)
+   * @param {string} id - User ID
+   * @param {Object} updateData - Data to update
+   * @returns {Object} Updated user
+   */
+  static async update(id, updateData) {
+    return await this.updateUser(id, updateData);
+  }
+
+  /**
+   * Delete user (alias for test compatibility)
+   * @param {string} id - User ID
+   * @returns {Object} Deletion result
+   */
+  static async delete(id) {
+    return await this.deleteUser(id);
+  }
 }
 
 module.exports = UserService;

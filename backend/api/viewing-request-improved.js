@@ -12,7 +12,7 @@ const {
 } = require('@paypal/paypal-server-sdk');
 
 // Email configuration for SichrPlace
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'sichrplace@gmail.com',

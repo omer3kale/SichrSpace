@@ -2,14 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-    <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Landlord Dashboard</title>
+  <title>Landlord Dashboard - SichrPlace</title>
+  
+  <!-- Favicon and Icons -->
+  <link rel="icon" href="img/favicon.ico" sizes="any">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="icon" href="img/favicon-96x96.png" sizes="96x96" type="image/png">
+  <link rel="icon" href="img/web-app-manifest-192x192.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="img/web-app-manifest-512x512.png" sizes="512x512" type="image/png">
+  
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   
   <!-- Stripe.js -->
   <script src="https://js.stripe.com/v3/"></script>
+  
+  <!-- PayPal Integration -->
+  <script src="js/paypal-integration.js"></script>
   <style>
     :root {
       --primary: #2563EB;
@@ -875,6 +886,31 @@
           </div>
         </div>
 
+        <!-- Premium Features Section -->
+        <div class="payment-section">
+          <h3>🌟 Premium Features</h3>
+          <div class="payment-cards">
+            <div class="payment-card">
+              <h4>Featured Listing</h4>
+              <div class="payment-amount">€19.99</div>
+              <p class="payment-period">30 days</p>
+              <div id="featured-listing-paypal" style="margin-top: 16px;"></div>
+            </div>
+            <div class="payment-card">
+              <h4>Priority Support</h4>
+              <div class="payment-amount">€9.99</div>
+              <p class="payment-period">per month</p>
+              <div id="priority-support-paypal" style="margin-top: 16px;"></div>
+            </div>
+            <div class="payment-card">
+              <h4>Analytics Plus</h4>
+              <div class="payment-amount">€14.99</div>
+              <p class="payment-period">per month</p>
+              <div id="analytics-plus-paypal" style="margin-top: 16px;"></div>
+            </div>
+          </div>
+        </div>
+
         <!-- Payment History -->
         <div class="payment-section">
           <h3>Recent Transactions</h3>
@@ -1507,7 +1543,96 @@
       }
       // Also setup compare applicants for initial load
       setupCompareApplicants();
+      
+      // Initialize PayPal integration for premium features
+      initializePayPalIntegration();
     });
+
+    // PayPal Integration for Premium Features
+    function initializePayPalIntegration() {
+      if (typeof PayPalIntegration !== 'undefined') {
+        const paypalIntegration = new PayPalIntegration();
+        
+        // Featured Listing PayPal Button
+        if (document.getElementById('featured-listing-paypal')) {
+          paypalIntegration.createPremiumPaymentButton(
+            'featured-listing-paypal',
+            'Featured Listing',
+            '19.99',
+            'Boost your apartment listing visibility for 30 days',
+            function(data) {
+              console.log('Featured listing payment successful:', data);
+              showSuccessMessage('Your listing has been featured successfully! 🌟');
+              // Update UI to show featured status
+              updateFeatureStatus('featured', true);
+            }
+          );
+        }
+
+        // Priority Support PayPal Button
+        if (document.getElementById('priority-support-paypal')) {
+          paypalIntegration.createPremiumPaymentButton(
+            'priority-support-paypal',
+            'Priority Support',
+            '9.99',
+            'Get priority customer support for faster assistance',
+            function(data) {
+              console.log('Priority support payment successful:', data);
+              showSuccessMessage('Priority support activated! 🚀');
+              updateFeatureStatus('priority-support', true);
+            }
+          );
+        }
+
+        // Analytics Plus PayPal Button
+        if (document.getElementById('analytics-plus-paypal')) {
+          paypalIntegration.createPremiumPaymentButton(
+            'analytics-plus-paypal',
+            'Analytics Plus',
+            '14.99',
+            'Advanced analytics and insights for your listings',
+            function(data) {
+              console.log('Analytics Plus payment successful:', data);
+              showSuccessMessage('Analytics Plus activated! 📊');
+              updateFeatureStatus('analytics-plus', true);
+            }
+          );
+        }
+      } else {
+        console.warn('PayPal integration not available. Please ensure paypal-integration.js is loaded.');
+      }
+    }
+
+    function showSuccessMessage(message) {
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-success';
+      alert.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #10B981; color: white; padding: 16px; border-radius: 8px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+      alert.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa fa-check-circle"></i>
+          <span>${message}</span>
+          <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; margin-left: 8px; cursor: pointer;">×</button>
+        </div>
+      `;
+      document.body.appendChild(alert);
+      setTimeout(() => alert.remove(), 5000);
+    }
+
+    function updateFeatureStatus(feature, active) {
+      // Update UI to reflect active premium features
+      const featureCard = document.querySelector(`#${feature.replace('-', '')}-paypal`).closest('.payment-card');
+      if (featureCard && active) {
+        featureCard.style.border = '2px solid #10B981';
+        featureCard.style.background = 'linear-gradient(135deg, #f0fdf4, #ffffff)';
+        
+        const statusBadge = document.createElement('div');
+        statusBadge.className = 'feature-status';
+        statusBadge.style.cssText = 'position: absolute; top: 8px; right: 8px; background: #10B981; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;';
+        statusBadge.textContent = 'ACTIVE';
+        featureCard.style.position = 'relative';
+        featureCard.appendChild(statusBadge);
+      }
+    }
   </script>
 </body>
 </html>

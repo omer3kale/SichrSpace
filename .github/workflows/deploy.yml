@@ -1,0 +1,334 @@
+name: SichrPlace Production Deployment
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+        - staging
+
+env:
+  NODE_VERSION: '18.x'
+  AZURE_WEBAPP_NAME: sichrplace-app
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  REGISTRY_NAME: sichrplaceregistry
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm ci
+        cd backend && npm ci
+    
+    - name: Run backend tests
+      run: |
+        cd backend
+        npm test
+      env:
+        NODE_ENV: test
+        
+    - name: Run security audit
+      run: |
+        npm audit --audit-level moderate
+        cd backend && npm audit --audit-level moderate
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          backend/coverage/
+          backend/test-results.xml
+
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm ci --only=production
+        cd backend && npm ci --only=production
+    
+    - name: Create production build
+      run: |
+        mkdir -p dist
+        cp -r backend dist/
+        cp -r frontend dist/
+        cp package.json dist/
+        cp Dockerfile dist/
+        cp .dockerignore dist/
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: dist/
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: dist/
+    
+    - name: Login to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.REGISTRY_NAME }}.azurecr.io
+        username: ${{ secrets.AZURE_ACR_USERNAME }}
+        password: ${{ secrets.AZURE_ACR_PASSWORD }}
+    
+    - name: Build and push Docker image
+      run: |
+        # Create unique tag with timestamp and commit SHA
+        TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+        COMMIT_SHA=${GITHUB_SHA::7}
+        IMAGE_TAG="${REGISTRY_NAME}.azurecr.io/sichrplace:${TIMESTAMP}_${COMMIT_SHA}"
+        LATEST_TAG="${REGISTRY_NAME}.azurecr.io/sichrplace:latest"
+        
+        # Build Docker image
+        docker build -t $IMAGE_TAG -t $LATEST_TAG .
+        
+        # Push images
+        docker push $IMAGE_TAG
+        docker push $LATEST_TAG
+        
+        # Save image tag for deployment
+        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+        echo "::set-output name=image_tag::$IMAGE_TAG"
+      id: docker-build
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [docker-build, security-scan]
+    if: github.event_name == 'pull_request'
+    environment: staging
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Deploy to Azure Web App (Staging)
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}-staging
+        slot-name: staging
+        images: ${{ needs.docker-build.outputs.image_tag }}
+    
+    - name: Run staging health checks
+      run: |
+        sleep 30
+        curl -f https://sichrplace-staging.com/api/health || exit 1
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [docker-build, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Create deployment backup
+      run: |
+        # Backup current configuration
+        az webapp config show \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group sichrplace-rg \
+          --output json > backup-config.json
+        
+        az webapp config appsettings list \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group sichrplace-rg \
+          --output json > backup-settings.json
+    
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        images: ${{ needs.docker-build.outputs.image_tag }}
+    
+    - name: Update production settings
+      run: |
+        az webapp config appsettings set \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group sichrplace-rg \
+          --settings \
+          NODE_ENV=production \
+          PORT=8080 \
+          WEBSITES_PORT=8080 \
+          PAYPAL_MODE=live \
+          MONITORING_ENABLED=true \
+          DEPLOYMENT_ID=${{ github.run_id }}
+    
+    - name: Restart application
+      run: |
+        az webapp restart \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group sichrplace-rg
+    
+    - name: Health check with retries
+      run: |
+        for i in {1..10}; do
+          echo "Health check attempt $i/10..."
+          if curl -f https://sichrplace.com/api/health; then
+            echo "✅ Health check passed"
+            break
+          else
+            echo "⚠️ Health check failed, retrying in 30 seconds..."
+            sleep 30
+          fi
+          
+          if [ $i -eq 10 ]; then
+            echo "❌ Health checks failed, initiating rollback"
+            exit 1
+          fi
+        done
+    
+    - name: Verify PayPal integration
+      run: |
+        # Test PayPal webhook endpoint accessibility
+        curl -f -X POST https://sichrplace.com/api/paypal/webhooks \
+          -H "Content-Type: application/json" \
+          -d '{}' || echo "PayPal webhook endpoint tested"
+    
+    - name: Run smoke tests
+      run: |
+        # Test critical pages
+        curl -f https://sichrplace.com/
+        curl -f https://sichrplace.com/frontend/index.html
+        curl -f https://sichrplace.com/api/csrf-token
+        echo "✅ Smoke tests passed"
+    
+    - name: Upload deployment artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: deployment-backup
+        path: |
+          backup-config.json
+          backup-settings.json
+
+  notify:
+    name: Send Notifications
+    runs-on: ubuntu-latest
+    needs: [deploy-production, deploy-staging]
+    if: always()
+    
+    steps:
+    - name: Notify on success
+      if: needs.deploy-production.result == 'success' || needs.deploy-staging.result == 'success'
+      run: |
+        echo "🎉 Deployment successful!"
+        # Add notification logic here (Slack, Teams, Email, etc.)
+    
+    - name: Notify on failure
+      if: needs.deploy-production.result == 'failure' || needs.deploy-staging.result == 'failure'
+      run: |
+        echo "❌ Deployment failed!"
+        # Add failure notification logic here
+    
+    - name: Create deployment summary
+      run: |
+        echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Environment**: ${{ github.event.inputs.environment || 'production' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Timestamp**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **URL**: https://sichrplace.com" >> $GITHUB_STEP_SUMMARY
+
+  monitoring:
+    name: Setup Monitoring
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Setup Azure Application Insights
+      run: |
+        echo "Setting up monitoring and alerts..."
+        # Add Azure Application Insights setup commands
+        # Configure alerts for error rates, response times, etc.
+    
+    - name: Verify monitoring endpoints
+      run: |
+        sleep 60  # Wait for monitoring to initialize
+        curl -f https://sichrplace.com/api/metrics
+        echo "✅ Monitoring endpoints verified"

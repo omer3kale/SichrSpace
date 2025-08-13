@@ -1,0 +1,142 @@
+{
+  "name": "SichrPlace - Verified Student Apartments",
+  "short_name": "SichrPlace",
+  "description": "Find safe, verified apartments for students and young professionals in Germany",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2563EB",
+  "theme_color": "#2563EB",
+  "orientation": "portrait-primary",
+  "categories": ["lifestyle", "travel", "education"],
+  "lang": "en",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "img/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "img/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/logo-shield.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "img/pwa-icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/pwa-icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/pwa-icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/pwa-icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/pwa-icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/pwa-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/pwa-icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search Apartments",
+      "short_name": "Search",
+      "description": "Find verified apartments",
+      "url": "/marketplace.html",
+      "icons": [
+        {
+          "src": "img/pwa-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "My Dashboard",
+      "short_name": "Dashboard",
+      "description": "Access your account dashboard",
+      "url": "/applicant-dashboard.html",
+      "icons": [
+        {
+          "src": "img/pwa-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "short_name": "Chat",
+      "description": "View your messages",
+      "url": "/chat.html",
+      "icons": [
+        {
+          "src": "img/pwa-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "features": [
+    "offline",
+    "push-notifications",
+    "background-sync"
+  ]
+}

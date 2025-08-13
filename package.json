@@ -4,8 +4,8 @@
   "description": "Secure apartment rental platform connecting landlords and tenants",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "cd backend && node server.js",
+    "dev": "cd backend && nodemon server.js",
     "backend": "cd backend && node server.js",
     "backend:dev": "cd backend && nodemon server.js",
     "test": "jest --watchAll --verbose",
@@ -49,11 +49,16 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "chai": "^5.2.1",
     "eslint": "^8.55.0",
     "jest": "^29.7.0",
+    "mocha": "^11.7.1",
     "nodemon": "^3.0.2",
+    "nyc": "^17.1.0",
     "prettier": "^3.1.1",
-    "supertest": "^6.3.3"
+    "puppeteer": "^24.16.1",
+    "sinon": "^21.0.0",
+    "supertest": "^6.3.4"
   },
   "engines": {
     "node": ">=18.0.0",

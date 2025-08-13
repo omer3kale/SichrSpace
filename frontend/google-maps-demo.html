@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps Integration Demo - SichrPlace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .demo-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .api-example {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .response-example {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+        }
+        
+        .endpoint-badge {
+            background: #6f42c1;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-family: monospace;
+        }
+        
+        .test-button {
+            margin: 5px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-ready { background: #28a745; }
+        .status-demo { background: #ffc107; }
+        .status-pending { background: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4">🗺️ Google Maps Integration - Step 9.2</h1>
+                <p class="text-center lead">Advanced location services for SichrPlace property platform</p>
+            </div>
+        </div>
+
+        <!-- Feature Overview -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="demo-card">
+                    <h4>🎯 Implemented Features</h4>
+                    <ul class="feature-list">
+                        <li><span class="status-indicator status-ready"></span>Address Geocoding & Validation</li>
+                        <li><span class="status-indicator status-ready"></span>Reverse Geocoding (Coordinates → Address)</li>
+                        <li><span class="status-indicator status-ready"></span>Nearby Places Search (Restaurants, Schools, etc.)</li>
+                        <li><span class="status-indicator status-ready"></span>Distance & Duration Calculation</li>
+                        <li><span class="status-indicator status-ready"></span>Property Location Search</li>
+                        <li><span class="status-indicator status-ready"></span>Static Map URL Generation</li>
+                        <li><span class="status-indicator status-demo"></span>Interactive Map Interface</li>
+                        <li><span class="status-indicator status-demo"></span>Real-time Property Search</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="demo-card">
+                    <h4>🔧 API Configuration</h4>
+                    <p><strong>Status:</strong> <span class="badge bg-warning">Demo Mode</span></p>
+                    <p><strong>Environment Variable:</strong> <code>GOOGLE_MAPS_API_KEY</code></p>
+                    <p><strong>Required APIs:</strong></p>
+                    <ul>
+                        <li>Geocoding API</li>
+                        <li>Places API</li>
+                        <li>Distance Matrix API</li>
+                        <li>Maps JavaScript API</li>
+                        <li>Static Maps API</li>
+                    </ul>
+                    <p><small class="text-muted">Set your Google Maps API key in the .env file to enable full functionality.</small></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Endpoints Demo -->
+        <div class="row">
+            <div class="col-12">
+                <h3>🔗 Available API Endpoints</h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="demo-card">
+                    <h5><span class="endpoint-badge">POST</span> /api/maps/geocode</h5>
+                    <p>Convert address to coordinates</p>
+                    <div class="api-example">
+                        <strong>Request:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"address": "Brandenburger Tor, Berlin"<br>
+                        }
+                    </div>
+                    <button class="btn btn-primary test-button" onclick="testGeocode()">Test Geocoding</button>
+                    <div id="geocode-result" class="response-example mt-2" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="demo-card">
+                    <h5><span class="endpoint-badge">POST</span> /api/maps/reverse-geocode</h5>
+                    <p>Convert coordinates to address</p>
+                    <div class="api-example">
+                        <strong>Request:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"lat": 52.5200,<br>
+                        &nbsp;&nbsp;"lng": 13.4050<br>
+                        }
+                    </div>
+                    <button class="btn btn-primary test-button" onclick="testReverseGeocode()">Test Reverse Geocoding</button>
+                    <div id="reverse-result" class="response-example mt-2" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="demo-card">
+                    <h5><span class="endpoint-badge">POST</span> /api/maps/nearby-places</h5>
+                    <p>Find nearby restaurants, schools, etc.</p>
+                    <div class="api-example">
+                        <strong>Request:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"lat": 52.5200,<br>
+                        &nbsp;&nbsp;"lng": 13.4050,<br>
+                        &nbsp;&nbsp;"type": "restaurant",<br>
+                        &nbsp;&nbsp;"radius": 1000<br>
+                        }
+                    </div>
+                    <button class="btn btn-primary test-button" onclick="testNearbyPlaces()">Test Nearby Places</button>
+                    <div id="places-result" class="response-example mt-2" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="demo-card">
+                    <h5><span class="endpoint-badge">POST</span> /api/maps/search-by-location</h5>
+                    <p>Search properties near a location</p>
+                    <div class="api-example">
+                        <strong>Request:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"location": "Alexanderplatz, Berlin",<br>
+                        &nbsp;&nbsp;"radius": 5<br>
+                        }
+                    </div>
+                    <button class="btn btn-primary test-button" onclick="testPropertySearch()">Test Property Search</button>
+                    <div id="property-result" class="response-example mt-2" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="demo-card">
+                    <h5><span class="endpoint-badge">POST</span> /api/maps/distance</h5>
+                    <p>Calculate distance between two points</p>
+                    <div class="api-example">
+                        <strong>Request:</strong><br>
+                        {<br>
+                        &nbsp;&nbsp;"origin": "Berlin, Germany",<br>
+                        &nbsp;&nbsp;"destination": "Munich, Germany",<br>
+                        &nbsp;&nbsp;"mode": "driving"<br>
+                        }
+                    </div>
+                    <button class="btn btn-primary test-button" onclick="testDistance()">Test Distance</button>
+                    <div id="distance-result" class="response-example mt-2" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="demo-card">
+                    <h5><span class="endpoint-badge">GET</span> /api/maps/place-types</h5>
+                    <p>Get available place types for search</p>
+                    <div class="api-example">
+                        <strong>No request body required</strong>
+                    </div>
+                    <button class="btn btn-primary test-button" onclick="testPlaceTypes()">Test Place Types</button>
+                    <div id="types-result" class="response-example mt-2" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Status -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="demo-card">
+                    <h4>📊 Implementation Status</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6>✅ Backend Services</h6>
+                            <ul>
+                                <li>Google Maps Service class</li>
+                                <li>API routes & controllers</li>
+                                <li>Error handling & validation</li>
+                                <li>Database integration</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>✅ Frontend Components</h6>
+                            <ul>
+                                <li>Interactive map interface</li>
+                                <li>Location search forms</li>
+                                <li>Property result display</li>
+                                <li>Place type filtering</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>✅ Testing & Quality</h6>
+                            <ul>
+                                <li>Comprehensive test suite</li>
+                                <li>Mock services for testing</li>
+                                <li>Error scenario coverage</li>
+                                <li>Integration tests</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="demo-card">
+                    <h4>🚀 Next Steps to Enable Full Functionality</h4>
+                    <ol>
+                        <li><strong>Get Google Maps API Key:</strong>
+                            <ul>
+                                <li>Go to <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a></li>
+                                <li>Create/select a project</li>
+                                <li>Enable required APIs (Geocoding, Places, Distance Matrix, Maps JavaScript, Static Maps)</li>
+                                <li>Create credentials (API key)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Configure Environment:</strong>
+                            <ul>
+                                <li>Add <code>GOOGLE_MAPS_API_KEY=your_api_key_here</code> to <code>backend/.env</code></li>
+                                <li>Update <code>property-map.html</code> with your API key</li>
+                            </ul>
+                        </li>
+                        <li><strong>Database Migration:</strong>
+                            <ul>
+                                <li>Add latitude, longitude, place_id columns to apartments table</li>
+                                <li>Update existing properties with geocoded addresses</li>
+                            </ul>
+                        </li>
+                        <li><strong>Testing:</strong>
+                            <ul>
+                                <li>Run the test suite: <code>npm test step9-google-maps.test.js</code></li>
+                                <li>Test with real API calls</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Demo functions for testing API endpoints
+        const API_BASE = '/api/maps';
+        const DEMO_TOKEN = 'demo-token'; // In real app, get from localStorage
+
+        async function makeApiCall(endpoint, method = 'GET', data = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${DEMO_TOKEN}`
+                    }
+                };
+                
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+                
+                const response = await fetch(API_BASE + endpoint, options);
+                const result = await response.json();
+                
+                return {
+                    status: response.status,
+                    data: result
+                };
+            } catch (error) {
+                return {
+                    status: 500,
+                    data: { 
+                        success: false, 
+                        error: 'Network error: ' + error.message,
+                        note: 'This is expected in demo mode without API key'
+                    }
+                };
+            }
+        }
+
+        function showResult(elementId, result) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function testGeocode() {
+            const result = await makeApiCall('/geocode', 'POST', {
+                address: 'Brandenburger Tor, Berlin, Germany'
+            });
+            showResult('geocode-result', result);
+        }
+
+        async function testReverseGeocode() {
+            const result = await makeApiCall('/reverse-geocode', 'POST', {
+                lat: 52.5200,
+                lng: 13.4050
+            });
+            showResult('reverse-result', result);
+        }
+
+        async function testNearbyPlaces() {
+            const result = await makeApiCall('/nearby-places', 'POST', {
+                lat: 52.5200,
+                lng: 13.4050,
+                type: 'restaurant',
+                radius: 1000
+            });
+            showResult('places-result', result);
+        }
+
+        async function testPropertySearch() {
+            const result = await makeApiCall('/search-by-location', 'POST', {
+                location: 'Alexanderplatz, Berlin',
+                radius: 5
+            });
+            showResult('property-result', result);
+        }
+
+        async function testDistance() {
+            const result = await makeApiCall('/distance', 'POST', {
+                origin: 'Berlin, Germany',
+                destination: 'Munich, Germany',
+                mode: 'driving'
+            });
+            showResult('distance-result', result);
+        }
+
+        async function testPlaceTypes() {
+            const result = await makeApiCall('/place-types');
+            showResult('types-result', result);
+        }
+
+        // Show a welcome message
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🗺️ Google Maps Integration Demo Loaded');
+            console.log('📍 Features: Geocoding, Places Search, Distance Calculation, Property Search');
+            console.log('🔧 Status: Demo mode - Add GOOGLE_MAPS_API_KEY to enable full functionality');
+        });
+    </script>
+</body>
+</html>

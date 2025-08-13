@@ -1,19 +1,36 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const paypal = require('@paypal/checkout-server-sdk');
 
 // PayPal configuration
-const Environment = process.env.PAYPAL_ENVIRONMENT === 'production' 
-  ? paypal.core.ProductionEnvironment 
-  : paypal.core.SandboxEnvironment;
+const paypalBaseURL = process.env.PAYPAL_ENVIRONMENT === 'production' 
+  ? 'https://api.paypal.com'
+  : 'https://api.sandbox.paypal.com';
 
-const paypalClient = new paypal.core.PayPalHttpClient(
-  new Environment(
-    process.env.PAYPAL_CLIENT_ID,
-    process.env.PAYPAL_CLIENT_SECRET
-  )
-);
+const paypalClientId = process.env.PAYPAL_CLIENT_ID;
+const paypalClientSecret = process.env.PAYPAL_CLIENT_SECRET;
+
+// Helper function to get PayPal access token
+async function getPayPalAccessToken() {
+  const auth = Buffer.from(`${paypalClientId}:${paypalClientSecret}`).toString('base64');
+  
+  try {
+    const response = await fetch(`${paypalBaseURL}/v1/oauth2/token`, {
+      method: 'POST',
+      body: 'grant_type=client_credentials',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+    
+    const data = await response.json();
+    return data.access_token;
+  } catch (error) {
+    console.error('PayPal Access Token Error:', error);
+    throw error;
+  }
+}
 
 /**
  * @route   GET /api/paypal/config
@@ -27,7 +44,11 @@ router.get('/config', (req, res) => {
   });
 });
 
-// Real PayPal payment creation endpoint
+/**
+ * @route   POST /api/paypal/create
+ * @desc    Create PayPal payment order
+ * @access  Private
+ */
 router.post('/create', auth, async (req, res) => {
   try {
     const { amount, currency = 'EUR', description = 'SichrPlace Booking Fee', apartmentId, viewingRequestId, returnUrl, cancelUrl } = req.body;
@@ -37,9 +58,9 @@ router.post('/create', auth, async (req, res) => {
       return res.status(400).json({ error: 'Valid amount is required' });
     }
 
-    const request = new paypal.orders.OrdersCreateRequest();
-    request.prefer("return=representation");
-    request.requestBody({
+    const accessToken = await getPayPalAccessToken();
+
+    const createPayment = {
       intent: 'CAPTURE',
       purchase_units: [{
         amount: {
@@ -54,172 +75,228 @@ router.post('/create', auth, async (req, res) => {
         return_url: returnUrl || `${req.protocol}://${req.get('host')}/api/paypal/success`,
         cancel_url: cancelUrl || `${req.protocol}://${req.get('host')}/api/paypal/cancel`,
         brand_name: 'SichrPlace',
-        locale: 'de-DE',
-        landing_page: 'BILLING',
         user_action: 'PAY_NOW'
       }
+    };
+
+    const response = await fetch(`${paypalBaseURL}/v2/checkout/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      body: JSON.stringify(createPayment)
     });
 
-    const order = await paypalClient.execute(request);
-    
-    res.json({
-      success: true,
-      paymentId: order.result.id,
-      approvalUrl: order.result.links.find(link => link.rel === 'approve').href,
-      status: 'created',
-      amount: {
-        value: amount,
-        currency: currency
-      }
-    });
+    const data = await response.json();
+
+    if (response.ok) {
+      // Store payment details in memory for now (in production, use database)
+      if (!global.paymentStore) global.paymentStore = {};
+      global.paymentStore[data.id] = {
+        userId: req.userId,
+        apartmentId,
+        viewingRequestId,
+        amount,
+        currency,
+        description,
+        created: new Date()
+      };
+
+      res.json({
+        success: true,
+        orderId: data.id,
+        approvalUrl: data.links.find(link => link.rel === 'approve')?.href
+      });
+    } else {
+      console.error('PayPal Create Error:', data);
+      res.status(400).json({ error: 'Failed to create PayPal order', details: data });
+    }
   } catch (error) {
-    console.error('PayPal order creation error:', error);
-    res.status(500).json({ error: 'Failed to create PayPal payment' });
+    console.error('PayPal creation error:', error);
+    res.status(500).json({ error: 'Internal server error creating payment' });
   }
 });
 
-// Mock PayPal payment execution endpoint
+/**
+ * @route   POST /api/paypal/execute
+ * @desc    Execute/capture PayPal payment
+ * @access  Private
+ */
 router.post('/execute', auth, async (req, res) => {
   try {
-    const { paymentId, payerId } = req.body;
+    const { orderId } = req.body;
     
-    if (!paymentId || !payerId) {
-      return res.status(400).json({ error: 'Missing payment ID or payer ID' });
+    if (!orderId) {
+      return res.status(400).json({ error: 'Order ID is required' });
     }
-    
-    // Mock payment execution
-    const mockExecution = {
-      paymentId,
-      payerId,
-      status: 'completed',
-      transactionId: `TXN_${Date.now()}`,
-      executedAt: new Date().toISOString()
-    };
-    
-    res.json({
-      success: true,
-      status: 'completed',
-      transactionId: mockExecution.transactionId,
-      execution: mockExecution
+
+    const accessToken = await getPayPalAccessToken();
+
+    const response = await fetch(`${paypalBaseURL}/v2/checkout/orders/${orderId}/capture`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
     });
-    
+
+    const data = await response.json();
+
+    if (response.ok && data.status === 'COMPLETED') {
+      // Get stored payment details
+      const paymentDetails = global.paymentStore?.[orderId];
+      
+      // Here you would typically save to database
+      console.log('Payment completed:', {
+        orderId,
+        paymentDetails,
+        paypalData: data
+      });
+
+      res.json({
+        success: true,
+        orderId: data.id,
+        status: data.status,
+        paymentDetails: paymentDetails,
+        message: 'Payment completed successfully'
+      });
+    } else {
+      console.error('PayPal Capture Error:', data);
+      res.status(400).json({ error: 'Failed to capture payment', details: data });
+    }
   } catch (error) {
-    console.error('PayPal payment execution error:', error);
-    res.status(500).json({ error: 'Failed to execute PayPal payment', details: error.message });
+    console.error('PayPal execution error:', error);
+    res.status(500).json({ error: 'Internal server error executing payment' });
   }
 });
 
-// PayPal webhook endpoint for payment notifications
+/**
+ * @route   POST /api/paypal/marketplace/capture
+ * @desc    Capture marketplace item payment
+ * @access  Public (marketplace purchases don't require authentication)
+ */
+router.post('/marketplace/capture', async (req, res) => {
+  try {
+    const { 
+      orderID, 
+      paymentID, 
+      itemName, 
+      amount, 
+      sellerId, 
+      sellerEmail, 
+      payerDetails 
+    } = req.body;
+    
+    // Validate required fields
+    if (!orderID || !itemName || !amount) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: orderID, itemName, amount' 
+      });
+    }
+
+    const accessToken = await getPayPalAccessToken();
+
+    // Capture the payment
+    const response = await fetch(`${paypalBaseURL}/v2/checkout/orders/${orderID}/capture`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    const captureData = await response.json();
+
+    if (response.ok && captureData.status === 'COMPLETED') {
+      // Store marketplace transaction details
+      if (!global.marketplaceStore) global.marketplaceStore = {};
+      global.marketplaceStore[orderID] = {
+        paymentID,
+        itemName,
+        amount: parseFloat(amount),
+        sellerId,
+        sellerEmail,
+        payerDetails: {
+          name: payerDetails?.name?.given_name + ' ' + payerDetails?.name?.surname,
+          email: payerDetails?.email_address,
+          payerId: payerDetails?.payer_id
+        },
+        transactionId: captureData.purchase_units[0]?.payments?.captures[0]?.id,
+        status: 'completed',
+        created: new Date(),
+        paypalData: captureData
+      };
+
+      console.log('Marketplace payment completed:', {
+        orderID,
+        itemName,
+        amount,
+        sellerId,
+        transactionId: captureData.purchase_units[0]?.payments?.captures[0]?.id
+      });
+
+      // In a real application, you would:
+      // 1. Save transaction to database
+      // 2. Send email notifications to buyer and seller
+      // 3. Update item availability if needed
+      // 4. Create seller notification
+
+      res.json({
+        success: true,
+        orderID: orderID,
+        transactionId: captureData.purchase_units[0]?.payments?.captures[0]?.id,
+        status: captureData.status,
+        itemName,
+        amount,
+        sellerEmail,
+        message: 'Marketplace payment completed successfully',
+        nextSteps: 'The seller will be notified and will contact you shortly.'
+      });
+    } else {
+      console.error('PayPal Marketplace Capture Error:', captureData);
+      res.status(400).json({ 
+        error: 'Failed to capture marketplace payment', 
+        details: captureData 
+      });
+    }
+  } catch (error) {
+    console.error('Marketplace payment error:', error);
+    res.status(500).json({ 
+      error: 'Internal server error processing marketplace payment',
+      message: error.message 
+    });
+  }
+});
+
+/**
+ * @route   POST /api/paypal/webhook
+ * @desc    Handle PayPal webhooks
+ * @access  Public
+ */
 router.post('/webhook', async (req, res) => {
   try {
-    const webhookData = req.body;
+    const event = req.body;
     
-    console.log('PayPal webhook received:', webhookData.event_type);
+    console.log('PayPal Webhook received:', event.event_type);
     
-    // Process different webhook events
-    switch (webhookData.event_type) {
+    switch (event.event_type) {
       case 'PAYMENT.CAPTURE.COMPLETED':
-        console.log('Payment completed:', webhookData.resource?.id);
-        
-        // Trigger automatic payment confirmation email
-        await handlePaymentCompleted(webhookData);
+        console.log('Payment capture completed:', event.resource);
+        // Handle successful payment
         break;
-        
       case 'PAYMENT.CAPTURE.DENIED':
-        console.log('Payment denied:', webhookData.resource?.id);
-        
-        // Handle payment denial
-        await handlePaymentDenied(webhookData);
+        console.log('Payment capture denied:', event.resource);
+        // Handle failed payment
         break;
-        
       default:
-        console.log('Unhandled webhook event:', webhookData.event_type);
+        console.log('Unhandled webhook event:', event.event_type);
     }
     
     res.status(200).json({ received: true });
-    
   } catch (error) {
     console.error('PayPal webhook error:', error);
     res.status(500).json({ error: 'Webhook processing failed' });
-  }
-});
-
-/**
- * Handle completed payment - send confirmation email
- */
-async function handlePaymentCompleted(webhookData) {
-  try {
-    const EmailService = require('../services/emailService');
-    const emailService = new EmailService();
-    
-    // Extract payment data from webhook
-    const paymentData = {
-      transactionId: webhookData.resource?.id,
-      amount: webhookData.resource?.amount?.value,
-      currency: webhookData.resource?.amount?.currency_code,
-      payerId: webhookData.resource?.payer?.payer_id,
-      status: 'completed'
-    };
-    
-    // Get user email from payment data (you may need to store this during payment creation)
-    const userEmail = webhookData.resource?.payer?.email_address;
-    
-    if (userEmail) {
-      const userData = {
-        firstName: webhookData.resource?.payer?.name?.given_name || 'there'
-      };
-      
-      // Send payment confirmation email
-      const emailResult = await emailService.sendPaymentConfirmation(
-        userEmail,
-        userData,
-        paymentData
-      );
-      
-      console.log('Payment confirmation email sent:', emailResult.success);
-    }
-    
-    // Update viewing request status in database
-    // You can implement this based on your database structure
-    
-  } catch (error) {
-    console.error('Error handling payment completion:', error);
-  }
-}
-
-/**
- * Handle payment denial
- */
-async function handlePaymentDenied(webhookData) {
-  try {
-    // Log payment denial
-    console.log('Payment denied for transaction:', webhookData.resource?.id);
-    
-    // You can implement additional logic here like:
-    // - Updating database status
-    // - Sending notification emails
-    // - Releasing reserved viewing slots
-    
-  } catch (error) {
-    console.error('Error handling payment denial:', error);
-  }
-}
-
-// PayPal configuration endpoint
-router.get('/config', (req, res) => {
-  try {
-    const config = {
-      clientId: process.env.PAYPAL_CLIENT_ID ? 'configured' : null,
-      environment: process.env.NODE_ENV === 'production' ? 'production' : 'sandbox',
-      currency: 'EUR',
-      supportedPaymentMethods: ['paypal', 'card']
-    };
-    
-    res.json(config);
-    
-  } catch (error) {
-    console.error('PayPal config error:', error);
-    res.status(500).json({ error: 'Failed to get PayPal configuration' });
   }
 });
 

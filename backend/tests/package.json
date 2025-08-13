@@ -1,40 +1,71 @@
 {
-  "name": "sichrplace-gdpr-tests",
-  "version": "1.0.0",
-  "description": "GDPR Compliance Test Suite for SichrPlace",
+  "name": "sichrplace-production-tests",
+  "version": "2.0.0",
+  "description": "Complete Test Suite for SichrPlace Production Deployment",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:gdpr": "jest --testPathPattern=gdpr",
-    "test:gdpr-all": "jest gdpr.test.js advanced-gdpr.test.js frontend-gdpr.test.js routes-gdpr.test.js routes-advanced-gdpr.test.js gdpr-models.test.js cookie-consent.test.js",
-    "test:routes": "jest routes-gdpr.test.js routes-advanced-gdpr.test.js",
-    "test:models": "jest gdpr-models.test.js",
-    "test:frontend": "jest cookie-consent.test.js frontend-gdpr.test.js"
+    "test": "mocha **/*.test.js --timeout 30000 --recursive",
+    "test:watch": "mocha **/*.test.js --timeout 30000 --recursive --watch",
+    "test:coverage": "nyc mocha **/*.test.js --timeout 30000 --recursive",
+    "test:step8": "mocha step8-*.test.js --timeout 30000",
+    "test:step8-coverage": "nyc mocha step8-*.test.js --timeout 30000",
+    "test:security": "mocha step8-security.test.js --timeout 30000",
+    "test:performance": "mocha step8-performance.test.js --timeout 30000", 
+    "test:monitoring": "mocha step8-monitoring.test.js --timeout 30000",
+    "test:webhooks": "mocha step8-paypal-webhooks.test.js --timeout 30000",
+    "test:integration": "mocha step8-integration.test.js --timeout 30000",
+    "test:gdpr": "mocha gdpr*.test.js routes-gdpr*.test.js --timeout 30000",
+    "test:paypal": "mocha paypal*.test.js step8-paypal*.test.js --timeout 30000",
+    "test:all": "./run-step8-tests.sh"
   },
-  "jest": {
-    "testEnvironment": "node",
-    "setupFilesAfterEnv": ["<rootDir>/setup.js"],
-    "testMatch": [
-      "**/tests/**/*.test.js",
-      "**/tests/**/*.spec.js"
+  "mocha": {
+    "timeout": 30000,
+    "recursive": true,
+    "reporter": "spec",
+    "bail": false
+  },
+  "nyc": {
+    "include": [
+      "../middleware/productionSecurity.js",
+      "../utils/performance.js",
+      "../utils/monitoring.js",
+      "../routes/paypal-webhooks.js",
+      "../server-production.js",
+      "../services/*.js",
+      "../utils/*.js",
+      "../routes/*.js",
+      "../models/*.js"
     ],
-    "collectCoverageFrom": [
-      "../services/GdprService.js",
-      "../utils/advancedGdprService.js",
-      "../utils/privacyComplianceScanner.js",
-      "../routes/gdpr.js",
-      "../routes/advancedGdpr.js",
-      "../models/*.js",
-      "../../frontend/js/cookie-consent.js"
+    "exclude": [
+      "**/*.test.js",
+      "**/*.spec.js",
+      "**/node_modules/**",
+      "**/coverage/**",
+      "**/__mocks__/**"
     ],
-    "coverageReporters": ["text", "lcov", "html"],
-    "coverageDirectory": "coverage",
-    "verbose": true
+    "reporter": ["text", "html", "json", "lcov"],
+    "report-dir": "coverage",
+    "check-coverage": true,
+    "lines": 80,
+    "statements": 80,
+    "functions": 80,
+    "branches": 70
   },
   "devDependencies": {
-    "jest": "^29.0.0",
-    "supertest": "^6.3.0",
-    "jsdom": "^22.0.0"
+    "mocha": "^11.7.1",
+    "chai": "^5.2.1",
+    "sinon": "^19.0.2",
+    "supertest": "^6.3.4",
+    "nyc": "^17.1.0",
+    "puppeteer": "^24.16.1",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "express-rate-limit": "^7.4.1",
+    "compression": "^1.7.4",
+    "xss": "^1.0.15",
+    "validator": "^13.12.0",
+    "cors": "^2.8.5"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1"
   }
 }
