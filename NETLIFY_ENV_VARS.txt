@@ -1,0 +1,19 @@
+# Environment Variables for Netlify Deployment
+# Copy these to Netlify Dashboard → Site Settings → Environment Variables
+
+SUPABASE_URL=https://cgkumwtibknfrhyiicoo.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+PAYPAL_CLIENT_ID=your_paypal_client_id_here
+PAYPAL_CLIENT_SECRET=your_paypal_client_secret_here
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_gmail_app_password
+VAPID_PUBLIC_KEY=your_vapid_public_key
+VAPID_PRIVATE_KEY=your_vapid_private_key
+VAPID_EMAIL=your_email@gmail.com
+NODE_ENV=production
+
+# Instructions:
+# 1. Go to Netlify Dashboard
+# 2. Site Settings → Environment Variables
+# 3. Add each variable above with your actual values
+# 4. Redeploy your site

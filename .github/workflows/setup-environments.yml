@@ -1,0 +1,61 @@
+name: 🔧 Setup GitHub Environments
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-environments:
+    name: 🏗️ Configure Environments
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📋 Environment Setup Instructions
+      run: |
+        echo "🔧 GitHub Environment Configuration Required"
+        echo "=============================================="
+        echo ""
+        echo "Please configure the following environments in your GitHub repository:"
+        echo ""
+        echo "1. 🌍 PRODUCTION Environment:"
+        echo "   - GOOGLE_MAPS_API_KEY_PROD"
+        echo "   - SUPABASE_URL_PROD"
+        echo "   - SUPABASE_ANON_KEY_PROD"
+        echo "   - SUPABASE_SERVICE_ROLE_KEY_PROD"
+        echo "   - PAYPAL_CLIENT_ID_PROD"
+        echo "   - PAYPAL_CLIENT_SECRET_PROD"
+        echo "   - RAILWAY_TOKEN"
+        echo ""
+        echo "2. 🧪 STAGING Environment:"
+        echo "   - GOOGLE_MAPS_API_KEY (same as prod for testing)"
+        echo "   - SUPABASE_URL_STAGING"
+        echo "   - SUPABASE_ANON_KEY_STAGING"
+        echo "   - SUPABASE_SERVICE_ROLE_KEY_STAGING"
+        echo "   - PAYPAL_CLIENT_ID (sandbox)"
+        echo "   - PAYPAL_CLIENT_SECRET (sandbox)"
+        echo "   - RAILWAY_TOKEN_STAGING"
+        echo ""
+        echo "3. 🧪 Repository Secrets (for testing):"
+        echo "   - GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY || 'NOT_SET' }}"
+        echo "   - SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'NOT_SET' }}"
+        echo "   - SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'NOT_SET' }}"
+        echo "   - PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID || 'NOT_SET' }}"
+        echo ""
+        echo "📖 Setup Instructions:"
+        echo "1. Go to your GitHub repository"
+        echo "2. Navigate to Settings > Environments"
+        echo "3. Create 'production' and 'staging' environments"
+        echo "4. Add the secrets listed above to each environment"
+        echo "5. For repository secrets, go to Settings > Secrets and variables > Actions"
+        echo ""
+        echo "🔗 Your current Google Maps API Key is configured: your-google-maps-api-key-here"
+        echo ""
+        echo "✅ Once configured, your CI/CD pipeline will:"
+        echo "   - Run comprehensive tests (100% Google Maps coverage)"
+        echo "   - Perform security scanning"
+        echo "   - Deploy to staging on 'develop' branch"
+        echo "   - Deploy to production on 'main' branch"
+        echo "   - Run Lighthouse performance tests"
+        echo "   - Send deployment notifications"

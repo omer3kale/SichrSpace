@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "name": "sichrplace-live-test",
+  "builds": [
+    {
+      "src": "backend/app.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "frontend/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/health",
+      "dest": "/backend/app.js"
+    },
+    {
+      "src": "/api/paypal-config",
+      "dest": "/backend/app.js"
+    },
+    {
+      "src": "/api/viewing-request",
+      "dest": "/backend/app.js"
+    },
+    {
+      "src": "/api/send-message",
+      "dest": "/backend/app.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/app.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "PORT": "3000"
+  },
+  "functions": {
+    "backend/app.js": {
+      "maxDuration": 30
+    }
+  }
+}

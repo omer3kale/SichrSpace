@@ -60,6 +60,17 @@ const testSupabaseConnection = async () => {
 // Test Supabase connection in background
 testSupabaseConnection();
 
+// Health check endpoint for Railway and other platforms
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    service: 'SichrPlace Backend',
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Mount the messages routes under /api
 app.use('/api', messagesRoutes);
 

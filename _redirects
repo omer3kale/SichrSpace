@@ -1,0 +1,11 @@
+# API redirects for Netlify Functions
+/api/paypal-config /.netlify/functions/paypal-config 200
+/api/csrf-token /.netlify/functions/csrf-token 200
+/api/viewing-request /.netlify/functions/viewing-request 200
+/api/send-message /.netlify/functions/send-message 200
+/api/feedback /.netlify/functions/feedback 200
+/api/upload-apartment /.netlify/functions/upload-apartment 200
+/api/health /.netlify/functions/health 200
+
+# Frontend routing - serve index.html for all routes
+/* /index.html 200
