@@ -25,6 +25,7 @@
   "author": "SichrPlace Team",
   "license": "MIT",
   "dependencies": {
+    "@netlify/functions": "^4.2.1",
     "@paypal/paypal-server-sdk": "^1.1.0",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
