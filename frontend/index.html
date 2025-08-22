@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>SichrPlace - Verified Student Apartments in Germany | Safe Apartment Search Platform</title>
+  <link rel="stylesheet" href="css/logo-system.css">
+  <script src="js/language-switcher.js" defer></script>
+  <script src="js/logo-cookie-manager.js" defer></script>
   <meta name="description" content="Find safe, verified apartments for students and young professionals in Germany. Secure messaging, trusted landlords, and exclusive offers for AIESEC and university students.">
   <meta name="keywords" content="student apartments Germany, verified apartments, rent apartment Germany, student housing Berlin, landlord listing Germany, AIESEC housing, safe rental Germany, WG, student flat, young professionals, university housing">
   <link rel="canonical" href="https://sichrplace.com/">
@@ -726,16 +729,22 @@
 </head>
 <body>
   <header>
-    <a href="index.html" class="logo">
-      <img src="img/logo-shield.svg" alt="SichrPlace" style="height: 40px;">
+    <a href="index.html" class="logo-placeholder" data-type="navbar">
+      <div class="sichrplace-logo navbar-brand">
+        <div class="sichrplace-shield sichrplace-certified"></div>
+        <span class="sichrplace-text" data-translate="nav.home">SichrPlace</span>
+        <span class="german-certification">Certified</span>
+      </div>
     </a>
     <nav>
-      <a href="apartments-listing.html">Apartments</a>
+      <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
       <a href="chat.html">Messages</a>
-      <a href="login.html">Login</a>
-      <a href="create-account.html">Create Account</a>
+      <a href="login.html" data-translate="nav.login">Login</a>
+      <a href="register.html" data-translate="nav.register">Create Account</a>
       <a href="marketplace.html">Marketplace</a>
       <a href="viewing-request.html">View</a>
+      <!-- Language Switcher -->
+      <div class="language-switcher"></div>
       <span class="notification-bell" id="notification-bell" tabindex="0" aria-label="Show notifications">
         <i class="fa fa-bell"></i>
         <span class="notification-badge" id="notification-badge">2</span>
@@ -1233,12 +1242,32 @@
 
 
   <footer>
+    <!-- German Certification Footer -->
+    <div class="footer-certification">
+      <div class="certification-badges">
+        <div class="certification-badge german-authority">
+          <span data-translate="footer.certified">German Authority Certified</span>
+        </div>
+        <div class="certification-badge security-verified">
+          <span>Security Verified</span>
+        </div>
+        <div class="certification-badge data-protection">
+          <span>GDPR Compliant</span>
+        </div>
+      </div>
+      <div class="certification-text">
+        <span data-translate="footer.certified">SichrPlace is certified by German authorities as a trusted rental platform.</span>
+        Our security measures and data protection protocols meet the highest European standards.
+      </div>
+    </div>
+    
     <div class="footer-links">
-      <a href="about.html">About</a>
+      <a href="about.html" data-translate="footer.about">About</a>
       <a href="faq.html">FAQ</a>
       <a href="customer-service.html">Customer Service</a>
       <a href="marketplace.html">Marketplace</a>
-      <a href="scam-stories.html">Scam Stories</a>
+      <a href="privacy-policy.html" data-translate="footer.privacy">Privacy Policy</a>
+      <a href="terms-of-service.html" data-translate="footer.terms">Terms of Service</a>
     </div>
     <div class="footer-social">
       <a href="https://www.linkedin.com/company/sichrplace/" target="_blank"><i class="fab fa-linkedin"></i></a>
@@ -1246,6 +1275,17 @@
       <a href="https://www.instagram.com/sichrplace" target="_blank"><i class="fab fa-instagram"></i></a>
       <a href="https://www.tiktok.com/@sichrplace" target="_blank"><i class="fab fa-tiktok"></i></a>
     </div>
+    
+    <!-- SichrPlace Footer Logo -->
+    <div style="text-align: center; margin: 20px 0;">
+      <div class="logo-placeholder" data-type="footer">
+        <div class="sichrplace-logo">
+          <div class="sichrplace-shield sichrplace-certified"></div>
+          <span class="sichrplace-text">SichrPlace</span>
+        </div>
+      </div>
+    </div>
+    
     <p style="margin-top:16px;">&copy; 2025 SichrPlace. All rights reserved.<br>
       Created by <a href="https://www.linkedin.com/in/z%C3%A9t%C3%A9ny-dobos/?originalSubdomain=hu" style="color:#40E0D0;">Zétény Dobos</a> and <a href="https://www.linkedin.com/in/%C3%B6mer-%C3%BC%C3%A7kale-482787202/" style="color:#40E0D0;">Ömer Üçkale</a>.
     </p>

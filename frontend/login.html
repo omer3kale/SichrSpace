@@ -16,6 +16,9 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="css/logo-system.css">
+    <script src="js/language-switcher.js" defer></script>
+    <script src="js/logo-cookie-manager.js" defer></script>
     
     <style>
         :root {
@@ -292,7 +295,14 @@
     <div class="container">
         <div class="login-card">
             <div class="logo-section">
-                <h1><i class="fas fa-shield-alt"></i> SichrPlace</h1>
+                <div class="logo-placeholder header-logo" data-type="header">
+                    <div class="sichrplace-logo header-logo">
+                        <div class="sichrplace-shield large sichrplace-certified"></div>
+                        <span class="sichrplace-text">SichrPlace</span>
+                        <span class="german-certification">German Certified</span>
+                    </div>
+                </div>
+                <h1 style="margin-top: 15px;" data-translate="nav.login">Sign In</h1>
                 <p>Sign in to your secure apartment viewing account</p>
             </div>
 
