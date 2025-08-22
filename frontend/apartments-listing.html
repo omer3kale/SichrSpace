@@ -291,18 +291,25 @@
   </style>
     <script src="js/language-switcher.js" defer></script>
     <script src="js/logo-cookie-manager.js" defer></script>
+    <script src="js/language-switcher.js" defer></script>
 </head>
 <body>
   <header>
-    <a href="index.html" class="logo">
-      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px;">
+    <a href="index.html" class="logo-placeholder" data-type="navbar">
+      <div class="sichrplace-logo navbar-brand">
+        <div class="sichrplace-shield sichrplace-certified"></div>
+        <span class="sichrplace-text" data-translate="nav.home">SichrPlace</span>
+        <span class="german-certification">Certified</span>
+      </div>
     </a>
     <nav id="main-nav">
-      <a href="apartments-listing.html" style="color: var(--accent);">Apartments</a>
+      <a href="apartments-listing.html" data-translate="nav.apartments" style="color: var(--accent);">Apartments</a>
       <a href="add-property.html">Rent</a>
+      <!-- Language Switcher -->
+      <div class="language-switcher" style="margin-right: 15px;"></div>
       <!-- Dynamic navigation based on login status -->
       <span id="user-nav-section">
-        <a href="login-new.html">Login</a>
+        <a href="login-new.html" data-translate="nav.login">Login</a>
         <a href="create-account.html">Create Account</a>
       </span>
     </nav>
