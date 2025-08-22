@@ -4,9 +4,14 @@
   <meta charset="UTF-8">
     <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Offer Details</title>
+  <title>Offer Details - SichrPlace</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/logo-system.css">
+  <link rel="stylesheet" href="css/distance-widget.css">
+  <script src="js/language-switcher.js" defer></script>
+  <script src="js/location-services.js" defer></script>
+  <script src="js/logo-cookie-manager.js" defer></script>
   <style>
     :root {
       --primary: #2563EB;
@@ -575,6 +580,21 @@
         <a href="mailto:sichrplace@gmail.com" style="background:#EF4444;">Contact Us</a>
       </div>
     </div>
+
+    <!-- Location & Distance Section -->
+    <div class="location-section" style="margin-top: 40px; padding: 30px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);">
+      <h3 data-translate="apartment.location">Location & Distances</h3>
+      <div id="distance-widget" class="distance-widget-container">
+        <div class="loading-spinner" style="text-align: center; padding: 20px;">
+          📍 <span data-translate="map.calculating">Calculating distances...</span>
+        </div>
+      </div>
+      
+      <!-- Google Maps Container -->
+      <div id="map-container" style="margin-top: 20px; height: 300px; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
+        <div id="google-map" style="width: 100%; height: 100%;"></div>
+      </div>
+    </div>
   </main>
 
   <!-- Chat Page Modal -->
@@ -780,6 +800,58 @@ document.getElementById('booking-request-form').onsubmit = async function(e) {
     // Carousel navigation (dummy for now)
     function prevImage() {}
     function nextImage() {}
+
+    // Initialize location services and distance calculation
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Get apartment details (in real app, this would come from URL params or API)
+      const apartmentAddress = "Maximilianstraße 1, 80539 Munich, Germany"; // Example address
+      const city = "Munich"; // Example city
+      
+      try {
+        // Initialize location services
+        const locationServices = new LocationServices();
+        await locationServices.init();
+        
+        // Create distance widget
+        const distanceWidget = locationServices.createDistanceWidget(apartmentAddress, city);
+        const distanceContainer = document.getElementById('distance-widget');
+        distanceContainer.innerHTML = '';
+        distanceContainer.appendChild(distanceWidget);
+        
+        // Initialize map if Google Maps is available
+        if (window.google && window.google.maps) {
+          const geocoder = new google.maps.Geocoder();
+          geocoder.geocode({ address: apartmentAddress }, (results, status) => {
+            if (status === 'OK' && results[0]) {
+              const location = results[0].geometry.location;
+              locationServices.initializeMap('google-map', {
+                lat: location.lat(),
+                lng: location.lng()
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.warn('Could not initialize location services:', error);
+        document.getElementById('distance-widget').innerHTML = `
+          <div style="text-align: center; padding: 20px; color: #6b7280;">
+            <p>📍 Distance information currently unavailable</p>
+            <p style="font-size: 0.9em;">Location: ${apartmentAddress}</p>
+          </div>
+        `;
+      }
+    });
+  </script>
+  
+  <!-- Google Maps API -->
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places,geometry&callback=initMap">
+  </script>
+  <script>
+    function initMap() {
+      // Google Maps initialization callback
+      console.log('Google Maps API loaded');
+    }
   </script>
 </body>
 </html>
