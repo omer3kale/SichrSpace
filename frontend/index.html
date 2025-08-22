@@ -113,6 +113,24 @@
     nav a:hover {
       color: var(--accent);
     }
+    .cart-icon {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border-radius: 50%;
+      background: var(--primary-lighter);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .cart-icon:hover {
+      background: var(--primary) !important;
+      color: white !important;
+      transform: translateY(-2px);
+    }
+    .cart-icon i {
+      font-size: 1.1rem;
+    }
     .notification-bell {
       position: relative;
       display: inline-block;
@@ -738,11 +756,10 @@
     </a>
     <nav>
       <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
-      <a href="chat.html">Messages</a>
+      <a href="marketplace.html" class="cart-icon" title="Marketplace" aria-label="Marketplace">
+        <i class="fas fa-shopping-cart"></i>
+      </a>
       <a href="login.html" data-translate="nav.login">Login</a>
-      <a href="register.html" data-translate="nav.register">Create Account</a>
-      <a href="marketplace.html">Marketplace</a>
-      <a href="viewing-request.html">View</a>
       <!-- Language Switcher -->
       <div class="language-switcher"></div>
       <span class="notification-bell" id="notification-bell" tabindex="0" aria-label="Show notifications">

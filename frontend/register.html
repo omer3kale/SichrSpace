@@ -10,12 +10,56 @@
     <script src="js/language-switcher.js" defer></script>
     <script src="js/logo-cookie-manager.js" defer></script>
     <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        :root {
+            --primary: #2563EB;
+            --primary-dark: #1d4ed8;
+            --primary-darker: #134cca;
+            --primary-light: #b1c7f8;
+            --primary-lighter: #DBEAFE;
+            --primary-hover: #5484ef;
+            --primary-accent: #60A5FA;
+            --secondary: #F9FAFB;
+            --accent: #40E0D0;
+            --text: #222;
+            --muted: #6b7280;
+            --card: #fff;
+            --danger: #EF4444;
+            --success: #10b981;
+            --background: #FFFFFF;
+            --border: #E5E7EB;
+            --radius: 18px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --heading-font: "Poppins", sans-serif;
+            --body-font: "Roboto", sans-serif;
         }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-lighter) 0%, var(--secondary) 50%, var(--primary-light) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            33% { transform: translate(-48%, -52%) rotate(1deg); }
+            66% { transform: translate(-52%, -48%) rotate(-1deg); }
+        }
+
         .form-input:focus {
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
         .password-strength {
             height: 4px;

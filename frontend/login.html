@@ -24,16 +24,22 @@
         :root {
             --primary: #2563EB;
             --primary-dark: #1d4ed8;
+            --primary-darker: #134cca;
+            --primary-light: #b1c7f8;
+            --primary-lighter: #DBEAFE;
+            --primary-hover: #5484ef;
+            --primary-accent: #60A5FA;
             --secondary: #F9FAFB;
             --accent: #40E0D0;
+            --text: #222;
             --muted: #6b7280;
+            --card: #fff;
             --danger: #EF4444;
             --success: #10b981;
             --background: #FFFFFF;
-            --text: #1f2937;
             --border: #E5E7EB;
-            --radius: 12px;
-            --shadow: 0 10px 25px rgba(0,0,0,0.1);
+            --radius: 18px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
             --heading-font: "Poppins", sans-serif;
             --body-font: "Roboto", sans-serif;
         }
@@ -46,11 +52,32 @@
 
         body {
             font-family: var(--body-font);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-lighter) 0%, var(--secondary) 50%, var(--primary-light) 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             color: var(--text);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            33% { transform: translate(-48%, -52%) rotate(1deg); }
+            66% { transform: translate(-52%, -48%) rotate(-1deg); }
         }
 
         .container {
@@ -70,6 +97,8 @@
             max-width: 450px;
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
         }
 
         .login-card::before {
@@ -79,7 +108,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
+            background: linear-gradient(90deg, var(--primary), var(--primary-accent));
         }
 
         .logo-section {
@@ -164,7 +193,7 @@
         .btn {
             width: 100%;
             padding: 1rem;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
             color: white;
             border: none;
             border-radius: var(--radius);
@@ -176,10 +205,27 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover:not(:disabled) {
-            background: var(--primary-dark);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker));
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
         }
