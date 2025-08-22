@@ -312,6 +312,9 @@
                             <p data-translate="register.landlord_desc">Listing properties</p>
                         </div>
                     </div>
+                    <p class="text-sm text-muted mt-2" style="color: var(--muted); font-size: 0.875rem; margin-top: 0.5rem;">
+                        💡 Click the same option again to deselect
+                    </p>
                 </div>
 
                 <div class="form-group">
@@ -375,12 +378,24 @@
                 const type = e.currentTarget;
                 const accountType = type.dataset.type;
 
+                // If clicking the same selected type, deselect it
+                if (this.selectedAccountType === accountType) {
+                    this.deselectAccountType();
+                    return;
+                }
+
                 // Remove selected class from all types
                 this.accountTypes.forEach(t => t.classList.remove('selected'));
                 
                 // Add selected class to clicked type
                 type.classList.add('selected');
                 this.selectedAccountType = accountType;
+            }
+
+            deselectAccountType() {
+                // Remove selected class from all types
+                this.accountTypes.forEach(t => t.classList.remove('selected'));
+                this.selectedAccountType = null;
             }
 
             async handleSubmit(e) {
