@@ -2,11 +2,17 @@
   base = "/"
   publish = "frontend"
   command = "echo 'Frontend ready for deployment'"
+  functions = "functions"
 
 [build.environment]
   NODE_VERSION = "18"
 
 # API redirects - route API calls to Netlify Functions
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
 [[redirects]]
   from = "/api/paypal-config"
   to = "/.netlify/functions/paypal-config"
