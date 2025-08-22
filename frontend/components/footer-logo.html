@@ -1,0 +1,78 @@
+<!-- SichrPlace Footer with Trademark Logo -->
+<footer class="sichrplace-footer">
+    <div class="footer-logo-line">
+        <div class="footer-logo">
+            <img src="img/SichrPlaceLogo_944x944.jpg" alt="SichrPlace Trademark Logo" class="footer-logo-img">
+            <span class="footer-logo-text">SichrPlace</span>
+        </div>
+        <div class="footer-certification">
+            <span class="german-certification-footer">German Certified Platform</span>
+        </div>
+    </div>
+</footer>
+
+<style>
+.sichrplace-footer {
+    background: linear-gradient(135deg, var(--primary-lighter) 0%, var(--secondary) 100%);
+    padding: 20px 0;
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+}
+
+.footer-logo-line {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 0 20px;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.footer-logo-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.footer-logo-text {
+    font-family: var(--heading-font, "Poppins", sans-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary, #2563EB);
+}
+
+.footer-certification {
+    display: flex;
+    align-items: center;
+}
+
+.german-certification-footer {
+    font-size: 0.9rem;
+    color: var(--muted, #6b7280);
+    font-weight: 500;
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    border: 1px solid var(--border, #E5E7EB);
+}
+
+@media (max-width: 768px) {
+    .footer-logo-line {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .footer-logo-text {
+        font-size: 1.25rem;
+    }
+}
+</style>
