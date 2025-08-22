@@ -204,6 +204,20 @@
       max-width: 600px;
       margin: 0 auto;
     }
+    .hero-logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .hero-brand .sichrplace-text {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-left: 1rem;
+    }
+    .hero-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+    }
     .hero h1 {
       font-family: var(--heading-font);
       font-size: 3rem;
@@ -749,7 +763,7 @@
   <header>
     <a href="index.html" class="logo-placeholder" data-type="navbar">
       <div class="sichrplace-logo navbar-brand">
-        <div class="sichrplace-shield sichrplace-certified"></div>
+        <div class="sichrplace-shield large sichrplace-certified"></div>
         <span class="sichrplace-text" data-translate="nav.home">SichrPlace</span>
         <span class="german-certification">Certified</span>
       </div>
@@ -905,6 +919,12 @@
     <!-- Hero Section (Landing) -->
     <section class="hero">
       <div class="hero-content">
+        <div class="hero-logo">
+          <div class="sichrplace-logo hero-brand">
+            <div class="sichrplace-shield xlarge sichrplace-certified"></div>
+            <span class="sichrplace-text hero-text">SichrPlace</span>
+          </div>
+        </div>
         <h1>Find Your Next Apartment<br>with Confidence</h1>
         <p>Secure, transparent, and easy apartment search for students and professionals in Germany.</p>
         <form class="search-bar" action="apartments-listing.html" method="get">
