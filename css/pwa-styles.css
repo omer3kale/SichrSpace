@@ -1,0 +1,352 @@
+/* SichrPlace PWA Integration Styles and Components */
+
+/* PWA Install Button Styles */
+.pwa-install-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--primary, #2563EB), #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.pwa-install-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.pwa-install-button.hidden {
+  display: none;
+}
+
+.pwa-install-button i {
+  font-size: 16px;
+}
+
+/* Notification Toggle Styles */
+.notification-toggle {
+  margin: 16px 0;
+  padding: 16px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  color: var(--text, #333);
+}
+
+.toggle-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f3f4f6;
+  color: #6b7280;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-button:hover {
+  background: #e5e7eb;
+}
+
+.toggle-button.enabled {
+  background: var(--primary, #2563EB);
+  color: white;
+}
+
+.toggle-button.enabled:hover {
+  background: #1d4ed8;
+}
+
+/* Offline Indicator Styles */
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #f59e0b;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 9999;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.offline-indicator.show {
+  transform: translateY(0);
+}
+
+.offline-indicator i {
+  margin-right: 8px;
+}
+
+/* Update Notification Styles */
+.update-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-left: 4px solid var(--primary, #2563EB);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  max-width: 300px;
+  animation: slideInRight 0.3s ease;
+}
+
+.update-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.update-content span {
+  font-weight: 500;
+  color: var(--text, #333);
+}
+
+.update-content button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.update-content button:first-of-type {
+  background: var(--primary, #2563EB);
+  color: white;
+}
+
+.update-content button:first-of-type:hover {
+  background: #1d4ed8;
+}
+
+.update-content button:last-of-type {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.update-content button:last-of-type:hover {
+  background: #e5e7eb;
+}
+
+/* In-App Notification Styles */
+.in-app-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-left: 4px solid var(--primary, #2563EB);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  max-width: 320px;
+  animation: slideInRight 0.3s ease;
+}
+
+.notification-content {
+  position: relative;
+}
+
+.notification-content h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text, #333);
+}
+
+.notification-content p {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.notification-content button {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #9ca3af;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-content button:hover {
+  color: #6b7280;
+}
+
+/* PWA Status Indicator */
+.pwa-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: #f0f9ff;
+  color: #0369a1;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.pwa-status.installed {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.pwa-status.offline {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Animation Keyframes */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .pwa-install-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 14px;
+    z-index: 1000;
+  }
+  
+  .update-notification,
+  .in-app-notification {
+    left: 20px;
+    right: 20px;
+    max-width: none;
+  }
+  
+  .notification-toggle {
+    margin: 12px 0;
+    padding: 12px;
+  }
+  
+  .toggle-label {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .toggle-button {
+    justify-content: center;
+  }
+}
+
+/* PWA Splash Screen Styles (iOS) */
+@media (display-mode: standalone) {
+  /* Styles for when the app is installed as PWA */
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  /* Hide browser-specific elements */
+  .browser-only {
+    display: none !important;
+  }
+  
+  /* Show PWA-specific elements */
+  .pwa-only {
+    display: block !important;
+  }
+}
+
+/* Print Styles (hide PWA elements when printing) */
+@media print {
+  .pwa-install-button,
+  .notification-toggle,
+  .offline-indicator,
+  .update-notification,
+  .in-app-notification,
+  .pwa-status {
+    display: none !important;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .pwa-install-button,
+  .toggle-button.enabled {
+    border: 2px solid currentColor;
+  }
+  
+  .notification-toggle {
+    border: 2px solid #333;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .pwa-install-button,
+  .toggle-button,
+  .offline-indicator,
+  .update-notification,
+  .in-app-notification {
+    transition: none;
+    animation: none;
+  }
+}

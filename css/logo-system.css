@@ -1,0 +1,291 @@
+/* 🛡️ SichrPlace German Certified Logo System
+   Trademark and certification display styles */
+
+.sichrplace-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.sichrplace-shield {
+    width: 32px;
+    height: 32px;
+    background-image: url('../img/SichrPlaceLogo_944x944.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+}
+
+.sichrplace-shield.medium {
+    width: 40px;
+    height: 40px;
+}
+
+.sichrplace-shield.large {
+    width: 48px;
+    height: 48px;
+}
+
+.sichrplace-shield.xlarge {
+    width: 64px;
+    height: 64px;
+}
+
+.sichrplace-text {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    background: linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.sichrplace-certified {
+    position: relative;
+}
+
+.sichrplace-certified::after {
+    content: '✓';
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background: #27ae60;
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.german-certification {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #000000 0%, #dd0000 50%, #ffcc00 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.german-certification::before {
+    content: '🇩🇪';
+    font-size: 14px;
+}
+
+.footer-certification {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    margin-top: 40px;
+}
+
+.certification-badges {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.certification-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    padding: 10px 16px;
+    border-radius: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.certification-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.certification-badge.german-authority {
+    border-color: #dd0000;
+}
+
+.certification-badge.german-authority::before {
+    content: '🏛️';
+    font-size: 16px;
+}
+
+.certification-badge.security-verified {
+    border-color: #27ae60;
+}
+
+.certification-badge.security-verified::before {
+    content: '🔒';
+    font-size: 16px;
+}
+
+.certification-badge.data-protection {
+    border-color: #3498db;
+}
+
+.certification-badge.data-protection::before {
+    content: '🛡️';
+    font-size: 16px;
+}
+
+.certification-text {
+    font-size: 11px;
+    color: #6c757d;
+    margin-top: 10px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.4;
+}
+
+/* Cookie consent for logo images */
+.logo-cookie-notice {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-width: 300px;
+    z-index: 1000;
+    display: none;
+}
+
+.logo-cookie-notice.show {
+    display: block;
+    animation: slideInUp 0.3s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.logo-cookie-notice h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.logo-cookie-notice p {
+    margin: 0 0 12px 0;
+    font-size: 12px;
+    color: #6c757d;
+    line-height: 1.4;
+}
+
+.logo-cookie-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.logo-cookie-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logo-cookie-btn.accept {
+    background: #27ae60;
+    color: white;
+}
+
+.logo-cookie-btn.accept:hover {
+    background: #219a52;
+}
+
+.logo-cookie-btn.decline {
+    background: #e9ecef;
+    color: #6c757d;
+}
+
+.logo-cookie-btn.decline:hover {
+    background: #dee2e6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sichrplace-text {
+        font-size: 20px;
+    }
+    
+    .certification-badges {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .certification-badge {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .logo-cookie-notice {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+/* Navigation logo styles */
+.navbar-brand .sichrplace-logo {
+    font-size: 20px;
+}
+
+.navbar-brand .sichrplace-shield {
+    width: 28px;
+    height: 28px;
+}
+
+.navbar-brand .sichrplace-shield::before {
+    font-size: 16px;
+}
+
+/* Header logo styles */
+.header-logo .sichrplace-logo {
+    font-size: 32px;
+}
+
+.header-logo .sichrplace-shield {
+    width: 40px;
+    height: 40px;
+}
+
+.header-logo .sichrplace-shield::before {
+    font-size: 22px;
+}
