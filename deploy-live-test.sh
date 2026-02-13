@@ -17,21 +17,21 @@ cd /Users/omer3kale/SichrPlace77/SichrPlace77
 echo "🔧 Setting up environment variables..."
 
 # Set environment variables for testing
-vercel env add SUPABASE_URL production <<< "https://mmtccvrrtraaknzmkgtu.supabase.co"
-vercel env add SUPABASE_ANON_KEY production <<< "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tdGNjdnJydHJhYWtuem1rZ3R1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA5NzUzOTAsImV4cCI6MjA0NjU1MTM5MH0.8_mCKSoql3O9n4-6o5LQnDhZKFQYAkdHpJWKWODOsJs"
+vercel env add SUPABASE_URL production <<< "YOUR_SUPABASE_URL"
+vercel env add SUPABASE_ANON_KEY production <<< "YOUR_SUPABASE_ANON_KEY"
 
 # PayPal Sandbox for testing
-vercel env add PAYPAL_CLIENT_ID production <<< "AcPYlXozR8VS9kJSk7rv5MW36lMV66ZMyqZKjM0YVuvt0dJ1cIyHRvDmGeux0qu3gBOh6XswI5gin2WO"
-vercel env add PAYPAL_CLIENT_SECRET production <<< "EGO3ecmQdi4dAyrgahy9TgLVqR2vY6WBABARb7YgcmSn_nB7H9Sp6sEE-BAabWFcgbekfz_ForB19uCs"
+vercel env add PAYPAL_CLIENT_ID production <<< "YOUR_PAYPAL_CLIENT_ID"
+vercel env add PAYPAL_CLIENT_SECRET production <<< "YOUR_PAYPAL_CLIENT_SECRET"
 vercel env add PAYPAL_ENVIRONMENT production <<< "sandbox"
 
 # Email configuration
-vercel env add GMAIL_USER production <<< "omer3kale@gmail.com"
-vercel env add GMAIL_APP_PASSWORD production <<< "zbfm wjip dmzq nvcb"
+vercel env add GMAIL_USER production <<< "YOUR_GMAIL_USER"
+vercel env add GMAIL_APP_PASSWORD production <<< "YOUR_GMAIL_APP_PASSWORD"
 
 # Security keys
-vercel env add JWT_SECRET production <<< "your-super-secret-jwt-key-2024-sichrplace"
-vercel env add SESSION_SECRET production <<< "your-session-secret-2024-sichrplace"
+vercel env add JWT_SECRET production <<< "YOUR_JWT_SECRET"
+vercel env add SESSION_SECRET production <<< "YOUR_SESSION_SECRET"
 
 # Application settings
 vercel env add NODE_ENV production <<< "production"

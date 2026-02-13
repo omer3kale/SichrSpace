@@ -8,10 +8,10 @@ echo "========================================"
 
 # Set test environment variables
 export NODE_ENV=test
-export JWT_SECRET="fNcgmCwu7lIbCYoxUy3zbDNyWFpfjmJrUtLLAhPq+2mDNyN/p//FnxhSmTgvnp2Fh51+eJJKAIkqJnFu/xf93Q=="
+export JWT_SECRET="YOUR_JWT_SECRET"
 export SUPABASE_URL="https://cgkumwtibknfrhyiicoo.supabase.co"
-export SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNna3Vtd3RpYmtuZnJoeWlpY29vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzMDE3ODYsImV4cCI6MjA2OTg3Nzc4Nn0.OVQHy8Z27QMCHBzZnBNI42yNpOYSsimbw3BNE-N6Zgo"
-export SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNna3Vtd3RpYmtuZnJoeWlpY29vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDMwMTc4NiwiZXhwIjoyMDY5ODc3Nzg2fQ.5piAC3CPud7oRvA1Rtypn60dfz5J1ydqoG2oKj-Su3M"
+export SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
+export SUPABASE_SERVICE_ROLE_KEY="YOUR_SUPABASE_SERVICE_ROLE_KEY"
 
 echo "Environment: $NODE_ENV"
 echo ""

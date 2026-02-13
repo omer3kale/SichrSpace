@@ -10,10 +10,10 @@ replace_api_keys() {
     local file="$1"
     if [ -f "$file" ]; then
         # Replace Google Maps API keys
-        sed -i.backup 's/AIzaSyDJxwKPd6TFySRiJf5PeTPVbszFwT0NChE/your-google-maps-api-key-here/g' "$file"
+        sed -i.backup 's/YOUR_GOOGLE_MAPS_API_KEY/your-google-maps-api-key-here/g' "$file"
         
         # Replace Supabase access tokens
-        sed -i.backup 's/sbp_f91cc66cfa13770757e3f8d29cdc5da2c3212167/your-supabase-access-token-here/g' "$file"
+        sed -i.backup 's/YOUR_SUPABASE_ACCESS_TOKEN/your-supabase-access-token-here/g' "$file"
         
         # Replace JWT tokens (keeping first 20 chars as example format)
         sed -i.backup 's/eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/eyJhbGciOiJIUzI1NiIsInR5cC...your-jwt-token-here/g' "$file"

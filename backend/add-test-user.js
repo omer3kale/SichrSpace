@@ -2,15 +2,15 @@
 const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcrypt');
 
-const supabaseUrl = 'https://cgkumwtibknfrhyiicoo.supabase.co';
-const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNna3Vtd3RpYmtuZnJoeWlpY29vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDMwMTc4NiwiZXhwIjoyMDY5ODc3Nzc4Nn0.5piAC3CPud7oRvA1Rtypn60dfz5J1ydqoG2oKj-Su3M';
+const supabaseUrl = process.env.SUPABASE_URL || 'https://cgkumwtibknfrhyiicoo.supabase.co';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'YOUR_SERVICE_ROLE_KEY';
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function addTestUser() {
   try {
     console.log('🔑 Generating password hash...');
-    const passwordHash = await bcrypt.hash('Ricardoquaresma7*', 10);
+    const passwordHash = await bcrypt.hash(process.env.TEST_USER_PASSWORD || 'YOUR_TEST_PASSWORD', 10);
     console.log('Hash generated:', passwordHash);
     
     console.log('👤 Creating test user in Supabase...');
@@ -37,7 +37,7 @@ async function addTestUser() {
     } else {
       console.log('✅ Test user created successfully!');
       console.log('📧 Email: omer3kale@gmail.com');
-      console.log('🔐 Password: Ricardoquaresma7*');
+      console.log('🔐 Password: [set via TEST_USER_PASSWORD env var]');
       console.log('👨‍💼 Role: admin');
     }
     
