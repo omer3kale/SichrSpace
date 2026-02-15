@@ -1,0 +1,115 @@
+name: SichrPlace Self-Hosted CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ===================================
+  # Build & Test Spring Boot Backend
+  # ===================================
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sichrplace-backend
+
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: TestPassword123!
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P TestPassword123! -Q 'SELECT 1' -C"
+          --health-interval 15s
+          --health-timeout 10s
+          --health-retries 10
+          --health-start-period 30s
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: chmod +x mvnw && ./mvnw clean package -B
+        env:
+          SPRING_DATASOURCE_URL: jdbc:sqlserver://localhost:1433;databaseName=master;encrypt=false
+          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_PASSWORD: TestPassword123!
+
+      - name: Run tests
+        run: ./mvnw test -B
+        env:
+          SPRING_DATASOURCE_URL: jdbc:sqlserver://localhost:1433;databaseName=master;encrypt=false
+          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_PASSWORD: TestPassword123!
+
+      - name: Build Docker image
+        run: docker build -t sichrplace-backend:${{ github.sha }} .
+
+      - name: Save Docker image
+        if: github.ref == 'refs/heads/main'
+        run: docker save sichrplace-backend:${{ github.sha }} | gzip > /tmp/sichrplace-backend.tar.gz
+
+      - name: Upload artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-image
+          path: /tmp/sichrplace-backend.tar.gz
+          retention-days: 3
+
+  # ===================================
+  # Deploy Frontend to GitHub Pages
+  # ===================================
+  frontend:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare frontend files
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          cp manifest.json _site/
+          cp service-worker.js _site/
+          cp -r css/ _site/css/ 2>/dev/null || true
+          cp -r js/ _site/js/ 2>/dev/null || true
+          cp -r img/ _site/img/ 2>/dev/null || true
+          cp -r frontend/ _site/frontend/ 2>/dev/null || true
+          rm -rf _site/js/node_modules 2>/dev/null || true
+
+      - name: Inject API URL
+        run: |
+          echo "window.SICHRPLACE_API_URL = 'https://api.sichrplace.com';" > _site/js/config.js
+          echo "window.SICHRPLACE_WS_URL = 'wss://api.sichrplace.com/ws';" >> _site/js/config.js
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

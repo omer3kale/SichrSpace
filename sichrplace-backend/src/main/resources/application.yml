@@ -1,0 +1,136 @@
+# ===================================================================
+# SichrPlace Spring Boot Configuration
+# Self-Hosted | MSSQL | Redis | MinIO | Maximum Security
+# ===================================================================
+
+spring:
+  application:
+    name: sichrplace-backend
+
+  # --- MSSQL Database ---
+  datasource:
+    url: jdbc:sqlserver://${DB_HOST:localhost}:${DB_PORT:1433};databaseName=${DB_NAME:SichrPlaceDB};encrypt=true;trustServerCertificate=true
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:SichrPlace_2026!}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 30000
+      connection-timeout: 20000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+  # --- Redis Cache ---
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 5000ms
+
+  # --- Email (Self-hosted SMTP / MailHog for dev) ---
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_AUTH:false}
+          starttls:
+            enable: ${MAIL_STARTTLS:false}
+
+  # --- File Upload ---
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+  # --- Jackson JSON ---
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+# --- Server ---
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# --- JWT Configuration ---
+jwt:
+  secret: ${JWT_SECRET:fNcgmCwu7lIbCYoxUy3zbDNyWFpfjmJrUtLLAhPq+2mDNyN/p//FnxhSmTgvnp2Fh51+eJJKAIkqJnFu/xf93Q==}
+  expiration: 86400000  # 24 hours in milliseconds
+
+# --- MinIO Configuration ---
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY:sichrplace}
+  secret-key: ${MINIO_SECRET_KEY:sichrplace_secret_2026}
+  bucket:
+    apartments: apartment-images
+    videos: secure-videos
+    profiles: profile-pictures
+
+# --- PayPal Configuration ---
+paypal:
+  client-id: ${PAYPAL_CLIENT_ID:AcPYlXozR8VS9kJSk7rv5MW36lMV66ZMyqZKjM0YVuvt0dJ1cIyHRvDmGeux0qu3gBOh6XswI5gin2WO}
+  client-secret: ${PAYPAL_CLIENT_SECRET:}
+  mode: ${PAYPAL_MODE:sandbox}
+
+# --- CORS ---
+cors:
+  allowed-origins: ${CORS_ORIGINS:http://localhost:3000,https://omer3kale.github.io}
+  allowed-methods: GET,POST,PUT,DELETE,PATCH,OPTIONS
+  allowed-headers: "*"
+  allow-credentials: true
+
+# --- Rate Limiting ---
+rate-limit:
+  requests-per-minute: 100
+  burst-capacity: 150
+
+# --- Actuator Health ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# --- Logging ---
+logging:
+  level:
+    com.sichrplace: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/sichrplace.log
+    max-size: 50MB
+    max-history: 30
+
+# --- OpenAPI / Swagger ---
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
