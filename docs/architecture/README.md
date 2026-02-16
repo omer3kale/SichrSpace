@@ -29,3 +29,16 @@ Visual diagrams documenting the migration from Supabase/Netlify/Express to a ful
 | 16 | [New Feature Workflow](16-new-feature-workflow.md) | End-to-end guide for adding features automatically |
 | 17 | [Request Lifecycle](17-request-lifecycle.md) | Full HTTP path: browser → Nginx → Spring → MSSQL → back |
 | 18 | [Backup & Disaster Recovery](18-backup-disaster-recovery.md) | Automated backups, rotation, and recovery runbooks |
+
+## Deep-Dive System Diagrams
+
+| # | Diagram | Description |
+|---|---------|-------------|
+| 19 | [WebSocket & Real-Time](19-websocket-realtime.md) | STOMP topic routing, subscriptions, typing, presence, reconnection |
+| 20 | [JWT Auth State Machine](20-jwt-auth-state-machine.md) | Login/register flows, 5-attempt lockout, token lifecycle |
+| 21 | [RBAC Access Control](21-rbac-access-control.md) | Complete endpoint → role matrix, authorization decision flow |
+| 22 | [REST API Surface Map](22-rest-api-surface.md) | All 41 endpoints across 8 controllers + WebSocket |
+| 23 | [Frontend Module Architecture](23-frontend-module-architecture.md) | api-client.js modules, SichrPlaceChat, event bus, page mappings |
+| 24 | [GDPR Compliance Flows](24-gdpr-compliance-flows.md) | Data export, 30-day deletion, consent — DSGVO Art. 7/15/17/20 |
+| 25 | [MinIO File Storage](25-minio-file-storage.md) | Upload, presigned URLs, bucket layout, storage operations |
+| 26 | [Notification Pipeline](26-notification-pipeline.md) | DB persistence + WebSocket push + Browser Notification API |
