@@ -1,0 +1,32 @@
+# ── Production profile (activated via SPRING_PROFILES_ACTIVE=prod) ──
+spring:
+  datasource:
+    # Docker Compose: 'database' is the postgres service name on the backend network
+    url: ${DATABASE_URL:jdbc:postgresql://database:5432/sichrplace}
+    username: ${DATABASE_USERNAME:sichrplace_user}
+    password: ${DATABASE_PASSWORD:changeme}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update          # Use Flyway/Liquibase for real migrations later
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+app:
+  jwtSecret: ${JWT_SECRET:change-this-to-a-strong-random-secret-at-least-32-chars}
+  jwtExpirationMs: ${JWT_EXPIRATION_MS:86400000}
+  jwtRefreshExpirationMs: ${JWT_REFRESH_EXPIRATION_MS:604800000}
+
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://sichrplace.com,https://www.sichrplace.com,https://<your-github-user>.github.io}
+
+server:
+  port: ${PORT:8080}
+
+logging:
+  level:
+    root: WARN
+    com.sichrplace.backend: INFO

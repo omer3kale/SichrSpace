@@ -1,0 +1,32 @@
+# ── Build outputs ──
+build/
+bin/
+out/
+*.class
+*.jar
+*.war
+
+# ── Gradle ──
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# ── IDE ──
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Secrets ──
+.env
+*.env.local
+
+# ── Misc ──
+anonymousId
+bootrun_output.txt
+build_output.txt

@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: sichrplace-backend
+  profiles:
+    active: local
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  logging:
+    level:
+      org.springframework: INFO
+      com.sichrplace: DEBUG
+
+logging:
+  level:
+    root: INFO
+    com.sichrplace.backend: DEBUG

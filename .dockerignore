@@ -1,0 +1,14 @@
+.git
+.gitignore
+build/
+bin/
+*.md
+bootrun_output.txt
+build_output.txt
+run.bat
+anonymousId
+.env
+.env.*
+!.env.example
+docker-compose.yml
+Caddyfile

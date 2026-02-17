@@ -1,0 +1,26 @@
+# ── SichrPlace Caddy Reverse Proxy ──
+# Replace api.sichrplace.com with your actual domain.
+# Caddy obtains + renews Let's Encrypt TLS certificates automatically.
+
+api.sichrplace.com {
+    # Proxy all traffic to the Spring Boot API container
+    reverse_proxy api:8080
+
+    # Security headers
+    header {
+        X-Content-Type-Options    nosniff
+        X-Frame-Options           DENY
+        Referrer-Policy            strict-origin-when-cross-origin
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        -Server
+    }
+
+    # Gzip/Zstd compression
+    encode zstd gzip
+
+    # Request logging
+    log {
+        output stdout
+        format console
+    }
+}

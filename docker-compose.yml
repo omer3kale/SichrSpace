@@ -1,0 +1,70 @@
+# ── SichrPlace VPS Docker Compose ──
+# Deploy: docker compose --env-file .env up -d
+# Logs:   docker compose logs -f api
+
+services:
+
+  # ─── PostgreSQL 16 ───
+  database:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-sichrplace}
+      POSTGRES_USER:     ${POSTGRES_USER:-sichrplace_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sichrplace_user} -d ${POSTGRES_DB:-sichrplace}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  # ─── Spring Boot API ───
+  api:
+    image: ghcr.io/${GHCR_OWNER:-your-github-user}/sichrplace-api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DATABASE_URL:      jdbc:postgresql://database:5432/${POSTGRES_DB:-sichrplace}
+      DATABASE_USERNAME: ${POSTGRES_USER:-sichrplace_user}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      JWT_SECRET:        ${JWT_SECRET:?Set JWT_SECRET in .env}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://sichrplace.com,https://www.sichrplace.com}
+      PORT: 8080
+    expose:
+      - "8080"
+    networks:
+      - backend
+      - web
+
+  # ─── Caddy Reverse Proxy (automatic TLS) ───
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
+
+networks:
+  backend:
+  web:

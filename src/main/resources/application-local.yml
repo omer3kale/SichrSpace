@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    # Default instance on localhost:1433
+    url: jdbc:sqlserver://localhost:1433;databaseName=sichrplace;encrypt=true;trustServerCertificate=true
+    # Named instance variant (uncomment and replace the url above):
+    # url: jdbc:sqlserver://localhost\\SICHRPLACEDEV:1433;databaseName=sichrplace;encrypt=true;trustServerCertificate=true
+    username: sichrplace_user
+    password: SichrPlace_Dev2026!
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  jwtSecret: your-super-secret-jwt-key-at-least-32-characters-long
+  jwtExpirationMs: 86400000
+  jwtRefreshExpirationMs: 604800000
+
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:5173,http://localhost:8080,https://sichrplace.com,https://www.sichrplace.com,https://sichrplace.netlify.app
+
