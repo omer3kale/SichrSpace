@@ -1,0 +1,28 @@
+# ── SichrPlace — Local MSSQL (Docker) Profile ──
+# Activate: ./gradlew bootRun --args='--spring.profiles.active=local-mssql'
+#
+# Requires: docker compose -f docker-compose.local-mssql.yml up -d
+# MSSQL runs on localhost:1433 via the Docker container.
+
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=sichrplace;encrypt=true;trustServerCertificate=true
+    username: sichrplace_dev
+    password: "SichrDev2025!"
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.SQLServerDialect
+
+app:
+  jwtSecret: local-dev-secret-not-for-production-at-least-32-chars
+  jwtExpirationMs: 86400000
+  jwtRefreshExpirationMs: 604800000
+
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:5173,http://localhost:8080
