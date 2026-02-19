@@ -2,7 +2,7 @@
 
 ## Enterprise Backend Architecture for Open-Source GitHub Hosting
 
-> **Prepared for:** SichrPlace / SichrSpace tutorium students
+> **Prepared for:** SichrPlace tutorium students
 > **Last Updated:** February 2026
 > **Repo:** `omer3kale/sichrplace-backend` (Spring Boot 3.2.2 / Java 21)
 
@@ -19,7 +19,7 @@ multiple platforms, but they all serve the **same product**:
 │                                                                     │
 │  ┌─────────────┐   ┌─────────────────┐   ┌────────────────────┐    │
 │  │  Frontend    │   │   Java Backend  │   │  Database (MSSQL)  │    │
-│  │  (SichrSpace │   │  Spring Boot    │   │  on DigitalOcean   │    │
+│  │  (SichrPlace │   │  Spring Boot    │   │  on DigitalOcean   │    │
 │  │   on GitHub  │   │  on VPS/Docker  │   │  Droplet (Docker)  │    │
 │  │   Pages)     │   │                 │   │                    │    │
 │  └──────┬───────┘   └────────┬────────┘   └────────┬───────────┘    │
@@ -32,7 +32,7 @@ multiple platforms, but they all serve the **same product**:
 
 | Component        | Platform         | Repo / Location                        | Purpose                      |
 |------------------|------------------|----------------------------------------|------------------------------|
-| **Frontend**     | GitHub Pages     | `SichrSpace` org on GitHub (beta)      | HTML/JS/CSS SPA              |
+| **Frontend**     | GitHub Pages     | `SichrPlace` org on GitHub (beta)      | HTML/JS/CSS SPA              |
 | **Backend API**  | DigitalOcean VPS | `omer3kale/sichrplace-backend`         | Spring Boot REST API         |
 | **Database**     | DigitalOcean VPS | Docker container on same droplet       | MSSQL Server (Linux Docker)  |
 | **Reverse Proxy**| DigitalOcean VPS | Caddy 2 (Docker container)             | TLS termination, HTTPS       |
@@ -94,7 +94,7 @@ src/main/java/com/sichrplace/backend/
 
 ```
   Browser                  Caddy             Spring Boot                 MSSQL
-  (SichrSpace)             (Reverse Proxy)   (Java Backend)              (Database)
+  (SichrPlace)             (Reverse Proxy)   (Java Backend)              (Database)
      │                        │                   │                        │
      │ GET /api/apartments    │                   │                        │
      ├───────────────────────►│                   │                        │
@@ -412,7 +412,7 @@ Docker Compose reads .env → injects into containers at runtime
 │                     GITHUB (Code + CI/CD + Hosting)                   │
 │                                                                       │
 │  ┌─────────────────────┐  ┌──────────────────┐  ┌─────────────────┐  │
-│  │ omer3kale/           │  │ SichrSpace/       │  │ GitHub Actions  │  │
+│  │ omer3kale/           │  │ SichrPlace/       │  │ GitHub Actions  │  │
 │  │ sichrplace-backend   │  │ (frontend repo)   │  │ CI/CD Pipeline  │  │
 │  │                      │  │                   │  │                 │  │
 │  │ Spring Boot 3.2.2    │  │ HTML/JS/CSS       │  │ Build → GHCR   │  │

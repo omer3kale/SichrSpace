@@ -9,7 +9,7 @@
 ```mermaid
 graph TD
     subgraph "HTTP Layer"
-        CLIENT["🌐 Browser / SichrSpace Frontend<br/>GitHub Pages"]
+        CLIENT["🌐 Browser / SichrPlace Frontend<br/>GitHub Pages"]
     end
 
     subgraph "Reverse Proxy"
@@ -231,7 +231,7 @@ graph TB
         GHCR["GitHub Container Registry<br/>ghcr.io/omer3kale/sichrplace-api"]
         ACTIONS["GitHub Actions<br/>Build → Push → Deploy"]
         SECRETS["Encrypted Secrets<br/>VPS_HOST, VPS_SSH_KEY"]
-        PAGES["GitHub Pages<br/>SichrSpace frontend (beta)"]
+        PAGES["GitHub Pages<br/>SichrPlace frontend (beta)"]
     end
 
     subgraph "DigitalOcean Droplet"
