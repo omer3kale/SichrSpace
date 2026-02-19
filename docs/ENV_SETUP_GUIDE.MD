@@ -190,6 +190,37 @@ In SSMS, expand `sichrplace` -> Tables. You should see 9 tables:
 `users`, `apartments`, `apartment_reviews`, `conversations`, `messages`,
 `notifications`, `user_favorites`, `viewing_requests`, `listings`.
 
+### Seed data (automatic)
+
+When running with `local-mssql` or `beta-mssql`, the `DataSeeder` component
+automatically populates the database with synthetic workplace data on first
+startup — **only if the `users` table is empty**.  This gives you:
+
+- 6 users (admin, 2 landlords, 3 students)
+- 4 apartments in Aachen
+- 3 conversations with 12 messages
+- 3 viewing requests, 3 reviews, 5 favorites, 5 notifications
+
+> **Login:** `charlie.student@rwth-aachen.de` / `password123`
+
+See [`docs/SEED_WORKPLACE_MSSQL.md`](SEED_WORKPLACE_MSSQL.md) for the full
+list of seed accounts and what each record represents.
+
+### Seed data (manual SQL)
+
+If you prefer to seed manually or need to reset:
+
+```powershell
+# Docker (local-mssql)
+docker cp db/mssql-seed-workplace.sql sichrplace-mssql-local:/tmp/seed.sql
+docker exec sichrplace-mssql-local /opt/mssql-tools18/bin/sqlcmd `
+  -S localhost -U sichrplace_user -P "$env:LOCAL_DB_PASS" `
+  -d sichrplace -C -i /tmp/seed.sql
+
+# Native Windows (SSMS)
+# Open db/mssql-seed-workplace.sql in SSMS and press F5.
+```
+
 ---
 
 ## 5. Database Backends — Summary
@@ -244,8 +275,11 @@ All diagrams are **MSSQL-compatible** and reflect the same schema used in local 
 1. Install SQL Server + SSMS on your laptop (Section 2)
 2. Run provided SQL script to create DB and user
 3. Set environment variables in `.env.local` (Section 3)
-4. Run Spring Boot with `local-mssql` and test `/api/auth/register` (Section 4)
-5. (Advanced) SSH into droplet, inspect MSSQL Docker container, compare schemas
+4. Run Spring Boot with `local-mssql` — `DataSeeder` auto-populates the DB (Section 4)
+5. Login as `charlie.student@rwth-aachen.de` / `password123` and explore the API
+6. Open SSMS, inspect the 9 tables, compare row counts with the docs
+7. Try the REST endpoints: `POST /api/auth/login`, `GET /api/apartments`, `GET /api/conversations`
+8. (Advanced) SSH into droplet, inspect MSSQL Docker container, compare schemas
 
 > **Reflection question:** How would you verify that your local and droplet
 > databases share the same schema and data model, purely from the ERD and
