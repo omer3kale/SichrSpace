@@ -1,4 +1,4 @@
-# ── SichrPlace Local Development — MSSQL 2022 ──
+# ── SichrPlace Local Development — MSSQL 2025 ──
 # Usage:  docker compose -f docker-compose.local-mssql.yml up -d
 # Stop:   docker compose -f docker-compose.local-mssql.yml down
 # Reset:  docker compose -f docker-compose.local-mssql.yml down -v
@@ -6,13 +6,17 @@
 # Then run the backend with:
 #   ./gradlew bootRun --args='--spring.profiles.active=local-mssql'
 #
+# Students can also install SQL Server Developer Edition natively on
+# Windows and skip this file entirely — just point application-local-mssql.yml
+# at localhost:1433.
+#
 # MSSQL SA password requirements: ≥8 chars, uppercase + lowercase + digit + symbol
 
 services:
 
-  # ─── Microsoft SQL Server 2022 Developer Edition ───
+  # ─── Microsoft SQL Server 2025 Developer Edition ───
   mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2025-latest
     container_name: sichrplace-mssql
     restart: unless-stopped
     environment:

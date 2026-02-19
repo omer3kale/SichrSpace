@@ -1,5 +1,5 @@
 -- ============================================================
--- SichrPlace — MSSQL 2022 Local Dev Initialization Script
+-- SichrPlace — MSSQL 2025 Local Dev Initialization Script
 -- ============================================================
 -- This script runs once when the MSSQL container is created.
 -- It creates the database, a dev login/user, and grants access.

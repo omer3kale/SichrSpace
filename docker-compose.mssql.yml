@@ -1,0 +1,90 @@
+# ── SichrPlace Droplet — MSSQL 2025 + Caddy + Spring Boot ──
+# Replaces PostgreSQL with SQL Server for the shared beta environment.
+#
+# Deploy:  docker compose -f docker-compose.mssql.yml --env-file .env up -d
+# Logs:    docker compose -f docker-compose.mssql.yml logs -f api
+# Stop:    docker compose -f docker-compose.mssql.yml down
+# Reset:   docker compose -f docker-compose.mssql.yml down -v
+#
+# ⚠ MSSQL requires >= 2 GB RAM.  A 1 GB droplet will OOM-kill the container.
+#   Use at least a $12/mo droplet (2 GB) or the $24/mo (4 GB) for comfort.
+#
+# Teaching note:
+#   This file shows the SAME Spring Boot API image connecting to MSSQL
+#   instead of PostgreSQL.  Only the env vars and this compose file change.
+
+services:
+
+  # ─── Microsoft SQL Server 2025 Developer Edition ───
+  database:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: sichrplace-mssql
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD:?Set SA_PASSWORD in .env}
+      MSSQL_PID: ${MSSQL_PID:-Developer}
+    volumes:
+      - mssql_data:/var/opt/mssql
+      - ./db/droplet-mssql-init.sql:/opt/sichrplace/init.sql:ro
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$${MSSQL_SA_PASSWORD}" -Q "SELECT 1" -C -b -o /dev/null
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    networks:
+      - backend
+    # Limit memory so it doesn't consume entire droplet
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+
+  # ─── Spring Boot API ───
+  api:
+    image: ghcr.io/${GHCR_OWNER:-your-github-user}/sichrplace-api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: beta
+      DATABASE_URL:      jdbc:sqlserver://database:1433;databaseName=sichrplace;encrypt=false
+      DATABASE_USERNAME: ${MSSQL_APP_USER:-sichrplace_user}
+      DATABASE_PASSWORD: ${MSSQL_APP_PASSWORD:?Set MSSQL_APP_PASSWORD in .env}
+      DATABASE_DRIVER:   com.microsoft.sqlserver.jdbc.SQLServerDriver
+      JWT_SECRET:        ${JWT_SECRET:?Set JWT_SECRET in .env}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://sichrplace.com,https://www.sichrplace.com}
+      PORT: 8080
+    expose:
+      - "8080"
+    networks:
+      - backend
+      - web
+
+  # ─── Caddy Reverse Proxy (automatic TLS) ───
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+
+volumes:
+  mssql_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  backend:
+  web:
