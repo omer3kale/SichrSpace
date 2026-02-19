@@ -160,7 +160,8 @@ viewing_requests=3, apartment_reviews=3, user_favorites=5, notifications=5.
 
 ### Exercise 1.1 — Map the ERD
 
-Open `docs/diagrams/erd_sichrplace.md` (or the `.png`).
+> **📊 Diagram:** Open the ERD — [`diagrams/erd_sichrplace.png`](diagrams/erd_sichrplace.png)
+> (source: [`diagrams/erd_sichrplace.md`](diagrams/erd_sichrplace.md))
 
 For each of these API calls, write down **which tables** are touched:
 
@@ -251,7 +252,8 @@ See `ApartmentController.java`, `ViewingRequestController.java`, `AdminControlle
 
 ### Exercise 2.2 — Viewing request state machine
 
-Open `docs/diagrams/state_charts.md` → Section 2 (Viewing Request Lifecycle).
+> **📊 Diagram:** Open the state charts — [`diagrams/state_message_lifecycle.png`](diagrams/state_message_lifecycle.png)
+> (source: [`diagrams/state_charts.md`](diagrams/state_charts.md) → Section 2, Viewing Request Lifecycle)
 
 Execute this sequence and verify the state transitions:
 
@@ -284,6 +286,10 @@ Execute this sequence and verify the state transitions:
 ## Lab 3 — Extend the Backend
 
 ### Exercise 3.1 — Add a "messages by user in last N days" endpoint
+
+> **📊 Diagram:** Study the sequence diagram — [`diagrams/sequence_send_message.png`](diagrams/sequence_send_message.png)
+> (source: [`diagrams/sequence_diagrams.md`](diagrams/sequence_diagrams.md))
+> Model your new endpoint's flow in the same style.
 
 **Goal:** Create `GET /api/conversations/messages/recent?days=7` that returns
 all messages sent by the current user in the last N days.
@@ -371,6 +377,11 @@ all messages sent by the current user in the last N days.
 ---
 
 ### Exercise 3.3 — Schema evolution (advanced)
+
+> **📊 Diagram:** After adding new columns, update the ERD —
+> [`diagrams/erd_sichrplace.md`](diagrams/erd_sichrplace.md)
+> and the architecture flow [`diagrams/arch_request_flow.png`](diagrams/arch_request_flow.png)
+> to reflect the new fields.
 
 **Scenario:** Add a `lease_start_date` and `lease_end_date` to the `apartments` table.
 

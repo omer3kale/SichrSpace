@@ -220,6 +220,22 @@ Then re-run the seed script.
 
 ---
 
+## Migration Version Table
+
+Versioned migration scripts are maintained in [`db/migrations/`](../db/migrations/).
+Each script is **idempotent** and **MSSQL-compatible**.
+
+| Version | Script | Description | Tables affected |
+|---------|--------|-------------|----------------|
+| **V001** | [`V001__initial_schema_mssql.sql`](../db/migrations/V001__initial_schema_mssql.sql) | Baseline schema — 9 tables, 123 columns, 41 indexes, 26 constraints | All 9 tables |
+| **V002** | [`V002__seed_workplace_mssql.sql`](../db/migrations/V002__seed_workplace_mssql.sql) | Workplace seed data — 43 rows across all tables | All 9 tables |
+| *V003+* | *(reserved for student extensions — see [STUDENT_EXTENSION_TRACKS.md](STUDENT_EXTENSION_TRACKS.md))* | — | — |
+
+> **Convention:** `V<NNN>__<description>.sql` — see [`db/migrations/README.md`](../db/migrations/README.md).
+> Scripts use `IF NOT EXISTS` guards and end batches with `GO`.
+
+---
+
 ## Schema Evolution on MSSQL
 
 When you need to add new tables, columns, or constraints to the database, follow

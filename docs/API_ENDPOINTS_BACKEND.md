@@ -75,6 +75,8 @@
 
 ### Use Case 1 — Student searches for an apartment and favorites it
 
+> **📊 Diagram:** [`diagrams/erd_sichrplace.png`](diagrams/erd_sichrplace.png) — follow the `apartments → users` and `user_favorites` relationships.
+
 > **Roles involved:** TENANT (Charlie, Diana, Erik)
 > **Seed data used:** Apartments #1–#4, Users #4–#6
 
@@ -131,6 +133,8 @@ curl -X POST http://localhost:8080/api/favorites/3 \
 
 ### Use Case 2 — Tutor–student messaging (Conversation)
 
+> **📊 Diagram:** [`diagrams/sequence_send_message.png`](diagrams/sequence_send_message.png) — see how a message flows from Controller → Service → Repository → MSSQL.
+
 > **Roles involved:** TENANT (Charlie) ↔ LANDLORD (Alice)
 > **Seed data used:** Conversation #1 (Charlie ↔ Alice, Apartment #1 Ponttor), 5 messages
 
@@ -174,6 +178,8 @@ curl -X PATCH http://localhost:8080/api/conversations/messages/13 \
 ---
 
 ### Use Case 3 — Viewing request lifecycle
+
+> **📊 Diagram:** [`diagrams/state_message_lifecycle.png`](diagrams/state_message_lifecycle.png) — state chart Section 2 shows PENDING → CONFIRMED / DECLINED / CANCELLED transitions.
 
 > **Roles involved:** TENANT (Diana) requests → LANDLORD (Bob) confirms/declines
 > **Seed data used:** Viewing Request #2 (Diana → WG-Zimmer, PENDING)
@@ -238,6 +244,8 @@ CONFIRMED ──cancel─→ CANCELLED
 
 ### Use Case 4 — Apartment reviews and moderation
 
+> **📊 Diagram:** [`diagrams/state_message_lifecycle.png`](diagrams/state_message_lifecycle.png) — state chart Section 3 shows PENDING → APPROVED / REJECTED review lifecycle.
+
 > **Roles involved:** TENANT (Charlie, Diana) write reviews → ADMIN approves
 > **Seed data used:** Reviews #1–#3 (2 approved, 1 pending), Admin user #1
 
@@ -298,6 +306,8 @@ APPROVED ──edit─────→ PENDING  (resets on update)
 ---
 
 ### Use Case 5 — Admin dashboard and user management
+
+> **📊 Diagram:** [`diagrams/arch_request_flow.png`](diagrams/arch_request_flow.png) — notice how `AdminController` sits alongside other controllers with ADMIN-only `@PreAuthorize`.
 
 > **Roles involved:** ADMIN (user #1)
 > **Seed data used:** All 6 users
