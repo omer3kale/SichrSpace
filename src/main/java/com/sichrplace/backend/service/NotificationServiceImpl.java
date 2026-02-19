@@ -85,7 +85,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public int markAllAsRead(Long userId) {
-        int count = notificationRepository.markAllAsReadByUserId(userId);
+        int count = notificationRepository.markAllAsReadByUserId(userId, java.time.Instant.now());
         log.info("Marked {} notifications as read for user {}", count, userId);
         return count;
     }

@@ -8,12 +8,12 @@ spring:
     properties:
       hibernate:
         format_sql: false
-  logging:
-    level:
-      org.springframework: INFO
-      com.sichrplace: DEBUG
 
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
   level:
     root: INFO
     com.sichrplace.backend: DEBUG
+    org.springframework.web: INFO
+    com.zaxxer.hikari: INFO

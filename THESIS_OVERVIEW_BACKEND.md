@@ -294,10 +294,161 @@ The following extensions are planned or proposed for continuation:
    SockJS) for instant message delivery.
 3. **Geo-search** — Add coordinates to `Apartment` and implement
    distance-based search (PostGIS on prod, spatial queries on MSSQL).
-4. **CI test suite** — Expand beyond compilation checks: integration tests
+4. **CI test suite** — Expand beyond smoke tests: integration tests
    with Testcontainers (MSSQL + PostgreSQL) in GitHub Actions.
 5. **Flyway adoption** — Replace manual migration scripts with
    Flyway-managed migrations for automatic version tracking.
+
+---
+
+## 11  Profile-Specific Smoke Tests
+
+The test class [`MssqlProfileSmokeTest.java`](src/test/java/com/sichrplace/backend/MssqlProfileSmokeTest.java)
+validates the application in CI without requiring a real MSSQL instance.
+
+| Test | What it verifies |
+|------|-----------------|
+| `contextLoads` | All 9 repositories wire correctly; full Spring context starts |
+| `repositoryCountWorks` | `count()` executes against all 9 tables |
+| `tablesExistAndAreQueryable` | `findAll()` returns empty lists (schema is valid) |
+| `userFindByEmail` | Custom `@Query` method compiles and runs |
+| `userExistsByEmail` | Derived query method works |
+| `apartmentFindByOwner` | FK-based query executes without error |
+
+**Profile:** `test` (configured in [`src/test/resources/application-test.yml`](src/test/resources/application-test.yml))
+uses H2 in-memory — no Docker or MSSQL required.
+
+**Run locally:**
+
+```bash
+./gradlew test
+```
+
+**CI integration:** The tests run automatically via `./gradlew test` in the
+GitHub Actions workflow.
+
+---
+
+## 12  Debugging and Observability
+
+### Startup logging
+
+`StartupInfoLogger.java` runs at startup and prints:
+
+```
+═══════════════════════════════════════════════════════
+  SichrPlace Backend — Startup Info
+───────────────────────────────────────────────────────
+  Profiles:    [local-mssql]
+  Database:    jdbc:sqlserver://localhost:1433;databaseName=sichrplace;encrypt=false
+  DB User:     sichrplace_user
+  DDL-Auto:    update
+  Dialect:     org.hibernate.dialect.SQLServerDialect
+  Pool:        SichrPlace-MSSQL-Local
+═══════════════════════════════════════════════════════
+  MSSQL profile active — DataSeeder will run if database is empty.
+```
+
+This immediately tells you which profile, database, and pool are active —
+without revealing passwords.
+
+### Where logs live in Docker
+
+| Container | Command |
+|-----------|---------|
+| **API (Spring Boot)** | `docker logs sichrplace-api-1 --tail 100` |
+| **MSSQL** | `docker logs sichrplace-database-1 --tail 50` |
+| **Caddy** | `docker logs sichrplace-caddy-1 --tail 50` |
+| **Follow live** | `docker logs -f sichrplace-api-1` |
+
+### Useful log levels to adjust for teaching
+
+| Logger | Level | Effect |
+|--------|-------|--------|
+| `org.hibernate.SQL` | `DEBUG` | Prints every SQL statement |
+| `org.hibernate.type.descriptor.sql.BasicBinder` | `TRACE` | Shows bound parameter values |
+| `com.sichrplace.backend` | `DEBUG` | Application-level debug logs |
+| `org.springframework.web` | `DEBUG` | Incoming HTTP request details |
+| `com.zaxxer.hikari` | `DEBUG` | Connection pool lifecycle |
+
+Set these in the profile YAML under `logging.level`:
+
+```yaml
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+```
+
+### Common error patterns
+
+| Log pattern | Meaning | Fix |
+|------------|---------|-----|
+| `SQLServerException: Connection reset` | MSSQL container restarted or OOM | `docker compose restart database api` |
+| `HikariPool-1 - Connection is not available` | Pool exhausted | Check for leaked connections; increase `maximum-pool-size` |
+| `ExpiredJwtException` | JWT token expired | Re-login to get fresh token |
+| `AccessDeniedException` | Role doesn't match `@PreAuthorize` | Verify user role in seed data |
+
+---
+
+## 13  Doc / Behavior Consistency Checklist
+
+These claims have been verified against the running MSSQL beta and local instances.
+Check them after any schema or seed change.
+
+- [x] **6 seed users** — `SELECT COUNT(*) FROM users` returns 6
+- [x] **4 apartments** — `SELECT COUNT(*) FROM apartments` returns 4
+- [x] **12 messages across 3 conversations** — counts match SEED_WORKPLACE_MSSQL.md
+- [x] **55 endpoints** — `API_ENDPOINTS_BACKEND.md` quick reference table lists 55 rows
+- [x] **9 tables, 123 columns, 41 indexes, 26 constraints** — schema metrics in §4 match live DB
+- [x] **ViewingRequest states: PENDING/CONFIRMED/DECLINED/COMPLETED/CANCELLED** — matches `ViewingRequest.ViewingStatus` enum
+- [x] **Review states: PENDING/APPROVED/REJECTED** — matches `ApartmentReview.ReviewStatus` enum
+- [x] **charlie.student@rwth-aachen.de login returns JWT** — HTTP 200 on both local and beta
+- [x] **DataSeeder is idempotent** — re-running on seeded DB skips insertion (checks `userRepository.count() > 0`)
+- [x] **Extension Track B references soft-delete** — `STUDENT_EXTENSION_TRACKS.md` Track B requires `deletedAt`/`deletedBy` columns (not yet in base schema — correct, it's an extension)
+
+---
+
+## 14  Release Notes — v1.0.0-mssql-workplace
+
+**Tag:** `v1.0.0-mssql-workplace`
+**Date:** February 2026
+
+This tag marks the **thesis-submission baseline** — a fully documented,
+tested, and reproducible MSSQL workplace for teaching and review.
+
+### What's included
+
+| Category | Deliverable |
+|----------|-------------|
+| **Schema** | 9 JPA entities → 9 tables, 123 columns, 41 indexes, 26 constraints |
+| **Seed data** | 43 rows via `DataSeeder.java` (idempotent, profile-gated) |
+| **Endpoints** | 55 REST endpoints across 9 controllers |
+| **Profiles** | `local`, `local-mssql`, `beta-mssql`, `prod` |
+| **Migrations** | `V001__initial_schema_mssql.sql`, `V002__seed_workplace_mssql.sql` |
+| **Tests** | 6 smoke tests (H2 in-memory, CI-safe) |
+| **Docs** | Thesis overview, API reference, tutorium lab (3 sessions), extension tracks (3 tracks), seed guide, demo script |
+| **Diagrams** | ERD, state charts, sequence diagram, architecture flow |
+| **Infra** | Docker Compose for local + beta MSSQL, Caddy reverse proxy, GitHub Actions CI/CD |
+
+### What's guaranteed
+
+- Application context loads and all repositories are functional (smoke tests green).
+- Same JAR runs on PostgreSQL and MSSQL 2025 with zero code changes.
+- Seed data is identical on local and beta (verified row counts).
+- All 55 endpoints respond correctly against seeded MSSQL.
+- Documentation matches actual behavior (consistency checklist verified).
+
+### Starting from this baseline
+
+Students and future cohorts can clone at this tag:
+
+```bash
+git clone --branch v1.0.0-mssql-workplace https://github.com/omer3kale/sichrplace-backend.git
+```
+
+Then follow [`docs/ENV_SETUP_GUIDE.MD`](docs/ENV_SETUP_GUIDE.MD) to set up
+their local MSSQL environment in under 10 minutes.
 
 ---
 
@@ -312,3 +463,6 @@ The following extensions are planned or proposed for continuation:
 | Migration conventions | [`db/migrations/README.md`](db/migrations/README.md) |
 | Environment setup | [`docs/ENV_SETUP_GUIDE.MD`](docs/ENV_SETUP_GUIDE.MD) |
 | Diagrams (Mermaid sources) | [`docs/diagrams/`](docs/diagrams/) |
+| Demo script (live demo) | [`DEMO_SCRIPT_BACKEND.md`](DEMO_SCRIPT_BACKEND.md) |
+| Smoke tests | [`src/test/java/com/sichrplace/backend/MssqlProfileSmokeTest.java`](src/test/java/com/sichrplace/backend/MssqlProfileSmokeTest.java) |
+| Test profile | [`src/test/resources/application-test.yml`](src/test/resources/application-test.yml) |

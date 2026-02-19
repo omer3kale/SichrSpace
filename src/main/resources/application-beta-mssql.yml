@@ -18,6 +18,9 @@ spring:
     username: ${BETA_DB_USER}
     password: ${BETA_DB_PASS}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    hikari:
+      pool-name: SichrPlace-MSSQL-Beta
+      maximum-pool-size: 10
   jpa:
     hibernate:
       ddl-auto: update

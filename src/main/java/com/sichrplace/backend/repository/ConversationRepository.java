@@ -15,7 +15,7 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
 
     @Query("SELECT c FROM Conversation c WHERE " +
             "(c.participant1.id = :userId OR c.participant2.id = :userId) " +
-            "ORDER BY c.lastMessageAt DESC NULLS LAST")
+            "ORDER BY COALESCE(c.lastMessageAt, c.createdAt) DESC")
     Page<Conversation> findByParticipant(@Param("userId") Long userId, Pageable pageable);
 
     @Query("SELECT c FROM Conversation c WHERE " +

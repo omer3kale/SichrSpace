@@ -21,6 +21,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     long countByUserId(Long userId);
 
     @Modifying
-    @Query("UPDATE Notification n SET n.readAt = CURRENT_TIMESTAMP WHERE n.user.id = :userId AND n.readAt IS NULL")
-    int markAllAsReadByUserId(@Param("userId") Long userId);
+    @Query("UPDATE Notification n SET n.readAt = :now WHERE n.user.id = :userId AND n.readAt IS NULL")
+    int markAllAsReadByUserId(@Param("userId") Long userId, @Param("now") java.time.Instant now);
 }

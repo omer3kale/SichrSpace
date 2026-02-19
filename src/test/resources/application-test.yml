@@ -1,0 +1,25 @@
+# ── SichrPlace — Test Profile (H2 in-memory for CI) ──
+# Used by MssqlProfileSmokeTest when MSSQL is not available.
+# H2 provides basic SQL compatibility for context-loading tests.
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:sichrplace-test;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+app:
+  jwtSecret: test-secret-key-for-unit-tests-at-least-32-characters-long!!
+  jwtExpirationMs: 86400000
+  jwtRefreshExpirationMs: 604800000
+
+  cors:
+    allowed-origins: http://localhost:8080
