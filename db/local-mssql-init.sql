@@ -19,11 +19,11 @@ BEGIN
 END
 GO
 
--- 2. Create a dev login (matches application-local-mssql.yml)
-IF NOT EXISTS (SELECT name FROM sys.server_principals WHERE name = 'sichrplace_dev')
+-- 2. Create a restricted dev login (matches application-local-mssql.yml)
+IF NOT EXISTS (SELECT name FROM sys.server_principals WHERE name = 'sichrplace_user')
 BEGIN
-    CREATE LOGIN sichrplace_dev WITH PASSWORD = 'SichrDev2025!';
-    PRINT 'Login [sichrplace_dev] created.';
+    CREATE LOGIN sichrplace_user WITH PASSWORD = 'SichrDev2025!';
+    PRINT 'Login [sichrplace_user] created.';
 END
 GO
 
@@ -31,15 +31,18 @@ GO
 USE [sichrplace];
 GO
 
-IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = 'sichrplace_dev')
+IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = 'sichrplace_user')
 BEGIN
-    CREATE USER sichrplace_dev FOR LOGIN sichrplace_dev;
-    PRINT 'User [sichrplace_dev] mapped.';
+    CREATE USER sichrplace_user FOR LOGIN sichrplace_user;
+    PRINT 'User [sichrplace_user] mapped.';
 END
 GO
 
--- 4. Grant full DDL + DML privileges (dev only — NEVER in production)
-ALTER ROLE db_owner ADD MEMBER sichrplace_dev;
+-- 4. Grant DDL + DML privileges (dev only — NEVER in production)
+--    Students: In production you would use a more restrictive role.
+ALTER ROLE db_datareader ADD MEMBER sichrplace_user;
+ALTER ROLE db_datawriter ADD MEMBER sichrplace_user;
+ALTER ROLE db_ddladmin   ADD MEMBER sichrplace_user;
 GO
 
 PRINT '=== SichrPlace MSSQL initialization complete ===';

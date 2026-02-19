@@ -3,12 +3,18 @@
 #
 # Requires: docker compose -f docker-compose.local-mssql.yml up -d
 # MSSQL runs on localhost:1433 via the Docker container.
+#
+# Credentials are read from environment variables.
+# Students: create a .env.local file (git-ignored) with:
+#   LOCAL_DB_USER=sichrplace_user
+#   LOCAL_DB_PASS=SichrDev2025!
+# Then source it before running bootRun.
 
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=sichrplace;encrypt=true;trustServerCertificate=true
-    username: sichrplace_dev
-    password: "SichrDev2025!"
+    url: jdbc:sqlserver://localhost:1433;databaseName=sichrplace;encrypt=false
+    username: ${LOCAL_DB_USER:sichrplace_user}
+    password: ${LOCAL_DB_PASS:SichrDev2025!}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     hibernate:
@@ -20,7 +26,7 @@ spring:
         dialect: org.hibernate.dialect.SQLServerDialect
 
 app:
-  jwtSecret: local-dev-secret-not-for-production-at-least-32-chars
+  jwtSecret: ${JWT_SECRET:local-dev-secret-not-for-production-at-least-32-chars}
   jwtExpirationMs: 86400000
   jwtRefreshExpirationMs: 604800000
 
