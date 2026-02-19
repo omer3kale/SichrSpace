@@ -204,10 +204,10 @@ Browse all 55 endpoints with curl examples and seed data mappings:
 ```
 sichrplace-backend/
 ├── src/main/java/com/sichrplace/backend/
-│   ├── controller/      ← 9 REST controllers (55 endpoints)
-│   ├── service/          ← Business logic (9 service impls)
-│   ├── repository/       ← JPA repositories (9 interfaces)
-│   ├── model/            ← JPA entities (9 entities → 9 tables)
+│   ├── controller/      ← 11 REST controllers (61 endpoints)
+│   ├── service/          ← Business logic (11 service impls)
+│   ├── repository/       ← JPA repositories (11 interfaces)
+│   ├── model/            ← JPA entities (11 entities → 11 tables)
 │   ├── dto/              ← Request/response DTOs
 │   ├── security/         ← JWT provider, auth filter, security config
 │   └── config/           ← DataSeeder, CORS, Swagger, StartupInfoLogger
@@ -215,7 +215,7 @@ sichrplace-backend/
 │   ├── application.yml             ← Base config
 │   ├── application-local-mssql.yml ← Local MSSQL profile
 │   └── application-beta-mssql.yml  ← Beta (droplet) MSSQL profile
-├── src/test/                       ← 6 smoke tests (H2 in-memory)
+├── src/test/                       ← 8 smoke tests (H2 in-memory)
 ├── docs/                           ← All documentation
 │   ├── API_ENDPOINTS_BACKEND.md
 │   ├── TUTORIUM_LAB_WORKPLACE.md

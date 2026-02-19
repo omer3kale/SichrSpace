@@ -60,12 +60,18 @@ class MssqlProfileSmokeTest {
     @Autowired
     private NotificationRepository notificationRepository;
 
+    @Autowired
+    private ViewingRequestTransitionRepository transitionRepository;
+
+    @Autowired
+    private SavedSearchRepository savedSearchRepository;
+
     // ──────────────────────────────────────────────
     // 1. Context loads
     // ──────────────────────────────────────────────
 
     @Test
-    @DisplayName("Application context loads with all 9 repositories")
+    @DisplayName("Application context loads with all 11 repositories")
     void contextLoads() {
         assertNotNull(userRepository, "UserRepository should be wired");
         assertNotNull(apartmentRepository, "ApartmentRepository should be wired");
@@ -76,6 +82,8 @@ class MssqlProfileSmokeTest {
         assertNotNull(apartmentReviewRepository, "ApartmentReviewRepository should be wired");
         assertNotNull(userFavoriteRepository, "UserFavoriteRepository should be wired");
         assertNotNull(notificationRepository, "NotificationRepository should be wired");
+        assertNotNull(transitionRepository, "ViewingRequestTransitionRepository should be wired");
+        assertNotNull(savedSearchRepository, "SavedSearchRepository should be wired");
     }
 
     // ──────────────────────────────────────────────
@@ -83,7 +91,7 @@ class MssqlProfileSmokeTest {
     // ──────────────────────────────────────────────
 
     @Test
-    @DisplayName("Repository.count() works for all 9 tables")
+    @DisplayName("Repository.count() works for all 11 tables")
     void repositoryCountWorks() {
         assertDoesNotThrow(() -> userRepository.count());
         assertDoesNotThrow(() -> apartmentRepository.count());
@@ -94,6 +102,8 @@ class MssqlProfileSmokeTest {
         assertDoesNotThrow(() -> apartmentReviewRepository.count());
         assertDoesNotThrow(() -> userFavoriteRepository.count());
         assertDoesNotThrow(() -> notificationRepository.count());
+        assertDoesNotThrow(() -> transitionRepository.count());
+        assertDoesNotThrow(() -> savedSearchRepository.count());
     }
 
     // ──────────────────────────────────────────────
@@ -112,6 +122,8 @@ class MssqlProfileSmokeTest {
         assertTrue(apartmentReviewRepository.findAll().isEmpty(), "apartment_reviews table should be empty");
         assertTrue(userFavoriteRepository.findAll().isEmpty(), "user_favorites table should be empty");
         assertTrue(notificationRepository.findAll().isEmpty(), "notifications table should be empty");
+        assertTrue(transitionRepository.findAll().isEmpty(), "viewing_request_transitions table should be empty");
+        assertTrue(savedSearchRepository.findAll().isEmpty(), "saved_searches table should be empty");
     }
 
     // ──────────────────────────────────────────────
@@ -134,5 +146,17 @@ class MssqlProfileSmokeTest {
     @DisplayName("ApartmentRepository.findByOwnerId works")
     void apartmentFindByOwner() {
         assertTrue(apartmentRepository.findByOwnerId(999L).isEmpty());
+    }
+
+    @Test
+    @DisplayName("ViewingRequestTransitionRepository.findByViewingRequestId works")
+    void transitionFindByViewingRequestId() {
+        assertTrue(transitionRepository.findByViewingRequestIdOrderByChangedAtAsc(999L).isEmpty());
+    }
+
+    @Test
+    @DisplayName("SavedSearchRepository.findByUserId works")
+    void savedSearchFindByUserId() {
+        assertTrue(savedSearchRepository.findByUserIdOrderByCreatedAtDesc(999L).isEmpty());
     }
 }

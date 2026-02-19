@@ -227,9 +227,12 @@ Each script is **idempotent** and **MSSQL-compatible**.
 
 | Version | Script | Description | Tables affected |
 |---------|--------|-------------|----------------|
-| **V001** | [`V001__initial_schema_mssql.sql`](../db/migrations/V001__initial_schema_mssql.sql) | Baseline schema — 9 tables, 123 columns, 41 indexes, 26 constraints | All 9 tables |
-| **V002** | [`V002__seed_workplace_mssql.sql`](../db/migrations/V002__seed_workplace_mssql.sql) | Workplace seed data — 43 rows across all tables | All 9 tables |
-| *V003+* | *(reserved for student extensions — see [STUDENT_EXTENSION_TRACKS.md](STUDENT_EXTENSION_TRACKS.md))* | — | — |
+| **V001** | [`V001__initial_schema_mssql.sql`](../db/migrations/V001__initial_schema_mssql.sql) | Baseline schema — 9 tables, 123 columns, 41 indexes, 26 constraints | All 9 baseline tables |
+| **V002** | [`V002__seed_workplace_mssql.sql`](../db/migrations/V002__seed_workplace_mssql.sql) | Workplace seed data — 43 rows across baseline tables | All 9 baseline tables |
+| **V003** | [`V003__viewing_request_transitions.sql`](../db/migrations/V003__viewing_request_transitions.sql) | Append-only audit log for viewing-request state changes | `viewing_request_transitions` |
+| **V004** | [`V004__saved_searches.sql`](../db/migrations/V004__saved_searches.sql) | User-saved apartment search filters (JSON) | `saved_searches` |
+| **V005** | [`V005__seed_transitions_and_saved_searches.sql`](../db/migrations/V005__seed_transitions_and_saved_searches.sql) | Seed data for V003/V004 tables — 4 transitions, 2 saved searches | `viewing_request_transitions`, `saved_searches` |
+| *V006+* | *(reserved for student extensions — see [STUDENT_EXTENSION_TRACKS.md](STUDENT_EXTENSION_TRACKS.md))* | — | — |
 
 > **Convention:** `V<NNN>__<description>.sql` — see [`db/migrations/README.md`](../db/migrations/README.md).
 > Scripts use `IF NOT EXISTS` guards and end batches with `GO`.

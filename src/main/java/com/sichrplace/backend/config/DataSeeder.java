@@ -40,6 +40,8 @@ public class DataSeeder implements CommandLineRunner {
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
     private final ViewingRequestRepository viewingRequestRepository;
+    private final ViewingRequestTransitionRepository transitionRepository;
+    private final SavedSearchRepository savedSearchRepository;
     private final ApartmentReviewRepository apartmentReviewRepository;
     private final UserFavoriteRepository userFavoriteRepository;
     private final NotificationRepository notificationRepository;
@@ -255,7 +257,7 @@ public class DataSeeder implements CommandLineRunner {
         log.info("  ✓ 12 messages created");
 
         // ── Viewing Requests ─────────────────────────────────────────
-        viewingRequestRepository.save(ViewingRequest.builder()
+        ViewingRequest vr1 = viewingRequestRepository.save(ViewingRequest.builder()
                 .apartment(ponttor).tenant(charlie)
                 .proposedDateTime(LocalDateTime.of(2025, 11, 16, 14, 0))
                 .message("Ich möchte die Wohnung gerne am Samstag besichtigen.")
@@ -264,19 +266,61 @@ public class DataSeeder implements CommandLineRunner {
                 .confirmedDateTime(LocalDateTime.of(2025, 11, 16, 14, 0))
                 .build());
 
-        viewingRequestRepository.save(ViewingRequest.builder()
+        ViewingRequest vr2 = viewingRequestRepository.save(ViewingRequest.builder()
                 .apartment(wgZimmer).tenant(diana)
                 .proposedDateTime(LocalDateTime.of(2025, 11, 20, 15, 0))
                 .message("Mittwoch Nachmittag wäre ideal für mich.")
                 .status(ViewingRequest.ViewingStatus.PENDING).build());
 
-        viewingRequestRepository.save(ViewingRequest.builder()
+        ViewingRequest vr3 = viewingRequestRepository.save(ViewingRequest.builder()
                 .apartment(lousberg).tenant(erik)
                 .proposedDateTime(LocalDateTime.of(2025, 11, 23, 11, 0))
                 .message("Weekend viewing if possible, please.")
                 .status(ViewingRequest.ViewingStatus.PENDING).build());
 
         log.info("  ✓ 3 viewing requests created");
+
+        // ── Viewing Request Transitions ──────────────────────────────
+        // VR 1 (Charlie → Ponttor): PENDING → CONFIRMED
+        transitionRepository.save(ViewingRequestTransition.builder()
+                .viewingRequest(vr1).fromStatus(null)
+                .toStatus("PENDING").changedBy(charlie)
+                .changedAt(LocalDateTime.of(2025, 11, 10, 10, 0))
+                .reason("Viewing request created").build());
+        transitionRepository.save(ViewingRequestTransition.builder()
+                .viewingRequest(vr1).fromStatus("PENDING")
+                .toStatus("CONFIRMED").changedBy(alice)
+                .changedAt(LocalDateTime.of(2025, 11, 11, 9, 30))
+                .build());
+
+        // VR 2 (Diana → WG-Zimmer): only initial PENDING
+        transitionRepository.save(ViewingRequestTransition.builder()
+                .viewingRequest(vr2).fromStatus(null)
+                .toStatus("PENDING").changedBy(diana)
+                .changedAt(LocalDateTime.of(2025, 11, 14, 16, 0))
+                .reason("Viewing request created").build());
+
+        // VR 3 (Erik → Lousberg): only initial PENDING
+        transitionRepository.save(ViewingRequestTransition.builder()
+                .viewingRequest(vr3).fromStatus(null)
+                .toStatus("PENDING").changedBy(erik)
+                .changedAt(LocalDateTime.of(2025, 11, 17, 12, 0))
+                .reason("Viewing request created").build());
+
+        log.info("  ✓ 4 viewing request transitions created");
+
+        // ── Saved Searches ───────────────────────────────────────────
+        savedSearchRepository.save(SavedSearch.builder()
+                .user(charlie).name("Ponttor unter 650€")
+                .filterJson("{\"city\":\"Aachen\",\"district\":\"Ponttor\",\"maxRent\":650,\"furnished\":true}")
+                .isActive(true).matchCount(0).build());
+
+        savedSearchRepository.save(SavedSearch.builder()
+                .user(diana).name("WG-Zimmer Aachen")
+                .filterJson("{\"city\":\"Aachen\",\"maxRent\":400,\"minBedrooms\":1,\"petFriendly\":true}")
+                .isActive(true).matchCount(0).build());
+
+        log.info("  ✓ 2 saved searches created");
 
         // ── Reviews ──────────────────────────────────────────────────
         apartmentReviewRepository.save(ApartmentReview.builder()
@@ -364,7 +408,7 @@ public class DataSeeder implements CommandLineRunner {
         log.info("  ✓ 5 notifications created");
 
         log.info("═══════════════════════════════════════════════════════");
-        log.info("  SichrPlace workplace seed complete!");
+        log.info("  SichrPlace workplace seed complete! (11 tables)");
         log.info("  Login with any seed account: password123");
         log.info("═══════════════════════════════════════════════════════");
     }

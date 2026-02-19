@@ -4,6 +4,7 @@ import com.sichrplace.backend.dto.ApiErrorResponse;
 import com.sichrplace.backend.dto.CreateViewingRequestRequest;
 import com.sichrplace.backend.dto.DeclineRequest;
 import com.sichrplace.backend.dto.ViewingRequestDto;
+import com.sichrplace.backend.dto.ViewingRequestTransitionDto;
 import com.sichrplace.backend.service.ViewingRequestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -183,5 +184,24 @@ public class ViewingRequestController {
         Long userId = (Long) auth.getPrincipal();
         viewingRequestService.cancelViewingRequest(id, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/history")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Get transition history for a viewing request")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Transition history"),
+            @ApiResponse(responseCode = "403", description = "Not authorized to view this history",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Viewing request not found",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<List<ViewingRequestTransitionDto>> getTransitionHistory(
+            @PathVariable Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) auth.getPrincipal();
+        List<ViewingRequestTransitionDto> response =
+                viewingRequestService.getTransitionHistory(id, userId);
+        return ResponseEntity.ok(response);
     }
 }

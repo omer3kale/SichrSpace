@@ -1,6 +1,7 @@
 package com.sichrplace.backend.service;
 
 import com.sichrplace.backend.dto.ViewingRequestDto;
+import com.sichrplace.backend.dto.ViewingRequestTransitionDto;
 import com.sichrplace.backend.dto.CreateViewingRequestRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ public interface ViewingRequestService {
     ViewingRequestDto confirmViewingRequest(Long id, Long ownerId);
     ViewingRequestDto declineViewingRequest(Long id, Long ownerId, String reason);
     void cancelViewingRequest(Long id, Long tenantId);
+    List<ViewingRequestTransitionDto> getTransitionHistory(Long viewingRequestId, Long userId);
 
     enum ViewingRequestStatus {
         PENDING, CONFIRMED, DECLINED, COMPLETED, CANCELLED

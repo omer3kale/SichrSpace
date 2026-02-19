@@ -55,19 +55,25 @@
 | 42 | PUT | `/api/viewing-requests/{id}/confirm` | LANDLORD/ADMIN | ViewingRequestController | Confirm viewing |
 | 43 | PUT | `/api/viewing-requests/{id}/decline` | LANDLORD/ADMIN | ViewingRequestController | Decline viewing |
 | 44 | PUT | `/api/viewing-requests/{id}/cancel` | TENANT | ViewingRequestController | Cancel viewing |
-| 45 | GET | `/api/notifications` | Bearer | NotificationController | All notifications (paged) |
-| 46 | GET | `/api/notifications/unread` | Bearer | NotificationController | Unread notifications |
-| 47 | GET | `/api/notifications/unread/count` | Bearer | NotificationController | Unread count |
-| 48 | PATCH | `/api/notifications/{id}/read` | Bearer | NotificationController | Mark one read |
-| 49 | PATCH | `/api/notifications/read-all` | Bearer | NotificationController | Mark all read |
-| 50 | GET | `/api/admin/dashboard` | ADMIN | AdminController | Dashboard stats |
-| 51 | GET | `/api/admin/users` | ADMIN | AdminController | List all users |
-| 52 | PATCH | `/api/admin/users/{id}/role` | ADMIN | AdminController | Change user role |
-| 53 | PATCH | `/api/admin/users/{id}/status` | ADMIN | AdminController | Activate/suspend user |
-| 54 | GET | `/api/admin/reviews/pending` | ADMIN | AdminController | Pending reviews |
-| 55 | POST | `/api/admin/reviews/{id}/moderate` | ADMIN | AdminController | Moderate review |
+| 45 | GET | `/api/viewing-requests/{id}/history` | Bearer | ViewingRequestController | Transition history |
+| 46 | GET | `/api/notifications` | Bearer | NotificationController | All notifications (paged) |
+| 47 | GET | `/api/notifications/unread` | Bearer | NotificationController | Unread notifications |
+| 48 | GET | `/api/notifications/unread/count` | Bearer | NotificationController | Unread count |
+| 49 | PATCH | `/api/notifications/{id}/read` | Bearer | NotificationController | Mark one read |
+| 50 | PATCH | `/api/notifications/read-all` | Bearer | NotificationController | Mark all read |
+| 51 | POST | `/api/saved-searches` | Bearer | SavedSearchController | Create saved search |
+| 52 | GET | `/api/saved-searches` | Bearer | SavedSearchController | My saved searches |
+| 53 | GET | `/api/saved-searches/{id}` | Bearer | SavedSearchController | Saved search by ID |
+| 54 | PUT | `/api/saved-searches/{id}/toggle` | Bearer | SavedSearchController | Toggle active/inactive |
+| 55 | DELETE | `/api/saved-searches/{id}` | Bearer | SavedSearchController | Delete saved search |
+| 56 | GET | `/api/admin/dashboard` | ADMIN | AdminController | Dashboard stats |
+| 57 | GET | `/api/admin/users` | ADMIN | AdminController | List all users |
+| 58 | PATCH | `/api/admin/users/{id}/role` | ADMIN | AdminController | Change user role |
+| 59 | PATCH | `/api/admin/users/{id}/status` | ADMIN | AdminController | Activate/suspend user |
+| 60 | GET | `/api/admin/reviews/pending` | ADMIN | AdminController | Pending reviews |
+| 61 | POST | `/api/admin/reviews/{id}/moderate` | ADMIN | AdminController | Moderate review |
 
-**Total: 55 endpoints across 9 controllers.**
+**Total: 61 endpoints across 11 controllers.**
 
 ---
 

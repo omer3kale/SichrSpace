@@ -1,13 +1,16 @@
 package com.sichrplace.backend.service;
 
 import com.sichrplace.backend.dto.ViewingRequestDto;
+import com.sichrplace.backend.dto.ViewingRequestTransitionDto;
 import com.sichrplace.backend.dto.CreateViewingRequestRequest;
 import com.sichrplace.backend.model.Apartment;
 import com.sichrplace.backend.model.User;
 import com.sichrplace.backend.model.ViewingRequest;
+import com.sichrplace.backend.model.ViewingRequestTransition;
 import com.sichrplace.backend.repository.ApartmentRepository;
 import com.sichrplace.backend.repository.UserRepository;
 import com.sichrplace.backend.repository.ViewingRequestRepository;
+import com.sichrplace.backend.repository.ViewingRequestTransitionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 public class ViewingRequestServiceImpl implements ViewingRequestService {
 
     private final ViewingRequestRepository viewingRequestRepository;
+    private final ViewingRequestTransitionRepository transitionRepository;
     private final ApartmentRepository apartmentRepository;
     private final UserRepository userRepository;
 
@@ -54,6 +58,17 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
                 .build();
 
         viewingRequest = viewingRequestRepository.save(viewingRequest);
+
+        // Record the initial PENDING transition
+        transitionRepository.save(ViewingRequestTransition.builder()
+                .viewingRequest(viewingRequest)
+                .fromStatus(null)
+                .toStatus(ViewingRequest.ViewingStatus.PENDING.name())
+                .changedBy(tenant)
+                .changedAt(LocalDateTime.now())
+                .reason("Viewing request created")
+                .build());
+
         log.info("Viewing request created id={}, tenantId={}, apartmentId={}",
                 viewingRequest.getId(), tenantId, request.getApartmentId());
         return ViewingRequestDto.fromEntity(viewingRequest);
@@ -157,6 +172,18 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
         viewingRequest.setRespondedAt(LocalDateTime.now());
 
         viewingRequest = viewingRequestRepository.save(viewingRequest);
+
+        // Record the PENDING → CONFIRMED transition
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        transitionRepository.save(ViewingRequestTransition.builder()
+                .viewingRequest(viewingRequest)
+                .fromStatus(ViewingRequest.ViewingStatus.PENDING.name())
+                .toStatus(ViewingRequest.ViewingStatus.CONFIRMED.name())
+                .changedBy(owner)
+                .changedAt(LocalDateTime.now())
+                .build());
+
         log.info("Viewing request confirmed id={}, ownerId={}", id, ownerId);
         return ViewingRequestDto.fromEntity(viewingRequest);
     }
@@ -180,6 +207,19 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
         viewingRequest.setRespondedAt(LocalDateTime.now());
 
         viewingRequest = viewingRequestRepository.save(viewingRequest);
+
+        // Record the PENDING → DECLINED transition
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        transitionRepository.save(ViewingRequestTransition.builder()
+                .viewingRequest(viewingRequest)
+                .fromStatus(ViewingRequest.ViewingStatus.PENDING.name())
+                .toStatus(ViewingRequest.ViewingStatus.DECLINED.name())
+                .changedBy(owner)
+                .changedAt(LocalDateTime.now())
+                .reason(reason)
+                .build());
+
         log.info("Viewing request declined id={}, ownerId={}", id, ownerId);
         return ViewingRequestDto.fromEntity(viewingRequest);
     }
@@ -199,8 +239,44 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
                     + viewingRequest.getStatus() + ")");
         }
 
+        String previousStatus = viewingRequest.getStatus().name();
         viewingRequest.setStatus(ViewingRequest.ViewingStatus.CANCELLED);
         viewingRequestRepository.save(viewingRequest);
+
+        // Record the → CANCELLED transition
+        User tenant = userRepository.findById(tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        transitionRepository.save(ViewingRequestTransition.builder()
+                .viewingRequest(viewingRequest)
+                .fromStatus(previousStatus)
+                .toStatus(ViewingRequest.ViewingStatus.CANCELLED.name())
+                .changedBy(tenant)
+                .changedAt(LocalDateTime.now())
+                .build());
+
         log.info("Viewing request cancelled id={}, tenantId={}", id, tenantId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ViewingRequestTransitionDto> getTransitionHistory(Long viewingRequestId, Long userId) {
+        ViewingRequest viewingRequest = viewingRequestRepository.findById(viewingRequestId)
+                .orElseThrow(() -> new IllegalArgumentException("Viewing request not found"));
+
+        boolean isTenant = viewingRequest.getTenant().getId().equals(userId);
+        boolean isOwner = viewingRequest.getApartment().getOwner().getId().equals(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        boolean isAdmin = user.getRole() == User.UserRole.ADMIN;
+
+        if (!isTenant && !isOwner && !isAdmin) {
+            log.warn("Unauthorized transition history access userId={}, requestId={}", userId, viewingRequestId);
+            throw new SecurityException("Not authorized to view transition history");
+        }
+
+        return transitionRepository.findByViewingRequestIdOrderByChangedAtAsc(viewingRequestId)
+                .stream()
+                .map(ViewingRequestTransitionDto::fromEntity)
+                .collect(Collectors.toList());
     }
 }
