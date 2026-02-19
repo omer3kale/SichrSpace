@@ -339,21 +339,51 @@ business logic runs on PostgreSQL (production) and MSSQL 2025 (teaching).
 
 ---
 
-## 11  Future Work
+## 11  Future Work & Known Limitations
 
-The following extensions are planned or proposed for continuation:
+This section distinguishes between current technical limitations, MSSQL-specific
+considerations, and opportunities for future development — ordered by what the
+author would tackle first given additional time.
 
-1. **Deeper frontend integration** — Migrate the Vanilla JS frontend to
-   a modern framework (Vue 3 / React) with Vite, consuming `.env` files
-   for backend URL configuration.
-2. **Real-time messaging** — Replace polling with WebSocket (STOMP over
-   SockJS) for instant message delivery.
-3. **Geo-search** — Add coordinates to `Apartment` and implement
-   distance-based search (PostGIS on prod, spatial queries on MSSQL).
-4. **CI test suite** — Expand beyond smoke tests: integration tests
-   with Testcontainers (MSSQL + PostgreSQL) in GitHub Actions.
-5. **Flyway adoption** — Replace manual migration scripts with
-   Flyway-managed migrations for automatic version tracking.
+### 11.1  Technical limitations
+
+| Limitation | Impact | Mitigation path |
+|-----------|--------|------------------|
+| **Single-instance deployment** | No horizontal scaling; one JPA container + one DB | Externalize sessions to Redis, add DB read replicas, deploy behind a load balancer |
+| **No WebSocket / real-time push** | Chat relies on polling; no typing indicators or instant delivery | Add STOMP over SockJS (Spring WebSocket module); frontend `realtime-chat.js` already has the UI hooks |
+| **Limited observability** | No metrics endpoint (`/actuator/prometheus`), no distributed tracing | Add Spring Boot Actuator + Micrometer; export to Grafana or DigitalOcean Monitoring |
+| **No automated integration tests against live MSSQL** | Smoke tests use H2 in-memory; subtle MSSQL-specific SQL differences could be missed | Testcontainers with `mcr.microsoft.com/mssql/server:2022-latest` in GitHub Actions |
+| **Manual migration scripts** | `V001`/`V002` are idempotent but not managed by a migration framework | Adopt Flyway — auto-tracks applied versions, supports both PostgreSQL and MSSQL |
+
+### 11.2  MSSQL-specific considerations
+
+| Factor | Detail |
+|--------|--------|
+| **Licensing** | MSSQL 2025 Developer Edition is free for development and teaching, but production use requires a commercial license (or Express Edition with 10 GB limit) |
+| **Memory footprint** | MSSQL Docker container reserves ~2 GB RAM minimum; this constrains small VPS deployments (current beta uses a 4 GB droplet) |
+| **Vendor lock-in risk** | JPA/Hibernate insulates the application from vendor-specific SQL, but raw queries (if added) could introduce dialect coupling; all current queries are JPQL-only |
+| **Tooling** | SSMS is Windows-only; Azure Data Studio is cross-platform but less mature; `sqlcmd` works everywhere but lacks a GUI |
+
+### 11.3  What the author would do next
+
+1. **Migrate frontend to Vue 3 / Vite** — consume `.env` files for
+   `VITE_API_BASE_URL`, enable SPA routing, improve developer experience.
+2. **WebSocket messaging** — replace polling with STOMP over SockJS;
+   the `ConversationController` already has real-time-ready endpoint shapes.
+3. **Flyway migrations** — auto-versioned, rollback-aware, CI-validated.
+4. **Testcontainers CI** — GitHub Actions matrix testing against
+   PostgreSQL 16 + MSSQL 2022 Docker images on every PR.
+5. **Geo-search** — add `latitude`/`longitude` to `Apartment`;
+   use PostGIS on PostgreSQL, spatial queries on MSSQL.
+
+### 11.4  Pedagogical opportunities
+
+- **More tutorium labs** — Lab 4 (WebSocket messaging), Lab 5 (CI pipeline
+  setup), Lab 6 (performance profiling with JMeter).
+- **Additional extension tracks** — Track D (multi-language i18n),
+  Track E (payment integration with Stripe/PayPal).
+- **Cross-university collaboration** — share the MSSQL workplace as a
+  reusable template for other SE courses that use MS SQL Server.
 
 ---
 
@@ -526,3 +556,81 @@ their local MSSQL environment in under 10 minutes.
 | Frontend backend variants | [`docs/BACKEND_VARIANTS.md`](https://github.com/omer3kale/sichrplace/blob/main/docs/BACKEND_VARIANTS.md) |
 | Smoke tests | [`src/test/java/com/sichrplace/backend/MssqlProfileSmokeTest.java`](src/test/java/com/sichrplace/backend/MssqlProfileSmokeTest.java) |
 | Test profile | [`src/test/resources/application-test.yml`](src/test/resources/application-test.yml) |
+| Exam checklist | [`EXAM_CHECKLIST_BACKEND.md`](EXAM_CHECKLIST_BACKEND.md) |
+| Student onboarding | [`docs/ONBOARDING_README.md`](docs/ONBOARDING_README.md) |
+
+---
+
+## 16  How to Evaluate SichrPlace (for Reviewers)
+
+This section is addressed to thesis reviewers, examiners, and external
+evaluators who want to assess the system independently.
+
+### Quick evaluation path (15 minutes)
+
+1. **Run the demo script** — follow [`DEMO_SCRIPT_BACKEND.md`](DEMO_SCRIPT_BACKEND.md).
+   It walks through architecture diagrams, live API calls, and role-based
+   access in 10–15 minutes.
+
+2. **Inspect MSSQL tables** — after the demo, connect to the droplet DB
+   (or local Docker MSSQL) and verify row counts:
+   ```sql
+   SELECT 'users' AS tbl, COUNT(*) FROM users
+   UNION ALL SELECT 'apartments', COUNT(*) FROM apartments
+   UNION ALL SELECT 'messages', COUNT(*) FROM messages;
+   ```
+   Expected: users=6, apartments=4, messages=12.
+
+3. **Run the smoke tests** — no MSSQL needed:
+   ```bash
+   ./gradlew clean test
+   # 6 tests pass against H2 in-memory
+   ```
+
+4. **Trace a full-stack flow** — follow
+   [`docs/FULLSTACK_GOLDEN_PATH.md`](docs/FULLSTACK_GOLDEN_PATH.md) to see
+   a single action (favorite an apartment) traced from browser click to
+   MSSQL row.
+
+### Evaluation criteria
+
+| Criterion | What to look for | Where to verify |
+|-----------|-----------------|----------------|
+| **Correctness of core flows** | Login returns JWT; favorites persist; viewing requests transition states correctly; role-based access enforced (403 for unauthorized) | Demo script Phase 2; `API_ENDPOINTS_BACKEND.md` curl examples |
+| **Database schema quality** | 3NF normalization; proper FK constraints; unique constraints on `(user, apartment)` favorites and `(apartment, p1, p2)` conversations; consistent naming conventions | ERD diagram; `V001__initial_schema_mssql.sql`; §4 Data Model |
+| **Code structure** | Clean Controller → Service → Repository separation; no business logic in controllers; services use DTOs; repositories use JPQL not native SQL | Any controller/service pair (e.g., `FavoriteController` → `FavoriteServiceImpl` → `FavoriteRepository`) |
+| **JPA portability** | Same JAR runs on PostgreSQL and MSSQL with zero code changes; only the Spring profile differs | §7 Why MSSQL; §3 Environments table; smoke tests use H2 (third DB engine) |
+| **Documentation completeness** | Thesis overview, API reference, labs, extension tracks, seed guide, demo script, golden path, onboarding — all consistent with actual behavior | §14 Consistency Checklist; References table |
+| **Reproducibility** | Any reviewer can clone at `v1.0.0-mssql-workplace`, start Docker MSSQL, run `bootRun`, and see the seeded system in < 10 minutes | `docs/ENV_SETUP_GUIDE.MD`; `docs/ONBOARDING_README.md` |
+
+### Cross-repo alignment
+
+SichrPlace is a **two-repo system**:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ github.com/omer3kale/sichrplace          (Frontend)        │
+│ Vanilla JS · Netlify · Supabase (original)                 │
+│ Branch: main                                               │
+├─────────────────────────────────────────────────────────────┤
+│            ▲ calls /api/* ▼ returns JSON                   │
+├─────────────────────────────────────────────────────────────┤
+│ github.com/omer3kale/sichrplace-backend  (Backend)         │
+│ Spring Boot 3.2.2 · Java 21 · JPA/Hibernate                │
+│ Tag: v1.0.0-mssql-workplace                                │
+├─────────────────────────────────────────────────────────────┤
+│            ▼ JDBC ▲ SQL results                            │
+├─────────────────────────────────────────────────────────────┤
+│ MSSQL 2025 Developer (Docker)                              │
+│ 9 tables · 123 columns · 43 seed rows                      │
+│ Hosted: localhost:1433 (local) / 206.189.53.163 (beta)     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+| Repo | URL | Paired version |
+|------|-----|---------------|
+| **Backend** | [`github.com/omer3kale/sichrplace-backend`](https://github.com/omer3kale/sichrplace-backend) | Tag `v1.0.0-mssql-workplace` on `main` |
+| **Frontend** | [`github.com/omer3kale/sichrplace`](https://github.com/omer3kale/sichrplace) | `main` branch (commit `a0e7820` or later) |
+
+The frontend README confirms the expected backend tag. The backend
+`FULLSTACK_GOLDEN_PATH.md` documents the integration contract.
