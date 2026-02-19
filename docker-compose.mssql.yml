@@ -49,12 +49,11 @@ services:
       database:
         condition: service_healthy
     environment:
-      SPRING_PROFILES_ACTIVE: beta
-      DATABASE_URL:      jdbc:sqlserver://database:1433;databaseName=sichrplace;encrypt=false
-      DATABASE_USERNAME: ${MSSQL_APP_USER:-sichrplace_user}
-      DATABASE_PASSWORD: ${MSSQL_APP_PASSWORD:?Set MSSQL_APP_PASSWORD in .env}
-      DATABASE_DRIVER:   com.microsoft.sqlserver.jdbc.SQLServerDriver
-      JWT_SECRET:        ${JWT_SECRET:?Set JWT_SECRET in .env}
+      SPRING_PROFILES_ACTIVE: beta-mssql
+      BETA_DB_HOST:    database
+      BETA_DB_USER:    ${MSSQL_APP_USER:-sichrplace_user}
+      BETA_DB_PASS:    ${MSSQL_APP_PASSWORD:?Set MSSQL_APP_PASSWORD in .env}
+      JWT_SECRET:      ${JWT_SECRET:?Set JWT_SECRET in .env}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://sichrplace.com,https://www.sichrplace.com}
       PORT: 8080
     expose:

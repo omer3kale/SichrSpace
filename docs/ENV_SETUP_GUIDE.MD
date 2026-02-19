@@ -1,138 +1,252 @@
-# ðŸŒŸ **ENVIRONMENT SETUP GUIDE**
-## Essential Configuration for SichrPlace Production
+# SichrPlace — Environment Setup Guide
 
-Your database schema deployment was successful! Now let's configure the essential environment variables to make all features work.
-
-## ðŸ”‘ **REQUIRED ENVIRONMENT VARIABLES**
-
-### 1. **Supabase Configuration (CRITICAL)**
-```bash
-SUPABASE_URL=https://your-project-ref.supabase.co
-SUPABASE_ANON_KEY=your-anon-key-here
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
-```
-
-**How to get these:**
-1. Go to your Supabase dashboard
-2. Click on your project
-3. Go to Settings â†’ API
-4. Copy the URL and anon key
-5. Copy the service_role key (keep this secret!)
-
-### 2. **Slack Error Notifications (HIGH PRIORITY)**
-```bash
-SLACK_ERROR_WEBHOOK=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
-```
-
-**How to set this up:**
-1. Go to your Slack workspace
-2. Create a new webhook: https://api.slack.com/messaging/webhooks
-3. Choose a channel (e.g., #alerts or #errors)
-4. Copy the webhook URL
-
-### 3. **UptimeRobot Monitoring (RECOMMENDED)**
-```bash
-UPTIMEROBOT_API_KEY=your-uptimerobot-api-key
-```
-
-**How to get this:**
-1. Sign up at https://uptimerobot.com
-2. Go to Settings â†’ API Settings
-3. Create a new API key
-4. Copy the key
-
-### 4. **Authentication Secrets (CRITICAL)**
-```bash
-JWT_SECRET=your-super-secret-jwt-key-at-least-32-characters
-```
-
-**Generate a secure JWT secret:**
-```bash
-# In PowerShell:
-[System.Web.Security.Membership]::GeneratePassword(32, 0)
-
-# Or use this online generator:
-# https://www.allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx
-```
-
-## ðŸš€ **SETTING UP ENVIRONMENT VARIABLES**
-
-### **For Netlify (Production):**
-1. Go to your Netlify dashboard
-2. Select your site
-3. Go to Site settings â†’ Environment variables
-4. Add each variable listed above
-
-### **For Local Development:**
-Create a `.env` file in your root directory:
-
-```bash
-# Supabase
-SUPABASE_URL=https://your-project-ref.supabase.co
-SUPABASE_ANON_KEY=your-anon-key-here
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
-
-# Authentication
-JWT_SECRET=your-super-secret-jwt-key-at-least-32-characters
-
-# Slack Notifications
-SLACK_ERROR_WEBHOOK=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
-
-# UptimeRobot
-UPTIMEROBOT_API_KEY=your-uptimerobot-api-key
-```
-
-## âœ… **VERIFICATION STEPS**
-
-### 1. Test Database Connection
-```bash
-# Navigate to your site and check:
-# https://your-site.netlify.app/api/health
-```
-
-### 2. Test User Feedback System
-```bash
-# Navigate to:
-# https://your-site.netlify.app/api/feedback
-# Should show: "Method not allowed" (good - means it's working)
-```
-
-### 3. Test Error Tracking
-```bash
-# Navigate to:
-# https://your-site.netlify.app/api/simple-error-tracking
-# Check your Slack channel for notifications
-```
-
-## ðŸŽ¯ **NEXT ACTION ITEMS**
-
-1. **Configure environment variables** (above)
-2. **Run UptimeRobot setup script**: `bash scripts/setup-uptimerobot.sh`
-3. **Deploy frontend changes** (feedback widget + lazy loading)
-4. **Test all systems** end-to-end
-
-## ðŸ†˜ **TROUBLESHOOTING**
-
-### Common Issues:
-- **"Missing environment variables"**: Check Netlify dashboard environment variables
-- **"Supabase connection failed"**: Verify URL and keys are correct
-- **"Slack notifications not working"**: Test webhook URL manually
-- **"JWT errors"**: Ensure JWT_SECRET is at least 32 characters
-
-### Support:
-If you encounter issues, check:
-1. Netlify function logs
-2. Supabase dashboard logs
-3. Browser developer console
+> For SE tutorium students and contributors.
+> Last updated: February 2026.
 
 ---
 
-**ðŸŽ‰ Once configured, your SichrPlace platform will have:**
-- âœ… Real-time error tracking with Slack alerts
-- âœ… User feedback collection system  
-- âœ… External uptime monitoring
-- âœ… Optimized performance with lazy loading
-- âœ… Automated database backups
-- âœ… SEO validation automation
+## Pre-Flight Checklist
 
-**Ready for production! ðŸš€**
+Before you start, confirm:
+
+- [ ] Java 17+ installed (`java -version`)
+- [ ] SQL Server installed (Developer Edition or Docker)
+- [ ] SSMS installed (optional but recommended on Windows)
+- [ ] `sichrplace` database created with `sichrplace_user` login
+- [ ] Environment variables set (see Section 3)
+- [ ] Correct Spring profile selected (see Section 1)
+
+---
+
+## 1. Spring Profile Map
+
+SichrPlace uses Spring profiles to switch between database environments.
+The **Java code never changes** — only the active profile does.
+
+| Profile | Activate with | DB Host | DB Engine | Credentials from | Use case |
+|---------|--------------|---------|-----------|-----------------|----------|
+| `local` | `--spring.profiles.active=local` | `localhost:1433` | MSSQL (native Windows) | Hardcoded dev values | Quick local dev |
+| `local-mssql` | `--spring.profiles.active=local-mssql` | `localhost:1433` | MSSQL (Docker or native) | `LOCAL_DB_USER`, `LOCAL_DB_PASS` | **Recommended for students** |
+| `beta-mssql` | `--spring.profiles.active=beta-mssql` | `${BETA_DB_HOST}:1433` | MSSQL (Docker on droplet) | `BETA_DB_USER`, `BETA_DB_PASS` | Shared beta / thesis demo |
+| `beta` | `--spring.profiles.active=beta` | `${DATABASE_URL}` | MSSQL or PostgreSQL | `DATABASE_USERNAME`, `DATABASE_PASSWORD` | Generic beta (any DB) |
+| `prod` | `--spring.profiles.active=prod` | `database:5432` | PostgreSQL (Docker on VPS) | `DATABASE_USERNAME`, `DATABASE_PASSWORD` | Production |
+
+**Key files:**
+
+```
+src/main/resources/
+  application.yml              <- base config (no secrets)
+  application-local.yml        <- native Windows MSSQL, dev defaults
+  application-local-mssql.yml  <- Docker MSSQL, env var credentials
+  application-beta-mssql.yml   <- droplet MSSQL, env var credentials
+  application-beta.yml         <- generic beta, any DB via env vars
+  application-prod.yml         <- PostgreSQL production
+```
+
+> **Teaching question:** How does separating environments by Spring profiles
+> help avoid leaking real secrets into the public GitHub repo?
+
+---
+
+## 2. Desktop Setup — MSSQL on Windows
+
+### Option A: SQL Server Developer Edition (native install)
+
+1. **Download** SQL Server 2022/2025 Developer Edition from
+   [Microsoft Downloads](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+2. **Run installer** -> choose **Developer** edition -> **Basic** installation type
+3. During setup:
+   - Authentication mode: **Mixed** (Windows + SQL auth)
+   - Set a strong `sa` password
+4. **Install SSMS** from [aka.ms/ssms](https://aka.ms/ssms)
+
+### Option B: Docker Desktop (recommended for students)
+
+```powershell
+# Start MSSQL 2025 Developer container
+docker compose -f docker-compose.local-mssql.yml up -d
+```
+
+Or manually:
+
+```powershell
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=SichrDev2025!" `
+  -e "MSSQL_PID=Developer" -p 1433:1433 --name sichrplace-mssql `
+  -d mcr.microsoft.com/mssql/server:2025-latest
+```
+
+### Create Database + User (both options)
+
+Connect via SSMS or `sqlcmd` and run the provided init script:
+
+```sql
+-- Quick command block: paste into SSMS query window
+CREATE DATABASE sichrplace;
+GO
+
+CREATE LOGIN sichrplace_user WITH PASSWORD = 'SichrDev2025!';
+GO
+
+USE sichrplace;
+GO
+
+CREATE USER sichrplace_user FOR LOGIN sichrplace_user;
+GO
+
+ALTER ROLE db_datareader ADD MEMBER sichrplace_user;
+ALTER ROLE db_datawriter ADD MEMBER sichrplace_user;
+ALTER ROLE db_ddladmin   ADD MEMBER sichrplace_user;
+GO
+```
+
+The full script is in [`db/local-mssql-init.sql`](../db/local-mssql-init.sql).
+
+> Hibernate `ddl-auto=update` will create all 9 tables automatically
+> from the JPA entity classes when Spring Boot starts.
+
+---
+
+## 3. Environment Variables
+
+### Local development (`.env.local` — git-ignored)
+
+Create a file called `.env.local` in the project root:
+
+```dotenv
+# SichrPlace Local Dev
+LOCAL_DB_USER=sichrplace_user
+LOCAL_DB_PASS=SichrDev2025!
+JWT_SECRET=local-dev-secret-not-for-production-at-least-32-chars
+```
+
+Load it before running:
+
+```powershell
+# PowerShell: load .env.local variables into current session
+Get-Content .env.local | ForEach-Object {
+    if ($_ -match '^([^#=]+)=(.*)$') {
+        [Environment]::SetEnvironmentVariable($matches[1].Trim(), $matches[2].Trim(), 'Process')
+    }
+}
+
+# Then start Spring Boot
+./gradlew bootRun --args='--spring.profiles.active=local-mssql'
+```
+
+### Beta / droplet (set in `/opt/sichrplace/.env` on the VPS)
+
+```dotenv
+# SichrPlace Beta (Droplet)
+SA_PASSWORD=<strong SA password>
+BETA_DB_HOST=database
+BETA_DB_USER=sichrplace_user
+BETA_DB_PASS=<strong app password>
+JWT_SECRET=<openssl rand -base64 48>
+CORS_ALLOWED_ORIGINS=https://sichrplace.com,https://www.sichrplace.com
+GHCR_OWNER=omer3kale
+IMAGE_TAG=latest
+```
+
+> **Rule:** `.env`, `.env.local`, and `*.env.*` are in `.gitignore`.
+> If someone accidentally commits one, the repo has no real secrets anyway —
+> only placeholder/dev values exist in the YAML files.
+
+> **Teaching question:** Why is `.env.local` in `.gitignore`, and what
+> happens if someone accidentally commits it?
+
+---
+
+## 4. Run and Verify
+
+### Start the backend
+
+```powershell
+./gradlew bootRun --args='--spring.profiles.active=local-mssql'
+```
+
+You should see in the console:
+
+```
+Started SichrPlaceBackendApplication in ~15s
+Hibernate: create table users ...
+Hibernate: create table apartments ...
+```
+
+### Verify it works
+
+```powershell
+# Health check
+curl http://localhost:8080/api/health
+
+# Or test registration
+curl -X POST http://localhost:8080/api/auth/register `
+  -H "Content-Type: application/json" `
+  -d '{\"firstName\":\"Test\",\"lastName\":\"Student\",\"email\":\"test@rwth.de\",\"password\":\"Test1234!\",\"role\":\"TENANT\"}'
+```
+
+### Check the database
+
+In SSMS, expand `sichrplace` -> Tables. You should see 9 tables:
+`users`, `apartments`, `apartment_reviews`, `conversations`, `messages`,
+`notifications`, `user_favorites`, `viewing_requests`, `listings`.
+
+---
+
+## 5. Database Backends — Summary
+
+| Environment | DB Engine | Where it runs | Profile | Compose file |
+|-------------|-----------|--------------|---------|-------------|
+| **Local dev** | MSSQL 2025 Developer | Student laptop (native or Docker) | `local-mssql` | `docker-compose.local-mssql.yml` |
+| **Beta** | MSSQL 2025 Developer | DigitalOcean droplet (Docker) | `beta-mssql` | `docker-compose.mssql.yml` |
+| **Production** | PostgreSQL 16 | DigitalOcean droplet (Docker) | `prod` | `docker-compose.yml` |
+
+All three share the **same ERD** (see [`docs/diagrams/erd_sichrplace.png`](diagrams/erd_sichrplace.png))
+and the same JPA entity classes. Only the JDBC URL, driver, and Hibernate
+dialect change — configured entirely via Spring profiles.
+
+> **Teaching question:** For your thesis beta environment, how will you
+> explain to students the trade-offs between using MSSQL locally and the
+> same MSSQL on the droplet, while keeping the codebase identical?
+
+---
+
+## 6. Troubleshooting
+
+| Problem | Cause | Fix |
+|---------|-------|-----|
+| `Login failed for user 'sichrplace_user'` | Wrong password or user not created | Re-run `db/local-mssql-init.sql` in SSMS |
+| `Cannot open database "sichrplace"` | Database doesn't exist yet | Create it: `CREATE DATABASE sichrplace;` |
+| `Connection refused localhost:1433` | SQL Server not running | Start the service or Docker container |
+| `HikariPool - Connection is not available` | Wrong JDBC URL or firewall | Check `encrypt=false` in URL, TCP/IP enabled |
+| `Table 'users' already exists` | Normal with `ddl-auto=update` | Hibernate skips existing tables — this is fine |
+| `JWT_SECRET not set` | Missing env var in beta profile | Set it in `.env` — beta has no defaults on purpose |
+
+---
+
+## 7. Diagram Cross-References
+
+All diagrams are **MSSQL-compatible** and reflect the same schema used in local and beta:
+
+| Diagram | File | Shows |
+|---------|------|-------|
+| ERD | [`erd_sichrplace.png`](diagrams/erd_sichrplace.png) | All 9 tables, PKs, FKs, types |
+| State chart | [`state_message_lifecycle.png`](diagrams/state_message_lifecycle.png) | Message lifecycle states |
+| Architecture | [`arch_request_flow.png`](diagrams/arch_request_flow.png) | HTTP -> Controller -> Service -> Repo -> MSSQL |
+| Sequence | [`sequence_send_message.png`](diagrams/sequence_send_message.png) | Send message request-response flow |
+
+> These diagrams are versioned in Git alongside the code.
+> If a student adds a new entity, they should update the ERD too.
+
+---
+
+## 8. Student Pathway (Step-by-Step)
+
+1. Install SQL Server + SSMS on your laptop (Section 2)
+2. Run provided SQL script to create DB and user
+3. Set environment variables in `.env.local` (Section 3)
+4. Run Spring Boot with `local-mssql` and test `/api/auth/register` (Section 4)
+5. (Advanced) SSH into droplet, inspect MSSQL Docker container, compare schemas
+
+> **Reflection question:** How would you verify that your local and droplet
+> databases share the same schema and data model, purely from the ERD and
+> Spring entities, without seeing the physical servers?
