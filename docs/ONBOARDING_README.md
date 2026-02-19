@@ -163,6 +163,22 @@ Pick one of 3 self-contained tracks:
 - **Track B:** Soft-delete pattern (`deletedAt`/`deletedBy` columns)
 - **Track C:** Advanced apartment search (filters, sorting, pagination)
 
+### Path E: SQL Practice (database-first)
+
+Explore the SichrPlace data directly in SQL Server — no Java required:
+
+[`docs/SQL_LAB_MSSQL_BASICS.md`](SQL_LAB_MSSQL_BASICS.md)
+
+- **Part 1:** Discover the data (`SELECT`, `WHERE`, `ORDER BY`) — 5 exercises
+- **Part 2:** Join the domain (multi-table joins) — 5 exercises
+- **Part 3:** Aggregate the workplace (`COUNT`, `GROUP BY`, `HAVING`) — 5 exercises
+
+Then continue with the intermediate lab (constraints, indexing, CTEs) and the
+MSSQL features showcase:
+
+- [`SQL_LAB_MSSQL_INTERMEDIATE.md`](SQL_LAB_MSSQL_INTERMEDIATE.md)
+- [`SQL_MSSQL_FEATURES_SHOWCASE.md`](SQL_MSSQL_FEATURES_SHOWCASE.md)
+
 ### Path D: Explore the API
 
 Browse all 55 endpoints with curl examples and seed data mappings:
@@ -208,6 +224,10 @@ sichrplace-backend/
 │   ├── FULLSTACK_LAB_EXERCISES.md
 │   ├── ENV_SETUP_GUIDE.MD
 │   ├── SEED_WORKPLACE_MSSQL.md
+│   ├── SQL_LAB_MSSQL_BASICS.md         ← 15 SQL exercises (basics)
+│   ├── SQL_LAB_MSSQL_INTERMEDIATE.md   ← 8 SQL exercises (constraints, perf)
+│   ├── SQL_MSSQL_FEATURES_SHOWCASE.md  ← MSSQL-specific features
+│   ├── SQL_EXAM_QUESTIONS.md           ← 3 exam-style SQL questions
 │   └── diagrams/                   ← ERD, state charts, sequence, architecture
 ├── db/migrations/                  ← V001 (schema), V002 (seed)
 ├── THESIS_OVERVIEW_BACKEND.md      ← Thesis-level architecture overview

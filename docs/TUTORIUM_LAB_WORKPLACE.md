@@ -158,6 +158,10 @@ viewing_requests=3, apartment_reviews=3, user_favorites=5, notifications=5.
 
 ---
 
+> **SQL focus:** After completing Lab 1, try SQL_LAB_MSSQL_BASICS exercises 1–5
+> ("Discover the data") — explore the same seed data you just called via REST,
+> but directly in MSSQL: [`SQL_LAB_MSSQL_BASICS.md`](SQL_LAB_MSSQL_BASICS.md)
+
 ### Exercise 1.1 — Map the ERD
 
 > **📊 Diagram:** Open the ERD — [`diagrams/erd_sichrplace.png`](diagrams/erd_sichrplace.png)
@@ -222,6 +226,12 @@ See `ApartmentController.java`, `ViewingRequestController.java`, `AdminControlle
 
 ---
 
+> **SQL focus:** After completing Lab 1, also try SQL_LAB_MSSQL_BASICS
+> exercises 6–10 ("Join the domain") — practice the JOINs that map to the
+> API calls you just made: [`SQL_LAB_MSSQL_BASICS.md`](SQL_LAB_MSSQL_BASICS.md)
+
+---
+
 ## Lab 2 — Messaging, Viewing Requests, and Reviews
 
 ### Exercise 2.1 — Complete conversation flow
@@ -280,6 +290,14 @@ Execute this sequence and verify the state transitions:
 5. Login as Erik → Edit the review → Verify it resets to PENDING.
 
 **Draw the state transitions you observed between PENDING → APPROVED → (edit) → PENDING.**
+
+---
+
+> **SQL focus:** After completing Lab 2, try SQL_LAB_MSSQL_BASICS exercises
+> 11–15 ("Aggregate the workplace") and SQL_LAB_MSSQL_INTERMEDIATE exercises
+> 1–3 (normalization & constraints):
+> [`SQL_LAB_MSSQL_BASICS.md`](SQL_LAB_MSSQL_BASICS.md) ·
+> [`SQL_LAB_MSSQL_INTERMEDIATE.md`](SQL_LAB_MSSQL_INTERMEDIATE.md)
 
 ---
 
@@ -519,6 +537,17 @@ DELETE FROM apartments;
 DELETE FROM users;
 # Restart Spring Boot — DataSeeder will re-seed
 ```
+
+---
+
+> **SQL focus:** After completing Lab 3, try SQL_LAB_MSSQL_INTERMEDIATE
+> exercises 4–8 (indexing, parameterised queries, CTEs) and the MSSQL
+> features showcase (views, `OFFSET-FETCH`, `DATEADD`):
+> [`SQL_LAB_MSSQL_INTERMEDIATE.md`](SQL_LAB_MSSQL_INTERMEDIATE.md) ·
+> [`SQL_MSSQL_FEATURES_SHOWCASE.md`](SQL_MSSQL_FEATURES_SHOWCASE.md)
+>
+> **Exam practice:** [`SQL_EXAM_QUESTIONS.md`](SQL_EXAM_QUESTIONS.md)
+> — 3 exam-style questions on the SichrPlace schema.
 
 ---
 
