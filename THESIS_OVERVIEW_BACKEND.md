@@ -284,12 +284,68 @@ exports in [`docs/diagrams/`](docs/diagrams/):
 
 ---
 
-## 10  Future Work
+## 10  Frontend Integration
+
+The SichrPlace frontend is a **Vanilla JS (ES6+)** multi-page application
+originally built against Supabase (managed PostgreSQL). It is hosted at
+[`github.com/omer3kale/sichrplace`](https://github.com/omer3kale/sichrplace)
+and deployed on Netlify.
+
+The frontend's API configuration
+([`frontend/js/config.js`](https://github.com/omer3kale/sichrplace/blob/main/frontend/js/config.js))
+already resolves to `http://localhost:8080` in development and
+`https://api.sichrplace.com` in production — both of which are served by the
+Spring Boot backend. This means the existing frontend can call the Spring Boot
+REST API **without code changes** for the core flows (login, apartments,
+favorites, messaging, viewing requests).
+
+### Full-stack architecture at a glance
+
+```
+┌──────────────────────┐     HTTPS      ┌──────────────────┐
+│  Browser             │ ◄────────────► │  Caddy (TLS)     │
+│  Vanilla JS / HTML   │                │  api.sichrplace  │
+│  (Netlify or local)  │                │  .com            │
+└──────────────────────┘                └────────┬─────────┘
+                                                 │ :8080
+                                        ┌────────▼─────────┐
+                                        │  Spring Boot     │
+                                        │  3.2.2 (Java 21) │
+                                        │  55 endpoints    │
+                                        └────────┬─────────┘
+                                                 │ JDBC
+                                        ┌────────▼─────────┐
+                                        │  MSSQL 2025      │
+                                        │  (or PostgreSQL) │
+                                        └──────────────────┘
+```
+
+### Bridge documentation
+
+| Document | Purpose |
+|----------|--------|
+| [`docs/FULLSTACK_GOLDEN_PATH.md`](docs/FULLSTACK_GOLDEN_PATH.md) | Traces one action (favorite an apartment) from browser click to MSSQL row |
+| [`docs/FULLSTACK_LAB_EXERCISES.md`](docs/FULLSTACK_LAB_EXERCISES.md) | 3 student exercises: trace favorites, trace messaging, extend the API |
+| [`docs/BACKEND_VARIANTS.md`](https://github.com/omer3kale/sichrplace/blob/main/docs/BACKEND_VARIANTS.md) | Frontend-side guide: how to point at local-mssql vs beta-mssql backend |
+
+### What examiners should know
+
+The thesis demonstrates that a **single Spring Boot JAR** replaces the
+combination of Node.js/Express + 107 Netlify Functions + Supabase that the
+original frontend relied on — while keeping the same REST contract. The
+frontend HTML/JS files remain unchanged; only the backend and database
+layer are swapped. This validates the **JPA portability thesis**: the same
+business logic runs on PostgreSQL (production) and MSSQL 2025 (teaching).
+
+---
+
+## 11  Future Work
 
 The following extensions are planned or proposed for continuation:
 
-1. **Frontend integration** — Connect the existing Vue.js/React frontend
-   (SichrPlace GitHub repo) to the Spring Boot API.
+1. **Deeper frontend integration** — Migrate the Vanilla JS frontend to
+   a modern framework (Vue 3 / React) with Vite, consuming `.env` files
+   for backend URL configuration.
 2. **Real-time messaging** — Replace polling with WebSocket (STOMP over
    SockJS) for instant message delivery.
 3. **Geo-search** — Add coordinates to `Apartment` and implement
@@ -301,7 +357,7 @@ The following extensions are planned or proposed for continuation:
 
 ---
 
-## 11  Profile-Specific Smoke Tests
+## 12  Profile-Specific Smoke Tests
 
 The test class [`MssqlProfileSmokeTest.java`](src/test/java/com/sichrplace/backend/MssqlProfileSmokeTest.java)
 validates the application in CI without requiring a real MSSQL instance.
@@ -329,7 +385,7 @@ GitHub Actions workflow.
 
 ---
 
-## 12  Debugging and Observability
+## 13  Debugging and Observability
 
 ### Startup logging
 
@@ -391,7 +447,7 @@ logging:
 
 ---
 
-## 13  Doc / Behavior Consistency Checklist
+## 14  Doc / Behavior Consistency Checklist
 
 These claims have been verified against the running MSSQL beta and local instances.
 Check them after any schema or seed change.
@@ -409,7 +465,7 @@ Check them after any schema or seed change.
 
 ---
 
-## 14  Release Notes — v1.0.0-mssql-workplace
+## 15  Release Notes — v1.0.0-mssql-workplace
 
 **Tag:** `v1.0.0-mssql-workplace`
 **Date:** February 2026
@@ -464,5 +520,9 @@ their local MSSQL environment in under 10 minutes.
 | Environment setup | [`docs/ENV_SETUP_GUIDE.MD`](docs/ENV_SETUP_GUIDE.MD) |
 | Diagrams (Mermaid sources) | [`docs/diagrams/`](docs/diagrams/) |
 | Demo script (live demo) | [`DEMO_SCRIPT_BACKEND.md`](DEMO_SCRIPT_BACKEND.md) |
+| Full-stack golden path | [`docs/FULLSTACK_GOLDEN_PATH.md`](docs/FULLSTACK_GOLDEN_PATH.md) |
+| Full-stack lab exercises | [`docs/FULLSTACK_LAB_EXERCISES.md`](docs/FULLSTACK_LAB_EXERCISES.md) |
+| Frontend repo | [`github.com/omer3kale/sichrplace`](https://github.com/omer3kale/sichrplace) |
+| Frontend backend variants | [`docs/BACKEND_VARIANTS.md`](https://github.com/omer3kale/sichrplace/blob/main/docs/BACKEND_VARIANTS.md) |
 | Smoke tests | [`src/test/java/com/sichrplace/backend/MssqlProfileSmokeTest.java`](src/test/java/com/sichrplace/backend/MssqlProfileSmokeTest.java) |
 | Test profile | [`src/test/resources/application-test.yml`](src/test/resources/application-test.yml) |

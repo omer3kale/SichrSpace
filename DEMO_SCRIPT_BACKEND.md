@@ -271,3 +271,81 @@ curl -s -X POST https://sichrplace.com/api/auth/login \
 - **Use German for apartment data** — the seed data uses realistic German addresses and messages. This resonates with Aachen-based students.
 - **State machines are the "aha" moment.** The transition from PENDING → CONFIRMED → CANCELLED is intuitive and demonstrates real-world workflow modeling.
 - **JPA abstraction is the thesis point.** The fact that the same JAR runs on both databases is the key technical contribution — emphasize it.
+
+---
+
+## Full Stack Demo (optional extension — 5 min)
+
+Use this section when you want to show the **frontend → backend → MSSQL**
+flow live. Requires the frontend served at `localhost:3000` (or Netlify)
+and the backend running on `local-mssql` or the droplet.
+
+### Setup
+
+```bash
+# Terminal 1: Backend (already running from Phase 2)
+# If not: ./gradlew bootRun --args='--spring.profiles.active=local-mssql'
+
+# Terminal 2: Frontend (simple HTTP server)
+cd sichrplace/frontend
+python3 -m http.server 3000
+```
+
+### Step 1 — Open the frontend in a browser
+
+Navigate to `http://localhost:3000/login.html`.
+
+> *"This is the SichrPlace frontend — Vanilla JS, multi-page HTML.
+> It calls the same Spring Boot backend we just tested with curl."*
+
+### Step 2 — Log in as Charlie
+
+- Email: `charlie.student@rwth-aachen.de`
+- Password: `password123`
+
+Open **DevTools → Network** so the audience can see the API calls.
+
+> *"Watch the Network tab — the POST to `/api/auth/login` returns
+> the same JWT we used in curl. The frontend stores it in localStorage."*
+
+### Step 3 — Navigate to apartments and favorite one
+
+Go to `apartments-listing.html`. Click the heart icon on an apartment.
+
+> *"That click just triggered `POST /api/favorites/3`. Let's see it
+> in the backend logs."*
+
+### Step 4 — Show backend logs in real time
+
+In the backend terminal (or Docker logs), show the SQL:
+
+```bash
+# If using Docker (beta)
+ssh deploy@206.189.53.163 "docker logs -f sichrplace-api-1 --tail 5"
+
+# If local, the Gradle console shows it (with Hibernate SQL: DEBUG)
+```
+
+> *"There's the INSERT into `user_favorites`. The same Hibernate query
+> that worked on our curl demo — now triggered from the browser."*
+
+### Step 5 — Verify the row in MSSQL (optional)
+
+```bash
+# Quick verification via sqlcmd
+docker exec sichrplace-database-1 /opt/mssql-tools18/bin/sqlcmd \
+  -S localhost -U sichrplace_user -P "$DB_PASSWORD" -C \
+  -Q "SELECT u.email, a.title FROM user_favorites uf
+      JOIN users u ON u.id = uf.user_id
+      JOIN apartments a ON a.id = uf.apartment_id
+      WHERE u.email = 'charlie.student@rwth-aachen.de'"
+```
+
+> *"From browser click to MSSQL row — one coherent stack.
+> The same JAR, the same JPA entities, the same security model."*
+
+### Presenter note
+
+This section pairs well with the
+[`FULLSTACK_GOLDEN_PATH.md`](docs/FULLSTACK_GOLDEN_PATH.md) document.
+If time permits, open it and show the data flow diagram from §4.
