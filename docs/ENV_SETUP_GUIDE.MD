@@ -268,6 +268,14 @@ All diagrams are **MSSQL-compatible** and reflect the same schema used in local 
 > These diagrams are versioned in Git alongside the code.
 > If a student adds a new entity, they should update the ERD too.
 
+## 7b. Related Documentation
+
+| Document | File | Purpose |
+|----------|------|---------|
+| API Endpoints | [`API_ENDPOINTS_BACKEND.md`](API_ENDPOINTS_BACKEND.md) | All 55 endpoints, use cases, curl examples |
+| Seed Data | [`SEED_WORKPLACE_MSSQL.md`](SEED_WORKPLACE_MSSQL.md) | Seed records, verification, schema evolution |
+| Tutorium Lab | [`TUTORIUM_LAB_WORKPLACE.md`](TUTORIUM_LAB_WORKPLACE.md) | 3-session lab with exercises and solutions |
+
 ---
 
 ## 8. Student Pathway (Step-by-Step)

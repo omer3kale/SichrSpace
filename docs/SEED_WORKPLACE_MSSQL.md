@@ -217,3 +217,111 @@ Then re-run the seed script.
   `@CreatedDate` / `@LastModifiedDate` annotations with `AuditingEntityListener`.
 - **BCrypt:** Passwords are never stored in plain text.  The hash in the seed script
   was generated with cost factor 10, matching `BCryptPasswordEncoder` in `SecurityConfig`.
+
+---
+
+## Schema Evolution on MSSQL
+
+When you need to add new tables, columns, or constraints to the database, follow
+this process to keep **local** and **beta** environments in sync.
+
+### 1. Update the JPA entity
+
+Add the new field to the corresponding Java entity class in `src/main/java/com/sichrplace/backend/model/`.
+
+```java
+// Example: add lease dates to Apartment.java
+@Column(name = "lease_start_date")
+private LocalDate leaseStartDate;
+
+@Column(name = "lease_end_date")
+private LocalDate leaseEndDate;
+```
+
+Hibernate `ddl-auto=update` will add the columns automatically when Spring Boot
+starts.  This works identically on MSSQL and PostgreSQL.
+
+### 2. Write an idempotent migration script
+
+Even though Hibernate handles the DDL, create an explicit migration script so
+that DBAs, tutors, or CI pipelines can apply it independently.
+
+Save it in `db/migrations/` with a version prefix:
+
+```sql
+-- db/migrations/V002__add_lease_dates.sql
+-- Idempotent: safe to run multiple times.
+IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'apartments' AND COLUMN_NAME = 'lease_start_date'
+)
+BEGIN
+    ALTER TABLE apartments ADD lease_start_date DATE NULL;
+    ALTER TABLE apartments ADD lease_end_date DATE NULL;
+    PRINT 'Added lease date columns to apartments.';
+END
+ELSE
+    PRINT 'Lease date columns already exist — skipping.';
+GO
+```
+
+**MSSQL-specific types to use:**
+
+| Java type | MSSQL type | Notes |
+|-----------|-----------|-------|
+| `String` | `VARCHAR(255)` / `VARCHAR(MAX)` | MAX for `@Lob` / `TEXT` |
+| `BigDecimal` | `DECIMAL(10,2)` | Match `@Column(precision, scale)` |
+| `LocalDate` | `DATE` | |
+| `LocalDateTime` | `DATETIME2` | |
+| `Instant` | `DATETIME2` | UTC timestamps |
+| `Boolean` | `BIT` | |
+| `Long` | `BIGINT` | |
+| `Integer` | `INT` | |
+| `Double` | `FLOAT` | |
+
+### 3. Update the seed data
+
+If the new columns need seed values, update **both**:
+- `DataSeeder.java` — set the new fields on the builder
+- `db/mssql-seed-workplace.sql` — add `INSERT` values for the new columns
+
+### 4. Update the ERD
+
+Edit `docs/diagrams/erd_sichrplace.md` and add the new columns to the
+appropriate entity block.  Regenerate the PNG if you maintain one.
+
+### 5. Apply to both environments
+
+```bash
+# Local: restart Spring Boot (Hibernate adds columns automatically)
+./gradlew bootRun --args='--spring.profiles.active=local-mssql'
+
+# Beta (droplet): apply migration script explicitly
+docker cp db/migrations/V002__add_lease_dates.sql \
+  sichrplace-mssql:/tmp/migration.sql
+docker exec sichrplace-mssql /opt/mssql-tools18/bin/sqlcmd \
+  -S localhost -U sichrplace_user -P "$MSSQL_APP_PASSWORD" \
+  -d sichrplace -C -i /tmp/migration.sql
+```
+
+### 6. Verify both environments match
+
+```sql
+-- Run on both local and beta to compare
+SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'dbo'
+ORDER BY TABLE_NAME, ORDINAL_POSITION;
+```
+
+The output should be identical (same tables, same columns, same types).
+
+### Migration checklist
+
+- [ ] JPA entity updated with new fields
+- [ ] Idempotent SQL migration script created in `db/migrations/`
+- [ ] Seed data updated (DataSeeder.java + mssql-seed-workplace.sql)
+- [ ] ERD updated
+- [ ] Local MSSQL tested (Hibernate applies DDL)
+- [ ] Beta MSSQL tested (migration script applied)
+- [ ] Column inventory verified identical on both environments
