@@ -7,380 +7,273 @@
 
 ---
 
-## What You're Working With
+## 1. Introduction
 
-The SichrPlace database models a student-housing platform in Aachen.
-The schema has **9 tables** connected by foreign keys:
+This workbook teaches basic SQL querying on a **Microsoft SQL Server 2025
+Developer** database.  The schema is the SichrPlace student-housing platform
+— 9 tables covering users, apartments, messaging, reviews, and more.
 
-```
-users ──< apartments ──< apartment_reviews
-  │              │
-  │              ├──< conversations ──< messages
-  │              │
-  │              ├──< viewing_requests
-  │              │
-  │              └──< user_favorites
-  │
-  └──< notifications
-  └──< listings (standalone, owner by ID only)
-```
+You should already have:
 
-> **📊 Full ERD:** [`diagrams/erd_sichrplace.md`](diagrams/erd_sichrplace.md)
+- The `local-mssql` environment running (Docker + Spring Boot).
+- Seed data loaded (6 users, 4 apartments, 43 rows total).
+
+> **📊 Schema reference:** [`diagrams/erd_sichrplace.md`](diagrams/erd_sichrplace.md)
+> — open this alongside the exercises to see table names, columns, and FK
+> relationships.
 
 ---
 
-## Connecting to MSSQL
+## 2. Connecting to the Database
 
-### Option A — SSMS (SQL Server Management Studio)
+### SSMS or Azure Data Studio (recommended)
 
-1. Open SSMS.
-2. Server name: `localhost,1433`
-3. Authentication: SQL Server Authentication
-4. Login: `sichrplace_user` / Password: `SichrDev2025!`
-   (or whatever you set in `.env.local`)
-5. Expand **Databases → sichrplace → Tables** to see all 9 tables.
+| Setting | Value |
+|---------|-------|
+| Server | `localhost,1433` |
+| Authentication | SQL Server Authentication |
+| User | `sichrplace_user` |
+| Password | `SichrDev2025!` (or your `.env.local` value) |
+| Database | `sichrplace` |
 
-### Option B — Azure Data Studio
+In SSMS: expand **Databases → sichrplace → Tables** to browse all 9 tables.
 
-1. New Connection → Server: `localhost,1433`
-2. Authentication type: SQL Login
-3. User name: `sichrplace_user`, Password: `SichrDev2025!`
-4. Database: `sichrplace`
-5. Trust server certificate: ✅
+### Droplet MSSQL (if your course uses VPN)
 
-### Option C — sqlcmd in Docker
-
-```bash
-docker exec -it sichrplace-database-1 /opt/mssql-tools18/bin/sqlcmd \
-  -S localhost -U sichrplace_user -P 'SichrDev2025!' -d sichrplace -C
-```
-
-### Option D — Droplet MSSQL (if accessible via VPN)
-
-Same as Option A/B but use `206.189.53.163,1433` as the server address
-with the beta credentials from your `.env` file.
+Same connection settings but use `206.189.53.163,1433` as the server
+address with the beta credentials from your `.env` file.  Access is
+**read-only** for students.
 
 ---
 
-## Part 1 — Discover the Data
+## 3. Part A — Discover the Data
 
-These exercises use `SELECT`, `WHERE`, `ORDER BY`, and `LIKE` to explore
-what the seed data looks like.
-
----
-
-### Exercise 1 — See all users
-
-> **Task:** List every user's id, email, role, and city.
-
-```sql
-SELECT id, email, role, city
-FROM users
-ORDER BY id;
-```
-
-> **Expected:** 6 rows. Two ADMIN, two LANDLORD, two TENANT users.
+These exercises use `SELECT`, `FROM`, `WHERE`, `ORDER BY`, and `TOP`.
 
 ---
 
-### Exercise 2 — Filter by role
+### Exercise 1 — List all users
 
-> **Task:** Show only TENANT users, sorted alphabetically by last name.
+> **Task:** Write a query that shows every user's id, email, role, and city,
+> ordered by id.
 
-```sql
-SELECT id, first_name, last_name, email
-FROM users
-WHERE role = 'TENANT'
-ORDER BY last_name;
-```
+**Hint:** The `users` table has columns `id`, `email`, `role`, `city`.
+Check the ERD for the full column list.
 
-> **Hint:** Look at the ERD — the `role` column stores an enum as a string
-> (`ADMIN`, `LANDLORD`, `TENANT`).
+---
+
+### Exercise 2 — Filter users by role
+
+> **Task:** Show only users whose role is `TENANT`, sorted alphabetically
+> by last name.  Include their first name, last name, and email.
+
+**Hint:** The `role` column in `users` stores a string value — one of
+`ADMIN`, `LANDLORD`, or `TENANT`.  Use a `WHERE` clause with string
+comparison.
 
 ---
 
 ### Exercise 3 — Apartments under a budget
 
-> **Task:** Find all apartments with monthly rent below 900 €, showing
-> title, city, district, and monthly rent.
+> **Task:** Find all apartments with a monthly rent below 900, showing the
+> title, city, district, and monthly rent.  Order by rent ascending.
 
-```sql
-SELECT title, city, district, monthly_rent
-FROM apartments
-WHERE monthly_rent < 900
-ORDER BY monthly_rent ASC;
-```
-
-> **Question:** How many apartments match? Check if the seed data has any
-> under this threshold.
+**Hint:** The `apartments` table has a `monthly_rent` column (DECIMAL).
+Use `WHERE` with a numeric comparison and `ORDER BY`.
 
 ---
 
 ### Exercise 4 — Search by keyword
 
-> **Task:** Find apartments whose title or description contains the word
-> "Ponttor" (a neighbourhood in Aachen).
+> **Task:** Find apartments whose title or description mentions "Ponttor"
+> (a neighbourhood in Aachen).  Show the apartment id, title, district, and
+> monthly rent.
 
-```sql
-SELECT id, title, district, monthly_rent
-FROM apartments
-WHERE title LIKE '%Ponttor%'
-   OR description LIKE '%Ponttor%';
-```
+**Hint:** Use the `LIKE` operator with `%` wildcards on both the `title`
+and `description` columns.  You can combine conditions with `OR`.
 
 ---
 
-### Exercise 5 — Recent messages
+### Exercise 5 — Most recent messages
 
-> **Task:** List the 5 most recent messages with their content preview
-> (first 80 characters) and creation time.
+> **Task:** Show the 5 most recent messages — include the message id, the
+> first 80 characters of the content, the message type, and the creation
+> timestamp.
 
-```sql
-SELECT TOP 5
-    id,
-    LEFT(content, 80) AS content_preview,
-    message_type,
-    created_at
-FROM messages
-ORDER BY created_at DESC;
-```
-
-> **Note:** `TOP` is MSSQL-specific. In PostgreSQL you'd write `LIMIT 5`.
-> The Spring Boot backend uses JPA pagination that abstracts this difference.
+**Hint:** Use `TOP 5` (an MSSQL-specific keyword) together with
+`ORDER BY created_at DESC`.  The `LEFT()` function truncates a string
+to a given length.  The relevant table is `messages`.
 
 ---
 
-## Part 2 — Join the Domain
+## 4. Part B — Join the Domain
 
-These exercises practice `INNER JOIN` and `LEFT JOIN` across related tables.
+These exercises use `INNER JOIN` and `LEFT JOIN` to connect related tables.
 
 ---
 
 ### Exercise 6 — Messages with sender names
 
 > **Task:** For conversation 1, list each message's content, the sender's
-> first name and email, and the send time.
+> first name, the sender's email, and the send time — ordered
+> chronologically.
 
-```sql
-SELECT
-    m.content,
-    u.first_name AS sender_name,
-    u.email      AS sender_email,
-    m.created_at
-FROM messages m
-INNER JOIN users u ON m.sender_id = u.id
-WHERE m.conversation_id = 1
-ORDER BY m.created_at;
-```
+**Hint:** You need two tables: `messages` and `users`.  The FK is
+`messages.sender_id → users.id`.  Filter with
+`WHERE m.conversation_id = 1`.
 
-> **ERD hint:** `messages.sender_id` → `users.id` (FK).
-> `messages.conversation_id` → `conversations.id` (FK).
+**Output columns:** content, sender first name, sender email, created_at.
 
 ---
 
 ### Exercise 7 — Apartments with their owners
 
-> **Task:** List every apartment with its owner's name and email.
+> **Task:** List every apartment alongside its owner's full name (first +
+> last) and email address.
 
-```sql
-SELECT
-    a.id          AS apartment_id,
-    a.title,
-    a.city,
-    a.monthly_rent,
-    u.first_name + ' ' + u.last_name AS owner_name,
-    u.email       AS owner_email
-FROM apartments a
-INNER JOIN users u ON a.user_id = u.id
-ORDER BY a.id;
-```
+**Hint:** Join `apartments` to `users` using `apartments.user_id → users.id`.
+Concatenate first and last name with `+` in MSSQL (e.g.
+`first_name + ' ' + last_name`).
+
+**Output columns:** apartment id, title, city, monthly_rent, owner name, owner email.
 
 ---
 
-### Exercise 8 — Conversations with apartment context
+### Exercise 8 — Conversations with apartment and participant context
 
 > **Task:** For each conversation, show the apartment title and both
-> participants' names.
+> participants' first names, ordered by most recent message.
 
-```sql
-SELECT
-    c.id           AS conv_id,
-    a.title        AS apartment_title,
-    p1.first_name  AS participant_1,
-    p2.first_name  AS participant_2,
-    c.last_message_at
-FROM conversations c
-INNER JOIN apartments a  ON c.apartment_id       = a.id
-INNER JOIN users      p1 ON c.participant_1_id   = p1.id
-INNER JOIN users      p2 ON c.participant_2_id   = p2.id
-ORDER BY c.last_message_at DESC;
-```
+**Hint:** This requires joining `conversations` to three other tables:
+`apartments` (via `apartment_id`), `users` twice (via `participant_1_id`
+and `participant_2_id`).  Use table aliases to distinguish the two user
+joins.
 
-> **Note:** This is a 3-way join (conversations → apartments, conversations → users × 2).
+**Output columns:** conversation id, apartment title, participant 1 name, participant 2 name, last_message_at.
 
 ---
 
-### Exercise 9 — Reviews with reviewer and apartment info
+### Exercise 9 — Approved reviews with apartment and reviewer info
 
-> **Task:** Show all approved reviews: the apartment title, reviewer name,
-> rating, and the review title.
+> **Task:** Show all reviews that have status `APPROVED` — include the
+> apartment title, reviewer's first name, the numeric rating, and the
+> review title.  Order by rating descending.
 
-```sql
-SELECT
-    a.title        AS apartment_title,
-    u.first_name   AS reviewer,
-    r.rating,
-    r.title        AS review_title,
-    r.status
-FROM apartment_reviews r
-INNER JOIN apartments a ON r.apartment_id = a.id
-INNER JOIN users      u ON r.reviewer_id  = u.id
-WHERE r.status = 'APPROVED'
-ORDER BY r.rating DESC;
-```
+**Hint:** Join `apartment_reviews` to both `apartments` (via `apartment_id`)
+and `users` (via `reviewer_id`).  Filter with `WHERE status = 'APPROVED'`.
+
+**Output columns:** apartment title, reviewer name, rating, review title.
 
 ---
 
-### Exercise 10 — Users and their favorites (LEFT JOIN)
+### Exercise 10 — All users and their favorite count (LEFT JOIN)
 
-> **Task:** List all users and how many favorites they have. Include users
-> with zero favorites.
+> **Task:** List every user with their first name, role, and the number of
+> apartments they have favorited.  Users with zero favorites must still
+> appear in the results.
 
-```sql
-SELECT
-    u.id,
-    u.first_name,
-    u.role,
-    COUNT(f.id) AS favorite_count
-FROM users u
-LEFT JOIN user_favorites f ON u.id = f.user_id
-GROUP BY u.id, u.first_name, u.role
-ORDER BY favorite_count DESC;
-```
+**Hint:** Use a `LEFT JOIN` from `users` to `user_favorites` on
+`users.id = user_favorites.user_id`.  An `INNER JOIN` would drop users
+who have no favorites.  You'll need `COUNT()` and `GROUP BY` here.
 
-> **Why LEFT JOIN?** An `INNER JOIN` would exclude users with no favorites.
-> `LEFT JOIN` keeps every user row even if there's no matching row in
-> `user_favorites`.
+**Output columns:** user id, first name, role, favorite count.
 
 ---
 
-## Part 3 — Aggregate the Workplace
+## 5. Part C — Aggregate the Workplace
 
-These exercises use `COUNT`, `SUM`, `AVG`, `GROUP BY`, and `HAVING`.
+These exercises use `COUNT`, `AVG`, `MIN`, `MAX`, `GROUP BY`, and `HAVING`.
 
 ---
 
 ### Exercise 11 — Messages per conversation
 
-> **Task:** Count messages in each conversation and show the total.
+> **Business question:** How many messages does each conversation have?
+> Which conversation is the most active?
 
-```sql
-SELECT
-    c.id           AS conv_id,
-    a.title        AS apartment_title,
-    COUNT(m.id)    AS message_count
-FROM conversations c
-INNER JOIN apartments a ON c.apartment_id = a.id
-LEFT  JOIN messages   m ON c.id = m.conversation_id
-GROUP BY c.id, a.title
-ORDER BY message_count DESC;
-```
+**Tables needed:** `conversations`, `apartments`, `messages`.
+Join conversations to apartments (for the title) and to messages (to count).
+
+**Output columns:** conversation id, apartment title, message count.
+
+**Hint:** Use `COUNT(m.id)` with `GROUP BY` on conversation id and
+apartment title.  Order by message count descending.
 
 ---
 
 ### Exercise 12 — Average rent by city
 
-> **Task:** Compute the average monthly rent per city.
+> **Business question:** What is the average, minimum, and maximum monthly
+> rent in each city?
 
-```sql
-SELECT
-    city,
-    COUNT(*)                     AS apartment_count,
-    CAST(AVG(monthly_rent) AS DECIMAL(10,2)) AS avg_rent,
-    MIN(monthly_rent)           AS min_rent,
-    MAX(monthly_rent)           AS max_rent
-FROM apartments
-GROUP BY city
-ORDER BY avg_rent DESC;
-```
+**Tables needed:** `apartments` only.
+
+**Output columns:** city, apartment count, average rent, min rent, max rent.
+
+**Hint:** Use `AVG(monthly_rent)`, `MIN(monthly_rent)`, `MAX(monthly_rent)`
+with `GROUP BY city`.  You may need `CAST(... AS DECIMAL(10,2))` to round
+the average.
 
 ---
 
 ### Exercise 13 — Viewing requests by status
 
-> **Task:** Count viewing requests grouped by status.
+> **Business question:** How many viewing requests exist for each status
+> (PENDING, CONFIRMED, DECLINED, etc.)?
 
-```sql
-SELECT
-    status,
-    COUNT(*) AS request_count
-FROM viewing_requests
-GROUP BY status
-ORDER BY request_count DESC;
-```
+**Tables needed:** `viewing_requests` only.
+
+**Output columns:** status, request count.
+
+**Hint:** Use `COUNT(*)` with `GROUP BY status`.  Order by count descending.
 
 ---
 
-### Exercise 14 — Users with unread notifications (HAVING)
+### Exercise 14 — Users with many unread notifications
 
-> **Task:** Find users who have more than 1 unread notification.
+> **Business question:** Which users have more than 1 unread notification?
 
-```sql
-SELECT
-    u.first_name,
-    u.email,
-    COUNT(n.id) AS unread_count
-FROM users u
-INNER JOIN notifications n ON u.id = n.user_id
-WHERE n.read_at IS NULL
-GROUP BY u.first_name, u.email
-HAVING COUNT(n.id) > 1
-ORDER BY unread_count DESC;
-```
+**Tables needed:** `users`, `notifications`.
 
-> **Key difference:** `WHERE` filters rows before grouping.
+**Output columns:** user first name, email, unread notification count.
+
+**Hint:** A notification is unread when `read_at IS NULL`.  Use `WHERE`
+to filter unread rows *before* grouping, then use `HAVING COUNT(...) > 1`
+to keep only users above the threshold.
+
+> **Key concept:** `WHERE` filters individual rows before aggregation.
 > `HAVING` filters groups after aggregation.
 
 ---
 
 ### Exercise 15 — Landlords ranked by apartment count
 
-> **Task:** Show each landlord's name and how many apartments they own,
-> but only include landlords with 2+ apartments.
+> **Business question:** Which landlords own 2 or more apartments?
 
-```sql
-SELECT
-    u.first_name + ' ' + u.last_name AS landlord_name,
-    u.email,
-    COUNT(a.id) AS apartment_count
-FROM users u
-INNER JOIN apartments a ON u.id = a.user_id
-WHERE u.role = 'LANDLORD'
-GROUP BY u.first_name, u.last_name, u.email
-HAVING COUNT(a.id) >= 2
-ORDER BY apartment_count DESC;
-```
+**Tables needed:** `users`, `apartments`.
+
+**Output columns:** landlord full name, email, apartment count.
+
+**Hint:** Filter `users` by `role = 'LANDLORD'`, join to `apartments`
+on `users.id = apartments.user_id`, group by landlord, and use
+`HAVING COUNT(...) >= 2`.
 
 ---
 
-## Quick Reference
+## 6. Wrap-Up
 
-| SQL concept | Exercise(s) |
-|-------------|------------|
-| `SELECT … WHERE` | 1–4 |
-| `TOP` / `ORDER BY` | 5 |
-| `INNER JOIN` | 6–9 |
-| `LEFT JOIN` | 10 |
-| `COUNT / GROUP BY` | 11–13 |
-| `AVG / MIN / MAX` | 12 |
-| `HAVING` | 14–15 |
+After completing this lab you should be able to:
 
----
+- **Filter and sort** rows using `WHERE`, `ORDER BY`, `TOP`, and `LIKE`.
+- **Join tables** with `INNER JOIN` and `LEFT JOIN`, following the FK
+  relationships shown in the ERD.
+- **Aggregate data** with `COUNT`, `AVG`, `MIN`, `MAX`, `GROUP BY`, and
+  `HAVING` to answer business-level questions about the SichrPlace domain.
+- **Read an ERD** and translate its relationships into SQL join conditions.
 
-## Next Steps
+### Next step
 
-- **Intermediate SQL lab:** [`SQL_LAB_MSSQL_INTERMEDIATE.md`](SQL_LAB_MSSQL_INTERMEDIATE.md)
-  — normalization, indexes, performance-aware queries, parameterised thinking
-- **MSSQL features showcase:** [`SQL_MSSQL_FEATURES_SHOWCASE.md`](SQL_MSSQL_FEATURES_SHOWCASE.md)
-  — `TRY_CONVERT`, `OFFSET-FETCH`, views, and more
-- **Back to tutorium labs:** [`TUTORIUM_LAB_WORKPLACE.md`](TUTORIUM_LAB_WORKPLACE.md)
+Continue with the intermediate SQL lab — constraints, indexes,
+parameterised queries, and CTEs:
+
+[`SQL_LAB_MSSQL_INTERMEDIATE.md`](SQL_LAB_MSSQL_INTERMEDIATE.md)
