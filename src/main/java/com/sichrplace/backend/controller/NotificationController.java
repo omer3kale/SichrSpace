@@ -66,4 +66,12 @@ public class NotificationController {
         int count = notificationService.markAllAsRead(getCurrentUserId());
         return ResponseEntity.ok(Map.of("markedRead", count));
     }
+
+    @DeleteMapping("/{notificationId}")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Delete a notification")
+    public ResponseEntity<Void> deleteNotification(@PathVariable Long notificationId) {
+        notificationService.deleteNotification(getCurrentUserId(), notificationId);
+        return ResponseEntity.noContent().build();
+    }
 }

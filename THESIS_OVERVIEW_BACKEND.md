@@ -341,6 +341,29 @@ originally built against Supabase (managed PostgreSQL). It is hosted at
 [`github.com/omer3kale/sichrplace`](https://github.com/omer3kale/sichrplace)
 and deployed on Netlify.
 
+### Framework-agnostic integration surface
+
+The backend is **frontend-framework-agnostic**. Every endpoint accepts and
+returns JSON, authenticates via Bearer JWT, and documents itself via OpenAPI
+3.0. Integration specs are generated from a FreeMarker template
+([`docs/templates/frontend_integration.ftl`](docs/templates/frontend_integration.ftl))
+and YAML descriptors (`descriptors/frontend/*.yml`), producing rendered
+Markdown specs under `docs/generated/frontend_integration/`.
+
+This means the same backend can be consumed by:
+
+- The existing Vanilla JS frontend (no code changes needed)
+- The author's own responsive design system
+  ([AppleMontiCore](https://github.com/omer3kale/AppleMontiCore))
+- Any SPA framework, Web Components, or mobile client
+
+All generated specs express patterns in plain `fetch()` pseudocode with no
+framework-specific imports. See
+[`docs/FRONTEND_INTEGRATION_OVERVIEW.md`](docs/FRONTEND_INTEGRATION_OVERVIEW.md)
+for the full philosophy and workflow.
+
+### Current frontend connection
+
 The frontend's API configuration
 ([`frontend/js/config.js`](https://github.com/omer3kale/sichrplace/blob/main/frontend/js/config.js))
 already resolves to `http://localhost:8080` in development and

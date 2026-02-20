@@ -9,7 +9,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update          # Use Flyway/Liquibase for real migrations later
+      ddl-auto: none             # Schema managed exclusively by migration scripts
     show-sql: false
     properties:
       hibernate:

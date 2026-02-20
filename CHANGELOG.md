@@ -7,6 +7,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [v1.3.0-backend-10of10] — 2026-02-21
+
+### Summary
+
+Backend 10/10 release. Closes all Phase 1 gaps (email verification, health
+check, delete notification, V006 migration), adds 51 new tests (82 total),
+raises coverage from ~10% to 15.3% with enforced quality gates, differentiates
+`ddl-auto` per environment, and comprehensively updates all documentation.
+All three dimensions (Domain, Endpoints, Operations) now score 10/10 within
+the thesis and teaching scope.
+
+### Added
+
+- **Email verification flow** — `POST /api/auth/verify-email` and
+  `POST /api/auth/resend-verification`. SHA-256 hashed tokens, 24-hour expiry,
+  single-use. Anti-enumeration: resend always returns same success message.
+  Verification token issued automatically on registration.
+- **New entity:** `EmailVerificationToken` — SHA-256 hashed token storage with
+  expiry, single-use, and user FK. Mirrors `PasswordResetToken` pattern.
+- **New repository:** `EmailVerificationTokenRepository` — `findByTokenHash()`.
+- **New interface:** `EmailService` — Strategy pattern for email delivery.
+- **New implementation:** `EmailServiceStub` — logs email content to console;
+  swap for SMTP in production by changing `@Primary` annotation.
+- **New migration:** `V006__password_reset_tokens.sql` — makes the v1.2.0 showcase
+  feature reproducible without Hibernate auto-DDL. Includes 3 indexes.
+- **New migration:** `V007__email_verification_tokens.sql` — table for email
+  verification tokens with 3 indexes.
+- **Health check endpoint** — `GET /api/health` returns JSON with status, app
+  name, timestamp, and uptime. Public (no auth). Usable by Docker HEALTHCHECK,
+  K8s probes, Caddy.
+- **Delete notification endpoint** — `DELETE /api/notifications/{id}` with
+  ownership enforcement. Returns 204 No Content.
+- **51 new unit tests** across 7 new test classes:
+  - `UserServiceEmailVerificationTest` (7): verify valid/expired/used/invalid,
+    resend unverified/unknown/already-verified
+  - `UserServiceRegistrationLoginTest` (12): register/login/getUserById/
+    updateUser/emailExists happy + error paths
+  - `NotificationServiceTest` (15): create/get/markRead/markAllRead/
+    getUnreadCount/delete with ownership checks
+  - `HealthControllerTest` (2): MockMvc integration — 200+UP, no auth
+  - `EmailServiceStubTest` (3): normal/long-body/empty-body
+  - `DtoMappingTest` (4): UserDto/NotificationDto fromEntity
+  - `EntityLogicTest` (8): PasswordResetToken/EmailVerificationToken
+    isExpired/isUsed
+- **Smoke test updated:** 13th repository (`EmailVerificationTokenRepository`)
+  added to all smoke test assertions.
+- **docs/BACKEND_10OF10_CRITERIA.md** — defines 10/10 for each dimension with
+  5 criteria per dimension and explicit out-of-scope list.
+
+### Changed
+
+- **Endpoint count:** 66 → 70 (4 new endpoints).
+- **Entity count:** 12 → 13 (EmailVerificationToken).
+- **Repository count:** 13 → 14 (EmailVerificationTokenRepository).
+- **Controller count:** 10 → 12 (HealthController, GlobalExceptionHandler counted).
+- **Test count:** 31 → 82 (51 new unit tests).
+- **COCO coverage:** 10.3% → 15.3% overall; service 17.7% → 32.1%.
+- **COCO targets raised:** overall 3→12, service 4→25, dto 0→5, security 10→15,
+  controller 5→8, model 3→12.
+- **JaCoCo minimum:** 3% → 12%.
+- **`ddl-auto` differentiation:**
+  - `prod`: `update` → **`none`** (no Hibernate DDL)
+  - `beta` + `beta-mssql`: `update` → **`validate`** (schema must match)
+  - `local` + `local-mssql`: unchanged (`update`)
+  - `test`: unchanged (`create-drop`)
+- **SecurityConfig** — added `.permitAll()` for verify-email and
+  resend-verification endpoints.
+- **UserService** — `register()` now issues verification token; added
+  `verifyEmail()` and `resendVerificationEmail()`.
+- **NotificationService** — added `deleteNotification()` with ownership check.
+- **BACKEND_DB_STATUS.md** — comprehensive revision: 13 entities, 70 endpoints,
+  82 tests, Phase 1 100% complete, scores updated to 10/10.
+- **API_ENDPOINTS_BACKEND.md** — added endpoints 67–70, Use Cases 8–10
+  (email verification, delete notification, health check).
+- **NEXT_TABLES_DESIGN.md** — added de-scope annotations for `tags`/
+  `apartment_tags` and `usage_stats_daily`; updated phase status.
+- **FRONTEND_INTEGRATION_OVERVIEW.md** — added links to BACKEND_10OF10_CRITERIA.md
+  and BACKEND_DB_STATUS.md.
+
+---
+
 ## [v1.2.0-thesis-showcase] — 2026-02-20
 
 ### Summary
@@ -147,5 +228,6 @@ is the recommended starting point for forks and university adoptions.
 - Complete documentation suite (thesis overview, tutorium, API reference,
   extension tracks, demo script, diagrams).
 
+[v1.3.0-backend-10of10]: https://github.com/omer3kale/sichrplace-backend/releases/tag/v1.3.0-backend-10of10
 [v1.2.0-thesis-showcase]: https://github.com/omer3kale/sichrplace-backend/releases/tag/v1.2.0-thesis-showcase
 [v1.1.0-quality-baseline]: https://github.com/omer3kale/sichrplace-backend/releases/tag/v1.1.0-quality-baseline

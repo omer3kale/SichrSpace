@@ -68,7 +68,7 @@ jacocoTestCoverageVerification {
         rule {
             limit {
                 counter = 'INSTRUCTION'
-                minimum = 0.03   // Current baseline (3.7%) — raise as tests are added
+                minimum = 0.12   // Raised from 3% → 12% (v1.3.0, Feb 2026)
             }
         }
     }

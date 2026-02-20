@@ -95,4 +95,18 @@ public class NotificationServiceImpl implements NotificationService {
     public long getUnreadCount(Long userId) {
         return notificationRepository.countByUserIdAndReadAtIsNull(userId);
     }
+
+    @Override
+    @Transactional
+    public void deleteNotification(Long userId, Long notificationId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new IllegalArgumentException("Notification not found"));
+
+        if (!notification.getUser().getId().equals(userId)) {
+            throw new SecurityException("Not authorized to delete this notification");
+        }
+
+        notificationRepository.delete(notification);
+        log.info("Deleted notification {} for user {}", notificationId, userId);
+    }
 }

@@ -1,6 +1,7 @@
 package com.sichrplace.backend;
 
 import com.sichrplace.backend.repository.*;
+import com.sichrplace.backend.repository.EmailVerificationTokenRepository;
 import com.sichrplace.backend.repository.PasswordResetTokenRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -70,12 +71,15 @@ class MssqlProfileSmokeTest {
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
+    @Autowired
+    private EmailVerificationTokenRepository emailVerificationTokenRepository;
+
     // ──────────────────────────────────────────────
     // 1. Context loads
     // ──────────────────────────────────────────────
 
     @Test
-    @DisplayName("Application context loads with all 12 repositories")
+    @DisplayName("Application context loads with all 13 repositories")
     void contextLoads() {
         assertNotNull(userRepository, "UserRepository should be wired");
         assertNotNull(apartmentRepository, "ApartmentRepository should be wired");
@@ -89,6 +93,7 @@ class MssqlProfileSmokeTest {
         assertNotNull(transitionRepository, "ViewingRequestTransitionRepository should be wired");
         assertNotNull(savedSearchRepository, "SavedSearchRepository should be wired");
         assertNotNull(passwordResetTokenRepository, "PasswordResetTokenRepository should be wired");
+        assertNotNull(emailVerificationTokenRepository, "EmailVerificationTokenRepository should be wired");
     }
 
     // ──────────────────────────────────────────────
@@ -110,6 +115,7 @@ class MssqlProfileSmokeTest {
         assertDoesNotThrow(() -> transitionRepository.count());
         assertDoesNotThrow(() -> savedSearchRepository.count());
         assertDoesNotThrow(() -> passwordResetTokenRepository.count());
+        assertDoesNotThrow(() -> emailVerificationTokenRepository.count());
     }
 
     // ──────────────────────────────────────────────
@@ -131,6 +137,7 @@ class MssqlProfileSmokeTest {
         assertTrue(transitionRepository.findAll().isEmpty(), "viewing_request_transitions table should be empty");
         assertTrue(savedSearchRepository.findAll().isEmpty(), "saved_searches table should be empty");
         assertTrue(passwordResetTokenRepository.findAll().isEmpty(), "password_reset_tokens table should be empty");
+        assertTrue(emailVerificationTokenRepository.findAll().isEmpty(), "email_verification_tokens table should be empty");
     }
 
     // ──────────────────────────────────────────────

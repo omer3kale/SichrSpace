@@ -353,50 +353,67 @@ GO
 
 ## 4. Priority & Migration Plan
 
-| Table | Priority | Rationale |
-|-------|----------|-----------|
-| `viewing_request_transitions` | **MUST HAVE** | Directly completes Track B; the state machine is a core teaching concept and the audit log is a thesis-defensible pattern |
-| `saved_searches` | **MUST HAVE** | Directly completes Track C; the `SAVED_SEARCH_ALERT` notification type already exists but has no backing data |
-| `tags` + `apartment_tags` | **NICE TO HAVE** | Normalisation exercise is pedagogically strong but the current `amenities` column works; can be a student deliverable |
-| `usage_stats_daily` | **NICE TO HAVE** | Track A works with live queries; pre-aggregation is an optimisation for larger datasets |
+| Table | Priority | Rationale | v1.3.0 Status |
+|-------|----------|-----------|---------------|
+| `viewing_request_transitions` | **MUST HAVE** | Directly completes Track B; the state machine is a core teaching concept and the audit log is a thesis-defensible pattern | **IMPLEMENTED** (V003, v1.1.0) |
+| `saved_searches` | **MUST HAVE** | Directly completes Track C; the `SAVED_SEARCH_ALERT` notification type already exists but has no backing data | **IMPLEMENTED** (V004, v1.1.0) |
+| `tags` + `apartment_tags` | **NICE TO HAVE** | Normalisation exercise is pedagogically strong but the current `amenities` column works; can be a student deliverable | **DE-SCOPED** — see note below |
+| `usage_stats_daily` | **NICE TO HAVE** | Track A works with live queries; pre-aggregation is an optimisation for larger datasets | **DE-SCOPED** — see note below |
 
-### Suggested implementation order
+> ### De-scope note (v1.3.0-backend-10of10)
+>
+> **Decision:** Both NICE-TO-HAVE tables (`tags`/`apartment_tags` and
+> `usage_stats_daily`) are **explicitly kept as future work** and are not
+> required for the v1.3.0 10/10 thesis assessment. Rationale:
+>
+> - **`tags` + `apartment_tags`:** The free-text `amenities` column is
+>   sufficient for the thesis demo and student exercises. Tag normalisation
+>   is a strong extension exercise for future cohorts (see §2.3 integration
+>   points for the full design). The DDL sketch above remains valid and
+>   ready for implementation.
+>
+> - **`usage_stats_daily`:** The admin dashboard already uses live JPA queries
+>   (`AdminService.getDashboardStats()`). Pre-aggregation is a scalability
+>   optimisation that becomes relevant at production scale, not at thesis
+>   demo scale (49 seed rows). The DDL sketch and `@Scheduled` design above
+>   remain valid for future implementation.
+>
+> Both designs are preserved in this document as **student extension exercises**
+> referenced from TUTORIUM_LAB_WORKPLACE.md.
+
+### Suggested implementation order (updated v1.3.0)
 
 ```
-Phase 1 — V003__viewing_request_transitions.sql
-  • Create table + indexes
-  • Add JPA entity, repository, service logic, endpoint
-  • Seed 3–5 sample transitions for existing viewing_requests
-  • Update state chart diagram
-  • Add 1 SQL lab exercise ("count transitions by type")
+Phase 1 — V003__viewing_request_transitions.sql           ✅ DONE (v1.1.0)
+  • Table, indexes, entity, repository, service, endpoint — all implemented
+  • 4 seed transitions in V005
+  • Transition history endpoint: GET /api/viewing-requests/{id}/history
+  • 9 unit tests in ViewingRequestServiceExtendedTest
 
-Phase 2 — V004__saved_searches.sql
-  • Create table + indexes
-  • Add JPA entity, repository, SavedSearchService, SavedSearchController
-  • Seed 2 sample saved searches for Charlie and Diana
-  • Update ERD
-  • Add 1 SQL lab exercise ("join saved_searches to users")
+Phase 2 — V004__saved_searches.sql                        ✅ DONE (v1.1.0)
+  • Table, indexes, entity, repository, service, controller — all implemented
+  • 2 seed searches in V005
+  • Execute endpoint: POST /api/saved-searches/{id}/execute (v1.2.0)
+  • 6 unit tests in SavedSearchServiceTest
 
-Phase 3 — V005__tags_and_apartment_tags.sql  (if time permits)
-  • Create both tables
-  • Add Tag entity, @ManyToMany on Apartment
-  • Seed 10 tags + mappings to existing 4 apartments
-  • Migrate existing amenities text to tags (optional)
-  • Update ERD (first many-to-many)
+Phase 3 — V005__tags_and_apartment_tags.sql               ❌ DE-SCOPED (v1.3.0)
+  • Design preserved above (§2.3) — ready for student implementation
+  • Kept as extension exercise for future cohorts
 
-Phase 4 — V006__usage_stats_daily.sql  (future / student project)
-  • Create table
-  • Add @Scheduled aggregation job
-  • Backfill from existing data
-  • Add admin analytics endpoint
+Phase 4 — V006__usage_stats_daily.sql                     ❌ DE-SCOPED (v1.3.0)
+  • Design preserved above (§2.4) — ready for student implementation
+  • Note: V006 version number is now used by password_reset_tokens migration
+  • If implemented, use V008 or later
 ```
 
 ### Updated table count per phase
 
-| Phase | Tables | Total |
-|-------|--------|-------|
-| Current | 9 | 9 |
-| Phase 1 | +1 (viewing_request_transitions) | 10 |
-| Phase 2 | +1 (saved_searches) | 11 |
-| Phase 3 | +2 (tags, apartment_tags) | 13 |
-| Phase 4 | +1 (usage_stats_daily) | 14 |
+| Phase | Tables | Total | Status |
+|-------|--------|-------|--------|
+| Current (v1.0.0) | 9 | 9 | Done |
+| Phase 1 | +1 (viewing_request_transitions) | 10 | **Done** (v1.1.0) |
+| Phase 2 | +1 (saved_searches) | 11 | **Done** (v1.1.0) |
+| v1.2.0 | +1 (password_reset_tokens) | 12 | **Done** (v1.2.0, migration V006 in v1.3.0) |
+| v1.3.0 | +1 (email_verification_tokens) | 13 | **Done** (v1.3.0, migration V007) |
+| Phase 3 | +2 (tags, apartment_tags) | 15 | **De-scoped** — future work |
+| Phase 4 | +1 (usage_stats_daily) | 16 | **De-scoped** — future work |

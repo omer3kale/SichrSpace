@@ -1,0 +1,176 @@
+# Frontend Integration Descriptor — Execute Saved Search
+# Used with: docs/templates/frontend_integration.ftl
+# Rendered to: docs/generated/frontend_integration/saved_search_execute.md
+
+featureName: "Execute Saved Search"
+backendTag: "v1.2.0-thesis-showcase"
+integrationLevel: "Full (CRUD + Execute)"
+
+userStory: >
+  As a logged-in tenant, I want to execute a previously saved search so
+  that I can see current apartments matching my stored filters without
+  re-entering criteria every time.
+primaryUserRole: "TENANT (or any authenticated user)"
+screenContext: "Saved-searches list page → results overlay / results page"
+
+endpoints:
+  - httpMethod: "POST"
+    endpointPath: "/api/saved-searches/{id}/execute"
+    authRequired: "Yes — Bearer JWT (any authenticated user)"
+    rateLimitNotes: "No explicit rate limit; consider debouncing on the frontend (300ms)"
+    requestFields:
+      - name: "id"
+        type: "Long (path variable)"
+        required: "Yes"
+        constraints: "Must be a saved search owned by the authenticated user"
+      - name: "page"
+        type: "int (query param)"
+        required: "No"
+        constraints: "Default 0; zero-indexed"
+      - name: "size"
+        type: "int (query param)"
+        required: "No"
+        constraints: "Default 20; max recommended 50"
+      - name: "sort"
+        type: "String (query param)"
+        required: "No"
+        constraints: "e.g. price,asc or createdAt,desc"
+    responseFields:
+      - name: "content"
+        type: "ApartmentDto[]"
+        notes: "Array of matching apartments"
+      - name: "content[].id"
+        type: "Long"
+        notes: "Apartment ID"
+      - name: "content[].title"
+        type: "String"
+        notes: "Listing title"
+      - name: "content[].description"
+        type: "String"
+        notes: "Full description text"
+      - name: "content[].city"
+        type: "String"
+        notes: "City name"
+      - name: "content[].district"
+        type: "String"
+        notes: "District / neighbourhood"
+      - name: "content[].address"
+        type: "String"
+        notes: "Street address"
+      - name: "content[].price"
+        type: "BigDecimal"
+        notes: "Monthly rent"
+      - name: "content[].size"
+        type: "Double"
+        notes: "Size in m²"
+      - name: "content[].bedrooms"
+        type: "Integer"
+        notes: "Number of bedrooms"
+      - name: "content[].furnished"
+        type: "Boolean"
+        notes: "true if furnished"
+      - name: "content[].petFriendly"
+        type: "Boolean"
+        notes: "true if pets allowed"
+      - name: "content[].hasParking"
+        type: "Boolean"
+        notes: "true if parking available"
+      - name: "content[].hasElevator"
+        type: "Boolean"
+        notes: "true if building has elevator"
+      - name: "content[].hasBalcony"
+        type: "Boolean"
+        notes: "true if unit has balcony"
+      - name: "totalElements"
+        type: "long"
+        notes: "Total matching apartments across all pages"
+      - name: "totalPages"
+        type: "int"
+        notes: "Total number of pages"
+      - name: "number"
+        type: "int"
+        notes: "Current page number (zero-indexed)"
+      - name: "size"
+        type: "int"
+        notes: "Page size"
+    errorCodes:
+      - status: "401"
+        meaning: "Not authenticated"
+        suggestedUx: "Redirect to login page"
+      - status: "403"
+        meaning: "Saved search belongs to another user"
+        suggestedUx: "Show 'Access denied' toast"
+      - status: "404"
+        meaning: "Saved search not found"
+        suggestedUx: "Show 'Search not found — it may have been deleted' message"
+    validationHints:
+      - "The saved search stores 13 filter fields (city, district, minPrice, maxPrice, minBedrooms, maxBedrooms, minSize, maxSize, furnished, petFriendly, hasParking, hasElevator, hasBalcony)."
+      - "Null filter fields are ignored (match all). Only non-null fields constrain results."
+      - "Results are returned as a Spring Data Page — use totalElements and totalPages for pagination UI."
+
+dataFetchPattern: |
+  const token = localStorage.getItem('jwt');
+  const res = await fetch(
+    `${BASE_URL}/api/saved-searches/${searchId}/execute?page=${page}&size=20`,
+    {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    }
+  );
+  if (!res.ok) { /* handle 401/403/404 */ }
+  const data = await res.json();
+  // data.content = ApartmentDto[], data.totalPages, data.number
+
+stateShape: |
+  {
+    "searchId": 42,
+    "results": [],
+    "currentPage": 0,
+    "totalPages": 0,
+    "totalElements": 0,
+    "isLoading": false,
+    "error": null
+  }
+
+renderHints:
+  - "Show a loading skeleton while isLoading is true."
+  - "Render each apartment as a card with title, city, price, size, bedrooms."
+  - "Show boolean amenities (furnished, petFriendly, parking, elevator, balcony) as icon badges."
+  - "Display pagination controls using totalPages and currentPage."
+  - "If results are empty, show a friendly 'No apartments match your saved filters' message with a link to edit the search."
+
+breakpoints:
+  - name: "≤ 480px (mobile)"
+    guidance: "Single-column card list; stack price below title; hide description."
+  - name: "481–768px (tablet)"
+    guidance: "Two-column card grid; show truncated description (2 lines)."
+  - name: "769–1024px (small desktop)"
+    guidance: "Three-column grid; show full amenity badge row."
+  - name: "≥ 1025px (desktop)"
+    guidance: "Three or four-column grid with sidebar showing saved-search filters summary."
+
+priorityContent:
+  - "Apartment title and price are always visible (even on smallest screens)."
+  - "Pagination controls are always accessible — sticky footer or infinite scroll."
+  - "Error messages appear inline above the results area."
+
+a11yNotes:
+  - "Each apartment card should be a focusable element (tabindex or semantic <article>)."
+  - "Pagination buttons need aria-label (e.g. 'Go to page 3 of 5')."
+  - "Loading state should set aria-busy='true' on the results container."
+  - "Boolean amenity icons must have aria-label or sr-only text."
+
+mockDataSource: |
+  Use Swagger UI at /swagger-ui/index.html to execute the endpoint
+  with a valid JWT. Alternatively, seed data includes saved searches
+  for user alice@example.com (TENANT) — login, list saved searches,
+  then execute any of them.
+
+manualTestChecklist:
+  - "Login as a tenant and execute a saved search — verify results match the stored filters."
+  - "Execute with page=0&size=5 and verify only 5 results per page."
+  - "Execute a search that matches zero apartments — verify empty-state message."
+  - "Try to execute another user's saved search — verify 403 response."
+  - "Try to execute with an invalid search ID — verify 404 response."
+  - "Resize the browser from desktop to mobile — verify responsive card layout."
+  - "Tab through results with keyboard — verify all cards and pagination are focusable."

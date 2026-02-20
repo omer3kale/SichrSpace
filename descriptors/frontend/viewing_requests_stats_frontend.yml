@@ -1,0 +1,192 @@
+# Frontend Integration Descriptor — Viewing Request Stats & Complete
+# Used with: docs/templates/frontend_integration.ftl
+# Rendered to: docs/generated/frontend_integration/viewing_requests_stats.md
+
+featureName: "Viewing Request Statistics & Completion"
+backendTag: "v1.2.0-thesis-showcase"
+integrationLevel: "Full (Read stats + State transition)"
+
+userStory: >
+  As a landlord or tenant, I want to see an overview of my viewing request
+  statistics (pending, confirmed, declined, completed, cancelled) and be
+  able to mark a confirmed viewing as completed, so that I can track my
+  rental activity at a glance.
+primaryUserRole: "LANDLORD (stats for own apartments) or TENANT (stats for own requests)"
+screenContext: "Dashboard / viewing-requests management page"
+
+endpoints:
+  - httpMethod: "GET"
+    endpointPath: "/api/viewing-requests/statistics"
+    authRequired: "Yes — Bearer JWT"
+    rateLimitNotes: "Low-frequency endpoint; no special rate limiting needed"
+    requestFields: []
+    responseFields:
+      - name: "totalRequests"
+        type: "long"
+        notes: "Total viewing requests for the authenticated user"
+      - name: "pendingCount"
+        type: "long"
+        notes: "Requests awaiting landlord response"
+      - name: "confirmedCount"
+        type: "long"
+        notes: "Requests confirmed by landlord"
+      - name: "declinedCount"
+        type: "long"
+        notes: "Requests declined by landlord"
+      - name: "completedCount"
+        type: "long"
+        notes: "Viewings that took place"
+      - name: "cancelledCount"
+        type: "long"
+        notes: "Requests cancelled by tenant"
+      - name: "averageResponseTimeHours"
+        type: "Double (nullable)"
+        notes: "Average hours from PENDING to CONFIRMED/DECLINED; null if no transitions yet"
+    errorCodes:
+      - status: "401"
+        meaning: "Not authenticated"
+        suggestedUx: "Redirect to login page"
+    validationHints:
+      - "Landlords see statistics for viewing requests against their apartments."
+      - "Tenants see statistics for their own viewing requests."
+      - "averageResponseTimeHours may be null if no requests have been responded to yet — display 'N/A' in that case."
+
+  - httpMethod: "PUT"
+    endpointPath: "/api/viewing-requests/{id}/complete"
+    authRequired: "Yes — Bearer JWT"
+    rateLimitNotes: "Idempotent on success; safe to retry"
+    requestFields:
+      - name: "id"
+        type: "Long (path variable)"
+        required: "Yes"
+        constraints: "Must be a viewing request ID in CONFIRMED status"
+    responseFields:
+      - name: "id"
+        type: "Long"
+        notes: "Viewing request ID"
+      - name: "status"
+        type: "String"
+        notes: "Updated status — will be 'COMPLETED'"
+      - name: "apartmentId"
+        type: "Long"
+        notes: "Associated apartment ID"
+      - name: "tenantId"
+        type: "Long"
+        notes: "Tenant who requested the viewing"
+      - name: "landlordId"
+        type: "Long"
+        notes: "Landlord who owns the apartment"
+      - name: "requestedDate"
+        type: "LocalDate"
+        notes: "Date the viewing was requested for"
+      - name: "message"
+        type: "String"
+        notes: "Optional message from the tenant"
+      - name: "createdAt"
+        type: "LocalDateTime"
+        notes: "When the request was created"
+      - name: "updatedAt"
+        type: "LocalDateTime"
+        notes: "When the status was last changed"
+    errorCodes:
+      - status: "401"
+        meaning: "Not authenticated"
+        suggestedUx: "Redirect to login page"
+      - status: "403"
+        meaning: "User is not the landlord or tenant for this viewing request"
+        suggestedUx: "Show 'Access denied' toast"
+      - status: "404"
+        meaning: "Viewing request not found"
+        suggestedUx: "Show 'Viewing request not found' message"
+      - status: "409"
+        meaning: "Invalid state transition (e.g. trying to complete a PENDING or DECLINED request)"
+        suggestedUx: "Show 'This viewing must be confirmed before it can be completed' message"
+    validationHints:
+      - "Only CONFIRMED viewing requests can be completed — the backend enforces a state machine: PENDING → CONFIRMED → COMPLETED."
+      - "PENDING and DECLINED requests cannot be completed (409 Conflict)."
+      - "Both the landlord and tenant can mark a viewing as completed."
+
+dataFetchPattern: |
+  const token = localStorage.getItem('jwt');
+
+  // Fetch statistics
+  const statsRes = await fetch(`${BASE_URL}/api/viewing-requests/statistics`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  const stats = await statsRes.json();
+
+  // Complete a viewing request
+  const completeRes = await fetch(
+    `${BASE_URL}/api/viewing-requests/${requestId}/complete`,
+    {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}` }
+    }
+  );
+  if (completeRes.status === 409) { /* show state-machine error */ }
+  const updated = await completeRes.json();
+
+stateShape: |
+  {
+    "stats": {
+      "totalRequests": 0,
+      "pendingCount": 0,
+      "confirmedCount": 0,
+      "declinedCount": 0,
+      "completedCount": 0,
+      "cancelledCount": 0,
+      "averageResponseTimeHours": null
+    },
+    "isLoadingStats": false,
+    "selectedRequestId": null,
+    "isCompleting": false,
+    "error": null
+  }
+
+renderHints:
+  - "Display statistics as a dashboard with count cards or a summary bar."
+  - "Use colour coding: pending=amber, confirmed=green, declined=red, completed=blue, cancelled=grey."
+  - "Show averageResponseTimeHours formatted as 'X.X hours' or 'N/A' if null."
+  - "The 'Complete' button should only appear on CONFIRMED viewing requests."
+  - "After completing, refresh the statistics to show updated counts."
+  - "Consider a donut/pie chart for visual distribution of statuses (optional)."
+
+breakpoints:
+  - name: "≤ 480px (mobile)"
+    guidance: "Stack stat cards vertically (one per row); full-width 'Complete' button."
+  - name: "481–768px (tablet)"
+    guidance: "2×3 grid of stat cards; viewing requests as compact list."
+  - name: "769–1024px (small desktop)"
+    guidance: "3×2 grid of stat cards with optional chart; viewing requests as table."
+  - name: "≥ 1025px (desktop)"
+    guidance: "Stats row across top; table of viewing requests below with inline 'Complete' action."
+
+priorityContent:
+  - "Total count and status breakdown are always visible."
+  - "The 'Complete' action must be easily discoverable on confirmed requests."
+  - "Average response time is secondary — can be hidden on smallest screens."
+
+a11yNotes:
+  - "Stat cards should use aria-label (e.g. 'Pending viewing requests: 3')."
+  - "Colour coding must be supplemented with text labels (do not rely on colour alone)."
+  - "The 'Complete' button should have aria-label='Mark viewing request as completed'."
+  - "Status change confirmation should use role='status' for live-region announcement."
+  - "If using a chart, provide a text-based alternative (e.g. a summary sentence)."
+
+mockDataSource: |
+  Seed data includes viewing requests in various states for landlord
+  bob@example.com and tenant diana@example.com. Login as either user
+  and call GET /api/viewing-requests/statistics to see real counts.
+  To test completion, create a request as Diana, confirm as Bob,
+  then complete as either party.
+
+manualTestChecklist:
+  - "Login as a landlord — verify statistics reflect viewing requests for their apartments."
+  - "Login as a tenant — verify statistics reflect their own requests."
+  - "Verify averageResponseTimeHours displays correctly (or 'N/A' if null)."
+  - "Complete a CONFIRMED viewing request — verify status changes to COMPLETED."
+  - "Try to complete a PENDING request — verify 409 error and appropriate message."
+  - "Try to complete a DECLINED request — verify 409 error."
+  - "After completing, refresh statistics — verify completedCount incremented."
+  - "Resize from desktop to mobile — verify stat cards stack responsively."
+  - "Use keyboard to navigate stat cards and 'Complete' button — verify focus management."

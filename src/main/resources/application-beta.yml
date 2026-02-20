@@ -16,7 +16,7 @@ spring:
     driver-class-name: ${DATABASE_DRIVER:com.microsoft.sqlserver.jdbc.SQLServerDriver}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate          # Schema managed by migration scripts; Hibernate validates only
     show-sql: false
     properties:
       hibernate:

@@ -135,4 +135,28 @@ public class UserController {
         userService.resetPassword(request.getToken(), request.getNewPassword());
         return ResponseEntity.ok(Map.of("message", "Password has been reset successfully."));
     }
+
+    @PostMapping("/verify-email")
+    @Operation(summary = "Verify email address using token from registration email", security = {})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Email verified successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid or expired token",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<Map<String, String>> verifyEmail(@RequestParam String token) {
+        Map<String, String> result = userService.verifyEmail(token);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/resend-verification")
+    @Operation(summary = "Resend email verification link", security = {})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Verification email re-sent (if applicable)"),
+            @ApiResponse(responseCode = "400", description = "Validation error",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<Map<String, String>> resendVerification(@RequestParam String email) {
+        Map<String, String> result = userService.resendVerificationEmail(email);
+        return ResponseEntity.ok(result);
+    }
 }

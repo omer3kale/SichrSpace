@@ -77,8 +77,12 @@
 | 64 | POST | `/api/auth/reset-password` | — | UserController | Reset password with token |
 | 65 | PUT | `/api/viewing-requests/{id}/complete` | Bearer | ViewingRequestController | Mark viewing completed |
 | 66 | GET | `/api/viewing-requests/statistics` | Bearer | ViewingRequestController | Viewing request statistics |
+| 67 | POST | `/api/auth/verify-email` | — | UserController | Verify email with token |
+| 68 | POST | `/api/auth/resend-verification` | — | UserController | Resend verification email |
+| 69 | DELETE | `/api/notifications/{id}` | Bearer | NotificationController | Delete notification |
+| 70 | GET | `/api/health` | — | HealthController | Application health check |
 
-**Total: 66 endpoints across 11 controllers.**
+**Total: 70 endpoints across 12 controllers.**
 
 ---
 
@@ -491,6 +495,106 @@ Response:
 ```
 
 > **Security design:** Tokens are stored as SHA-256 hashes (not plaintext), expire after 1 hour, and are single-use. The `forgotPassword` endpoint always returns success to prevent email enumeration.
+
+---
+
+### Use Case 8 — Email verification (v1.3.0)
+
+> **Feature type:** Security / onboarding — proves the user owns their email address via a SHA-256 hashed, time-limited verification token.
+
+> **Roles involved:** Public (no auth required)
+> **Tables involved:** `email_verification_tokens`, `users`
+
+**Flow:**
+
+```
+1. Register new user               → POST /api/auth/register
+   (automatically issues a verification token and "sends" email via EmailServiceStub)
+2. Verify email with token          → POST /api/auth/verify-email?token=<raw-token>
+3. Resend verification (optional)   → POST /api/auth/resend-verification?email=<email>
+```
+
+**Example — Verify email:**
+
+```bash
+curl -X POST "http://localhost:8080/api/auth/verify-email?token=abc123..."
+```
+
+Response:
+```json
+{
+  "message": "Email verified successfully"
+}
+```
+
+**Example — Resend verification:**
+
+```bash
+curl -X POST "http://localhost:8080/api/auth/resend-verification?email=charlie.student@rwth-aachen.de"
+```
+
+Response:
+```json
+{
+  "message": "If the email exists and is not yet verified, a new verification link has been sent."
+}
+```
+
+> **Security design:** Tokens are stored as SHA-256 hashes, expire after 24 hours, and are single-use. The resend endpoint always returns the same success message to prevent email enumeration. `EmailServiceStub` logs the token to the console (swap for SMTP in production).
+
+---
+
+### Use Case 9 — Delete notification (v1.3.0)
+
+> **Feature type:** Phase 1 gap closure — allows users to permanently remove a notification.
+
+> **Roles involved:** Authenticated user (owner of the notification)
+> **Tables involved:** `notifications`
+
+**Flow:**
+
+```
+1. Get all notifications           → GET   /api/notifications
+2. Delete a specific notification  → DELETE /api/notifications/{id}
+```
+
+**Example:**
+
+```bash
+curl -X DELETE http://localhost:8080/api/notifications/3 \
+  -H "Authorization: Bearer <jwt>"
+```
+
+Response: `204 No Content`
+
+> **Ownership enforcement:** Only the notification's owner (`userId`) can delete it. Attempting to delete another user's notification returns `403 Forbidden`.
+
+---
+
+### Use Case 10 — Health check (v1.3.0)
+
+> **Feature type:** Operational readiness — provides a liveness probe for load balancers, monitoring, and deployment pipelines.
+
+> **Roles involved:** Public (no auth required)
+> **Tables involved:** None (application-level metadata only)
+
+**Example:**
+
+```bash
+curl http://localhost:8080/api/health
+```
+
+Response:
+```json
+{
+  "status": "UP",
+  "application": "SichrPlace Backend",
+  "timestamp": "2026-02-21T14:30:00Z",
+  "uptime": "PT2H15M30S"
+}
+```
+
+> **Integration note:** Use this endpoint for Docker `HEALTHCHECK`, Kubernetes liveness probes, or Caddy load-balancer health checks.
 
 ---
 

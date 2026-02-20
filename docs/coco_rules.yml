@@ -6,12 +6,12 @@
 #   target       — enforceable NOW (CI gate, build fails below this)
 #   aspiration   — goal once full test suite is written
 #
-# Current baseline: 3.7 % overall (8 smoke tests, Feb 2026)
+# Current baseline: 15.3 % overall (70+ tests, Feb 2026)
 # ──────────────────────────────────────────────────────────────
 
 # Global minimum — weighted across all packages
 overall:
-  target: 3          # Enforceable now  (current: 3.7 %)
+  target: 12         # Enforceable now  (current: 15.3 %)
   aspiration: 85     # Goal with full test suite
   metric: INSTRUCTION
 
@@ -20,7 +20,7 @@ overall:
 packages:
 
   service:
-    target: 4           # Current: 4.8 %
+    target: 25           # Current: 32.1 %
     aspiration: 95
     description: "Business logic — highest priority for coverage"
     critical_classes:
@@ -35,12 +35,12 @@ packages:
       - AdminServiceImpl
 
   dto:
-    target: 0            # Current: 0 % (no DTO tests yet)
+    target: 5            # Current: 8.2 %
     aspiration: 95
     description: "DTO fromEntity() mapping — must be fully tested"
 
   security:
-    target: 10           # Current: 12.4 %
+    target: 15           # Current: 22.3 %
     aspiration: 90
     description: "JWT provider, auth filter, security config"
     critical_classes:
@@ -49,7 +49,7 @@ packages:
       - CustomUserDetailsService
 
   controller:
-    target: 5            # Current: 7.3 %
+    target: 8            # Current: 10.3 %
     aspiration: 80
     description: "REST endpoints — test request/response contracts"
     critical_classes:
@@ -67,13 +67,13 @@ packages:
     description: "Custom JPA query methods"
 
   model:
-    target: 3            # Current: 4.0 %
+    target: 12           # Current: 18.1 %
     aspiration: 70
     description: "Entity classes — mostly Lombok, test custom logic only"
     notes: "Lombok-generated getters/setters are excluded from coverage"
 
   config:
-    target: 20           # Current: 22.2 %
+    target: 20           # Current: 23.5 %
     aspiration: 60
     description: "DataSeeder, CORS, Swagger — test that they initialise"
     critical_classes:

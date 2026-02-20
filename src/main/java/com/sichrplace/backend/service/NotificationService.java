@@ -21,4 +21,7 @@ public interface NotificationService {
     int markAllAsRead(Long userId);
 
     long getUnreadCount(Long userId);
+
+    /** Delete a notification belonging to the given user. */
+    void deleteNotification(Long userId, Long notificationId);
 }

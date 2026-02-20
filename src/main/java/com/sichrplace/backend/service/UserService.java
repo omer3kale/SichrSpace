@@ -19,4 +19,10 @@ public interface UserService {
 
     /** Complete password reset — validates token, updates password. */
     void resetPassword(String token, String newPassword);
+
+    /** Verify email address using the token sent at registration. */
+    Map<String, String> verifyEmail(String token);
+
+    /** Resend the email verification token for the given email. */
+    Map<String, String> resendVerificationEmail(String email);
 }

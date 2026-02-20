@@ -2,8 +2,10 @@ package com.sichrplace.backend.service;
 
 import com.sichrplace.backend.dto.UserDto;
 import com.sichrplace.backend.dto.UserAuthDto;
+import com.sichrplace.backend.model.EmailVerificationToken;
 import com.sichrplace.backend.model.PasswordResetToken;
 import com.sichrplace.backend.model.User;
+import com.sichrplace.backend.repository.EmailVerificationTokenRepository;
 import com.sichrplace.backend.repository.PasswordResetTokenRepository;
 import com.sichrplace.backend.repository.UserRepository;
 import com.sichrplace.backend.security.JwtTokenProvider;
@@ -31,6 +33,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -60,6 +64,9 @@ public class UserServiceImpl implements UserService {
 
         user = userRepository.save(user);
         log.info("User registered successfully id={}, role={}", user.getId(), role);
+
+        // Issue email verification token
+        issueVerificationToken(user);
 
         String accessToken = jwtTokenProvider.generateAccessToken(user);
         String refreshToken = jwtTokenProvider.generateRefreshToken(user);
@@ -241,5 +248,73 @@ public class UserServiceImpl implements UserService {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 not available", e);
         }
+    }
+
+    // ─── Email Verification ─────────────────────────────────────────
+
+    private static final int VERIFICATION_EXPIRY_HOURS = 24;
+
+    private void issueVerificationToken(User user) {
+        byte[] randomBytes = new byte[32];
+        SECURE_RANDOM.nextBytes(randomBytes);
+        String plainToken = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+        String tokenHash = sha256(plainToken);
+
+        EmailVerificationToken evt = EmailVerificationToken.builder()
+                .user(user)
+                .tokenHash(tokenHash)
+                .expiresAt(Instant.now().plus(VERIFICATION_EXPIRY_HOURS, ChronoUnit.HOURS))
+                .createdAt(Instant.now())
+                .build();
+        emailVerificationTokenRepository.save(evt);
+
+        String verifyUrl = "https://sichrplace.com/verify-email?token=" + plainToken;
+        emailService.sendEmail(
+                user.getEmail(),
+                "SichrPlace — Verify your email address",
+                "Welcome to SichrPlace!\n\nPlease verify your email by clicking this link:\n"
+                        + verifyUrl + "\n\nThis link expires in 24 hours."
+        );
+
+        log.info("Email verification token issued for userId={}", user.getId());
+    }
+
+    @Override
+    public Map<String, String> verifyEmail(String token) {
+        String tokenHash = sha256(token);
+
+        EmailVerificationToken evt = emailVerificationTokenRepository.findByTokenHash(tokenHash)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid verification token"));
+
+        if (evt.isUsed()) {
+            throw new IllegalStateException("Verification token has already been used");
+        }
+        if (evt.isExpired()) {
+            throw new IllegalStateException("Verification token has expired");
+        }
+
+        // Mark user as email-verified
+        User user = evt.getUser();
+        user.setEmailVerified(true);
+        userRepository.save(user);
+
+        // Mark token as used
+        evt.setUsedAt(Instant.now());
+        emailVerificationTokenRepository.save(evt);
+
+        log.info("Email verified for userId={}", user.getId());
+        return Map.of("message", "Email verified successfully.");
+    }
+
+    @Override
+    public Map<String, String> resendVerificationEmail(String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null || Boolean.TRUE.equals(user.getEmailVerified())) {
+            // Silent success to prevent enumeration
+            return Map.of("message", "If the email exists and is unverified, a new link has been sent.");
+        }
+
+        issueVerificationToken(user);
+        return Map.of("message", "If the email exists and is unverified, a new link has been sent.");
     }
 }

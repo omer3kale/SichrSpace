@@ -783,6 +783,48 @@ DELETE FROM users;
 
 ---
 
+### Exercise A.1 — Frontend integration spec (advanced)
+
+This exercise uses the **backend-first integration template** system.
+No specific frontend framework is required — use your own design system,
+plain HTML/CSS/JS, or any stack you prefer.
+
+1. Open [`docs/FRONTEND_INTEGRATION_OVERVIEW.md`](FRONTEND_INTEGRATION_OVERVIEW.md)
+   and read §2 "Integration Workflow".
+2. Study the FreeMarker template at
+   [`docs/templates/frontend_integration.ftl`](templates/frontend_integration.ftl).
+   Identify the 6 sections and their placeholder variables.
+3. Open one of the rendered integration specs:
+   - [`docs/generated/frontend_integration/saved_search_execute.md`](generated/frontend_integration/saved_search_execute.md)
+   - [`docs/generated/frontend_integration/auth_password_reset.md`](generated/frontend_integration/auth_password_reset.md)
+   - [`docs/generated/frontend_integration/viewing_requests_stats.md`](generated/frontend_integration/viewing_requests_stats.md)
+4. Pick a **different** backend feature (e.g. Favorites, Messaging, or
+   Reviews) and create a new YAML descriptor for it under
+   `descriptors/frontend/`. Use an existing descriptor as a template.
+5. Fill in all sections: endpoints, request/response fields, error codes,
+   state shape, render hints, breakpoints, and accessibility notes.
+6. Sketch a responsive UI for your chosen feature at three breakpoints
+   (mobile, tablet, desktop). You may use paper, Figma, or HTML.
+7. **Discussion:** How does the integration spec help you build the
+   frontend without needing to read the Java source code?
+
+<details>
+<summary>Hints</summary>
+
+- Look at Swagger UI (`/swagger-ui/index.html`) to discover endpoint
+  paths, request bodies, and response shapes for the feature you chose.
+- The YAML descriptor format mirrors the FTL template sections — copy
+  `descriptors/frontend/saved_search_execute_frontend.yml` and replace
+  each field.
+- For the state shape, think about what data the UI needs to hold between
+  renders: loading flags, the fetched data, selected item, error state.
+- Accessibility notes should cover keyboard navigation, ARIA labels, and
+  colour-contrast requirements.
+
+</details>
+
+---
+
 ## Summary Checklist
 
 After completing all three labs, you should be able to:
@@ -801,3 +843,5 @@ After completing all three labs, you should be able to:
 - [ ] Run `secretsCheck` and verify no hardcoded secrets exist
 - [ ] Execute a saved search and explain how JPA Specifications work
 - [ ] Request a password reset and trace the token lifecycle
+- [ ] Read a frontend integration spec and identify the endpoint contract, state shape, and a11y notes
+- [ ] Create a YAML descriptor for a new feature and sketch a responsive UI

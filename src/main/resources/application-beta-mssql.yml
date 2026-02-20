@@ -23,7 +23,7 @@ spring:
       maximum-pool-size: 10
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate          # Schema managed by migration scripts; Hibernate validates only
     show-sql: false
     properties:
       hibernate:
