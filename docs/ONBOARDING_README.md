@@ -16,12 +16,13 @@ moderation.
 
 The backend is a **Spring Boot 3.2.2** REST API (Java 21) with:
 
-- **55 endpoints** across 9 controllers (users, apartments, conversations,
-  messages, favorites, viewing requests, reviews, notifications, admin)
+- **61 endpoints** across 11 controllers (users, apartments, conversations,
+  messages, favorites, viewing requests, reviews, notifications, admin,
+  saved searches, viewing-request transitions)
 - **JWT authentication** with three roles: ADMIN, LANDLORD, TENANT
 - **JPA/Hibernate** — the same code runs on PostgreSQL and MSSQL with
   zero changes
-- **43 rows of seed data** — 6 users, 4 apartments, 3 conversations,
+- **49 rows of seed data** — 6 users, 4 apartments, 3 conversations,
   12 messages, and more
 
 You'll use the **MSSQL 2025 Developer** profile, running in Docker.
@@ -181,9 +182,34 @@ MSSQL features showcase:
 
 ### Path D: Explore the API
 
-Browse all 55 endpoints with curl examples and seed data mappings:
+Browse all 61 endpoints with curl examples and seed data mappings:
 
 [`docs/API_ENDPOINTS_BACKEND.md`](API_ENDPOINTS_BACKEND.md)
+
+---
+
+## Quality & Security
+
+Before contributing code, read these three documents:
+
+| Document | What it covers |
+|----------|---------------|
+| [`TEST_STRATEGY.md`](TEST_STRATEGY.md) | Test layers (unit / slice / integration / E2E), naming rules, how to run tests |
+| [`COCO_RULES.md`](COCO_RULES.md) | Per-package code-coverage objectives — every PR must meet these thresholds |
+| [`SECURITY_AND_SECRETS.md`](SECURITY_AND_SECRETS.md) | What counts as a secret, where to store credentials, scanning config |
+
+**Key commands:**
+
+```bash
+./gradlew test                  # Run all tests
+./gradlew testWithCoverage      # Tests + JaCoCo report + global 85% check
+./gradlew checkCoco             # Per-package coverage objectives
+./gradlew secretsCheck          # Scan for hardcoded secrets
+```
+
+> **Rule:** Never commit real passwords, API keys, or JWT secrets.
+> Use `${ENV_VAR:placeholder}` in `application-*.yml` files.
+> See [`SECURITY_AND_SECRETS.md`](SECURITY_AND_SECRETS.md) for details.
 
 ---
 
@@ -241,7 +267,7 @@ sichrplace-backend/
 ## Need Help?
 
 - **Full thesis overview:** [`THESIS_OVERVIEW_BACKEND.md`](../THESIS_OVERVIEW_BACKEND.md)
-- **All 55 endpoints:** [`docs/API_ENDPOINTS_BACKEND.md`](API_ENDPOINTS_BACKEND.md)
+- **All 61 endpoints:** [`docs/API_ENDPOINTS_BACKEND.md`](API_ENDPOINTS_BACKEND.md)
 - **Seed data details:** [`docs/SEED_WORKPLACE_MSSQL.md`](SEED_WORKPLACE_MSSQL.md)
 - **Environment profiles:** [`docs/ENV_SETUP_GUIDE.MD`](ENV_SETUP_GUIDE.MD)
 - **Demo script:** [`DEMO_SCRIPT_BACKEND.md`](../DEMO_SCRIPT_BACKEND.md)

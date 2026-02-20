@@ -14,7 +14,7 @@ spring:
   datasource:
     url: jdbc:sqlserver://localhost:1433;databaseName=sichrplace;encrypt=false
     username: ${LOCAL_DB_USER:sichrplace_user}
-    password: ${LOCAL_DB_PASS:SichrDev2025!}
+    password: ${LOCAL_DB_PASS:changeme}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     hikari:
       pool-name: SichrPlace-MSSQL-Local

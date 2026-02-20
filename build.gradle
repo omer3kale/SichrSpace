@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
 }
@@ -44,6 +45,220 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+// ── JaCoCo ──────────────────────────────────────────────────────────
+jacoco {
+    toolVersion = '0.8.12'
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required  = true
+        html.required = true
+        csv.required  = false
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                counter = 'INSTRUCTION'
+                minimum = 0.85
+            }
+        }
+    }
+}
+
+// Convenience alias: ./gradlew testWithCoverage
+tasks.register('testWithCoverage') {
+    group = 'verification'
+    description = 'Runs tests, generates JaCoCo report, and verifies global coverage.'
+    dependsOn test, jacocoTestReport, jacocoTestCoverageVerification
+}
+
+// ── COCO checker ────────────────────────────────────────────────────
+// Reads per-package thresholds from docs/coco_rules.yml and verifies
+// them against the JaCoCo XML report.
+tasks.register('checkCoco') {
+    group = 'verification'
+    description = 'Checks per-package code-coverage objectives (COCO rules).'
+    dependsOn jacocoTestReport
+
+    doLast {
+        def rulesFile = file("${projectDir}/docs/coco_rules.yml")
+        if (!rulesFile.exists()) {
+            throw new GradleException("docs/coco_rules.yml not found — cannot check COCO rules.")
+        }
+
+        def reportFile = file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+        if (!reportFile.exists()) {
+            throw new GradleException(
+                "JaCoCo XML report not found. Run ./gradlew test jacocoTestReport first.")
+        }
+
+        // ─── Parse coco_rules.yml (simple line-based parsing) ───
+        def rules = [:]
+        def overallTarget = 85
+        def currentPackage = null
+        rulesFile.eachLine { line ->
+            def trimmed = line.trim()
+            if (trimmed.startsWith('target:') && currentPackage == null) {
+                // overall target (first occurrence before any package key)
+                overallTarget = trimmed.replaceAll('target:\\s*', '').trim() as int
+            }
+            if (line ==~ /^  \\w+:.*/) {
+                currentPackage = trimmed.replace(':', '').trim()
+            }
+            if (currentPackage != null && trimmed.startsWith('target:')) {
+                rules[currentPackage] = trimmed.replaceAll('target:\\s*', '').trim() as int
+                currentPackage = null
+            }
+        }
+
+        // ─── Parse JaCoCo XML report ───
+        def xml = new XmlSlurper().parse(reportFile)
+        def pkgBasePrefix = 'com/sichrplace/backend/'
+
+        def failures = []
+        def results = []
+
+        // Per-package checks
+        xml.package.each { pkg ->
+            def pkgName = pkg.@name.toString()
+            if (!pkgName.startsWith(pkgBasePrefix)) return
+
+            def subPkg = pkgName.replace(pkgBasePrefix, '')
+            def threshold = rules[subPkg]
+            if (threshold == null) return
+
+            def instrCounter = pkg.counter.find { it.@type == 'INSTRUCTION' }
+            if (instrCounter == null) return
+
+            def missed  = instrCounter.@missed.toString() as int
+            def covered = instrCounter.@covered.toString() as int
+            def total   = missed + covered
+            def pct     = total > 0 ? ((covered * 100.0) / total).round(1) : 0.0
+
+            def pass = pct >= threshold
+            results << [pkg: subPkg, pct: pct, target: threshold, pass: pass]
+            if (!pass) {
+                failures << "${subPkg}: ${pct}% < ${threshold}%"
+            }
+        }
+
+        // Overall check
+        def overallInstr = xml.counter.find { it.@type == 'INSTRUCTION' }
+        if (overallInstr) {
+            def missed  = overallInstr.@missed.toString() as int
+            def covered = overallInstr.@covered.toString() as int
+            def total   = missed + covered
+            def pct     = total > 0 ? ((covered * 100.0) / total).round(1) : 0.0
+            results << [pkg: 'OVERALL', pct: pct, target: overallTarget, pass: pct >= overallTarget]
+            if (pct < overallTarget) {
+                failures << "OVERALL: ${pct}% < ${overallTarget}%"
+            }
+        }
+
+        // Print summary table
+        println "\n╔══════════════════════════════════════════════════════════╗"
+        println "║           COCO — Code Coverage Objectives               ║"
+        println "╠══════════════════════════════════════════════════════════╣"
+        results.each { r ->
+            def status = r.pass ? '✓' : '✗'
+            printf("║ %s %-20s  %5.1f%% / %3d%%                   ║%n", status, r.pkg, r.pct, r.target)
+        }
+        println "╚══════════════════════════════════════════════════════════╝"
+
+        if (failures) {
+            throw new GradleException("COCO check FAILED:\n  " + failures.join('\n  '))
+        } else {
+            println "✓ All COCO rules passed."
+        }
+    }
+}
+
+// ── Secrets scanner ─────────────────────────────────────────────────
+// Scans source and config files for hardcoded secrets.
+tasks.register('secretsCheck') {
+    group = 'verification'
+    description = 'Scans for hardcoded secrets in source and config files.'
+
+    doLast {
+        def patterns = [
+            ~/(?i)(password|passwd|pwd)\s*[:=]\s*['"]?[A-Za-z0-9!@#%^&*]{6,}/,
+            ~/(?i)(secret|api[_-]?key|auth[_-]?token)\s*[:=]\s*['"]?[A-Za-z0-9!@#%^&*_\-]{8,}/,
+            ~/AKIA[0-9A-Z]{16}/,                     // AWS access key
+            ~/-----BEGIN (RSA |EC |DSA )?PRIVATE KEY-----/,
+            ~/(?i)bearer\s+[A-Za-z0-9\-._~+\/]+=*/,  // Bearer tokens
+        ]
+
+        // Patterns that are acceptable (test files, env-var placeholders, comments, docs)
+        def allowPatterns = [
+            ~/[$][{][A-Z_]+:/,     // Spring env-var placeholder ${VAR:default}
+            ~/password123/,         // Seed data test password
+            ~/changeme/,            // Documented placeholder
+            ~/test-secret/,         // Test-profile secret
+            ~/application-test/,    // Test config file
+            ~/[$]env:/,             // PowerShell env-var examples
+            ~/export\s+[A-Z_]+=\s*/,// Bash export examples
+            ~/JWT_SECRET=/,         // Env-var assignment examples in docs
+            ~/MSSQL_SA_PASSWORD=/,  // Docker env-var examples
+            ~/LOCAL_DB_PASS=/,      // Env-var setup instructions
+            ~/Bearer token/,        // Documentation describing auth
+            ~/secret:\s*MyReal/,    // Intentional "bad example" in lab exercises
+            ~/dev-only-/,           // Documented dev-only placeholder
+            ~/local-dev-secret/,    // Documented local dev placeholder
+            ~/not-for-production/,  // Documented non-production warning
+        ]
+
+        def scanDirs = [
+            file("${projectDir}/src"),
+        ]
+        // Only scan code/config files — documentation (.md) is excluded
+        // since it contains intentional examples and teaching content.
+        def extensions = ['java', 'yml', 'yaml', 'properties', 'xml', 'json', 'ftl'] as Set
+
+        def violations = []
+
+        scanDirs.each { dir ->
+            if (!dir.exists()) return
+            dir.eachFileRecurse { f ->
+                if (f.isDirectory()) return
+                def ext = f.name.contains('.') ? f.name.substring(f.name.lastIndexOf('.') + 1) : ''
+                if (!(ext in extensions)) return
+
+                f.eachLine { line, lineNum ->
+                    def trimmed = line.trim()
+                    if (trimmed.startsWith('#') || trimmed.startsWith('//') || trimmed.startsWith('*')) return
+
+                    patterns.each { pattern ->
+                        if (line =~ pattern) {
+                            def allowed = allowPatterns.any { ap -> line =~ ap }
+                            if (!allowed) {
+                                violations << "${f.absolutePath}:${lineNum}: ${trimmed.take(80)}"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (violations) {
+            println "\n⚠  Potential hardcoded secrets found:"
+            violations.each { println "  ${it}" }
+            throw new GradleException(
+                "secretsCheck FAILED — ${violations.size()} potential secret(s) found.\n" +
+                "Replace with environment-variable placeholders (\${VAR:default}).\n" +
+                "See docs/SECURITY_AND_SECRETS.md for guidance.")
+        } else {
+            println "✓ No hardcoded secrets detected."
+        }
+    }
 }
 
 springBoot {

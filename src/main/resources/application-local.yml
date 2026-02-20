@@ -4,8 +4,8 @@ spring:
     url: jdbc:sqlserver://localhost:1433;databaseName=sichrplace;encrypt=true;trustServerCertificate=true
     # Named instance variant (uncomment and replace the url above):
     # url: jdbc:sqlserver://localhost\\SICHRPLACEDEV:1433;databaseName=sichrplace;encrypt=true;trustServerCertificate=true
-    username: sichrplace_user
-    password: SichrPlace_Dev2026!
+    username: ${LOCAL_DB_USER:sichrplace_user}
+    password: ${LOCAL_DB_PASS:changeme}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     hibernate:
@@ -16,7 +16,7 @@ spring:
         format_sql: true
 
 app:
-  jwtSecret: your-super-secret-jwt-key-at-least-32-characters-long
+  jwtSecret: ${JWT_SECRET:dev-only-secret-key-at-least-32-characters-long!!}
   jwtExpirationMs: 86400000
   jwtRefreshExpirationMs: 604800000
 

@@ -498,10 +498,10 @@ Your local environment and the shared beta on the droplet are **identical** in:
 | **Database name** | `sichrplace` | `sichrplace` |
 | **Schema** | Created by Hibernate `ddl-auto=update` | Same JPA entities |
 | **Seed data** | `DataSeeder.java` auto-seeds on empty DB | Same `DataSeeder.java` |
-| **Tables** | 9 tables, same columns | 9 tables, same columns |
+| **Tables** | 11 tables, same columns | 11 tables, same columns |
 | **Seed counts** | 6 users, 4 apartments, … (43 rows total) | 6 users, 4 apartments, … (43 rows total) |
 | **Auth** | JWT (same algorithm, different secret) | JWT (same algorithm, different secret) |
-| **API endpoints** | 55 endpoints | 55 endpoints |
+| **API endpoints** | 61 endpoints | 61 endpoints |
 
 **Differences (expected):**
 - **JDBC URL:** `localhost:1433` vs `database:1433` (container networking)
@@ -551,6 +551,62 @@ DELETE FROM users;
 
 ---
 
+## Bonus Exercises — Quality & Security
+
+> These exercises can be done in any lab session.  They reinforce the
+> project's quality gates: code coverage and secrets scanning.
+
+### Exercise B.1 — Run tests with coverage
+
+1. Run the full test suite with JaCoCo coverage:
+   ```powershell
+   ./gradlew testWithCoverage
+   ```
+2. Open the HTML report: `build/reports/jacoco/test/html/index.html`
+3. **Answer:** What is the current overall instruction coverage percentage?
+4. Run the per-package COCO check:
+   ```powershell
+   ./gradlew checkCoco
+   ```
+5. Which packages (if any) are below their target?  Look at the output table.
+6. Open [`docs/COCO_RULES.md`](COCO_RULES.md) and find the target for the
+   `service` package.  Why is it set higher than `config`?
+
+<details>
+<summary>Hints</summary>
+
+- The `service` package contains business logic — bugs here have the highest
+  impact, so the coverage target (95%) is the strictest.
+- The `config` package mostly contains Spring configuration beans that are
+  difficult to unit-test in isolation, so 60% is acceptable.
+- Coverage reports live under `build/reports/jacoco/test/`.
+
+</details>
+
+---
+
+### Exercise B.2 — Secrets scanning
+
+1. Run the secrets scanner:
+   ```powershell
+   ./gradlew secretsCheck
+   ```
+2. Does it pass?  If not, read the output to find which files contain
+   hardcoded secrets.
+3. Open `src/main/resources/application-local.yml`.  Notice the `${...}`
+   placeholders.  Explain how Spring resolves `${LOCAL_DB_PASS:changeme}`.
+4. Create a temporary file `src/main/resources/test-leak.yml` with:
+   ```yaml
+   secret: MyRealPassword123!
+   ```
+5. Run `./gradlew secretsCheck` again.  Does it fail?  Why?
+6. Delete `test-leak.yml` and verify the check passes again.
+
+> **Teaching question:** Why do we run `secretsCheck` in CI before building
+> the Docker image?  What could happen if a real JWT secret were pushed?
+
+---
+
 ## Summary Checklist
 
 After completing all three labs, you should be able to:
@@ -564,3 +620,6 @@ After completing all three labs, you should be able to:
 - [ ] Add new columns to an entity and write an idempotent migration script
 - [ ] Compare your local schema with the droplet beta (should be identical)
 - [ ] Draw a sequence diagram for a new endpoint
+- [ ] Run `testWithCoverage` and read the JaCoCo HTML report
+- [ ] Run `checkCoco` and interpret the per-package results
+- [ ] Run `secretsCheck` and verify no hardcoded secrets exist

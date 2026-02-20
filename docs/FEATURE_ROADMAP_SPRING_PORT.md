@@ -181,6 +181,7 @@ Phase 8        ██████████  10/10  116 endpoints, 23 tables
 > **Target rating:** 4 → **6 / 10**
 > **Estimated effort:** 2–3 days
 > **New endpoints:** +7 → 68 total
+> **COCO target:** overall ≥ 85 %, new service classes ≥ 95 %
 
 | Feature | Spec (generated) | Design (generated) | Migration | Template(s) |
 |---------|-------------------|--------------------|-----------|-------------|
@@ -203,6 +204,7 @@ Phase 8        ██████████  10/10  116 endpoints, 23 tables
 > **Target rating:** 6 → **7 / 10**
 > **Estimated effort:** 2–3 days
 > **New endpoints:** +11 → 79 total
+> **COCO target:** overall ≥ 85 %, new service classes ≥ 95 %
 
 | Feature | Spec | Design | Migration | Template(s) |
 |---------|------|--------|-----------|-------------|
@@ -222,6 +224,7 @@ Phase 8        ██████████  10/10  116 endpoints, 23 tables
 > **Target rating:** 7 → **7.5 / 10**
 > **Estimated effort:** 1–2 days
 > **New endpoints:** +7 → 86 total
+> **COCO target:** overall ≥ 85 %, new service classes ≥ 95 %
 
 | Feature | Spec | Design | Migration | Template(s) |
 |---------|------|--------|-----------|-------------|
@@ -239,6 +242,7 @@ Phase 8        ██████████  10/10  116 endpoints, 23 tables
 > **Target rating:** 7.5 → **8 / 10** — THESIS TARGET
 > **Estimated effort:** 2–3 days
 > **New endpoints:** +7 → 93 total
+> **COCO target:** overall ≥ 85 %, new service classes ≥ 95 %, security ≥ 90 %
 
 | Feature | Spec | Design | Migration | Template(s) |
 |---------|------|--------|-----------|-------------|
@@ -258,6 +262,7 @@ Phase 8        ██████████  10/10  116 endpoints, 23 tables
 > **Target rating:** 8 → **8.5 / 10**
 > **Estimated effort:** 2 days
 > **New endpoints:** +4 → 97 total
+> **COCO target:** overall ≥ 85 %, new service classes ≥ 95 %
 
 | Feature | Spec | Design | Migration | Template(s) |
 |---------|------|--------|-----------|-------------|
@@ -275,6 +280,7 @@ Phase 8        ██████████  10/10  116 endpoints, 23 tables
 > **Target rating:** 8.5 → **9 / 10**
 > **Estimated effort:** 3–4 days
 > **New endpoints:** +6 → 103 total
+> **COCO target:** overall ≥ 85 %, new service classes ≥ 95 %
 
 | Feature | Spec | Design | Migration | Template(s) |
 |---------|------|--------|-----------|-------------|
@@ -294,6 +300,7 @@ Phase 8        ██████████  10/10  116 endpoints, 23 tables
 > **Target rating:** 9 → **9.5 / 10**
 > **Estimated effort:** 3 days
 > **New endpoints:** +5 → 108 total
+> **COCO target:** overall ≥ 85 %, new service classes ≥ 95 %, security ≥ 90 %
 
 | Feature | Spec | Design | Migration | Template(s) |
 |---------|------|--------|-----------|-------------|
@@ -312,6 +319,7 @@ Phase 8        ██████████  10/10  116 endpoints, 23 tables
 > **Target rating:** 9.5 → **10 / 10**
 > **Estimated effort:** 2–3 days
 > **New endpoints:** +8 → 116 total
+> **COCO target:** overall ≥ 85 %, all packages at or above COCO_RULES.md targets
 
 | Feature | Spec | Design | Migration | Template(s) |
 |---------|------|--------|-----------|-------------|

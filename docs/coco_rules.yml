@@ -1,0 +1,66 @@
+# ──────────────────────────────────────────────────────────────
+# SichrPlace — COCO Rules (Code Coverage Objectives)
+# Machine-readable thresholds for ./gradlew checkCoco
+# ──────────────────────────────────────────────────────────────
+
+# Global minimum — weighted across all packages
+overall:
+  target: 85
+  metric: INSTRUCTION   # JaCoCo counter type: INSTRUCTION, BRANCH, LINE, METHOD
+
+# Per-package thresholds
+# Package names are relative to com.sichrplace.backend.*
+packages:
+
+  service:
+    target: 95
+    description: "Business logic — highest priority for coverage"
+    critical_classes:
+      - UserServiceImpl
+      - ApartmentServiceImpl
+      - ViewingRequestServiceImpl
+      - ConversationServiceImpl
+      - ReviewServiceImpl
+      - NotificationServiceImpl
+      - FavoriteServiceImpl
+      - SavedSearchServiceImpl
+      - AdminServiceImpl
+
+  dto:
+    target: 95
+    description: "DTO fromEntity() mapping — must be fully tested"
+
+  security:
+    target: 90
+    description: "JWT provider, auth filter, security config"
+    critical_classes:
+      - JwtTokenProvider
+      - JwtAuthenticationFilter
+      - CustomUserDetailsService
+
+  controller:
+    target: 80
+    description: "REST endpoints — test request/response contracts"
+    critical_classes:
+      - UserController
+      - ApartmentController
+      - ViewingRequestController
+      - ConversationController
+      - ReviewController
+      - SavedSearchController
+      - AdminController
+
+  repository:
+    target: 80
+    description: "Custom JPA query methods"
+
+  model:
+    target: 70
+    description: "Entity classes — mostly Lombok, test custom logic only"
+    notes: "Lombok-generated getters/setters are excluded from coverage"
+
+  config:
+    target: 60
+    description: "DataSeeder, CORS, Swagger — test that they initialise"
+    critical_classes:
+      - DataSeeder
