@@ -551,6 +551,72 @@ DELETE FROM users;
 
 ---
 
+## Quality & Security Tour (15 minutes)
+
+> **Goal:** Walk through the project's quality gates end-to-end so every
+> student understands what the CI pipeline enforces before code ships.
+
+### Station 1 — Test suite & JaCoCo report (5 min)
+
+1. Run the test suite with coverage collection:
+   ```powershell
+   ./gradlew testWithCoverage
+   ```
+2. Open the HTML report in a browser:
+   ```
+   build/reports/jacoco/test/html/index.html
+   ```
+3. Click into the **service** package.  Notice which classes have red
+   (uncovered) lines vs. green (covered) lines.
+4. Note the **overall instruction coverage** shown at the top of the report.
+
+### Station 2 — COCO rules & the two-tier model (5 min)
+
+1. Open [`docs/coco_rules.yml`](coco_rules.yml) in your editor.
+   - **target** = enforceable right now (CI gate — build fails below this).
+   - **aspiration** = where we want to be once the full test suite is written.
+2. Run the COCO check:
+   ```powershell
+   ./gradlew checkCoco
+   ```
+3. Read the output table.  Each package shows:
+   ```
+   <package>  actual% / target%  ✔ PASS  or  ✘ FAIL
+   ```
+4. Open [`docs/COCO_RULES.md`](COCO_RULES.md) §5 to learn the **ratchet-up**
+   process: when you push coverage above the target, raise the target to
+   `actual − 5 %` so it never regresses.
+
+### Station 3 — Secrets scanning (3 min)
+
+1. Run the secrets scanner:
+   ```powershell
+   ./gradlew secretsCheck
+   ```
+2. It should pass.  Now create a fake leak to see what happens:
+   ```powershell
+   echo "password: RealSecret123!" > src/main/resources/fake-leak.yml
+   ./gradlew secretsCheck     # should FAIL
+   Remove-Item src/main/resources/fake-leak.yml
+   ```
+3. Open [`docs/SECURITY_AND_SECRETS.md`](SECURITY_AND_SECRETS.md) §8 to see
+   the list of **teaching-only fake credentials** (e.g. `password123`,
+   `changeme`).  These are safe — real deployments must use env vars.
+
+### Station 4 — Pick a package & improve (2 min)
+
+1. Look at the COCO output table.  Choose a package whose **actual** is close
+   to its **target** (or below its **aspiration**).
+2. Brainstorm one test class you could add for that package.
+3. *(Optional homework)* Write the test, re-run `testWithCoverage`, and
+   ratchet the target up following the process in COCO_RULES §5.
+
+> **Takeaway:** Every PR must pass `testWithCoverage`, `checkCoco`, and
+> `secretsCheck` before merge.  See [`CONTRIBUTING_QUALITY.md`](CONTRIBUTING_QUALITY.md)
+> for the full PR checklist.
+
+---
+
 ## Bonus Exercises — Quality & Security
 
 > These exercises can be done in any lab session.  They reinforce the

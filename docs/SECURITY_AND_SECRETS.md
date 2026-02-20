@@ -196,7 +196,31 @@ Docker image.  A failure blocks the deployment.
 
 ---
 
-## 8. Quick-Reference Checklist
+## 8. Teaching Examples vs. Real Secrets
+
+This repository is used for university teaching.  Some files contain
+**deliberately fake credentials** — these are safe:
+
+| Value | Where | Purpose |
+|-------|-------|---------|
+| `password123` | DataSeeder, test curls | Seed-user password for labs |
+| `changeme` | `application-local.yml` default | Obviously-fake placeholder |
+| `dev-only-secret-key-…` | `application-local.yml` JWT default | Clearly labelled non-production |
+| `test-secret-key-…` | `application-test.yml` | H2 test-profile only |
+| `YourPassword123!` | Documentation examples | Instructional placeholder |
+
+**These are NOT real secrets.**  They exist so students can follow the labs
+without setting up environment variables on first run.
+
+For any **real deployment** (beta droplet, production), you MUST:
+
+1. Generate strong random values (`openssl rand -base64 48`).
+2. Store them in `.env.local` (local) or GitHub Actions secrets (CI).
+3. Never commit real values — the `secretsCheck` task will catch them.
+
+---
+
+## 9. Quick-Reference Checklist
 
 - [ ] All passwords in `application-*.yml` use `${ENV_VAR:placeholder}` syntax
 - [ ] `.env.local` exists locally and is in `.gitignore`

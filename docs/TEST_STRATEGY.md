@@ -307,7 +307,29 @@ If any step fails, the pipeline stops and the image is not pushed.
 
 ---
 
-## 8. Related Documents
+## 8. Next Test Waves
+
+The current baseline has **8 smoke tests** covering bean wiring and basic
+profile activation (~3.7 % overall instruction coverage).  The following
+waves are planned in priority order:
+
+| Wave | Focus | Suggested tests | Target coverage lift |
+|------|-------|-----------------|---------------------|
+| **Wave 1** | Service-layer unit tests | `AdminServiceTest`, `SavedSearchServiceTest`, `ViewingRequestServiceTest` — mock repositories, verify business rules | service → 40 %+ |
+| **Wave 2** | Controller integration tests | `@WebMvcTest` for each controller, mock service layer, verify HTTP status & JSON shapes | controller → 30 %+ |
+| **Wave 3** | Security filter tests | `JwtAuthenticationFilterTest`, `SecurityConfigTest` — valid/invalid/expired tokens, role-based access | security → 50 %+ |
+| **Wave 4** | DTO validation & edge cases | `@Valid` constraint tests, null/blank fields, boundary values | dto → 60 %+ |
+| **Wave 5** | End-to-end lifecycle tests | Full viewing-request flow (PENDING → CONFIRMED → CANCELLED), review moderation flow | overall → 50 %+ |
+
+After each wave, ratchet the COCO targets following the process in
+[COCO_RULES.md](COCO_RULES.md) §5.
+
+See [`TEST_TODO.md`](TEST_TODO.md) for the detailed checklist of individual
+test classes and edge cases.
+
+---
+
+## 9. Related Documents
 
 | Document | Purpose |
 |----------|---------|

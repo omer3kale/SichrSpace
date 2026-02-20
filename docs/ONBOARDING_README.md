@@ -59,18 +59,31 @@ Wait ~15 seconds for MSSQL to initialize.
 ### Step 3 — Create your local env file
 
 ```bash
-cat > .env.local <<EOF
+# Copy the example file and fill in your local values:
+cp .env.example .env.local
+```
+
+Edit `.env.local` with your local-only, non-production credentials:
+
+```env
+# .env.local — NEVER committed (git-ignored)
 LOCAL_DB_HOST=localhost
 LOCAL_DB_PORT=1433
 LOCAL_DB_NAME=sichrplace
 LOCAL_DB_USER=sichrplace_user
 LOCAL_DB_PASS=YourPassword123!
 JWT_SECRET=my-local-jwt-secret-at-least-32-characters
-EOF
 ```
 
-> **Windows PowerShell?** Create `.env.local` manually in a text editor
-> with the same key=value pairs.
+> **Windows PowerShell?** Copy `.env.example` to `.env.local` manually in
+> a text editor with the same key=value pairs.  Then load them:
+> ```powershell
+> Get-Content .env.local | ForEach-Object {
+>     if ($_ -match '^([^#=]+)=(.*)$') {
+>         [Environment]::SetEnvironmentVariable($matches[1].Trim(), $matches[2].Trim(), 'Process')
+>     }
+> }
+> ```
 
 ### Step 4 — Run the backend
 
@@ -271,3 +284,5 @@ sichrplace-backend/
 - **Seed data details:** [`docs/SEED_WORKPLACE_MSSQL.md`](SEED_WORKPLACE_MSSQL.md)
 - **Environment profiles:** [`docs/ENV_SETUP_GUIDE.MD`](ENV_SETUP_GUIDE.MD)
 - **Demo script:** [`DEMO_SCRIPT_BACKEND.md`](../DEMO_SCRIPT_BACKEND.md)
+- **Contributing:** [`docs/CONTRIBUTING_QUALITY.md`](CONTRIBUTING_QUALITY.md) — PR checklist for quality gates
+- **Changelog:** [`CHANGELOG.md`](../CHANGELOG.md) — all releases and changes

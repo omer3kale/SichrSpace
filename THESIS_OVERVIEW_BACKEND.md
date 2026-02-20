@@ -536,6 +536,12 @@ git clone --branch v1.0.0-mssql-workplace https://github.com/omer3kale/sichrplac
 Then follow [`docs/ENV_SETUP_GUIDE.MD`](docs/ENV_SETUP_GUIDE.MD) to set up
 their local MSSQL environment in under 10 minutes.
 
+### Quality baseline
+
+Quality baseline for open-source release: tag `v1.1.0-quality-baseline`
+(tests, coverage gates via JaCoCo/COCO, secret-scanning checks).  See
+[`CHANGELOG.md`](CHANGELOG.md) for full details.
+
 ---
 
 ## References
