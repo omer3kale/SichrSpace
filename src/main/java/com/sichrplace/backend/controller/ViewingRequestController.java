@@ -4,6 +4,7 @@ import com.sichrplace.backend.dto.ApiErrorResponse;
 import com.sichrplace.backend.dto.CreateViewingRequestRequest;
 import com.sichrplace.backend.dto.DeclineRequest;
 import com.sichrplace.backend.dto.ViewingRequestDto;
+import com.sichrplace.backend.dto.ViewingRequestStatsDto;
 import com.sichrplace.backend.dto.ViewingRequestTransitionDto;
 import com.sichrplace.backend.service.ViewingRequestService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -202,6 +203,38 @@ public class ViewingRequestController {
         Long userId = (Long) auth.getPrincipal();
         List<ViewingRequestTransitionDto> response =
                 viewingRequestService.getTransitionHistory(id, userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/complete")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Mark a confirmed viewing request as completed")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Viewing request completed"),
+            @ApiResponse(responseCode = "403", description = "Not authorized",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "Request is not in CONFIRMED state",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<ViewingRequestDto> completeViewingRequest(@PathVariable Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) auth.getPrincipal();
+        ViewingRequestDto response = viewingRequestService.completeViewingRequest(id, userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/statistics")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Get viewing request statistics for the current user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Statistics summary"),
+            @ApiResponse(responseCode = "401", description = "Not authenticated",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<ViewingRequestStatsDto> getStatistics() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) auth.getPrincipal();
+        ViewingRequestStatsDto response = viewingRequestService.getStatistics(userId);
         return ResponseEntity.ok(response);
     }
 }

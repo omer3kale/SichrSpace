@@ -66,7 +66,7 @@ you open the presentation.
    Open [`docs/diagrams/arch_request_flow.png`](docs/diagrams/arch_request_flow.png).
 
    > *"This is the request flow: HTTPS comes in through Caddy,
-   > hits the Spring Boot REST layer — 9 controllers, 55 endpoints —
+   > hits the Spring Boot REST layer — 11 controllers, 66 endpoints —
    > which delegates to services, then JPA repositories talk to the
    > database. The same JAR runs against PostgreSQL in production
    > and MSSQL 2025 in our teaching environment."*
@@ -159,6 +159,45 @@ curl -s -o /dev/null -w "%{http_code}" \
 > *"Spring Security uses `@PreAuthorize` with role checks.
 > The JWT carries the role — TENANT can't access admin endpoints."*
 
+#### Step 6: Showcase — Password reset flow (v1.2.0)
+
+```bash
+# Request a password reset for Charlie
+RESET=$(curl -s -X POST https://sichrplace.com/api/auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{"email":"charlie.student@rwth-aachen.de"}')
+echo $RESET | python3 -m json.tool
+
+# Extract the token and reset the password
+RESET_TOKEN=$(echo $RESET | python3 -c "import sys,json; print(json.load(sys.stdin)['token'])")
+curl -s -X POST https://sichrplace.com/api/auth/reset-password \
+  -H "Content-Type: application/json" \
+  -d "{\"token\":\"$RESET_TOKEN\",\"newPassword\":\"brandNewP@ss1\"}" \
+  | python3 -m json.tool
+```
+
+> *"Password reset tokens are SHA-256 hashed, single-use, and expire after
+> 1 hour. The API returns the same message for known and unknown emails —
+> preventing email enumeration attacks."*
+
+#### Step 7: Showcase — Execute saved search (v1.2.0)
+
+```bash
+# Create and execute a saved search
+SEARCH_ID=$(curl -s -X POST https://sichrplace.com/api/saved-searches \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"name":"Demo Search","filterJson":"{\"city\":\"Aachen\",\"maxPrice\":600}"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+
+curl -s -X POST "https://sichrplace.com/api/saved-searches/$SEARCH_ID/execute?page=0&size=10" \
+  -H "Authorization: Bearer $TOKEN" | python3 -m json.tool | head -20
+```
+
+> *"The saved search filter is stored as JSON and deserialized at execution
+> time into JPA Specifications — no hardcoded SQL. Each filter field becomes
+> a composable AND-predicate."*
+
 ---
 
 ### Phase 3 — Tie to Diagrams (2–3 min)
@@ -181,10 +220,12 @@ curl -s -o /dev/null -w "%{http_code}" \
 
 ### Phase 4 — Wrap-up (1–2 min)
 
-> *"To summarize: 55 endpoints, 9 JPA entities, fully seeded with 43
+> *"To summarize: 66 endpoints, 12 JPA entities, fully seeded with 49
 > test rows, running on MSSQL 2025 in Docker. The same code runs on
-> PostgreSQL in production. Students use this in 3 lab sessions with
-> 9 exercises. Three extension tracks let advanced students add analytics,
+> PostgreSQL in production. Three showcase features demonstrate advanced
+> patterns: JPA Specifications, secure token lifecycle, and aggregate
+> statistics. Students use this in 3 lab sessions with 12+ exercises.
+> Three extension tracks let advanced students add analytics,
 > soft-delete, or advanced search."*
 
 Show the references:

@@ -1,16 +1,24 @@
 package com.sichrplace.backend.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sichrplace.backend.dto.ApartmentDto;
 import com.sichrplace.backend.dto.CreateSavedSearchRequest;
 import com.sichrplace.backend.dto.SavedSearchDto;
+import com.sichrplace.backend.dto.SearchFilterDto;
 import com.sichrplace.backend.model.SavedSearch;
 import com.sichrplace.backend.model.User;
+import com.sichrplace.backend.repository.ApartmentRepository;
+import com.sichrplace.backend.repository.ApartmentSpecifications;
 import com.sichrplace.backend.repository.SavedSearchRepository;
 import com.sichrplace.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +30,8 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 
     private final SavedSearchRepository savedSearchRepository;
     private final UserRepository userRepository;
+    private final ApartmentRepository apartmentRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public SavedSearchDto createSavedSearch(Long userId, CreateSavedSearchRequest request) {
@@ -95,5 +105,37 @@ public class SavedSearchServiceImpl implements SavedSearchService {
 
         savedSearchRepository.delete(savedSearch);
         log.info("Saved search deleted id={}, userId={}", id, userId);
+    }
+
+    @Override
+    public Page<ApartmentDto> executeSavedSearch(Long id, Long userId, Pageable pageable) {
+        SavedSearch savedSearch = savedSearchRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Saved search not found"));
+
+        if (!savedSearch.getUser().getId().equals(userId)) {
+            throw new SecurityException("Not authorized to execute this saved search");
+        }
+
+        // Deserialise filter_json → SearchFilterDto
+        SearchFilterDto filter;
+        try {
+            filter = objectMapper.readValue(savedSearch.getFilterJson(), SearchFilterDto.class);
+        } catch (Exception e) {
+            log.error("Failed to parse filter_json for saved search id={}: {}", id, e.getMessage());
+            throw new IllegalStateException("Invalid filter_json in saved search");
+        }
+
+        // Execute via JPA Specification
+        Page<ApartmentDto> results = apartmentRepository
+                .findAll(ApartmentSpecifications.fromFilter(filter), pageable)
+                .map(ApartmentDto::fromEntity);
+
+        // Update match statistics
+        savedSearch.setLastMatchedAt(Instant.now());
+        savedSearch.setMatchCount(savedSearch.getMatchCount() + (int) results.getTotalElements());
+        savedSearchRepository.save(savedSearch);
+
+        log.info("Saved search executed id={}, matches={}", id, results.getTotalElements());
+        return results;
     }
 }

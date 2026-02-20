@@ -1,8 +1,10 @@
 package com.sichrplace.backend.controller;
 
 import com.sichrplace.backend.dto.ApiErrorResponse;
+import com.sichrplace.backend.dto.ForgotPasswordRequest;
 import com.sichrplace.backend.dto.LoginRequest;
 import com.sichrplace.backend.dto.RegisterRequest;
+import com.sichrplace.backend.dto.ResetPasswordRequest;
 import com.sichrplace.backend.dto.UserAuthDto;
 import com.sichrplace.backend.dto.UserDto;
 import com.sichrplace.backend.model.User;
@@ -22,6 +24,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -104,5 +108,31 @@ public class UserController {
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         UserDto response = userService.getUserById(id);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password")
+    @Operation(summary = "Request a password reset token", security = {})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Reset initiated (always returns success)"),
+            @ApiResponse(responseCode = "400", description = "Validation error",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<Map<String, String>> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+        Map<String, String> response = userService.forgotPassword(request.getEmail());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reset-password")
+    @Operation(summary = "Reset password using token from forgot-password", security = {})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password reset successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid or expired token",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<Map<String, String>> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
+        userService.resetPassword(request.getToken(), request.getNewPassword());
+        return ResponseEntity.ok(Map.of("message", "Password has been reset successfully."));
     }
 }

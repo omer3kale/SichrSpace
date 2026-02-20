@@ -72,8 +72,13 @@
 | 59 | PATCH | `/api/admin/users/{id}/status` | ADMIN | AdminController | Activate/suspend user |
 | 60 | GET | `/api/admin/reviews/pending` | ADMIN | AdminController | Pending reviews |
 | 61 | POST | `/api/admin/reviews/{id}/moderate` | ADMIN | AdminController | Moderate review |
+| 62 | POST | `/api/saved-searches/{id}/execute` | Bearer | SavedSearchController | Execute saved search |
+| 63 | POST | `/api/auth/forgot-password` | — | UserController | Request password reset |
+| 64 | POST | `/api/auth/reset-password` | — | UserController | Reset password with token |
+| 65 | PUT | `/api/viewing-requests/{id}/complete` | Bearer | ViewingRequestController | Mark viewing completed |
+| 66 | GET | `/api/viewing-requests/statistics` | Bearer | ViewingRequestController | Viewing request statistics |
 
-**Total: 61 endpoints across 11 controllers.**
+**Total: 66 endpoints across 11 controllers.**
 
 ---
 
@@ -237,13 +242,41 @@ curl -X PUT http://localhost:8080/api/viewing-requests/2/decline \
   -d '{"reason":"Das Zimmer ist leider schon vergeben."}'
 ```
 
-**State machine:**
+**Example — Complete a viewing (as tenant or landlord, after CONFIRMED):**
+
+```bash
+curl -X PUT http://localhost:8080/api/viewing-requests/2/complete \
+  -H "Authorization: Bearer $TOKEN_DIANA"
+```
+
+**Example — Get viewing request statistics:**
+
+```bash
+curl http://localhost:8080/api/viewing-requests/statistics \
+  -H "Authorization: Bearer $TOKEN_DIANA"
+```
+
+Response:
+```json
+{
+  "totalRequests": 5,
+  "pendingCount": 1,
+  "confirmedCount": 2,
+  "declinedCount": 1,
+  "completedCount": 1,
+  "cancelledCount": 0,
+  "averageResponseTimeHours": 4.2
+}
+```
+
+**State machine (extended):**
 
 ```
 PENDING ──confirm──→ CONFIRMED
 PENDING ──decline──→ DECLINED
 PENDING ──cancel───→ CANCELLED
-CONFIRMED ──cancel─→ CANCELLED
+CONFIRMED ──cancel──→ CANCELLED
+CONFIRMED ──complete→ COMPLETED
 ```
 
 ---
@@ -347,6 +380,117 @@ curl -X PATCH http://localhost:8080/api/admin/users/6/status \
   -H "Authorization: Bearer $TOKEN_ADMIN" \
   -d '{"active":false}'
 ```
+
+---
+
+### Use Case 6 — Execute a saved search (v1.2.0 showcase)
+
+> **Feature type:** Core product value — demonstrates JPA Specifications, dynamic query composition, and the `saved_searches` table.
+
+> **Roles involved:** Any authenticated user (TENANT, LANDLORD, ADMIN)
+> **Tables involved:** `saved_searches`, `apartments`
+
+**Flow:**
+
+```
+1. Login as Charlie (TENANT)       → POST /api/auth/login
+2. Create a saved search           → POST /api/saved-searches
+3. Execute the saved search        → POST /api/saved-searches/1/execute
+4. Results: matching apartments    → Page<ApartmentDto>
+```
+
+**Example — Create a saved search:**
+
+```bash
+curl -X POST http://localhost:8080/api/saved-searches \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{
+    "name": "Aachen 2BR under 600",
+    "filterJson": "{\"city\":\"Aachen\",\"minBedrooms\":2,\"maxPrice\":600}"
+  }'
+```
+
+**Example — Execute the saved search:**
+
+```bash
+curl -X POST http://localhost:8080/api/saved-searches/1/execute?page=0&size=20 \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Response:
+```json
+{
+  "content": [
+    {
+      "id": 1,
+      "title": "Gemütliche 2-Zimmer-Wohnung am Ponttor",
+      "city": "Aachen",
+      "monthlyRent": 450.00,
+      "numberOfBedrooms": 2,
+      "status": "AVAILABLE"
+    }
+  ],
+  "totalElements": 1,
+  "totalPages": 1
+}
+```
+
+> **Technical note:** The `filterJson` is deserialized into a `SearchFilterDto` and converted to a JPA `Specification<Apartment>` at runtime — no hardcoded SQL, fully composable filters.
+
+---
+
+### Use Case 7 — Password reset (v1.2.0 showcase)
+
+> **Feature type:** Infrastructure / professionalism — demonstrates secure token generation, SHA-256 hashing, time-limited tokens.
+
+> **Roles involved:** Public (no auth required)
+> **Tables involved:** `password_reset_tokens`, `users`
+
+**Flow:**
+
+```
+1. Request password reset          → POST /api/auth/forgot-password
+2. Receive token (via email/API)   → response contains "token" (dev mode)
+3. Reset password with token       → POST /api/auth/reset-password
+4. Login with new password         → POST /api/auth/login
+```
+
+**Example — Request password reset:**
+
+```bash
+curl -X POST http://localhost:8080/api/auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{"email":"charlie.student@rwth-aachen.de"}'
+```
+
+Response:
+```json
+{
+  "message": "If the email exists, a reset link has been sent.",
+  "token": "dGhpcyBpcyBhIHRva2VuIGV4YW1wbGU..."
+}
+```
+
+**Example — Reset password with token:**
+
+```bash
+curl -X POST http://localhost:8080/api/auth/reset-password \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "dGhpcyBpcyBhIHRva2VuIGV4YW1wbGU...",
+    "newPassword": "myNewSecureP@ss"
+  }'
+```
+
+Response:
+```json
+{
+  "message": "Password reset successful"
+}
+```
+
+> **Security design:** Tokens are stored as SHA-256 hashes (not plaintext), expire after 1 hour, and are single-use. The `forgotPassword` endpoint always returns success to prevent email enumeration.
 
 ---
 

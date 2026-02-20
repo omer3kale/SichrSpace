@@ -78,6 +78,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/forgot-password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/apartments/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/apartment/**").permitAll()

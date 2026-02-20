@@ -1,5 +1,6 @@
 package com.sichrplace.backend.controller;
 
+import com.sichrplace.backend.dto.ApartmentDto;
 import com.sichrplace.backend.dto.ApiErrorResponse;
 import com.sichrplace.backend.dto.CreateSavedSearchRequest;
 import com.sichrplace.backend.dto.SavedSearchDto;
@@ -13,6 +14,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -115,5 +118,26 @@ public class SavedSearchController {
         Long userId = (Long) auth.getPrincipal();
         savedSearchService.deleteSavedSearch(id, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/execute")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Execute a saved search against available apartments")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Matching apartments"),
+            @ApiResponse(responseCode = "400", description = "Invalid filter_json",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Not the search owner",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Saved search not found",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<Page<ApartmentDto>> executeSavedSearch(
+            @PathVariable Long id,
+            Pageable pageable) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) auth.getPrincipal();
+        Page<ApartmentDto> results = savedSearchService.executeSavedSearch(id, userId, pageable);
+        return ResponseEntity.ok(results);
     }
 }

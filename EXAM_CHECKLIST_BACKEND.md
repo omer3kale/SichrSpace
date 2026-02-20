@@ -21,14 +21,14 @@ checks for the morning.
   ```
 - [ ] **Tag is reachable:**
   ```bash
-  git tag --list 'v1.0*'
-  # Must show: v1.0.0-mssql-workplace
-  git log --oneline v1.0.0-mssql-workplace -1
+  git tag --list 'v1.*'
+  # Must show: v1.0.0-mssql-workplace, v1.1.0-quality-baseline, v1.2.0-thesis-showcase
+  git log --oneline v1.2.0-thesis-showcase -1
   ```
 - [ ] **Smoke tests green:**
   ```bash
   ./gradlew clean test
-  # Expected: BUILD SUCCESSFUL, 6 tests passed
+  # Expected: BUILD SUCCESSFUL, 29 tests passed (8 smoke + 21 feature)
   ```
 
 ### Droplet (Beta MSSQL Stack)
@@ -100,7 +100,7 @@ show these.
 Open [`docs/diagrams/arch_request_flow.png`](docs/diagrams/arch_request_flow.png)
 and [`docs/diagrams/erd_sichrplace.png`](docs/diagrams/erd_sichrplace.png).
 
-> *"9 controllers, 55 endpoints, Spring Boot 3.2.2. Same JAR runs on
+> *"9 controllers, 66 endpoints, Spring Boot 3.2.2. Same JAR runs on
 > PostgreSQL and MSSQL 2025 — zero code changes between databases."*
 
 Point at: `User` → roles (ADMIN/LANDLORD/TENANT), `Conversation` → `Message`,
@@ -150,31 +150,74 @@ ssh deploy@206.189.53.163 "docker exec sichrplace-database-1 \
 > *"The row we just created via the API is now visible in MSSQL.
 > Browser → REST API → JPA → MSSQL row."*
 
+#### 5. Showcase feature: password reset or saved search execution (2 min)
+
+Pick **one** of the v1.2.0 showcase features:
+
+**Option A — Password reset flow:**
+
+```bash
+# Request reset
+RESET=$(curl -s -X POST https://sichrplace.com/api/auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{"email":"charlie.student@rwth-aachen.de"}')
+echo $RESET | python3 -m json.tool
+
+# Reset the password
+RESET_TOKEN=$(echo $RESET | python3 -c "import sys,json; print(json.load(sys.stdin)['token'])")
+curl -s -X POST https://sichrplace.com/api/auth/reset-password \
+  -H "Content-Type: application/json" \
+  -d "{\"token\":\"$RESET_TOKEN\",\"newPassword\":\"examDemoP@ss1\"}" \
+  | python3 -m json.tool
+```
+
+> *"Tokens are SHA-256 hashed, single-use, time-limited. The endpoint
+> returns the same message for known and unknown emails — preventing
+> email enumeration."*
+
+**Option B — Execute saved search:**
+
+```bash
+# Create and execute a saved search
+curl -s -X POST https://sichrplace.com/api/saved-searches \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"name":"Exam Demo","filterJson":"{\"city\":\"Aachen\",\"maxPrice\":600}"}' \
+  | python3 -m json.tool
+
+curl -s -X POST "https://sichrplace.com/api/saved-searches/1/execute?page=0&size=10" \
+  -H "Authorization: Bearer $TOKEN" \
+  | python3 -m json.tool | head -20
+```
+
+> *"JPA Specifications compose filter predicates dynamically from JSON.
+> No hardcoded SQL — the same query builder works on PostgreSQL and MSSQL."*
+
 ### Nice-to-show items (if time allows)
 
-#### 5. Smoke tests (1 min)
+#### 6. Smoke tests (1 min)
 
 ```bash
 ./gradlew test
-# 6 tests green — runs against H2 in-memory, no MSSQL needed for CI
+# 29 tests green — runs against H2 in-memory, no MSSQL needed for CI
 ```
 
 > *"CI pipeline runs these on every push. No external DB required."*
 
-#### 6. Startup logs (30 sec)
+#### 7. Startup logs (30 sec)
 
 Show `StartupInfoLogger` output from the terminal:
 
 > *"Active profile, database URL (password masked), connection pool name,
 > dialect — all printed at boot."*
 
-#### 7. Migration structure (30 sec)
+#### 8. Migration structure (30 sec)
 
 Open `db/migrations/` and show `V001__initial_schema_mssql.sql`, `V002__seed_workplace_mssql.sql`.
 
 > *"Versioned, idempotent migration scripts — reproducible on any machine."*
 
-#### 8. Full-stack demo (2 min, optional)
+#### 9. Full-stack demo (2 min, optional)
 
 If a browser is available, open `localhost:3000/login.html`, log in as Charlie,
 favorite an apartment. Show the Network tab → backend logs → MSSQL row.
@@ -230,7 +273,7 @@ Provide these two links:
 
 | Repo | URL | Tag / Branch |
 |------|-----|-------------|
-| **Backend** | `https://github.com/omer3kale/sichrplace-backend` | `v1.0.0-mssql-workplace` (tag) / `main` |
+| **Backend** | `https://github.com/omer3kale/sichrplace-backend` | `v1.2.0-thesis-showcase` (tag) / `main` |
 | **Frontend** | `https://github.com/omer3kale/sichrplace` | `main` |
 
 If the repos are private, add examiners as collaborators:
@@ -245,4 +288,4 @@ If the repos are private, add examiners as collaborators:
 | `EXAM_CHECKLIST_BACKEND.md` | This file — reproducible demo steps |
 | `docs/FULLSTACK_GOLDEN_PATH.md` | Browser → API → MSSQL trace |
 | `DEMO_SCRIPT_BACKEND.md` | 10–15 min live demo script |
-| `docs/API_ENDPOINTS_BACKEND.md` | All 55 endpoints with curl examples |
+| `docs/API_ENDPOINTS_BACKEND.md` | All 66 endpoints with curl examples |

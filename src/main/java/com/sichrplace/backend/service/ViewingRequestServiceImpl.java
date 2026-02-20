@@ -1,6 +1,7 @@
 package com.sichrplace.backend.service;
 
 import com.sichrplace.backend.dto.ViewingRequestDto;
+import com.sichrplace.backend.dto.ViewingRequestStatsDto;
 import com.sichrplace.backend.dto.ViewingRequestTransitionDto;
 import com.sichrplace.backend.dto.CreateViewingRequestRequest;
 import com.sichrplace.backend.model.Apartment;
@@ -278,5 +279,108 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
                 .stream()
                 .map(ViewingRequestTransitionDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ViewingRequestDto completeViewingRequest(Long id, Long userId) {
+        ViewingRequest viewingRequest = viewingRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Viewing request not found"));
+
+        // Either the landlord or the tenant can mark as completed
+        boolean isTenant = viewingRequest.getTenant().getId().equals(userId);
+        boolean isOwner = viewingRequest.getApartment().getOwner().getId().equals(userId);
+        if (!isTenant && !isOwner) {
+            throw new SecurityException("Not authorized to complete this viewing request");
+        }
+
+        if (viewingRequest.getStatus() != ViewingRequest.ViewingStatus.CONFIRMED) {
+            throw new IllegalStateException("Only CONFIRMED requests can be marked as completed (current: "
+                    + viewingRequest.getStatus() + ")");
+        }
+
+        viewingRequest.setStatus(ViewingRequest.ViewingStatus.COMPLETED);
+        viewingRequest = viewingRequestRepository.save(viewingRequest);
+
+        // Record the CONFIRMED → COMPLETED transition
+        User actor = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        transitionRepository.save(ViewingRequestTransition.builder()
+                .viewingRequest(viewingRequest)
+                .fromStatus(ViewingRequest.ViewingStatus.CONFIRMED.name())
+                .toStatus(ViewingRequest.ViewingStatus.COMPLETED.name())
+                .changedBy(actor)
+                .changedAt(LocalDateTime.now())
+                .reason("Viewing completed")
+                .build());
+
+        log.info("Viewing request completed id={}, userId={}", id, userId);
+        return ViewingRequestDto.fromEntity(viewingRequest);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ViewingRequestStatsDto getStatistics(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        long total, pending, confirmed, declined, completed, cancelled;
+
+        if (user.getRole() == User.UserRole.LANDLORD) {
+            // Landlord sees stats for requests against their apartments
+            total     = viewingRequestRepository.countByLandlordId(userId);
+            pending   = viewingRequestRepository.countByLandlordIdAndStatus(userId, ViewingRequest.ViewingStatus.PENDING);
+            confirmed = viewingRequestRepository.countByLandlordIdAndStatus(userId, ViewingRequest.ViewingStatus.CONFIRMED);
+            declined  = viewingRequestRepository.countByLandlordIdAndStatus(userId, ViewingRequest.ViewingStatus.DECLINED);
+            completed = viewingRequestRepository.countByLandlordIdAndStatus(userId, ViewingRequest.ViewingStatus.COMPLETED);
+            cancelled = viewingRequestRepository.countByLandlordIdAndStatus(userId, ViewingRequest.ViewingStatus.CANCELLED);
+        } else {
+            // Tenant (or admin) sees their own request stats
+            total     = viewingRequestRepository.countByTenantId(userId);
+            pending   = viewingRequestRepository.countByTenantIdAndStatus(userId, ViewingRequest.ViewingStatus.PENDING);
+            confirmed = viewingRequestRepository.countByTenantIdAndStatus(userId, ViewingRequest.ViewingStatus.CONFIRMED);
+            declined  = viewingRequestRepository.countByTenantIdAndStatus(userId, ViewingRequest.ViewingStatus.DECLINED);
+            completed = viewingRequestRepository.countByTenantIdAndStatus(userId, ViewingRequest.ViewingStatus.COMPLETED);
+            cancelled = viewingRequestRepository.countByTenantIdAndStatus(userId, ViewingRequest.ViewingStatus.CANCELLED);
+        }
+
+        // Compute average response time from transitions (PENDING → CONFIRMED/DECLINED)
+        Double avgResponseHours = null;
+        List<ViewingRequestTransition> responseTransitions = transitionRepository.findAll().stream()
+                .filter(t -> "PENDING".equals(t.getFromStatus())
+                        && ("CONFIRMED".equals(t.getToStatus()) || "DECLINED".equals(t.getToStatus())))
+                .collect(Collectors.toList());
+
+        if (!responseTransitions.isEmpty()) {
+            double totalHours = 0;
+            int count = 0;
+            for (ViewingRequestTransition t : responseTransitions) {
+                ViewingRequest vr = t.getViewingRequest();
+                boolean isRelevant = (user.getRole() == User.UserRole.LANDLORD)
+                        ? vr.getApartment().getOwner().getId().equals(userId)
+                        : vr.getTenant().getId().equals(userId);
+                if (isRelevant && vr.getCreatedAt() != null && t.getChangedAt() != null) {
+                    long seconds = java.time.Duration.between(
+                            vr.getCreatedAt(), t.getChangedAt().atZone(java.time.ZoneId.systemDefault()).toInstant()
+                    ).getSeconds();
+                    totalHours += seconds / 3600.0;
+                    count++;
+                }
+            }
+            if (count > 0) {
+                avgResponseHours = Math.round(totalHours / count * 10.0) / 10.0;
+            }
+        }
+
+        log.info("Viewing request stats for userId={}: total={}", userId, total);
+
+        return ViewingRequestStatsDto.builder()
+                .totalRequests(total)
+                .pendingCount(pending)
+                .confirmedCount(confirmed)
+                .declinedCount(declined)
+                .completedCount(completed)
+                .cancelledCount(cancelled)
+                .averageResponseTimeHours(avgResponseHours)
+                .build();
     }
 }

@@ -47,12 +47,12 @@ university teaching context.
         │          Spring Boot 3.2.2             │
         │  ┌────────────┐  ┌─────────────────┐  │
         │  │ Controllers │→│   Services       │  │
-        │  │ (9 REST)    │  │ (business logic)│  │
+        │  │ (11 REST)   │  │ (business logic)│  │
         │  └────────────┘  └───────┬─────────┘  │
         │                          │             │
         │  ┌───────────────────────▼──────────┐  │
         │  │ Spring Data JPA / Hibernate      │  │
-        │  │ Repositories (9 interfaces)      │  │
+        │  │ Repositories (12 interfaces)     │  │
         │  └───────────────┬──────────────────┘  │
         └──────────────────┼─────────────────────┘
                            │ JDBC
@@ -123,6 +123,9 @@ changes.  This is possible because:
 | `ApartmentReview` | `apartment_reviews` | `TENANT` reviews an `Apartment` — moderated by `ADMIN` |
 | `UserFavorite` | `user_favorites` | `User` bookmarks an `Apartment` |
 | `Notification` | `notifications` | Cross-cutting: created by side-effects (new message, viewing confirmed, …) |
+| `ViewingRequestTransition` | `viewing_request_transitions` | Audit trail for viewing request state changes |
+| `SavedSearch` | `saved_searches` | Persisted search filters per user |
+| `PasswordResetToken` | `password_reset_tokens` | SHA-256 hashed, single-use, time-limited reset tokens |
 
 **Full ERD:** [`docs/diagrams/erd_sichrplace.png`](docs/diagrams/erd_sichrplace.png)
 
@@ -130,30 +133,77 @@ changes.  This is possible because:
 
 | Metric | Count |
 |--------|-------|
-| Tables | 9 |
-| Columns (total) | 123 |
-| Indexes | 41 |
-| Constraints (FK + unique + check) | 26 |
+| Tables | 12 |
+| Columns (total) | 150+ |
+| Indexes | 50+ |
+| Constraints (FK + unique + check) | 30+ |
 
 ---
 
 ## 5  API Surface
 
-The backend exposes **55 REST endpoints** across 9 controllers.
+The backend exposes **66 REST endpoints** across 11 controllers.
 
 | Controller | Endpoints | Auth |
 |------------|-----------|------|
-| `UserController` | 11 | Mixed (public registration, JWT-protected profile) |
+| `UserController` | 13 | Mixed (public registration/reset, JWT-protected profile) |
 | `ApartmentController` | 8 | JWT (create/update), public (search/list) |
 | `ListingController` | 6 | JWT |
 | `ConversationController` | 7 | JWT |
 | `FavoriteController` | 4 | JWT |
 | `ReviewController` | 8 | JWT (submit), ADMIN (moderate) |
-| `ViewingRequestController` | 7 | JWT, role-restricted |
+| `ViewingRequestController` | 9 | JWT, role-restricted |
 | `NotificationController` | 5 | JWT |
 | `AdminController` | 6 | ADMIN only |
+| `SavedSearchController` | 6 | JWT |
 
 **Full endpoint reference:** [`docs/API_ENDPOINTS_BACKEND.md`](docs/API_ENDPOINTS_BACKEND.md)
+
+---
+
+## 5b  Showcase Features (v1.2.0)
+
+Three high-impact features were added in v1.2.0 to evolve the backend from
+a quality baseline to a thesis-ready showcase.  Each feature was chosen to
+demonstrate a different engineering pattern and provide value to three
+audiences: end users, examiners, and students.
+
+### Feature 1: Execute Saved Search
+
+**Endpoint:** `POST /api/saved-searches/{id}/execute`
+
+| Aspect | Detail |
+|--------|--------|
+| **Pattern** | JPA Specifications — dynamic query composition from JSON filter criteria |
+| **Implementation** | `SearchFilterDto` → `ApartmentSpecifications.fromFilter()` → `Specification<Apartment>` |
+| **Tables** | `saved_searches` (filter_json, match_count, last_matched_at), `apartments` |
+| **Value** | Demonstrates that a single `Specification` builder replaces N hardcoded query methods |
+| **Test coverage** | 6 unit tests: valid filter, unauthorized, malformed JSON, not found, empty filter, accumulating match count |
+
+### Feature 2: Password Reset
+
+**Endpoints:** `POST /api/auth/forgot-password`, `POST /api/auth/reset-password`
+
+| Aspect | Detail |
+|--------|--------|
+| **Pattern** | Secure token lifecycle — generate / hash / validate / expire / single-use |
+| **Implementation** | `SecureRandom` → Base64url token → SHA-256 hash → `PasswordResetToken` entity |
+| **Security** | SHA-256 hashed storage, 1-hour expiry, single-use, anti-enumeration response |
+| **Tables** | `password_reset_tokens` (new), `users` |
+| **Value** | Shows professional auth infrastructure; teaches students about token security |
+| **Test coverage** | 6 unit tests: known email, unknown email, valid reset, expired token, used token, invalid token |
+
+### Feature 3: Viewing Request Completion & Statistics
+
+**Endpoints:** `PUT /api/viewing-requests/{id}/complete`, `GET /api/viewing-requests/statistics`
+
+| Aspect | Detail |
+|--------|--------|
+| **Pattern** | Extended state machine + aggregate queries |
+| **Implementation** | CONFIRMED → COMPLETED transition with audit trail; role-aware aggregate statistics with avg response time |
+| **Tables** | `viewing_requests`, `viewing_request_transitions` |
+| **Value** | Completes the VR lifecycle for demo; shows real analytics query patterns |
+| **Test coverage** | 9 unit tests: tenant/landlord complete, unauthorized, invalid state, not found, tenant/landlord stats, avg response time, unknown user |
 
 ---
 
@@ -311,7 +361,7 @@ favorites, messaging, viewing requests).
                                         ┌────────▼─────────┐
                                         │  Spring Boot     │
                                         │  3.2.2 (Java 21) │
-                                        │  55 endpoints    │
+                                        │  66 endpoints    │
                                         └────────┬─────────┘
                                                  │ JDBC
                                         ┌────────▼─────────┐

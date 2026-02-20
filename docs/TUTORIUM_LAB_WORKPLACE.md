@@ -622,6 +622,116 @@ DELETE FROM users;
 > These exercises can be done in any lab session.  They reinforce the
 > project's quality gates: code coverage and secrets scanning.
 
+---
+
+## Bonus Exercises — Showcase Features (v1.2.0)
+
+> These exercises explore the three showcase features added in v1.2.0.
+> They demonstrate advanced patterns: JPA Specifications, secure token
+> lifecycle, and aggregate statistics.
+
+### Exercise S.1 — Execute a saved search
+
+1. Login as Charlie (TENANT) and create a saved search:
+   ```bash
+   curl -X POST http://localhost:8080/api/saved-searches \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $TOKEN" \
+     -d '{"name":"Aachen Budget","filterJson":"{\"city\":\"Aachen\",\"maxPrice\":500}"}'
+   ```
+2. Execute the saved search (note the ID from step 1):
+   ```bash
+   curl -X POST http://localhost:8080/api/saved-searches/1/execute?page=0&size=20 \
+     -H "Authorization: Bearer $TOKEN"
+   ```
+3. **Answer:** How many apartments match? Which fields from
+   `SearchFilterDto` were used to build the query?
+4. Modify the `filterJson` to add `"furnished":true`. Create a new saved
+   search and execute it. Does the result set change?
+5. Open `ApartmentSpecifications.java` and trace how each filter field
+   becomes a JPA `Predicate`. Why is `status=AVAILABLE` always added?
+
+<details>
+<summary>Hints</summary>
+
+- `SearchFilterDto` fields that are `null` are ignored — this gives composable filters.
+- The `Specification<Apartment>` builds AND-predicates dynamically at runtime.
+- This pattern avoids N+1 query methods in the repository.
+
+</details>
+
+### Exercise S.2 — Password reset lifecycle
+
+1. Request a password reset for Charlie:
+   ```bash
+   curl -X POST http://localhost:8080/api/auth/forgot-password \
+     -H "Content-Type: application/json" \
+     -d '{"email":"charlie.student@rwth-aachen.de"}'
+   ```
+2. Copy the `token` from the response.
+3. Reset Charlie's password:
+   ```bash
+   curl -X POST http://localhost:8080/api/auth/reset-password \
+     -H "Content-Type: application/json" \
+     -d '{"token":"<paste token>","newPassword":"newSecureP@ss1"}'
+   ```
+4. **Verify:** Login with the new password:
+   ```bash
+   curl -X POST http://localhost:8080/api/auth/login \
+     -H "Content-Type: application/json" \
+     -d '{"email":"charlie.student@rwth-aachen.de","password":"newSecureP@ss1"}'
+   ```
+5. **Security question:** Try using the same token again. What happens? Why?
+6. Try requesting a reset for a non-existent email. Does the API reveal
+   whether the email exists?
+
+<details>
+<summary>Hints</summary>
+
+- Tokens are stored as SHA-256 hashes — the plaintext is shown only once.
+- Tokens are single-use (`usedAt` is set after first use) and expire after 1 hour.
+- The `forgotPassword` endpoint always returns the same success message to
+  prevent email enumeration attacks.
+
+</details>
+
+### Exercise S.3 — Viewing request statistics and completion
+
+1. Login as Diana (TENANT) and check her viewing request statistics:
+   ```bash
+   curl http://localhost:8080/api/viewing-requests/statistics \
+     -H "Authorization: Bearer $TOKEN_DIANA"
+   ```
+2. Login as Bob (LANDLORD) and check his statistics. How do the
+   counts differ? Why?
+3. Create a new viewing request as Diana, have Bob confirm it, then
+   complete it:
+   ```bash
+   # As Diana: create
+   curl -X POST http://localhost:8080/api/viewing-requests ...
+   # As Bob: confirm
+   curl -X PUT http://localhost:8080/api/viewing-requests/{id}/confirm ...
+   # As Diana or Bob: complete
+   curl -X PUT http://localhost:8080/api/viewing-requests/{id}/complete ...
+   ```
+4. Re-check the statistics. Did `completedCount` increment?
+5. **State machine question:** What happens if you try to complete a
+   PENDING request? What about a DECLINED one?
+
+<details>
+<summary>Hints</summary>
+
+- Only CONFIRMED requests can be completed — the service enforces valid
+  state transitions.
+- Landlords see stats for requests against their apartments; tenants see
+  stats for requests they created.
+- The `averageResponseTimeHours` is computed from `ViewingRequestTransition`
+  records (PENDING → CONFIRMED/DECLINED).
+
+</details>
+
+---
+
 ### Exercise B.1 — Run tests with coverage
 
 1. Run the full test suite with JaCoCo coverage:
@@ -680,7 +790,7 @@ After completing all three labs, you should be able to:
 - [ ] Start MSSQL and Spring Boot locally with the `local-mssql` profile
 - [ ] Login as any seed user and obtain a JWT
 - [ ] Explain which tables each API endpoint touches (using the ERD)
-- [ ] Execute a complete viewing-request lifecycle (PENDING → CONFIRMED → CANCELLED)
+- [ ] Execute a complete viewing-request lifecycle (PENDING → CONFIRMED → COMPLETED)
 - [ ] Submit, moderate, and verify a review
 - [ ] Add a new JPA query method and map it to a REST endpoint
 - [ ] Add new columns to an entity and write an idempotent migration script
@@ -689,3 +799,5 @@ After completing all three labs, you should be able to:
 - [ ] Run `testWithCoverage` and read the JaCoCo HTML report
 - [ ] Run `checkCoco` and interpret the per-package results
 - [ ] Run `secretsCheck` and verify no hardcoded secrets exist
+- [ ] Execute a saved search and explain how JPA Specifications work
+- [ ] Request a password reset and trace the token lifecycle

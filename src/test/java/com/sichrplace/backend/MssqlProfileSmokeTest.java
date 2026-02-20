@@ -1,6 +1,7 @@
 package com.sichrplace.backend;
 
 import com.sichrplace.backend.repository.*;
+import com.sichrplace.backend.repository.PasswordResetTokenRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,12 +67,15 @@ class MssqlProfileSmokeTest {
     @Autowired
     private SavedSearchRepository savedSearchRepository;
 
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
+
     // ──────────────────────────────────────────────
     // 1. Context loads
     // ──────────────────────────────────────────────
 
     @Test
-    @DisplayName("Application context loads with all 11 repositories")
+    @DisplayName("Application context loads with all 12 repositories")
     void contextLoads() {
         assertNotNull(userRepository, "UserRepository should be wired");
         assertNotNull(apartmentRepository, "ApartmentRepository should be wired");
@@ -84,6 +88,7 @@ class MssqlProfileSmokeTest {
         assertNotNull(notificationRepository, "NotificationRepository should be wired");
         assertNotNull(transitionRepository, "ViewingRequestTransitionRepository should be wired");
         assertNotNull(savedSearchRepository, "SavedSearchRepository should be wired");
+        assertNotNull(passwordResetTokenRepository, "PasswordResetTokenRepository should be wired");
     }
 
     // ──────────────────────────────────────────────
@@ -91,7 +96,7 @@ class MssqlProfileSmokeTest {
     // ──────────────────────────────────────────────
 
     @Test
-    @DisplayName("Repository.count() works for all 11 tables")
+    @DisplayName("Repository.count() works for all 12 tables")
     void repositoryCountWorks() {
         assertDoesNotThrow(() -> userRepository.count());
         assertDoesNotThrow(() -> apartmentRepository.count());
@@ -104,6 +109,7 @@ class MssqlProfileSmokeTest {
         assertDoesNotThrow(() -> notificationRepository.count());
         assertDoesNotThrow(() -> transitionRepository.count());
         assertDoesNotThrow(() -> savedSearchRepository.count());
+        assertDoesNotThrow(() -> passwordResetTokenRepository.count());
     }
 
     // ──────────────────────────────────────────────
@@ -124,6 +130,7 @@ class MssqlProfileSmokeTest {
         assertTrue(notificationRepository.findAll().isEmpty(), "notifications table should be empty");
         assertTrue(transitionRepository.findAll().isEmpty(), "viewing_request_transitions table should be empty");
         assertTrue(savedSearchRepository.findAll().isEmpty(), "saved_searches table should be empty");
+        assertTrue(passwordResetTokenRepository.findAll().isEmpty(), "password_reset_tokens table should be empty");
     }
 
     // ──────────────────────────────────────────────
