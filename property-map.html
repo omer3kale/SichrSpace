@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Map - SichrPlace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .map-controls {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .property-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .property-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .distance-badge {
+            background: #007bff;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+        
+        .place-type-btn {
+            margin: 2px;
+            font-size: 0.85em;
+        }
+        
+        .search-radius {
+            width: 100px;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">🗺️ Property Map & Location Services</h2>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Map Controls -->
+            <div class="col-lg-4">
+                <div class="map-controls">
+                    <h5>🔍 Search & Navigation</h5>
+                    
+                    <!-- Location Search -->
+                    <div class="mb-3">
+                        <label class="form-label">Search Location:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="locationSearch" 
+                                   placeholder="Enter address or place name">
+                            <button class="btn btn-primary" id="searchBtn">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Radius Selection -->
+                    <div class="mb-3">
+                        <label class="form-label">Search Radius:</label>
+                        <select class="form-select search-radius" id="searchRadius">
+                            <option value="1">1 km</option>
+                            <option value="2">2 km</option>
+                            <option value="5" selected>5 km</option>
+                            <option value="10">10 km</option>
+                            <option value="20">20 km</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Place Types -->
+                    <div class="mb-3">
+                        <label class="form-label">Find Nearby:</label>
+                        <div id="placeTypes">
+                            <!-- Place type buttons will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Current Location -->
+                    <div class="mb-3">
+                        <button class="btn btn-success w-100" id="getCurrentLocation">
+                            <i class="fas fa-location-arrow"></i> Use My Location
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Property Results -->
+                <div id="propertyResults">
+                    <!-- Property cards will be populated here -->
+                </div>
+            </div>
+            
+            <!-- Map -->
+            <div class="col-lg-8">
+                <div id="map"></div>
+                
+                <!-- Status Messages -->
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading map data...</p>
+                </div>
+                
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include required scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    
+    <script>
+        class PropertyMapManager {
+            constructor() {
+                this.map = null;
+                this.markers = [];
+                this.currentLocation = null;
+                this.selectedPlaceType = 'restaurant';
+                this.init();
+            }
+
+            async init() {
+                await this.loadPlaceTypes();
+                this.initializeEventListeners();
+                this.initializeMap();
+            }
+
+            async loadPlaceTypes() {
+                try {
+                    const response = await fetch('/api/maps/place-types');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.renderPlaceTypes(result.data);
+                    }
+                } catch (error) {
+                    console.error('Error loading place types:', error);
+                }
+            }
+
+            renderPlaceTypes(placeTypes) {
+                const container = document.getElementById('placeTypes');
+                container.innerHTML = '';
+                
+                placeTypes.forEach(type => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-outline-secondary btn-sm place-type-btn';
+                    btn.textContent = type.label;
+                    btn.dataset.type = type.value;
+                    btn.addEventListener('click', () => this.selectPlaceType(type.value, btn));
+                    container.appendChild(btn);
+                });
+                
+                // Select first type by default
+                if (placeTypes.length > 0) {
+                    const firstBtn = container.querySelector('.place-type-btn');
+                    this.selectPlaceType(placeTypes[0].value, firstBtn);
+                }
+            }
+
+            selectPlaceType(type, btnElement) {
+                // Remove active class from all buttons
+                document.querySelectorAll('.place-type-btn').forEach(btn => {
+                    btn.classList.remove('btn-secondary');
+                    btn.classList.add('btn-outline-secondary');
+                });
+                
+                // Add active class to selected button
+                btnElement.classList.remove('btn-outline-secondary');
+                btnElement.classList.add('btn-secondary');
+                
+                this.selectedPlaceType = type;
+                
+                // If we have a current location, search for nearby places
+                if (this.currentLocation) {
+                    this.searchNearbyPlaces();
+                }
+            }
+
+            initializeEventListeners() {
+                document.getElementById('searchBtn').addEventListener('click', () => {
+                    this.searchLocation();
+                });
+                
+                document.getElementById('locationSearch').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.searchLocation();
+                    }
+                });
+                
+                document.getElementById('getCurrentLocation').addEventListener('click', () => {
+                    this.getCurrentLocation();
+                });
+            }
+
+            initializeMap() {
+                // Initialize map centered on Berlin (default)
+                this.map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: 52.5200, lng: 13.4050 },
+                    zoom: 12,
+                    styles: [
+                        {
+                            featureType: "poi",
+                            elementType: "labels",
+                            stylers: [{ visibility: "off" }]
+                        }
+                    ]
+                });
+            }
+
+            async searchLocation() {
+                const location = document.getElementById('locationSearch').value.trim();
+                if (!location) return;
+
+                this.showLoading();
+                
+                try {
+                    const response = await fetch('/api/maps/search-by-location', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({
+                            location: location,
+                            radius: parseInt(document.getElementById('searchRadius').value)
+                        })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.currentLocation = result.data.location;
+                        this.updateMap(result.data.location.lat, result.data.location.lng);
+                        this.displayProperties(result.data.apartments);
+                        this.searchNearbyPlaces();
+                        this.showSuccess(`Found ${result.data.count} properties near ${location}`);
+                    } else {
+                        this.showError(result.error || 'Search failed');
+                    }
+                } catch (error) {
+                    this.showError('Network error occurred');
+                    console.error('Search error:', error);
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            getCurrentLocation() {
+                if (!navigator.geolocation) {
+                    this.showError('Geolocation is not supported by this browser');
+                    return;
+                }
+
+                this.showLoading();
+                
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        
+                        try {
+                            // Reverse geocode to get address
+                            const response = await fetch('/api/maps/reverse-geocode', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                                },
+                                body: JSON.stringify({ lat, lng })
+                            });
+
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                this.currentLocation = { lat, lng, ...result.data };
+                                this.updateMap(lat, lng);
+                                document.getElementById('locationSearch').value = result.data.formatted_address;
+                                
+                                // Search for nearby apartments
+                                await this.searchNearbyApartments(lat, lng);
+                                this.searchNearbyPlaces();
+                                this.showSuccess('Location detected successfully');
+                            }
+                        } catch (error) {
+                            this.showError('Error getting location details');
+                            console.error('Reverse geocoding error:', error);
+                        } finally {
+                            this.hideLoading();
+                        }
+                    },
+                    (error) => {
+                        this.hideLoading();
+                        this.showError('Unable to get your location');
+                        console.error('Geolocation error:', error);
+                    }
+                );
+            }
+
+            async searchNearbyApartments(lat, lng) {
+                try {
+                    const response = await fetch('/api/maps/nearby-apartments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({
+                            lat: lat,
+                            lng: lng,
+                            radius: parseInt(document.getElementById('searchRadius').value)
+                        })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.displayProperties(result.data);
+                    }
+                } catch (error) {
+                    console.error('Error searching nearby apartments:', error);
+                }
+            }
+
+            async searchNearbyPlaces() {
+                if (!this.currentLocation) return;
+
+                try {
+                    const response = await fetch('/api/maps/nearby-places', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({
+                            lat: this.currentLocation.lat,
+                            lng: this.currentLocation.lng,
+                            type: this.selectedPlaceType,
+                            radius: 1000
+                        })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.addPlaceMarkers(result.data);
+                    }
+                } catch (error) {
+                    console.error('Error searching nearby places:', error);
+                }
+            }
+
+            updateMap(lat, lng) {
+                const center = { lat, lng };
+                this.map.setCenter(center);
+                this.map.setZoom(14);
+                
+                // Clear existing markers
+                this.clearMarkers();
+                
+                // Add marker for searched location
+                new google.maps.Marker({
+                    position: center,
+                    map: this.map,
+                    title: 'Searched Location',
+                    icon: {
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="red">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                        `),
+                        scaledSize: new google.maps.Size(32, 32)
+                    }
+                });
+            }
+
+            displayProperties(properties) {
+                const container = document.getElementById('propertyResults');
+                container.innerHTML = '<h5>🏠 Nearby Properties</h5>';
+                
+                if (properties.length === 0) {
+                    container.innerHTML += '<p class="text-muted">No properties found in this area.</p>';
+                    return;
+                }
+                
+                properties.forEach(property => {
+                    const card = this.createPropertyCard(property);
+                    container.appendChild(card);
+                    
+                    // Add property marker to map
+                    if (property.latitude && property.longitude) {
+                        this.addPropertyMarker(property);
+                    }
+                });
+            }
+
+            createPropertyCard(property) {
+                const card = document.createElement('div');
+                card.className = 'property-card';
+                
+                card.innerHTML = `
+                    <h6>${property.title || 'Property'}</h6>
+                    <p class="text-muted small">${property.address || 'Address not available'}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong>€${property.rent || 'N/A'}/month</strong>
+                        ${property.distance_km ? `<span class="distance-badge">${property.distance_km.toFixed(1)} km away</span>` : ''}
+                    </div>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            ${property.rooms || 'N/A'} rooms • ${property.size || 'N/A'} m²
+                        </small>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    if (property.latitude && property.longitude) {
+                        this.map.setCenter({ lat: property.latitude, lng: property.longitude });
+                        this.map.setZoom(16);
+                    }
+                });
+                
+                return card;
+            }
+
+            addPropertyMarker(property) {
+                const marker = new google.maps.Marker({
+                    position: { lat: property.latitude, lng: property.longitude },
+                    map: this.map,
+                    title: property.title || 'Property',
+                    icon: {
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="blue">
+                                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                            </svg>
+                        `),
+                        scaledSize: new google.maps.Size(24, 24)
+                    }
+                });
+                
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                        <div style="max-width: 200px;">
+                            <h6>${property.title || 'Property'}</h6>
+                            <p style="margin: 5px 0;">${property.address || ''}</p>
+                            <p style="margin: 5px 0;"><strong>€${property.rent || 'N/A'}/month</strong></p>
+                            <p style="margin: 5px 0; font-size: 0.9em;">
+                                ${property.rooms || 'N/A'} rooms • ${property.size || 'N/A'} m²
+                            </p>
+                        </div>
+                    `
+                });
+                
+                marker.addListener('click', () => {
+                    infoWindow.open(this.map, marker);
+                });
+                
+                this.markers.push(marker);
+            }
+
+            addPlaceMarkers(places) {
+                places.forEach(place => {
+                    const marker = new google.maps.Marker({
+                        position: place.location,
+                        map: this.map,
+                        title: place.name,
+                        icon: {
+                            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="green">
+                                    <circle cx="12" cy="12" r="8"/>
+                                </svg>
+                            `),
+                            scaledSize: new google.maps.Size(16, 16)
+                        }
+                    });
+                    
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: `
+                            <div style="max-width: 200px;">
+                                <h6>${place.name}</h6>
+                                <p style="margin: 5px 0; font-size: 0.9em;">${place.vicinity || ''}</p>
+                                ${place.rating ? `<p style="margin: 5px 0;">⭐ ${place.rating}/5</p>` : ''}
+                            </div>
+                        `
+                    });
+                    
+                    marker.addListener('click', () => {
+                        infoWindow.open(this.map, marker);
+                    });
+                    
+                    this.markers.push(marker);
+                });
+            }
+
+            clearMarkers() {
+                this.markers.forEach(marker => marker.setMap(null));
+                this.markers = [];
+            }
+
+            showLoading() {
+                document.querySelector('.loading-spinner').style.display = 'block';
+            }
+
+            hideLoading() {
+                document.querySelector('.loading-spinner').style.display = 'none';
+            }
+
+            showError(message) {
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                setTimeout(() => errorDiv.style.display = 'none', 5000);
+            }
+
+            showSuccess(message) {
+                const successDiv = document.getElementById('successMessage');
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+                setTimeout(() => successDiv.style.display = 'none', 3000);
+            }
+        }
+
+        // Initialize when Google Maps is loaded
+        function initMap() {
+            new PropertyMapManager();
+        }
+    </script>
+    
+    <!-- Load Google Maps API -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>

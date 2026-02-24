@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Settings - SichrPlace</title>
+    <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563EB;
+            --secondary: #F9FAFB;
+            --accent: #40E0D0;
+            --text: #222;
+            --muted: #6b7280;
+            --card: #fff;
+            --radius: 18px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --heading-font: "Poppins", sans-serif;
+            --body-font: "Roboto", sans-serif;
+        }
+
+        body {
+            font-family: var(--body-font);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: var(--secondary);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+
+        /* Header matching index.html */
+        header {
+            background: var(--card);
+            box-shadow: var(--shadow);
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--heading-font);
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 40px;
+            "
+        }
+
+        nav {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            position: relative;
+        }
+
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-family: var(--heading-font);
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: var(--card);
+            padding: 3rem;
+            "
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            font-family: var(--heading-font);
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: var(--heading-font);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 2.5rem 0 1rem 0;
+        }
+
+        .intro-text {
+            text-align: center;
+            color: var(--muted);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .setting-group {
+            background: var(--secondary);
+            padding: 2rem;
+            "
+            margin: 2rem 0;
+            border-left: 4px solid var(--accent);
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h4 {
+            margin: 0 0 5px 0;
+            color: var(--text);
+            font-family: var(--heading-font);
+            font-weight: 600;
+        }
+
+        .setting-info p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            "
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            "
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        
+        input:disabled + .slider {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            "
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            font-family: var(--heading-font);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            "
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-family: var(--heading-font);
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: var(--accent);
+        }
+        
+        .gdpr-section {
+            background: var(--secondary);
+            padding: 2rem;
+            "
+            margin: 30px 0;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .request-form {
+            margin: 20px 0;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--text);
+            font-family: var(--heading-font);
+        }
+        
+        .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            "
+            box-sizing: border-box;
+            font-family: var(--body-font);
+            transition: border-color 0.2s;
+        }
+        
+        .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Footer matching index.html */
+        footer {
+            background: var(--text);
+            color: var(--card);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: auto;
+            flex-shrink: 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--card);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .social-links a {
+            color: var(--card);
+            font-size: 1.5rem;
+            transition: color 0.2s;
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 0 20px;
+            }
+            
+            nav {
+                gap: 16px;
+            }
+            
+            .container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .setting-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="img/SichrPlaceLogo_944x944.jpg" class="logo" data-type="logo" alt="SichrPlace" style="height: 70px;">
+        <a href="index.html" class="logo">
+            SichrPlace
+        </a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="apartments-listing.html">Apartments</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="privacy-policy.html">Privacy</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1>Privacy Settings & Data Management</h1>
+            <p class="intro-text">Control your privacy preferences and manage your personal data</p>
+            
+            <div id="alert-container"></div>
+
+            <h2>Cookie & Tracking Preferences</h2>
+            <div class="setting-group">
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Essential Cookies</h4>
+                        <p>Required for basic website functionality and security. These cannot be disabled.</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked disabled>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Functional Cookies</h4>
+                        <p>Enable enhanced features like personalized content and remember your preferences.</p>
+                    </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="functional-cookies">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Analytics Cookies</h4>
+                    <p>Help us understand how you use our platform to improve our services.</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="analytics-cookies">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Marketing Cookies</h4>
+                    <p>Allow us to show you relevant ads and measure the effectiveness of our campaigns.</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="marketing-cookies">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <button class="btn" onclick="saveConsentSettings()">Save Cookie Preferences</button>
+
+        <div class="gdpr-section">
+            <h2>Your Data Rights (GDPR)</h2>
+            <p>Under the General Data Protection Regulation, you have several rights regarding your personal data:</p>
+            
+            <h3>Quick Actions</h3>
+            <button class="btn" onclick="downloadMyData()">Download My Data</button>
+            <button class="btn btn-danger" onclick="requestAccountDeletion()">Delete My Account</button>
+            
+            <h3>Submit a Data Request</h3>
+            <div class="request-form">
+                <div class="form-group">
+                    <label for="request-type">Request Type:</label>
+                    <select id="request-type">
+                        <option value="">Select a request type...</option>
+                        <option value="access">Access - Get a copy of my data</option>
+                        <option value="rectification">Rectification - Correct my data</option>
+                        <option value="deletion">Deletion - Delete my data</option>
+                        <option value="portability">Portability - Export my data</option>
+                        <option value="restriction">Restriction - Limit data processing</option>
+                        <option value="objection">Objection - Object to processing</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="request-description">Description (Optional):</label>
+                    <textarea id="request-description" rows="4" placeholder="Please describe your request in detail..."></textarea>
+                </div>
+                
+                <button class="btn" onclick="submitGdprRequest()">Submit Request</button>
+            </div>
+            
+            <h3>My Requests</h3>
+            <div id="my-requests">
+                <p>Loading your requests...</p>
+            </div>
+        </div>
+        
+        <h2>Additional Privacy Options</h2>
+        <div class="setting-group">
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Email Notifications</h4>
+                    <p>Receive updates about your listings and matches.</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="email-notifications" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Marketing Emails</h4>
+                    <p>Receive promotional emails about new features and offers.</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="marketing-emails">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h4>Profile Visibility</h4>
+                    <p>Allow other users to see your profile information.</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="profile-visibility" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <button class="btn" onclick="savePrivacySettings()">Save Privacy Settings</button>
+        </div>
+    </main>
+
+    <script>
+        // Check if user is authenticated
+        const isAuthenticated = localStorage.getItem('token') !== null;
+        
+        if (!isAuthenticated) {
+            showAlert('Please log in to access privacy settings.', 'warning');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = message;
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        async function loadUserConsent() {
+            try {
+                const response = await fetch('/api/gdpr/consent', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.consent) {
+                        document.getElementById('functional-cookies').checked = data.consent.consentTypes.functional?.given || false;
+                        document.getElementById('analytics-cookies').checked = data.consent.consentTypes.analytics?.given || false;
+                        document.getElementById('marketing-cookies').checked = data.consent.consentTypes.marketing?.given || false;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading consent:', error);
+            }
+        }
+
+        async function saveConsentSettings() {
+            const consentTypes = {
+                necessary: {
+                    given: true,
+                    timestamp: new Date()
+                },
+                functional: {
+                    given: document.getElementById('functional-cookies').checked,
+                    timestamp: new Date()
+                },
+                analytics: {
+                    given: document.getElementById('analytics-cookies').checked,
+                    timestamp: new Date()
+                },
+                marketing: {
+                    given: document.getElementById('marketing-cookies').checked,
+                    timestamp: new Date()
+                }
+            };
+
+            try {
+                const response = await fetch('/api/gdpr/consent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        consentTypes,
+                        privacyPolicyVersion: '1.0',
+                        termsVersion: '1.0'
+                    })
+                });
+
+                if (response.ok) {
+                    showAlert('Cookie preferences saved successfully!');
+                } else {
+                    const error = await response.json();
+                    showAlert('Error saving preferences: ' + error.message, 'warning');
+                }
+            } catch (error) {
+                showAlert('Error saving preferences. Please try again.', 'warning');
+            }
+        }
+
+        async function downloadMyData() {
+            try {
+                const response = await fetch('/api/gdpr/export', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showAlert('Data export request submitted. You will receive an email when your data is ready for download.');
+                } else {
+                    const error = await response.json();
+                    showAlert('Error requesting data export: ' + error.message, 'warning');
+                }
+            } catch (error) {
+                showAlert('Error requesting data export. Please try again.', 'warning');
+            }
+        }
+
+        async function requestAccountDeletion() {
+            const confirmation = prompt('To confirm account deletion, please type "DELETE_MY_ACCOUNT" below:');
+            
+            if (confirmation !== 'DELETE_MY_ACCOUNT') {
+                showAlert('Account deletion cancelled. Confirmation text did not match.', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/gdpr/account', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        confirmation: 'DELETE_MY_ACCOUNT'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showAlert('Account deletion request submitted. Your account will be deleted within 30 days.');
+                } else {
+                    const error = await response.json();
+                    showAlert('Error requesting account deletion: ' + error.message, 'warning');
+                }
+            } catch (error) {
+                showAlert('Error requesting account deletion. Please try again.', 'warning');
+            }
+        }
+
+        async function submitGdprRequest() {
+            const requestType = document.getElementById('request-type').value;
+            const description = document.getElementById('request-description').value;
+
+            if (!requestType) {
+                showAlert('Please select a request type.', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/gdpr/request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        requestType,
+                        description
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showAlert('GDPR request submitted successfully. We will process it within 30 days.');
+                    document.getElementById('request-type').value = '';
+                    document.getElementById('request-description').value = '';
+                    loadMyRequests(); // Refresh the requests list
+                } else {
+                    const error = await response.json();
+                    showAlert('Error submitting request: ' + error.message, 'warning');
+                }
+            } catch (error) {
+                showAlert('Error submitting request. Please try again.', 'warning');
+            }
+        }
+
+        async function loadMyRequests() {
+            try {
+                const response = await fetch('/api/gdpr/requests', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const requestsContainer = document.getElementById('my-requests');
+                    
+                    if (data.requests.length === 0) {
+                        requestsContainer.innerHTML = '<p>You have no GDPR requests.</p>';
+                    } else {
+                        requestsContainer.innerHTML = data.requests.map(req => `
+                            <div style="background: white; padding: 15px; margin: 10px 0; " border: 1px solid #ddd;">
+                                <strong>${req.requestType.charAt(0).toUpperCase() + req.requestType.slice(1)}</strong> - 
+                                <span style="color: ${req.status === 'completed' ? 'green' : req.status === 'pending' ? 'orange' : 'blue'}">
+                                    ${req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+                                </span><br>
+                                <small>Submitted: ${new Date(req.createdAt).toLocaleDateString()}</small><br>
+                                ${req.description ? `<p>${req.description}</p>` : ''}
+                            </div>
+                        `).join('');
+                    }
+                } else {
+                    document.getElementById('my-requests').innerHTML = '<p>Error loading requests.</p>';
+                }
+            } catch (error) {
+                document.getElementById('my-requests').innerHTML = '<p>Error loading requests.</p>';
+            }
+        }
+
+        function savePrivacySettings() {
+            // This would save other privacy settings to user profile
+            showAlert('Privacy settings saved successfully!');
+        }
+
+        // Load data when page loads
+        if (isAuthenticated) {
+            loadUserConsent();
+            loadMyRequests();
+        }
+    </script>
+</body>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="apartments-listing.html">Apartments</a>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="terms-of-service.html">Terms of Service</a>
+        </div>
+        <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        </div>
+        <p>&copy; 2024 SichrPlace. All rights reserved. | Making housing secure and accessible.</p>
+    </div>
+</footer>
+
+</html>

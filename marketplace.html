@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SichrPlace Marketplace - Equip your new home at a discount</title>
+  <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="css/logo-system.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/logo-system.css">
+  
+  <!-- PayPal SDK for Marketplace Payments -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AcPYlXozR8VS9kJSk7rv5MW36lMV66ZMyqZKjM0YVuvt0dJ1cIyHRvDmGeux0qu3gBOh6XswI5gin2WO&currency=EUR&locale=de_DE&components=buttons&enable-funding=venmo,paylater"></script>
+  <script src="js/paypal-integration.js"></script>
+  
+  <!-- Consent Manager (Professional GDPR Compliance) -->
+  <script src="https://cdn.consentmanager.net/delivery/autoblocking/02bebe9642911.js"></script>
+  
+  <!-- Analytics Integration Bridge -->
+  <script src="js/consent-manager-bridge.js"></script>
+  
+  <!-- Microsoft Clarity Integration -->
+  <script src="js/clarity-config-hybrid.js"></script>
+  
+  <!-- Google Analytics 4 Integration -->
+  <script src="js/google-analytics-config.js"></script>
+  
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --text: #222;
+      --muted: #6b7280;
+      --card: #fff;
+      --radius: 18px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+    }
+    body {
+      margin: 0;
+      font-family: var(--body-font);
+      background: var(--secondary);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-family: var(--heading-font);
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: var(--accent);
+    }
+    main {
+      flex: 1 0 auto;
+      max-width: 1100px;
+      margin: 40px auto 0 auto;
+      padding: 0 16px;
+    }
+    .marketplace-hero {
+      background: linear-gradient(120deg, var(--primary) 60%, var(--accent) 100%);
+      color: #fff;
+      "
+      box-shadow: var(--shadow);
+      padding: 40px 24px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .marketplace-hero h1 {
+      font-family: var(--heading-font);
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .marketplace-hero p {
+      font-size: 1.2rem;
+      color: #e0e7ff;
+    }
+    .marketplace-tabs {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+    .marketplace-tab {
+      background: var(--card);
+      color: var(--primary);
+      border: none;
+      padding: 10px 28px;
+      "
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: background 0.2s, color 0.2s;
+    }
+    .marketplace-tab.active, .marketplace-tab:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .marketplace-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: center;
+      background: #fff;
+      "
+      box-shadow: var(--shadow);
+      padding: 18px 18px;
+    }
+    .marketplace-filters select, .marketplace-filters input {
+      padding: 8px 12px;
+      "
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    .offers-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: flex-start;
+    }
+    .offer-card {
+      background: #fff;
+      "
+      box-shadow: var(--shadow);
+      padding: 18px 14px;
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+    .offer-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      "
+      background: #f3f4f6;
+    }
+    .offer-card .offer-title {
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+    .offer-card .offer-category {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    .offer-card .offer-type {
+      font-size: 0.95rem;
+      color: #10B981;
+      font-weight: 600;
+    }
+    .offer-card .offer-desc {
+      font-size: 0.98rem;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+    .offer-card .offer-meta {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    .offer-card .offer-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .offer-card .offer-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .offer-card button, .offer-card .favorite-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      "
+      padding: 7px 18px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .offer-card .favorite-btn {
+      background: none;
+      color: #e11d48;
+      padding: 0 10px;
+      font-size: 1.3rem;
+      "
+      border: none;
+      margin-left: auto;
+    }
+    .offer-card .favorite-btn.active {
+      color: #f87171;
+    }
+    .offer-card button:hover {
+      background: var(--primary);
+    }
+    .offer-card .favorite-btn:hover {
+      color: #f87171;
+    }
+    .create-offer-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      "
+      padding: 10px 32px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 24px;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .create-offer-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .section-title {
+      font-family: var(--heading-font);
+      color: var(--primary);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      margin-top: 32px;
+    }
+    @media (max-width: 900px) {
+      .offers-list {
+        flex-direction: column;
+        gap: 18px;
+        align-items: center;
+      }
+      .offer-card {
+        width: 98vw;
+        max-width: 340px;
+      }
+      main {
+        padding: 0 2vw;
+      }
+    }
+  </style>
+    <script src="js/language-switcher.js" defer></script>
+    <script src="js/logo-cookie-manager.js" defer></script>
+</head>
+<body>
+  <header>
+    <img src="img/SichrPlaceLogo_944x944.jpg" class="logo" data-type="logo" alt="SichrPlace" style="height: 70px;">
+    <a href="index.html" class="logo">
+      SichrPlace
+    </a>
+    <nav>
+      <a href="apartments-listing.html">Apartments</a>
+      <a href="marketplace.html" style="color:var(--accent);font-weight:700;">Marketplace</a>
+      <a href="login.html">Login</a>
+      <a href="create-account.html">Create Account</a>
+    </nav>
+  </header>
+  <main>
+    <section class="marketplace-hero">
+      <h1><i class="fa fa-store"></i> SichrPlace Second-hand Marketplace</h1>
+      <p>Equip your new home at a discount.<br>
+      <span style="font-size:1rem;color:#fff;font-weight:400;">You must be logged in to buy or sell items. All payments processed securely through our platform.</span></p>
+      <div style="margin-top:16px;font-size:0.95rem;color:#e0e7ff;">
+        <i class="fas fa-shield-alt"></i> <strong>Safe Transactions</strong> • 
+        <i class="fas fa-credit-card"></i> <strong>2% Platform Fee</strong> • 
+        <i class="fas fa-truck"></i> <strong>Local Pickup</strong>
+      </div>
+    </section>
+    <div class="marketplace-tabs">
+      <button class="marketplace-tab active" id="tab-buy" onclick="showTab('buy')"><i class="fa fa-shopping-basket"></i> Want to Buy</button>
+      <button class="marketplace-tab" id="tab-sell" onclick="showTab('sell')"><i class="fa fa-tags"></i> Want to Sell</button>
+    </div>
+    <!-- Filters -->
+    <div class="marketplace-filters" id="marketplace-filters">
+      <input type="text" id="filter-search" placeholder="Search items..." style="min-width:180px;">
+      <select id="filter-category">
+        <option value="">All Categories</option>
+        <option>Bedroom</option>
+        <option>Kitchen</option>
+        <option>Living Room</option>
+        <option>Hallway & Entrance</option>
+        <option>Cleaning Facilities</option>
+        <option>Decoration</option>
+      </select>
+      <select id="filter-condition">
+        <option value="">Any Condition</option>
+        <option>Pre-owned</option>
+        <option>Refurbished</option>
+        <option>Vintage</option>
+        <option>Like New</option>
+      </select>
+      <input type="text" id="filter-city" placeholder="City">
+      <input type="text" id="filter-postal" placeholder="Postal Code" style="width:100px;">
+      <input type="number" id="filter-min-price" placeholder="Min €" style="width:80px;">
+      <input type="number" id="filter-max-price" placeholder="Max €" style="width:80px;">
+      <button onclick="applyFilters()" style="background:var(--primary);color:#fff;padding:8px 18px;border-radius:8px;border:none;font-weight:600;cursor:pointer;"><i class="fas fa-search"></i> Filter</button>
+      <button onclick="clearFilters()" style="background:var(--muted);color:#fff;padding:8px 12px;border-radius:8px;border:none;font-weight:600;cursor:pointer;"><i class="fas fa-times"></i></button>
+    </div>
+    <!-- Offers List (Want to Buy) -->
+    <div id="offers-buy">
+      <div class="section-title"><i class="fa fa-list"></i> All Active Offers</div>
+      <div class="offers-list">
+        <!-- Enhanced Offer Cards with Better Data -->
+        <div class="offer-card">
+          <img src="img/apartment1.jpg" alt="Double Bed Frame" style="filter: hue-rotate(20deg);">
+          <div class="offer-title">Double Bed Frame with Storage</div>
+          <div class="offer-category">Bedroom</div>
+          <div class="offer-type">Pre-owned</div>
+          <div class="offer-desc">IKEA Malm bed frame, 160x200cm, white oak finish. 4 storage drawers underneath. Minor scratches on headboard. Mattress not included. Assembly required.</div>
+          <div class="offer-meta"><i class="fa fa-map-marker-alt"></i> Cologne, 50667 • <i class="fa fa-clock"></i> 2 days ago</div>
+          <div class="offer-price">€85 <span style="font-size:0.85rem;text-decoration:line-through;color:var(--muted);">€120</span></div>
+          <div class="offer-actions">
+            <button onclick="messageOwner('Double Bed Frame with Storage', 'bed1')"><i class="fas fa-envelope"></i> Message</button>
+            <button onclick="initiatePayment('bed1', 85)"><i class="fas fa-shopping-cart"></i> Buy Now</button>
+            <button class="favorite-btn" onclick="toggleFavorite(this)" title="Add to favorites"><i class="fa fa-heart"></i></button>
+          </div>
+        </div>
+
+        <div class="offer-card">
+          <img src="img/apartment2.jpg" alt="Kitchen Mixer" style="filter: hue-rotate(120deg) saturate(1.2);">
+          <div class="offer-title">KitchenAid Stand Mixer</div>
+          <div class="offer-category">Kitchen</div>
+          <div class="offer-type">Refurbished</div>
+          <div class="offer-desc">Professional KitchenAid Artisan 5-quart mixer in classic white. Recently serviced, new beater attachments included. Perfect for baking enthusiasts.</div>
+          <div class="offer-meta"><i class="fa fa-map-marker-alt"></i> Aachen, 52062 • <i class="fa fa-clock"></i> 5 hours ago</div>
+          <div class="offer-price">€185 <span style="font-size:0.85rem;text-decoration:line-through;color:var(--muted);">€220</span></div>
+          <div class="offer-actions">
+            <button onclick="messageOwner('KitchenAid Stand Mixer', 'mixer1')"><i class="fas fa-envelope"></i> Message</button>
+            <button onclick="initiatePayment('mixer1', 185)"><i class="fas fa-shopping-cart"></i> Buy Now</button>
+            <button class="favorite-btn" onclick="toggleFavorite(this)" title="Add to favorites"><i class="fa fa-heart"></i></button>
+          </div>
+        </div>
+
+        <div class="offer-card">
+          <img src="img/koeln.jpg" alt="Vintage Armchair" style="filter: sepia(0.3) contrast(1.1);">
+          <div class="offer-title">Mid-Century Modern Armchair</div>
+          <div class="offer-category">Living Room</div>
+          <div class="offer-type">Vintage</div>
+          <div class="offer-desc">Beautiful 1960s teak armchair with original upholstery. Minor wear on armrests adds character. A true conversation piece for any modern home.</div>
+          <div class="offer-meta"><i class="fa fa-map-marker-alt"></i> Düsseldorf, 40211 • <i class="fa fa-clock"></i> 1 day ago</div>
+          <div class="offer-price">€145</div>
+          <div class="offer-actions">
+            <button onclick="messageOwner('Mid-Century Modern Armchair', 'chair1')"><i class="fas fa-envelope"></i> Message</button>
+            <button onclick="initiatePayment('chair1', 145)"><i class="fas fa-shopping-cart"></i> Buy Now</button>
+            <button class="favorite-btn" onclick="toggleFavorite(this)" title="Add to favorites"><i class="fa fa-heart"></i></button>
+          </div>
+        </div>
+
+        <div class="offer-card">
+          <img src="img/koeln2.jpg" alt="Study Desk" style="filter: hue-rotate(40deg) brightness(1.1);">
+          <div class="offer-title">Minimalist Study Desk</div>
+          <div class="offer-category">Bedroom</div>
+          <div class="offer-type">Like New</div>
+          <div class="offer-desc">White lacquer desk, 120x60cm. Perfect for students. Built-in cable management. Used for only 6 months. Moving sale!</div>
+          <div class="offer-meta"><i class="fa fa-map-marker-alt"></i> Cologne, 50823 • <i class="fa fa-clock"></i> 3 hours ago</div>
+          <div class="offer-price">€75 <span style="font-size:0.85rem;text-decoration:line-through;color:var(--muted);">€95</span></div>
+          <div class="offer-actions">
+            <button onclick="messageOwner('Minimalist Study Desk', 'desk1')"><i class="fas fa-envelope"></i> Message</button>
+            <button onclick="initiatePayment('desk1', 75)"><i class="fas fa-shopping-cart"></i> Buy Now</button>
+            <button class="favorite-btn" onclick="toggleFavorite(this)" title="Add to favorites"><i class="fa fa-heart"></i></button>
+          </div>
+        </div>
+
+        <div class="offer-card">
+          <img src="img/koeln3.jpg" alt="Vacuum Cleaner" style="filter: hue-rotate(280deg) saturate(0.8);">
+          <div class="offer-title">Dyson V8 Cordless Vacuum</div>
+          <div class="offer-category">Cleaning Facilities</div>
+          <div class="offer-type">Pre-owned</div>
+          <div class="offer-desc">Dyson V8 Animal with all attachments. Battery lasts 35-40 minutes. Great suction power. Some cosmetic wear but fully functional.</div>
+          <div class="offer-meta"><i class="fa fa-map-marker-alt"></i> Aachen, 52072 • <i class="fa fa-clock"></i> 6 hours ago</div>
+          <div class="offer-price">€165 <span style="font-size:0.85rem;text-decoration:line-through;color:var(--muted);">€199</span></div>
+          <div class="offer-actions">
+            <button onclick="messageOwner('Dyson V8 Cordless Vacuum', 'vacuum1')"><i class="fas fa-envelope"></i> Message</button>
+            <button onclick="initiatePayment('vacuum1', 165)"><i class="fas fa-shopping-cart"></i> Buy Now</button>
+            <button class="favorite-btn" onclick="toggleFavorite(this)" title="Add to favorites"><i class="fa fa-heart"></i></button>
+          </div>
+        </div>
+
+        <div class="offer-card">
+          <img src="img/koeln4.jpg" alt="Wall Art Set" style="filter: contrast(1.2) saturate(1.1);">
+          <div class="offer-title">Abstract Wall Art Set (3 pieces)</div>
+          <div class="offer-category">Decoration</div>
+          <div class="offer-type">Like New</div>
+          <div class="offer-desc">Modern abstract prints, 40x60cm each. Framed in black aluminum. Perfect for contemporary living spaces. No damage, smoke-free home.</div>
+          <div class="offer-meta"><i class="fa fa-map-marker-alt"></i> Cologne, 50674 • <i class="fa fa-clock"></i> 4 days ago</div>
+          <div class="offer-price">€45 <span style="font-size:0.85rem;text-decoration:line-through;color:var(--muted);">€65</span></div>
+          <div class="offer-actions">
+            <button onclick="messageOwner('Abstract Wall Art Set', 'art1')"><i class="fas fa-envelope"></i> Message</button>
+            <button onclick="initiatePayment('art1', 45)"><i class="fas fa-shopping-cart"></i> Buy Now</button>
+            <button class="favorite-btn" onclick="toggleFavorite(this)" title="Add to favorites"><i class="fa fa-heart"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Want to Sell Section -->
+    <div id="offers-sell" style="display:none;">
+      <div class="section-title"><i class="fa fa-box"></i> Your Offers & Sales Dashboard</div>
+      <div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+        <button class="create-offer-btn" onclick="createOffer()"><i class="fa fa-plus"></i> Create New Offer</button>
+        <div style="background:var(--card);padding:12px 20px;border-radius:12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;">
+          <i class="fas fa-chart-line" style="color:var(--primary);"></i>
+          <div>
+            <div style="font-weight:600;color:var(--primary);">Your Stats</div>
+            <div style="font-size:0.9rem;color:var(--muted);">3 Active • 12 Sold • €450 Earned</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="offers-list">
+        <!-- Seller's Active Offers -->
+        <div class="offer-card">
+          <img src="img/koeln5.jpg" alt="Bookshelf" style="filter: hue-rotate(60deg) brightness(1.1);">
+          <div class="offer-title">IKEA Billy Bookshelf</div>
+          <div class="offer-category">Living Room</div>
+          <div class="offer-type">Pre-owned</div>
+          <div class="offer-desc">White bookshelf, 6 shelves, 80x202cm. Perfect condition, just need space. Assembly instructions included.</div>
+          <div class="offer-meta"><i class="fa fa-map-marker-alt"></i> Your Location: Cologne, 50668 • <i class="fa fa-eye"></i> 24 views</div>
+          <div class="offer-price">€35 <span style="font-size:0.85rem;color:var(--muted);">(You earn €34.30 after 2% fee)</span></div>
+          <div class="offer-actions">
+            <button onclick="viewChats('bookshelf1')" style="background:var(--primary);"><i class="fas fa-comments"></i> 3 Messages</button>
+            <button onclick="editOffer('bookshelf1')" style="background:var(--muted);"><i class="fas fa-edit"></i> Edit</button>
+            <button onclick="promoteOffer('bookshelf1')" style="background:var(--accent);"><i class="fas fa-arrow-up"></i> Promote</button>
+          </div>
+        </div>
+
+        <div class="offer-card">
+          <img src="img/koeln6.jpg" alt="Coffee Table" style="filter: hue-rotate(180deg) saturate(0.9);">
+          <div class="offer-title">Glass Coffee Table</div>
+          <div class="offer-category">Living Room</div>
+          <div class="offer-type">Like New</div>
+          <div class="offer-desc">Modern glass coffee table with chrome legs. 110x60cm. No scratches or chips. Moving abroad sale!</div>
+          <div class="offer-meta"><i class="fa fa-map-marker-alt"></i> Your Location: Cologne, 50668 • <i class="fa fa-eye"></i> 41 views</div>
+          <div class="offer-price">€95 <span style="font-size:0.85rem;color:var(--muted);">(You earn €93.10 after 2% fee)</span></div>
+          <div class="offer-actions">
+            <button onclick="viewChats('coffee1')" style="background:var(--primary);"><i class="fas fa-comments"></i> 7 Messages</button>
+            <button onclick="editOffer('coffee1')" style="background:var(--muted);"><i class="fas fa-edit"></i> Edit</button>
+            <button onclick="markAsSold('coffee1')" style="background:#10B981;"><i class="fas fa-check"></i> Mark Sold</button>
+          </div>
+        </div>
+
+        <!-- Sale in Progress -->
+        <div class="offer-card" style="border:2px solid var(--accent);background:#f0fdff;">
+          <img src="img/apartment1.jpg" alt="Office Chair" style="filter: hue-rotate(300deg) brightness(1.05);">
+          <div class="offer-title">Ergonomic Office Chair 
+            <span style="background:var(--accent);color:#fff;padding:2px 8px;border-radius:12px;font-size:0.8rem;margin-left:8px;">SALE PENDING</span>
+          </div>
+          <div class="offer-category">Bedroom</div>
+          <div class="offer-type">Pre-owned</div>
+          <div class="offer-desc">Herman Miller Aeron chair, size B. All adjustments work perfectly. Some wear on armrests but still very comfortable.</div>
+          <div class="offer-meta"><i class="fa fa-map-marker-alt"></i> Your Location: Cologne, 50668 • <i class="fa fa-handshake"></i> Payment received</div>
+          <div class="offer-price">€280 <span style="font-size:0.85rem;color:var(--accent);font-weight:600;">(€274.40 to be transferred)</span></div>
+          <div class="offer-actions">
+            <button onclick="viewSaleDetails('chair1')" style="background:var(--accent);"><i class="fas fa-info-circle"></i> Sale Details</button>
+            <button onclick="confirmHandover('chair1')" style="background:#10B981;"><i class="fas fa-handshake"></i> Confirm Handover</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Tips for Sellers -->
+      <div style="background:var(--card);padding:24px;border-radius:16px;box-shadow:var(--shadow);margin-top:32px;">
+        <h3 style="color:var(--primary);margin-bottom:16px;font-family:var(--heading-font);"><i class="fas fa-lightbulb"></i> Seller Tips</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
+          <div style="padding:12px;background:var(--secondary);border-radius:8px;">
+            <strong style="color:var(--primary);">📸 Good Photos:</strong><br>
+            <span style="color:var(--muted);font-size:0.9rem;">Use natural light, show all angles, include close-ups of wear</span>
+          </div>
+          <div style="padding:12px;background:var(--secondary);border-radius:8px;">
+            <strong style="color:var(--primary);">💰 Fair Pricing:</strong><br>
+            <span style="color:var(--muted);font-size:0.9rem;">Check similar items, consider condition, leave room for negotiation</span>
+          </div>
+          <div style="padding:12px;background:var(--secondary);border-radius:8px;">
+            <strong style="color:var(--primary);">📝 Detailed Description:</strong><br>
+            <span style="color:var(--muted);font-size:0.9rem;">Include brand, size, condition, reason for selling</span>
+          </div>
+          <div style="padding:12px;background:var(--secondary);border-radius:8px;">
+            <strong style="color:var(--primary);">⚡ Quick Response:</strong><br>
+            <span style="color:var(--muted);font-size:0.9rem;">Reply to messages within 24 hours for better sales</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer style="background:var(--primary);color:#fff;padding:32px 0 16px 0;text-align:center;margin-top:60px;">
+    <div class="footer-links" style="margin-bottom:12px;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+      <a href="about.html" style="color:#fff;text-decoration:none;font-weight:500;font-family:var(--heading-font);">About</a>
+      <a href="faq.html" style="color:#fff;text-decoration:none;font-weight:500;font-family:var(--heading-font);">FAQ</a>
+      <a href="customer-service.html" style="color:#fff;text-decoration:none;font-weight:500;font-family:var(--heading-font);">Customer Service</a>
+      <a href="marketplace.html" style="color:#fff;text-decoration:none;font-weight:500;font-family:var(--heading-font);">Marketplace</a>
+      <a href="scam-stories.html" style="color:#fff;text-decoration:none;font-weight:500;font-family:var(--heading-font);">Scam Stories</a>
+    </div>
+    <div class="footer-social" style="margin-top:10px;display:flex;justify-content:center;gap:18px;">
+      <a href="https://www.linkedin.com/company/sichrplace/" target="_blank"><i class="fab fa-linkedin"></i></a>
+      <a href="https://www.facebook.com/sichrplace" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/sichrplace" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.tiktok.com/@sichrplace" target="_blank"><i class="fab fa-tiktok"></i></a>
+    </div>
+    <p style="margin-top:16px;">&copy; 2025 SichrPlace. All rights reserved.</p>
+  </footer>
+  <script>
+    // --- Enhanced Marketplace Functionality ---
+    
+    // Authentication & Backend Logic
+    function isLoggedIn() {
+      return localStorage.getItem('sichrplace_logged_in') === 'true';
+    }
+
+    function requireLogin(action) {
+      if (!isLoggedIn()) {
+        // Track login requirement with analytics
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'login_required', {
+            event_category: 'marketplace',
+            event_label: action
+          });
+        }
+        window.location.href = 'login.html?redirect=marketplace.html';
+        return false;
+      }
+      return true;
+    }
+
+    // Tab Management
+    function showTab(tab) {
+      document.getElementById('tab-buy').classList.toggle('active', tab === 'buy');
+      document.getElementById('tab-sell').classList.toggle('active', tab === 'sell');
+      document.getElementById('offers-buy').style.display = tab === 'buy' ? '' : 'none';
+      document.getElementById('offers-sell').style.display = tab === 'sell' ? '' : 'none';
+      document.getElementById('marketplace-filters').style.display = tab === 'buy' ? '' : 'none';
+      
+      // Track tab switching
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'tab_switch', {
+          event_category: 'marketplace',
+          event_label: tab
+        });
+      }
+    }
+
+    // Enhanced Favorites System
+    function toggleFavorite(btn) {
+      if (!requireLogin()) return;
+      
+      btn.classList.toggle('active');
+      const offerTitle = btn.closest('.offer-card').querySelector('.offer-title').innerText;
+      const isFavorited = btn.classList.contains('active');
+      
+      // Track favorite action
+      if (typeof gtag !== 'undefined') {
+        gtag('event', isFavorited ? 'add_to_favorites' : 'remove_from_favorites', {
+          event_category: 'marketplace',
+          event_label: offerTitle,
+          value: 1
+        });
+      }
+      
+      // TODO: Send to backend
+      console.log(`${isFavorited ? 'Favorited' : 'Unfavorited'}: ${offerTitle}`);
+      
+      // Show feedback to user
+      showNotification(
+        isFavorited ? '❤️ Added to favorites' : '💔 Removed from favorites',
+        'success'
+      );
+    }
+
+    // Enhanced Messaging
+    function messageOwner(itemTitle, itemId) {
+      if (!requireLogin()) return;
+      
+      // Track messaging action
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'message_seller', {
+          event_category: 'marketplace',
+          event_label: itemTitle,
+          custom_parameters: {
+            item_id: itemId
+          }
+        });
+      }
+      
+      // TODO: Open chat modal or redirect to chat page
+      showNotification('💬 Opening chat with seller...', 'info');
+      setTimeout(() => {
+        window.location.href = `chat.html?item=${encodeURIComponent(itemId)}&title=${encodeURIComponent(itemTitle)}`;
+      }, 1000);
+    }
+
+    // Payment Processing System
+    function initiatePayment(itemId, price) {
+      if (!requireLogin()) return;
+      
+      const itemTitle = event.target.closest('.offer-card').querySelector('.offer-title').innerText;
+      
+      // Track purchase initiation
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'begin_checkout', {
+          event_category: 'marketplace',
+          currency: 'EUR',
+          value: price,
+          items: [{
+            item_id: itemId,
+            item_name: itemTitle,
+            category: event.target.closest('.offer-card').querySelector('.offer-category').innerText,
+            price: price,
+            quantity: 1
+          }]
+        });
+      }
+      
+      // Calculate platform fee (2%)
+      const platformFee = Math.round(price * 0.02 * 100) / 100;
+      const total = price;
+      
+      // Show payment modal with PayPal integration
+      const modal = `
+        <div id="payment-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;">
+          <div style="background:white;border-radius:16px;padding:32px;max-width:450px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+            <h3 style="color:var(--primary);margin:0 0 20px 0;font-family:var(--heading-font);text-align:center;">
+              <i class="fas fa-shopping-cart"></i> Secure Payment
+            </h3>
+            <div style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:20px;">
+              <div style="font-weight:600;margin-bottom:8px;">${itemTitle}</div>
+              <div style="color:var(--muted);font-size:0.9rem;">Item Price: €${price}</div>
+              <div style="color:var(--muted);font-size:0.9rem;">Platform Fee (2%): €${platformFee}</div>
+              <div style="border-top:1px solid #e5e7eb;margin-top:8px;padding-top:8px;font-weight:600;font-size:1.1rem;">
+                Total: €${total}
+              </div>
+            </div>
+            <div style="margin-bottom:20px;font-size:0.9rem;color:var(--muted);text-align:center;">
+              <i class="fas fa-shield-alt" style="color:var(--accent);"></i>
+              Your payment is protected by SichrPlace's secure payment system
+            </div>
+            
+            <!-- PayPal Payment Button Container -->
+            <div id="marketplace-paypal-button" style="margin-bottom:16px;"></div>
+            
+            <div style="text-align:center;margin-bottom:16px;color:var(--muted);font-size:0.9rem;">
+              Or use alternative payment
+            </div>
+            
+            <div style="display:flex;gap:12px;">
+              <button onclick="processTraditionalPayment('${itemId}', ${price})" style="flex:1;background:var(--primary);color:white;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;">
+                <i class="fas fa-credit-card"></i> Card Payment
+              </button>
+              <button onclick="closePaymentModal()" style="flex:1;background:var(--muted);color:white;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modal);
+      
+      // Initialize PayPal button for marketplace item
+      initializeMarketplacePayPal(itemId, itemTitle, total);
+    }
+
+    // PayPal Integration for Marketplace Items
+    function initializeMarketplacePayPal(itemId, itemTitle, amount) {
+      if (window.paypalIntegration) {
+        // Get seller info from the item card
+        const itemCard = event.target.closest('.offer-card');
+        const sellerElement = itemCard.querySelector('.offer-seller, .seller-info');
+        const sellerId = sellerElement ? sellerElement.dataset.sellerId || 'seller_' + itemId : 'seller_' + itemId;
+        const sellerEmail = sellerElement ? sellerElement.dataset.sellerEmail || 'seller@sichrplace.com' : 'seller@sichrplace.com';
+        
+        window.paypalIntegration.createMarketplacePaymentButton({
+          itemName: itemTitle,
+          amount: parseFloat(amount),
+          sellerId: sellerId,
+          sellerEmail: sellerEmail,
+          containerSelector: '#marketplace-paypal-button',
+          onSuccess: function(result, details) {
+            console.log('Marketplace payment successful:', result);
+            closePaymentModal();
+            showMarketplacePaymentSuccess(itemTitle, amount, sellerEmail);
+            
+            // Track successful purchase
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'purchase', {
+                event_category: 'marketplace',
+                transaction_id: result.orderID || details.id,
+                currency: 'EUR',
+                value: amount,
+                items: [{
+                  item_id: itemId,
+                  item_name: itemTitle,
+                  price: amount,
+                  quantity: 1
+                }]
+              });
+            }
+          },
+          onError: function(error) {
+            console.error('Marketplace payment error:', error);
+            alert('Payment failed. Please try again or contact support.');
+          }
+        });
+      } else {
+        console.warn('PayPal integration not available. Please ensure paypal-integration.js is loaded.');
+      }
+    }
+
+    function showMarketplacePaymentSuccess(itemTitle, amount, sellerEmail = '') {
+      const sellerContactInfo = sellerEmail && sellerEmail !== 'seller@sichrplace.com' 
+        ? `The seller (${sellerEmail}) will contact you within 24 hours to arrange pickup or delivery.`
+        : 'The seller will contact you within 24 hours to arrange pickup or delivery.';
+      
+      showNotification(`✅ Payment successful! You purchased ${itemTitle} for €${amount}. The seller will contact you soon.`, 'success');
+      
+      // Show detailed success modal
+      const successModal = `
+        <div id="success-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1001;display:flex;align-items:center;justify-content:center;padding:20px;">
+          <div style="background:white;border-radius:16px;padding:32px;max-width:400px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.3);text-align:center;">
+            <div style="font-size:3rem;color:#10B981;margin-bottom:16px;">🎉</div>
+            <h3 style="color:var(--primary);margin:0 0 16px 0;font-family:var(--heading-font);">
+              Purchase Successful!
+            </h3>
+            <p style="margin:0 0 16px 0;color:var(--muted);">
+              You've successfully purchased <strong>${itemTitle}</strong> for <strong>€${amount}</strong> via PayPal.
+            </p>
+            <div style="background:#f8f9fa;border-radius:8px;padding:16px;margin:16px 0;border-left:4px solid var(--accent);">
+              <p style="margin:0;color:var(--muted);font-size:0.9rem;">
+                📧 ${sellerContactInfo}
+              </p>
+              ${sellerEmail && sellerEmail !== 'seller@sichrplace.com' ? 
+                `<p style="margin:8px 0 0 0;color:var(--muted);font-size:0.85rem;">
+                  💡 <em>You'll also receive a confirmation email with all the details.</em>
+                </p>` : ''
+              }
+            </div>
+            <button onclick="closeSuccessModal()" style="background:var(--primary);color:white;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">
+              Continue Shopping
+            </button>
+          </div>
+        </div>
+      `;
+      
+      setTimeout(() => {
+        document.body.insertAdjacentHTML('beforeend', successModal);
+      }, 1000);
+    }
+
+    function closeSuccessModal() {
+      const modal = document.getElementById('success-modal');
+      if (modal) modal.remove();
+    }
+
+    function processTraditionalPayment(itemId, price) {
+      // Traditional payment processing (renamed from processPayment)
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'purchase', {
+          event_category: 'marketplace',
+          transaction_id: 'MP' + Date.now(),
+          currency: 'EUR',
+          value: price
+        });
+      }
+      
+      showNotification('💳 Processing payment...', 'info');
+      
+      // Simulate payment processing
+      setTimeout(() => {
+        closePaymentModal();
+        showNotification('✅ Payment successful! Seller will contact you soon.', 'success');
+        
+        // TODO: Send payment to backend
+        console.log(`Payment processed for item ${itemId}: €${price}`);
+      }, 2000);
+    }
+
+    function closePaymentModal() {
+      const modal = document.getElementById('payment-modal');
+      if (modal) modal.remove();
+    }
+
+    // Enhanced Filtering System
+    function applyFilters() {
+      const search = document.getElementById('filter-search').value.toLowerCase().trim();
+      const category = document.getElementById('filter-category').value;
+      const condition = document.getElementById('filter-condition').value;
+      const city = document.getElementById('filter-city').value.toLowerCase().trim();
+      const postal = document.getElementById('filter-postal').value.trim();
+      const minPrice = document.getElementById('filter-min-price').value;
+      const maxPrice = document.getElementById('filter-max-price').value;
+
+      // Track filter usage
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'filter_applied', {
+          event_category: 'marketplace',
+          custom_parameters: {
+            has_search: !!search,
+            has_category: !!category,
+            has_condition: !!condition,
+            has_location: !!(city || postal),
+            has_price: !!(minPrice || maxPrice)
+          }
+        });
+      }
+
+      const offers = document.querySelectorAll('#offers-buy .offer-card');
+      let visibleCount = 0;
+
+      offers.forEach(card => {
+        let match = true;
+        
+        // Search filter
+        if (search) {
+          const title = card.querySelector('.offer-title').innerText.toLowerCase();
+          const desc = card.querySelector('.offer-desc').innerText.toLowerCase();
+          if (!title.includes(search) && !desc.includes(search)) match = false;
+        }
+        
+        // Category filter
+        if (category && card.querySelector('.offer-category').innerText !== category) match = false;
+        
+        // Condition filter
+        if (condition && card.querySelector('.offer-type').innerText !== condition) match = false;
+        
+        // Location filters
+        const location = card.querySelector('.offer-meta').innerText.toLowerCase();
+        if (city && !location.includes(city)) match = false;
+        if (postal && !location.includes(postal)) match = false;
+        
+        // Price filters
+        const priceText = card.querySelector('.offer-price').innerText.replace(/[^\d]/g, '');
+        const price = parseInt(priceText, 10) || 0;
+        if (minPrice && price < parseInt(minPrice, 10)) match = false;
+        if (maxPrice && price > parseInt(maxPrice, 10)) match = false;
+        
+        card.style.display = match ? '' : 'none';
+        if (match) visibleCount++;
+      });
+
+      // Show results count
+      showNotification(`🔍 Found ${visibleCount} items matching your criteria`, 'info');
+    }
+
+    function clearFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-category').value = '';
+      document.getElementById('filter-condition').value = '';
+      document.getElementById('filter-city').value = '';
+      document.getElementById('filter-postal').value = '';
+      document.getElementById('filter-min-price').value = '';
+      document.getElementById('filter-max-price').value = '';
+      
+      // Show all offers
+      document.querySelectorAll('#offers-buy .offer-card').forEach(card => {
+        card.style.display = '';
+      });
+      
+      showNotification('🧹 Filters cleared', 'info');
+    }
+
+    // Seller Functions
+    function createOffer() {
+      if (!requireLogin()) return;
+      
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'create_offer_start', {
+          event_category: 'marketplace'
+        });
+      }
+      
+      showNotification('📝 Redirecting to create offer form...', 'info');
+      window.location.href = 'create-offer.html';
+    }
+
+    function viewChats(itemId) {
+      if (!requireLogin()) return;
+      
+      showNotification('💬 Loading your conversations...', 'info');
+      window.location.href = `seller-chats.html?item=${itemId}`;
+    }
+
+    function editOffer(itemId) {
+      if (!requireLogin()) return;
+      
+      showNotification('✏️ Opening offer editor...', 'info');
+      window.location.href = `edit-offer.html?item=${itemId}`;
+    }
+
+    function promoteOffer(itemId) {
+      if (!requireLogin()) return;
+      
+      const modal = `
+        <div id="promote-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;">
+          <div style="background:white;border-radius:16px;padding:32px;max-width:400px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+            <h3 style="color:var(--primary);margin:0 0 20px 0;font-family:var(--heading-font);text-align:center;">
+              <i class="fas fa-arrow-up"></i> Promote Your Offer
+            </h3>
+            <p style="color:var(--muted);text-align:center;margin-bottom:24px;">
+              Move your offer to the top of search results for 7 days
+            </p>
+            <div style="background:var(--secondary);border-radius:12px;padding:16px;margin-bottom:20px;text-align:center;">
+              <div style="font-size:1.5rem;font-weight:700;color:var(--primary);">€5.99</div>
+              <div style="color:var(--muted);font-size:0.9rem;">7-day promotion</div>
+            </div>
+            <div style="display:flex;gap:12px;">
+              <button onclick="processPromotion('${itemId}')" style="flex:1;background:var(--accent);color:white;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;">
+                Promote Now
+              </button>
+              <button onclick="closePromoteModal()" style="flex:1;background:var(--muted);color:white;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modal);
+    }
+
+    function processPromotion(itemId) {
+      document.getElementById('promote-modal').remove();
+      showNotification('🚀 Your offer has been promoted! It will appear at the top for 7 days.', 'success');
+    }
+
+    function closePromoteModal() {
+      const modal = document.getElementById('promote-modal');
+      if (modal) modal.remove();
+    }
+
+    function markAsSold(itemId) {
+      if (!requireLogin()) return;
+      
+      if (confirm('Mark this item as sold? This will remove it from active listings.')) {
+        showNotification('✅ Item marked as sold!', 'success');
+        // TODO: Send to backend
+      }
+    }
+
+    function viewSaleDetails(itemId) {
+      showNotification('📋 Loading sale details...', 'info');
+      // TODO: Show sale details modal
+    }
+
+    function confirmHandover(itemId) {
+      if (confirm('Confirm that you have handed over the item to the buyer?')) {
+        showNotification('🤝 Handover confirmed! Payment will be transferred to your account.', 'success');
+        // TODO: Send confirmation to backend
+      }
+    }
+
+    // Notification System
+    function showNotification(message, type = 'info') {
+      const colors = {
+        success: '#10B981',
+        error: '#EF4444',
+        warning: '#F59E0B',
+        info: '#3B82F6'
+      };
+      
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${colors[type]};
+        color: white;
+        padding: 16px 20px;
+        "
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        max-width: 300px;
+        font-weight: 500;
+        animation: slideIn 0.3s ease;
+      `;
+      notification.textContent = message;
+      
+      // Add animation styles
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes slideIn {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // Initialize marketplace
+    document.addEventListener('DOMContentLoaded', function() {
+      // Track page view
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'page_view', {
+          page_title: 'Marketplace',
+          page_location: window.location.href
+        });
+      }
+
+      // Show login prompt if not logged in
+      if (!isLoggedIn()) {
+        document.querySelectorAll('.offer-card button, .offer-card .favorite-btn').forEach(btn => {
+          btn.style.opacity = '0.7';
+          btn.title = 'Login required to interact with offers';
+        });
+        
+        // Show login banner
+        const banner = document.createElement('div');
+        banner.style.cssText = `
+          background: linear-gradient(135deg, var(--primary), var(--accent));
+          color: white;
+          padding: 12px 20px;
+          text-align: center;
+          position: sticky;
+          top: 70px;
+          z-index: 9;
+          font-weight: 500;
+        `;
+        banner.innerHTML = `
+          <i class="fas fa-info-circle"></i> 
+          <a href="login.html" style="color: white; text-decoration: underline;">Login</a> 
+          or 
+          <a href="create-account.html" style="color: white; text-decoration: underline;">create an account</a> 
+          to buy and sell items securely
+        `;
+        document.querySelector('main').insertAdjacentElement('afterbegin', banner);
+      }
+    });
+  </script>
+
+  <!-- SichrPlace Footer -->
+  <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid #E5E7EB; background: var(--secondary);">
+      <div class="footer-brand" style="text-align: center; margin: 20px 0;">
+          <img src="img/SichrPlaceLogo_944x944.jpg" alt="SichrPlace Logo" class="footer-logo" style="height: 48px; width: auto; margin-bottom: 10px;">
+          <div class="footer-brand-text" style="color: #6B7280; font-size: 14px;">
+              Your Trusted Rental Platform
+          </div>
+      </div>
+      <div class="footer-links" style="text-align: center; margin: 15px 0;">
+          <a href="privacy-policy.html" style="color: #6B7280; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
+          <a href="terms-of-service.html" style="color: #6B7280; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms of Service</a>
+          <a href="index.html" style="color: #6B7280; text-decoration: none; margin: 0 15px; font-size: 14px;">Home</a>
+      </div>
+      <p style="text-align: center; color: #9CA3AF; font-size: 12px; margin: 10px 0 0 0;">&copy; 2025 SichrPlace. All rights reserved.</p>
+  </footer>
+</body>
+</html>

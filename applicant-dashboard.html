@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+    <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Applicant Dashboard</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&family=Roboto:300,400,500,700&display=swap">
+    <link rel="stylesheet" href="css/logo-system.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/logo-system.css">
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --radius: 18px;
+      --card: #FFFFFF;
+      --background: #FFFFFF;
+      --foreground: #222222;
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--body-font);
+      background: var(--secondary);
+      color: var(--foreground);
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar {
+      width: 240px;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 32px 0 0 0;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+      min-height: 100vh;
+    }
+    .sidebar h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 0 0 32px 32px;
+      letter-spacing: 1px;
+      font-family: var(--heading-font);
+    }
+    .sidebar-nav {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 32px;
+      color: var(--foreground);
+      text-decoration: none;
+      font-size: 16px;
+      "
+      transition: background 0.2s, color 0.2s;
+      font-family: var(--body-font);
+    }
+    .sidebar-nav a.active, .sidebar-nav a:hover {
+      background: #e0e7ff;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .main-content {
+      flex: 1;
+      padding: 40px 48px;
+      background: var(--secondary);
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+    .dashboard-cards {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .dashboard-card {
+      background: var(--card);
+      "
+      box-shadow: var(--shadow);
+      padding: 28px 32px;
+      flex: 1 1 320px;
+      min-width: 320px;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .dashboard-card h3 {
+      margin: 0 0 8px 0;
+      font-size: 20px;
+      color: var(--primary);
+      font-weight: 600;
+      font-family: var(--heading-font);
+    }
+    .dashboard-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      font-family: var(--body-font);
+    }
+    .profile-section, .messages-section, .wishlist-section, .applications-section {
+      background: var(--card);
+      "
+      box-shadow: var(--shadow);
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    .profile-section h2,
+    .messages-section h2,
+    .wishlist-section h2,
+    .applications-section h2 {
+      color: var(--primary);
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      font-family: var(--heading-font);
+    }
+    /* Example for messages */
+    .messages-container {
+      display: flex;
+      gap: 24px;
+    }
+    .message-list {
+      width: 32%;
+      background: var(--secondary);
+      "
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      min-width: 180px;
+    }
+    .message-list h3 {
+      margin: 0 0 12px 0;
+      font-size: 18px;
+      color: var(--primary);
+      font-family: var(--heading-font);
+    }
+    .message-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .message-list li {
+      padding: 10px 8px;
+      "
+      cursor: pointer;
+      color: var(--foreground);
+      transition: background 0.2s;
+      font-family: var(--body-font);
+    }
+    .message-list li:hover, .message-list li.active {
+      background: #e0e7ff;
+      color: var(--primary);
+    }
+    .message-box {
+      flex: 1;
+      background: var(--secondary);
+      "
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      min-width: 260px;
+    }
+    .chat-window {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      "
+      background: var(--card);
+      min-height: 120px;
+    }
+    .message {
+      margin-bottom: 10px;
+      font-size: 15px;
+      font-family: var(--body-font);
+    }
+    .message.sent {
+      text-align: right;
+      color: var(--primary);
+    }
+    .message.received {
+      text-align: left;
+      color: var(--foreground);
+    }
+    #message-input {
+      width: calc(100% - 80px);
+      padding: 10px;
+      border: 1px solid var(--border);
+      "
+      font-size: 15px;
+      font-family: var(--body-font);
+      background: var(--background);
+      color: var(--foreground);
+    }
+    #message-form {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    #message-form button {
+      width: 70px;
+      padding: 10px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      "
+      cursor: pointer;
+      font-size: 15px;
+      font-family: var(--body-font);
+      transition: all 0.2s ease;
+    }
+    #message-form button:hover {
+      opacity: 0.9;
+    }
+    .wishlist-item {
+      padding: 10px;
+      border: 1px solid var(--border);
+      "
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .wishlist-item h3 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--foreground);
+      font-family: var(--heading-font);
+    }
+    .wishlist-item p {
+      margin: 0;
+      color: var(--muted);
+      font-family: var(--body-font);
+    }
+    .wishlist-item button {
+      padding: 5px 10px;
+      background-color: #EF4444;
+      color: white;
+      border: none;
+      "
+      cursor: pointer;
+    }
+    .wishlist-item button:hover {
+      background-color: #DC2626;
+    }
+    /* Applications Table */
+    .applications-section table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+    }
+    .applications-section th, .applications-section td {
+      border: 1px solid #e5e7eb;
+      padding: 10px 8px;
+      text-align: left;
+    }
+    .applications-section th {
+      background: #f3f4f6;
+      color: #2563EB;
+    }
+    .applications-section tr:nth-child(even) {
+      background: #f9fafb;
+    }
+    .applications-section tr:hover {
+      background: #e0f2fe;
+    }
+    .applications-section #applications-status {
+      margin-top: 10px;
+      color: #2563EB;
+      font-size: 15px;
+    }
+    /* Responsive */
+    @media (max-width: 900px) {
+      .dashboard-cards {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .main-content {
+        padding: 24px 8px;
+      }
+      .sidebar {
+        width: 100px;
+        padding: 16px 0 0 0;
+      }
+      .sidebar h2 {
+        font-size: 16px;
+        margin-left: 12px;
+      }
+      .sidebar-nav a {
+        font-size: 13px;
+        padding: 10px 12px;
+        gap: 8px;
+      }
+    }
+  </style>
+    <script src="js/language-switcher.js" defer></script>
+    <script src="js/logo-cookie-manager.js" defer></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2 style="display: flex; align-items: center; gap: 8px; margin-left: 12px;">
+      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 32px; "">
+    </h2>
+    <nav class="sidebar-nav">
+      <a href="#" id="profile-link" class="active"><i class="fa fa-user"></i> Profile</a>
+      <a href="#" id="applications-link"><i class="fa fa-home"></i> My Applications</a>
+      <a href="#" id="wishlist-link"><i class="fa fa-heart"></i> Wishlist</a>
+      <a href="#" id="lastSeen-link"><i class="fa fa-clock"></i> Last Seen</a>
+      <a href="#" id="messages-link"><i class="fa fa-comments"></i> Messages</a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" id="main-content">
+    <!-- Dashboard cards -->
+    <div class="dashboard-cards">
+      <div class="dashboard-card">
+        <h3><i class="fa fa-home"></i> My Applications</h3>
+        <p>Track the status of your apartment applications and viewings here.</p>
+        <!-- Viewing Agreement & Contract Generation -->
+        <div class="viewing-actions" style="margin-top:18px;">
+          <button id="proceed-viewing-btn" style="background:#2563eb;color:#fff;border:none;padding:10px 22px;border-radius:8px;cursor:pointer;font-weight:600;">
+            Proceed to Viewing
+          </button>
+          <div id="viewing-status" style="margin-top:12px;"></div>
+        </div>
+      </div>
+      <div class="dashboard-card">
+        <h3><i class="fa fa-bell"></i> Notifications</h3>
+        <p>Stay up to date with the latest updates and messages from landlords.</p>
+      </div>
+      <div class="dashboard-card">
+        <h3><i class="fa fa-user-check"></i> Profile Completion</h3>
+        <p>Complete your profile to increase your chances of finding a home.</p>
+      </div>
+    </div>
+
+    <!-- Section content will be loaded here -->
+    <div id="section-content"></div>
+  </div>
+
+  <script>
+    // Section content templates
+    const content = {
+      profile: `
+      <div class="profile-section" style="max-height: 600px; overflow-y: auto;">
+        <h2>Profile</h2>
+        <form id="profile-form" action="/api/update-profile" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 16px;">
+          <label for="photo">Profile Photo:</label>
+          <input type="file" id="photo" name="photo" accept="image/*">
+
+          <label for="full-name">Full Name:</label>
+          <input type="text" id="full-name" name="full-name" placeholder="Enter your full name" required>
+
+          <label for="email">Email Address:</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+
+          <label for="platform-id">Platform ID:</label>
+          <input type="text" id="platform-id" name="platform-id" value="USR-123456" readonly style="background:#f3f4f6;">
+
+          <label for="id-document">Upload ID Document (PDF, JPG, PNG):</label>
+          <input type="file" id="id-document" name="id-document" accept=".pdf,image/*" required>
+
+          <label for="selfie">Upload Selfie or Video for Verification:</label>
+          <input type="file" id="selfie" name="selfie" accept="image/*,video/*" required>
+
+          <label for="student">Are you a student?</label>
+          <select id="student" name="student" required>
+            <option value="" disabled selected>Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+
+          <label for="age">How old are you?</label>
+          <input type="number" id="age" name="age" placeholder="Enter your age" required>
+
+          <label for="telefon">Telefon Number:</label>
+          <input type="tel" id="telefon" name="telefon" placeholder="Enter your phone number" required>
+
+          <label for="dob">Date of Birth:</label>
+          <input type="date" id="dob" name="dob" required>
+
+          <label for="income">Monthly Income:</label>
+          <input type="number" id="income" name="income" placeholder="Enter your monthly income" required>
+
+          <label for="living-preference">Do you want to live alone or in a WG?</label>
+          <select id="living-preference" name="living-preference" required>
+            <option value="" disabled selected>Select an option</option>
+            <option value="alone">Alone</option>
+            <option value="wg">WG (Shared Apartment)</option>
+          </select>
+
+          <label for="disabilities">Any kind of disabilities?</label>
+          <textarea id="disabilities" name="disabilities" rows="3" placeholder="Describe any disabilities (if applicable)"></textarea>
+
+          <label for="pets">Do you have pets?</label>
+          <select id="pets" name="pets" required>
+            <option value="" disabled selected>Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+
+          <label for="schufa">SCHUFA Upload (PDF):</label>
+          <input type="file" id="schufa" name="schufa" accept=".pdf">
+
+          <label for="moving-date">Preferred Moving Date:</label>
+          <input type="date" id="moving-date" name="moving-date">
+
+          <button type="submit">Save Changes</button>
+        </form>
+      </div>
+      `,
+      applications: `
+        <div class="applications-section">
+          <h2>My Applications</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Apartment ID</th>
+                <th>Move-in</th>
+                <th>Move-out</th>
+                <th>Tenant Name(s)</th>
+                <th>Reason</th>
+                <th>Habits</th>
+                <th>Payer</th>
+                <th>Status</th>
+                <th>Last Updated</th>
+              </tr>
+            </thead>
+            <tbody id="applications-table-body">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+          <div id="applications-status"></div>
+        </div>
+      `,
+      wishlist: `
+        <div class="wishlist-section">
+          <h2>Wishlist</h2>
+          <div id="wishlist-items">
+            <!-- Wishlist items will be dynamically loaded here -->
+          </div>
+        </div>
+      `,
+      lastSeen: `
+        <div class="profile-section">
+          <h2>Last Seen Offers</h2>
+          <ul class="offer-list">
+            <li><a href="/offer/4">Apartment 4</a></li>
+            <li><a href="/offer/5">Apartment 5</a></li>
+            <li><a href="/offer/6">Apartment 6</a></li>
+          </ul>
+        </div>
+      `,
+      messages: `
+        <div class="messages-section">
+          <h2>Messages</h2>
+          <div class="messages-container">
+            <div class="message-list">
+              <h3>Conversations</h3>
+              <ul id="conversation-list">
+                <!-- Conversations will be dynamically loaded here -->
+              </ul>
+            </div>
+            <div class="message-box">
+              <h3>Chat</h3>
+              <div id="chat-window" class="chat-window">
+                <!-- Messages will be dynamically loaded here -->
+              </div>
+              <form id="message-form">
+                <input type="text" id="message-input" placeholder="Type your message..." required>
+                <button type="submit">Send</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      `,
+    };
+
+    // Sidebar navigation
+    const links = document.querySelectorAll('.sidebar-nav a');
+    const sectionContent = document.getElementById('section-content');
+
+    function setActiveSection(section) {
+      links.forEach(l => l.classList.remove('active'));
+      document.getElementById(section + '-link').classList.add('active');
+      sectionContent.innerHTML = content[section];
+      if (section === 'profile') setupProfileForm();
+      if (section === 'wishlist') loadWishlist();
+      if (section === 'messages') loadConversations();
+      if (section === 'applications') loadApplications();
+    }
+
+    links.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = link.id.split('-')[0];
+        setActiveSection(section);
+      });
+    });
+
+    // Default section
+    setActiveSection('profile');
+
+    // Profile progress bar logic
+    function setupProfileForm() {
+      const form = document.getElementById('profile-form');
+      const progressBar = document.getElementById('progress-bar');
+      if (!form || !progressBar) return;
+      form.addEventListener('input', () => {
+        const totalFields = form.elements.length - 1; // Exclude the submit button
+        let filledFields = 0;
+        for (let i = 0; i < totalFields; i++) {
+          if (form.elements[i].value && form.elements[i].value.trim() !== '') {
+            filledFields++;
+          }
+        }
+        const progress = Math.round((filledFields / totalFields) * 100);
+        progressBar.style.width = `${progress}%`;
+        progressBar.textContent = `${progress}% - Increase your chances of getting your home in Germany`;
+      });
+    }
+
+    // Wishlist logic
+    function loadWishlist() {
+      const wishlistContainer = document.getElementById('wishlist-items');
+      const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+      if (wishlist.length === 0) {
+        wishlistContainer.innerHTML = '<p>Your wishlist is empty.</p>';
+        return;
+      }
+      wishlistContainer.innerHTML = wishlist.map(item => `
+        <div class="wishlist-item">
+          <div>
+            <h3>${item.title}</h3>
+            <p>${item.address}</p>
+            <p><strong>Price:</strong> ${item.price}</p>
+          </div>
+          <button onclick="removeFromWishlist('${item.title}')">Remove</button>
+        </div>
+      `).join('');
+    }
+    window.removeFromWishlist = function(title) {
+      let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+      wishlist = wishlist.filter(item => item.title !== title);
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      loadWishlist();
+    };
+
+    // Messaging logic (frontend integration)
+    function loadConversations() {
+      const conversationList = document.getElementById('conversation-list');
+      const chatWindow = document.getElementById('chat-window');
+      const messageForm = document.getElementById('message-form');
+      const messageInput = document.getElementById('message-input');
+
+      // For demo, use a static userId. Replace with actual user session/userId in production.
+      const userId = "applicant1";
+
+      async function fetchConversations() {
+        try {
+          const response = await fetch(`/api/conversations/${userId}`);
+          if (!response.ok) throw new Error('Failed to load conversations');
+          const conversations = await response.json();
+          if (!Array.isArray(conversations) || conversations.length === 0) {
+            conversationList.innerHTML = '<li>No conversations found.</li>';
+            chatWindow.innerHTML = '';
+            return;
+          }
+          conversationList.innerHTML = conversations.map(convo => `
+            <li data-id="${convo.id}" class="conversation-item">${convo.name}</li>
+          `).join('');
+          document.querySelectorAll('.conversation-item').forEach(item => {
+            item.addEventListener('click', () => {
+              document.querySelectorAll('.conversation-item').forEach(i => i.classList.remove('active'));
+              item.classList.add('active');
+              loadMessages(item.getAttribute('data-id'));
+            });
+          });
+          // Auto-select the first conversation
+          const first = document.querySelector('.conversation-item');
+          if (first) {
+            first.classList.add('active');
+            loadMessages(first.getAttribute('data-id'));
+          }
+        } catch (error) {
+          conversationList.innerHTML = '<li>Failed to load conversations.</li>';
+          chatWindow.innerHTML = '';
+        }
+      }
+
+      async function loadMessages(conversationId) {
+        try {
+          const response = await fetch(`/api/messages/${conversationId}`);
+          if (!response.ok) throw new Error('Failed to load messages');
+          const messages = await response.json();
+          chatWindow.innerHTML = messages.map(msg => `
+            <div class="message ${msg.sender === userId ? 'sent' : 'received'}">
+              <p><strong>${msg.sender}:</strong> ${msg.message}</p>
+            </div>
+          `).join('');
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        } catch (error) {
+          chatWindow.innerHTML = '<p>Failed to load messages. Please try again later.</p>';
+        }
+      }
+
+      if (messageForm) {
+        messageForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const newMessage = messageInput.value.trim();
+          const activeConversation = document.querySelector('.conversation-item.active');
+          const conversationId = activeConversation ? activeConversation.getAttribute('data-id') : null;
+          if (newMessage && conversationId) {
+            // Optimistically add message to chat
+            chatWindow.innerHTML += `
+              <div class="message sent">
+                <p><strong>${userId}:</strong> ${newMessage}</p>
+              </div>
+            `;
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            messageInput.value = '';
+            try {
+              const response = await fetch('/api/send-message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  conversationId,
+                  sender: userId,
+                  message: newMessage,
+                }),
+              });
+              if (!response.ok) throw new Error('Failed to send the message');
+              // Optionally reload messages to get the latest from server
+              // await loadMessages(conversationId);
+            } catch (error) {
+              alert('Failed to send the message. Please try again.');
+            }
+          }
+        };
+      }
+
+      fetchConversations();
+    }
+
+    // Applications table logic
+    async function loadApplications() {
+      const tbody = document.getElementById('applications-table-body');
+      const statusDiv = document.getElementById('applications-status');
+      tbody.innerHTML = '';
+      statusDiv.textContent = 'Loading...';
+
+      // For demo: use a static applicantId or fetch from user session
+      const applicantId = "USR-123456";
+      try {
+        // You may want to filter by applicantId on the backend
+        const res = await fetch(`/api/my-bookings/${applicantId}`);
+        if (!res.ok) throw new Error('Failed to load applications');
+        const applications = await res.json();
+        if (!Array.isArray(applications) || applications.length === 0) {
+          statusDiv.textContent = "You have not applied to any apartments yet.";
+          return;
+        }
+        statusDiv.textContent = "";
+        applications.forEach(app => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${app.apartmentId || ''}</td>
+            <td>${app.move_in || ''}</td>
+            <td>${app.move_out || ''}</td>
+            <td>${app.tenant_names || ''}</td>
+            <td>${app.reason || ''}</td>
+            <td>${app.habits || ''}</td>
+            <td>${app.payer || ''}</td>
+            <td>${app.status || 'Pending'}</td>
+            <td>${app.updatedAt ? new Date(app.updatedAt).toLocaleString() : ''}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        statusDiv.textContent = "Error loading your applications.";
+      }
+    }
+
+    // Viewing Agreement & Contract Generation logic
+    document.addEventListener('DOMContentLoaded', function() {
+      const proceedBtn = document.getElementById('proceed-viewing-btn');
+      const viewingStatus = document.getElementById('viewing-status');
+      if (proceedBtn && viewingStatus) {
+        proceedBtn.addEventListener('click', function() {
+          proceedBtn.disabled = true;
+          viewingStatus.innerHTML = `
+            <div style="margin-bottom:10px;">
+              <i class="fa fa-user-tie" style="color:#2563eb;"></i>
+              <span style="margin-left:6px;">Customer manager assigned. Apartment video will be sent soon.</span>
+            </div>
+            <button id="generate-contract-btn" style="background:#10B981;color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-weight:600;">
+              Generate Contract
+            </button>
+            <div id="contract-status" style="margin-top:10px;"></div>
+          `;
+          const generateBtn = document.getElementById('generate-contract-btn');
+          const contractStatus = document.getElementById('contract-status');
+          if (generateBtn && contractStatus) {
+            generateBtn.addEventListener('click', function() {
+              generateBtn.disabled = true;
+              contractStatus.innerHTML = `
+                <i class="fa fa-file-signature" style="color:#2563eb;"></i>
+                <span style="margin-left:6px;">Digital contract generated! Both parties can now sign online.</span>
+              `;
+            });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

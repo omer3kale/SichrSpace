@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Send Viewing Request | SichrPlace</title>
+  <meta name="description" content="Send a viewing request for an apartment on SichrPlace.">
+  <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="css/logo-system.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/logo-system.css">
+  <!-- PayPal SDK - SichrPlace LIVE -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AcPYlXozR8VS9kJSk7rv5MW36lMV66ZMyqZKjM0YVuvt0dJ1cIyHRvDmGeux0qu3gBOh6XswI5gin2WO&currency=EUR&locale=de_DE&components=buttons&enable-funding=venmo,paylater"></script>
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --text: #222;
+      --muted: #6b7280;
+      --card: #fff;
+      --radius: 18px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+      --input-bg: #f3f6fa;
+      --input-focus: #e0e7ff;
+      --input-border: #c7d2fe;
+    }
+    body {
+      margin: 0;
+      font-family: var(--body-font);
+      background: var(--secondary);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .logo img {
+      height: 40px;
+    }
+    nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      position: relative;
+    }
+    nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-family: var(--heading-font);
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: var(--accent);
+    }
+    main {
+      flex: 1 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 0;
+    }
+    .send-viewing-container {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      max-width: 500px;
+      width: 95vw;
+      margin: 0 auto;
+      padding: 40px 28px 32px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .send-viewing-container::before {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 180px;
+      height: 180px;
+      background: linear-gradient(135deg, var(--primary) 60%, var(--accent) 100%);
+      opacity: 0.08;
+      border-radius: 50%;
+      z-index: 0;
+    }
+    .send-viewing-container h1 {
+      font-family: var(--heading-font);
+      color: var(--primary);
+      font-size: 2.1rem;
+      font-weight: 700;
+      margin-bottom: 28px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      letter-spacing: -1px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .send-viewing-container h1 i {
+      font-size: 2.2rem;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+    label {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 2px;
+      font-family: var(--heading-font);
+      font-size: 1.02rem;
+      letter-spacing: 0.01em;
+    }
+    input, select, textarea {
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--input-border);
+      font-size: 1rem;
+      font-family: inherit;
+      background: var(--input-bg);
+      transition: border 0.2s, background 0.2s;
+      outline: none;
+      box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus {
+      border: 1.5px solid var(--primary);
+      background: var(--input-focus);
+    }
+    select {
+      cursor: pointer;
+    }
+    input[type="date"], input[type="time"] {
+      max-width: 180px;
+    }
+    .row {
+      display: flex;
+      gap: 16px;
+    }
+    .row > .form-group {
+      flex: 1;
+    }
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+    button[type="submit"] {
+      background: linear-gradient(90deg, var(--primary) 70%, var(--accent) 100%);
+      color: #fff;
+      border: none;
+      "
+      padding: 14px 0;
+      font-family: var(--heading-font);
+      font-weight: 700;
+      font-size: 1.13rem;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 2px 8px rgba(64,224,208,0.08);
+      transition: background 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    button[type="submit"]:hover {
+      background: linear-gradient(90deg, #1e40af 70%, #2BC4B6 100%);
+      box-shadow: 0 4px 16px rgba(37,99,235,0.10);
+    }
+    button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff30;
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .error-message {
+      margin-top: 16px;
+      color: #EF4444;
+      font-weight: 600;
+      text-align: center;
+      font-size: 1rem;
+      background: #fef2f2;
+      border-radius: var(--radius);
+      padding: 16px 10px;
+      box-shadow: 0 1px 4px rgba(239,68,68,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .error-message i {
+      font-size: 1.5rem;
+      color: #EF4444;
+    }
+    .success-message {
+      margin-top: 28px;
+      color: #10B981;
+      font-weight: 700;
+      text-align: center;
+      font-size: 1.13rem;
+      background: #f0fdf4;
+      border-radius: var(--radius);
+      padding: 18px 10px;
+      box-shadow: 0 1px 4px rgba(16,185,129,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .success-message i {
+      font-size: 2rem;
+      color: #10B981;
+    }
+    /* PayPal Payment Section */
+    .payment-section {
+      display: none;
+      margin-top: 24px;
+      padding: 24px;
+      background: #f8fafc;
+      border-radius: var(--radius);
+      border: 2px solid #e2e8f0;
+      text-align: center;
+    }
+    .payment-section.active {
+      display: block;
+      animation: fadeInUp 0.3s ease-out;
+    }
+    .payment-header {
+      color: var(--primary);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .payment-description {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .payment-amount {
+      background: var(--primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+    #paypal-button-container {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    .payment-note {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @media (max-width: 700px) {
+      .send-viewing-container {
+        padding: 18px 4vw;
+      }
+      .row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+  </style>
+    <script src="js/language-switcher.js" defer></script>
+    <script src="js/logo-cookie-manager.js" defer></script>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">
+      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px;">
+    </a>
+    <nav>
+      <a href="apartments-listing.html">Apartments</a>
+      <a href="login.html">Login</a>
+      <a href="create-account.html">Create Account</a>
+      <a href="marketplace.html">Marketplace</a>
+    </nav>
+  </header>
+  <main>
+    <div class="send-viewing-container">
+      <h1>
+        <i class="fa fa-eye"></i>
+        Send Viewing Request
+      </h1>
+      <form id="viewing-request-form" autocomplete="off">
+        <div class="form-group">
+          <label for="apartment"><i class="fa fa-building"></i> Apartment Address</label>
+          <input type="text" id="apartment" name="apartment" placeholder="Enter apartment address" required>
+        </div>
+        <div class="form-group">
+          <label for="apartment_id"><i class="fa fa-hashtag"></i> Apartment Reference ID <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+          <input type="text" id="apartment_id" name="apartment_id" placeholder="Reference ID if available">
+        </div>
+        <div class="form-group">
+          <label for="name"><i class="fa fa-user"></i> Your Name</label>
+          <input type="text" id="name" name="name" placeholder="Full Name" required>
+        </div>
+        <div class="form-group">
+          <label for="email"><i class="fa fa-envelope"></i> Your Email</label>
+          <input type="email" id="email" name="email" placeholder="Email Address" required>
+        </div>
+        <div class="form-group">
+          <label for="phone"><i class="fa fa-phone"></i> Phone Number</label>
+          <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label for="date"><i class="fa fa-calendar"></i> Preferred Date</label>
+            <input type="date" id="date" name="date" required>
+          </div>
+          <div class="form-group">
+            <label for="time"><i class="fa fa-clock"></i> Preferred Time</label>
+            <input type="time" id="time" name="time" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="message"><i class="fa fa-comment-dots"></i> Additional Information <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+          <textarea id="message" name="message" rows="3" placeholder="Any additional info?"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="budget_range"><i class="fa fa-euro-sign"></i> Monthly Budget Range</label>
+          <select id="budget_range" name="budget_range" required>
+            <option value="">Select budget range</option>
+            <option value="€500-800">€500-800</option>
+            <option value="€800-1200">€800-1200</option>
+            <option value="€1200-1600">€1200-1600</option>
+            <option value="€1600-2000">€1600-2000</option>
+            <option value="€2000+">€2000+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="additional_guests"><i class="fa fa-users"></i> Number of Additional Guests for Viewing <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+          <input type="number" id="additional_guests" name="additional_guests" min="0" max="10" placeholder="0">
+        </div>
+        <button type="submit" id="submit-btn">
+          <i class="fa fa-paper-plane" id="submit-icon"></i>
+          <span id="submit-text">Send Request</span>
+        </button>
+      </form>
+      
+      <!-- PayPal Payment Section -->
+      <div class="payment-section" id="payment-section">
+        <div class="payment-header">
+          <i class="fa fa-credit-card"></i>
+          Complete Your Viewing Request
+        </div>
+        <div class="payment-description">
+          To confirm your viewing appointment, please complete the secure payment of the viewing service fee.
+        </div>
+        <div class="payment-amount">
+          €25.00 EUR
+        </div>
+        <div id="paypal-button-container"></div>
+        <div class="payment-note">
+          <i class="fa fa-shield-alt"></i>
+          Secure payment processed by PayPal
+        </div>
+      </div>
+      
+      <div class="success-message" id="success-message" style="display:none;">
+        <i class="fa fa-check-circle"></i>
+        Your viewing request has been sent!<br>
+        You will be notified by email once the landlord responds.
+      </div>
+      <div class="error-message" id="error-message" style="display:none;">
+        <i class="fa fa-exclamation-triangle"></i>
+        <span id="error-text">Something went wrong. Please try again.</span>
+      </div>
+    </div>
+  </main>
+  <script>
+    // Configuration - Your Google Form URL (updated to use your form ID)
+    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfXTvgpSrM7PiWBj2yXdgdO0Rb-XXcUXe1PjGke1tPgXQ/formResponse';
+    
+    // Google Form field IDs - Updated with actual values from your form
+    const FIELD_IDS = {
+      tenant_name: 'entry.1509739290',        // Full Name field
+      tenant_email: 'entry.263463906',        // Email Address field  
+      tenant_phone: 'entry.2079768341',       // Phone Number field
+      apartment_address: 'entry.1471002200',  // Apartment Address field
+      apartment_id: 'entry.227042932',        // Apartment Reference ID field
+      requested_date: 'entry.424746039',      // Preferred Viewing Date field (combined date)
+      preferred_time_range: 'entry.2071880532', // Preferred Time Range field (combined time)
+      additional_info: 'entry.1141855979',    // Additional Information field
+      budget_range: 'entry.1029652672',       // Monthly Budget Range field
+      additional_guests: 'entry.297118707'    // Number of Additional Guests field
+    };
+
+    document.getElementById('viewing-request-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const form = e.target;
+      const submitBtn = document.getElementById('submit-btn');
+      const submitIcon = document.getElementById('submit-icon');
+      const submitText = document.getElementById('submit-text');
+      const successMessage = document.getElementById('success-message');
+      const errorMessage = document.getElementById('error-message');
+      
+      // Hide any previous messages
+      successMessage.style.display = 'none';
+      errorMessage.style.display = 'none';
+      
+      // Show loading state
+      submitBtn.disabled = true;
+      submitIcon.className = 'loading';
+      submitText.textContent = 'Sending...';
+      
+      // Prepare form data for Google Forms
+      const formData = new FormData();
+      formData.append(FIELD_IDS.tenant_name, form.name.value);
+      formData.append(FIELD_IDS.tenant_email, form.email.value);
+      formData.append(FIELD_IDS.tenant_phone, form.phone.value);
+      formData.append(FIELD_IDS.apartment_address, form.apartment.value);
+      formData.append(FIELD_IDS.apartment_id, form.apartment_id.value || '');
+      
+      // Handle date field (Google Forms expects separate year, month, day)
+      const selectedDate = new Date(form.date.value);
+      formData.append('entry.424746039_year', selectedDate.getFullYear());
+      formData.append('entry.424746039_month', selectedDate.getMonth() + 1);
+      formData.append('entry.424746039_day', selectedDate.getDate());
+      
+      // Handle time field (Google Forms expects separate hour, minute)
+      const timeValue = form.time.value; // Format: "HH:MM"
+      const [hours, minutes] = timeValue.split(':');
+      formData.append('entry.2071880532_hour', parseInt(hours));
+      formData.append('entry.2071880532_minute', parseInt(minutes));
+      
+      formData.append(FIELD_IDS.additional_info, form.message.value || '');
+      formData.append(FIELD_IDS.budget_range, form.budget_range.value);
+      formData.append(FIELD_IDS.additional_guests, form.additional_guests.value || '0');
+
+      try {
+        // Submit to Google Forms
+        const googleResponse = await fetch(GOOGLE_FORM_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: formData
+        });
+
+        // Send automatic confirmation email (Email #1)
+        await sendConfirmationEmail({
+          userEmail: form.email.value,
+          userName: form.name.value,
+          apartmentAddress: form.apartment.value,
+          apartmentId: form.apartment_id.value || 'N/A',
+          phoneNumber: form.phone.value,
+          preferredDate: form.date.value,
+          preferredTime: form.time.value,
+          budgetRange: form.budget_range.value,
+          additionalInfo: form.message.value || 'None provided',
+          additionalGuests: form.additional_guests.value || '0'
+        });
+
+        // Since no-cors doesn't return readable response, we assume success
+        // Store form data for PayPal payment
+        window.viewingRequestData = {
+          apartmentId: form.apartment_id.value || form.apartment.value,
+          apartmentAddress: form.apartment.value,
+          viewingDate: form.date.value,
+          viewingTime: form.time.value,
+          applicantName: form.name.value,
+          applicantEmail: form.email.value,
+          applicantPhone: form.phone.value,
+          budgetRange: form.budget_range.value,
+          additionalInfo: form.message.value || '',
+          additionalGuests: form.additional_guests.value || '0'
+        };
+        
+        // Hide form and show payment section
+        form.style.display = 'none';
+        document.getElementById('payment-section').classList.add('active');
+        
+        // Initialize PayPal button
+        initializePayPalButton();
+        
+        console.log('✅ Viewing request submitted to Google Forms successfully');
+        console.log('📧 Confirmation email will be sent after payment');
+        console.log('� PayPal payment required to complete booking');
+        
+      } catch (error) {
+        console.error('❌ Error submitting to Google Forms:', error);
+        
+        // Show error message
+        const errorText = document.getElementById('error-text');
+        errorText.textContent = 'Failed to send request. Please try again or contact support.';
+        errorMessage.style.display = 'flex';
+      } finally {
+        // Reset button state
+        submitBtn.disabled = false;
+        submitIcon.className = 'fa fa-paper-plane';
+        submitText.textContent = 'Send Request';
+      }
+    });
+
+    // Set minimum date to today
+    document.addEventListener('DOMContentLoaded', function() {
+      const dateInput = document.getElementById('date');
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.min = today;
+      
+      console.log('📝 Google Form integration ready');
+      console.log('🔗 Form URL:', GOOGLE_FORM_URL);
+      console.log('📋 Form fields mapped:', Object.keys(FIELD_IDS));
+      console.log('📧 Email integration ready');
+    });
+
+    // Email #1: Send automatic confirmation email
+    async function sendConfirmationEmail(requestData) {
+      try {
+        const response = await fetch('/api/emails/send-request-confirmation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userEmail: requestData.userEmail,
+            userData: {
+              firstName: requestData.userName.split(' ')[0], // Get first name
+              fullName: requestData.userName,
+              apartmentAddress: requestData.apartmentAddress,
+              apartmentId: requestData.apartmentId,
+              phoneNumber: requestData.phoneNumber,
+              preferredDate: requestData.preferredDate,
+              preferredTime: requestData.preferredTime,
+              budgetRange: requestData.budgetRange,
+              additionalInfo: requestData.additionalInfo,
+              additionalGuests: requestData.additionalGuests,
+              requestId: generateRequestId() // Generate unique request ID
+            }
+          })
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+          console.log('✅ Confirmation email sent successfully');
+        } else {
+          console.warn('⚠️ Email sending failed:', result.error);
+          // Don't throw error - form submission should still succeed
+        }
+      } catch (error) {
+        console.warn('⚠️ Email sending error:', error.message);
+        // Don't throw error - form submission should still succeed
+      }
+    }
+
+    // Generate unique request ID for tracking
+    function generateRequestId() {
+      return 'VR-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // Initialize PayPal button for viewing request payment
+    function initializePayPalButton() {
+      // Clear any existing PayPal button
+      const container = document.getElementById('paypal-button-container');
+      container.innerHTML = '';
+      
+      window.paypal.Buttons({
+        style: {
+          shape: "rect",
+          layout: "vertical",
+          color: "blue",
+          label: "paypal",
+          height: 45
+        },
+        message: {
+          amount: 25,
+        },
+
+        async createOrder() {
+          try {
+            const response = await fetch('/api/create-viewing-order', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(window.viewingRequestData),
+            });
+
+            const orderData = await response.json();
+
+            if (orderData.id) {
+              return orderData.id;
+            }
+            const errorDetail = orderData?.details?.[0];
+            const errorMessage = errorDetail
+              ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
+              : JSON.stringify(orderData);
+
+            throw new Error(errorMessage);
+          } catch (error) {
+            console.error('PayPal createOrder error:', error);
+            showPaymentError(`Could not initiate PayPal Checkout...<br><br>${error}`);
+          }
+        },
+
+        async onApprove(data, actions) {
+          try {
+            const response = await fetch(`/api/capture-viewing-order/${data.orderID}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(window.viewingRequestData),
+            });
+
+            const orderData = await response.json();
+            
+            // Handle different response scenarios
+            const errorDetail = orderData?.details?.[0];
+
+            if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
+              // Recoverable error - allow retry
+              return actions.restart();
+            } else if (errorDetail) {
+              // Non-recoverable error
+              throw new Error(`${errorDetail.description} (${orderData.debug_id})`);
+            } else if (orderData.success) {
+              // Successful transaction
+              console.log('Viewing request payment successful:', orderData);
+              
+              // Hide payment section and show success message
+              document.getElementById('payment-section').style.display = 'none';
+              
+              // Update success message with payment confirmation
+              const successMessage = document.getElementById('success-message');
+              successMessage.innerHTML = `
+                <i class="fa fa-check-circle"></i>
+                <strong>Payment Successful!</strong><br>
+                Your viewing request has been confirmed and paid.<br>
+                <small>Transaction ID: ${orderData.paymentDetails.transactionId}</small><br>
+                <small>You will receive confirmation emails shortly.</small>
+              `;
+              successMessage.style.display = 'flex';
+              
+            } else {
+              throw new Error('Unexpected response format');
+            }
+          } catch (error) {
+            console.error('PayPal onApprove error:', error);
+            showPaymentError(
+              `Sorry, your transaction could not be processed...<br><br>${error}`
+            );
+          }
+        },
+
+        onError(err) {
+          console.error('PayPal error:', err);
+          showPaymentError('PayPal encountered an error. Please try again or contact support.');
+        }
+      }).render('#paypal-button-container');
+    }
+
+    // Show payment error message
+    function showPaymentError(message) {
+      const errorMessage = document.getElementById('error-message');
+      const errorText = document.getElementById('error-text');
+      errorText.innerHTML = message;
+      errorMessage.style.display = 'flex';
+    }
+  </script>
+</body>
+</html>

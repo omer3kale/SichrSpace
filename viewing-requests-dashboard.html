@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viewing Requests Dashboard - SichrPlace</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .stat-card p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .filters {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .requests-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .request-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .request-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .request-info h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.3rem;
+        }
+
+        .request-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meta-item i {
+            color: #667eea;
+            width: 20px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+            .request-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .actions {
+                justify-content: center;
+            }
+
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-calendar-check"></i> Viewing Requests Dashboard</h1>
+            <p>Manage your property viewing requests efficiently</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('my-requests')">
+                <i class="fas fa-user"></i> My Requests
+            </button>
+            <button class="nav-tab" onclick="switchTab('my-properties')">
+                <i class="fas fa-home"></i> My Properties
+            </button>
+            <button class="nav-tab" onclick="switchTab('create-request')">
+                <i class="fas fa-plus"></i> New Request
+            </button>
+        </div>
+
+        <!-- My Requests Tab -->
+        <div id="my-requests" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="my-requests-total">0</h3>
+                    <p>Total Requests</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="my-requests-pending">0</h3>
+                    <p>Pending</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="my-requests-approved">0</h3>
+                    <p>Approved</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="my-requests-completed">0</h3>
+                    <p>Completed</p>
+                </div>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="my-requests-status-filter">
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Date From</label>
+                    <input type="date" id="my-requests-date-from">
+                </div>
+                <div class="filter-group">
+                    <label>Date To</label>
+                    <input type="date" id="my-requests-date-to">
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="filterMyRequests()">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                </div>
+            </div>
+
+            <div id="my-requests-list" class="requests-grid">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading your viewing requests...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Properties Tab -->
+        <div id="my-properties" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="property-requests-total">0</h3>
+                    <p>Total Requests</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="property-requests-pending">0</h3>
+                    <p>Awaiting Response</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="property-requests-approved">0</h3>
+                    <p>Approved</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="property-requests-completed">0</h3>
+                    <p>Completed</p>
+                </div>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="property-requests-status-filter">
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Date From</label>
+                    <input type="date" id="property-requests-date-from">
+                </div>
+                <div class="filter-group">
+                    <label>Date To</label>
+                    <input type="date" id="property-requests-date-to">
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="filterPropertyRequests()">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                </div>
+            </div>
+
+            <div id="property-requests-list" class="requests-grid">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Loading property viewing requests...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Request Tab -->
+        <div id="create-request" class="tab-content">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <h2 style="margin-bottom: 30px; text-align: center; color: #2c3e50;">
+                    <i class="fas fa-plus-circle"></i> Create New Viewing Request
+                </h2>
+                
+                <form id="create-request-form">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Apartment</label>
+                        <select id="apartment-select" required style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px;">
+                            <option value="">Select an apartment...</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Preferred Viewing Date</label>
+                        <input type="datetime-local" id="requested-date" required style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Alternative Date 1 (Optional)</label>
+                        <input type="datetime-local" id="alternative-date-1" style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Alternative Date 2 (Optional)</label>
+                        <input type="datetime-local" id="alternative-date-2" style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Phone Number</label>
+                        <input type="tel" id="phone" required style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Message (Optional)</label>
+                        <textarea id="message" rows="4" style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px;" placeholder="Additional information or questions..."></textarea>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; color: #495057;">Booking Fee</h4>
+                        <p style="margin-bottom: 10px; color: #6c757d;">A booking fee of €25.00 is required to secure your viewing appointment.</p>
+                        <div style="display: flex; align-items: center; font-size: 1.2rem; font-weight: 600; color: #667eea;">
+                            <i class="fas fa-euro-sign"></i>
+                            <span style="margin-left: 5px;">25.00</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.1rem;">
+                        <i class="fas fa-calendar-plus"></i> Submit Viewing Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div id="request-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let allApartments = [];
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', async function() {
+            await checkAuthentication();
+            await loadApartments();
+            await loadMyRequests();
+        });
+
+        // Check if user is authenticated
+        async function checkAuthentication() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/frontend/login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/verify', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    currentUser = await response.json();
+                } else {
+                    localStorage.removeItem('token');
+                    window.location.href = '/frontend/login.html';
+                }
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                window.location.href = '/frontend/login.html';
+            }
+        }
+
+        // Switch between tabs
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab and mark nav tab as active
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Load data for the selected tab
+            if (tabName === 'my-requests') {
+                loadMyRequests();
+            } else if (tabName === 'my-properties') {
+                loadPropertyRequests();
+            }
+        }
+
+        // Load apartments for the create request form
+        async function loadApartments() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/apartments', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    allApartments = await response.json();
+                    const select = document.getElementById('apartment-select');
+                    select.innerHTML = '<option value="">Select an apartment...</option>';
+                    
+                    allApartments.forEach(apartment => {
+                        const option = document.createElement('option');
+                        option.value = apartment.id;
+                        option.textContent = `${apartment.title} - ${apartment.location || 'Location not specified'}`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading apartments:', error);
+            }
+        }
+
+        // Load user's viewing requests
+        async function loadMyRequests() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/viewing-requests/my-requests', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    displayMyRequests(result.data);
+                    updateMyRequestsStats(result.data);
+                } else {
+                    displayError('my-requests-list', 'Failed to load your viewing requests');
+                }
+            } catch (error) {
+                console.error('Error loading my requests:', error);
+                displayError('my-requests-list', 'Error loading your viewing requests');
+            }
+        }
+
+        // Load viewing requests for user's properties
+        async function loadPropertyRequests() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/viewing-requests/my-properties', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    displayPropertyRequests(result.data);
+                    updatePropertyRequestsStats(result.data);
+                } else {
+                    displayError('property-requests-list', 'Failed to load property viewing requests');
+                }
+            } catch (error) {
+                console.error('Error loading property requests:', error);
+                displayError('property-requests-list', 'Error loading property viewing requests');
+            }
+        }
+
+        // Display my requests
+        function displayMyRequests(requests) {
+            const container = document.getElementById('my-requests-list');
+            
+            if (requests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-times"></i>
+                        <h3>No Viewing Requests</h3>
+                        <p>You haven't made any viewing requests yet. Start by creating a new request!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = requests.map(request => `
+                <div class="request-card">
+                    <div class="request-header">
+                        <div class="request-info">
+                            <h3>${request.apartment_title || 'Apartment'}</h3>
+                            <p>${request.apartment_location || 'Location not specified'}</p>
+                        </div>
+                        <span class="status-badge status-${request.status}">${request.status}</span>
+                    </div>
+                    
+                    <div class="request-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Requested: ${formatDateTime(request.requested_date)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Created: ${formatDate(request.created_at)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-euro-sign"></i>
+                            <span>Fee: €${request.booking_fee}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Payment: ${request.payment_status}</span>
+                        </div>
+                    </div>
+                    
+                    ${request.confirmed_date ? `
+                        <div class="meta-item" style="margin-bottom: 15px;">
+                            <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                            <span><strong>Confirmed: ${formatDateTime(request.confirmed_date)}</strong></span>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="actions">
+                        <button class="btn btn-primary" onclick="viewRequestDetails('${request.id}')">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        ${request.status === 'pending' ? `
+                            <button class="btn btn-secondary" onclick="editRequest('${request.id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger" onclick="cancelRequest('${request.id}')">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Display property requests
+        function displayPropertyRequests(requests) {
+            const container = document.getElementById('property-requests-list');
+            
+            if (requests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-home"></i>
+                        <h3>No Viewing Requests</h3>
+                        <p>No one has requested to view your properties yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = requests.map(request => `
+                <div class="request-card">
+                    <div class="request-header">
+                        <div class="request-info">
+                            <h3>${request.apartment_title || 'Apartment'}</h3>
+                            <p>Requested by: ${request.requester_name || request.requester_email}</p>
+                        </div>
+                        <span class="status-badge status-${request.status}">${request.status}</span>
+                    </div>
+                    
+                    <div class="request-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Requested: ${formatDateTime(request.requested_date)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-user"></i>
+                            <span>Requester: ${request.requester_email}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-phone"></i>
+                            <span>Phone: ${request.phone || 'Not provided'}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-euro-sign"></i>
+                            <span>Fee: €${request.booking_fee}</span>
+                        </div>
+                    </div>
+                    
+                    ${request.message ? `
+                        <div style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <strong>Message:</strong><br>
+                            ${request.message}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="actions">
+                        <button class="btn btn-primary" onclick="viewRequestDetails('${request.id}')">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        ${request.status === 'pending' ? `
+                            <button class="btn btn-success" onclick="approveRequest('${request.id}')">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectRequest('${request.id}')">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        ` : ''}
+                        ${request.status === 'approved' ? `
+                            <button class="btn btn-secondary" onclick="markCompleted('${request.id}')">
+                                <i class="fas fa-check-circle"></i> Mark Completed
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update statistics for my requests
+        function updateMyRequestsStats(requests) {
+            const total = requests.length;
+            const pending = requests.filter(r => r.status === 'pending').length;
+            const approved = requests.filter(r => r.status === 'approved').length;
+            const completed = requests.filter(r => r.status === 'completed').length;
+
+            document.getElementById('my-requests-total').textContent = total;
+            document.getElementById('my-requests-pending').textContent = pending;
+            document.getElementById('my-requests-approved').textContent = approved;
+            document.getElementById('my-requests-completed').textContent = completed;
+        }
+
+        // Update statistics for property requests
+        function updatePropertyRequestsStats(requests) {
+            const total = requests.length;
+            const pending = requests.filter(r => r.status === 'pending').length;
+            const approved = requests.filter(r => r.status === 'approved').length;
+            const completed = requests.filter(r => r.status === 'completed').length;
+
+            document.getElementById('property-requests-total').textContent = total;
+            document.getElementById('property-requests-pending').textContent = pending;
+            document.getElementById('property-requests-approved').textContent = approved;
+            document.getElementById('property-requests-completed').textContent = completed;
+        }
+
+        // Handle create request form submission
+        document.getElementById('create-request-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                apartment_id: document.getElementById('apartment-select').value,
+                requested_date: document.getElementById('requested-date').value,
+                alternative_date_1: document.getElementById('alternative-date-1').value || null,
+                alternative_date_2: document.getElementById('alternative-date-2').value || null,
+                phone: document.getElementById('phone').value,
+                message: document.getElementById('message').value || null,
+                booking_fee: 25.00
+            };
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/viewing-requests', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Viewing request created successfully!');
+                    document.getElementById('create-request-form').reset();
+                    switchTab('my-requests');
+                } else {
+                    alert('Error: ' + (result.error || 'Failed to create viewing request'));
+                }
+            } catch (error) {
+                console.error('Error creating viewing request:', error);
+                alert('Error creating viewing request. Please try again.');
+            }
+        });
+
+        // Utility functions
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString();
+        }
+
+        function formatDateTime(dateString) {
+            return new Date(dateString).toLocaleString();
+        }
+
+        function displayError(containerId, message) {
+            document.getElementById(containerId).innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Modal functions
+        function viewRequestDetails(requestId) {
+            // TODO: Implement request details modal
+            console.log('View request details:', requestId);
+        }
+
+        function closeModal() {
+            document.getElementById('request-modal').style.display = 'none';
+        }
+
+        // Request action functions
+        async function approveRequest(requestId) {
+            const confirmedDate = prompt('Please enter the confirmed viewing date and time (YYYY-MM-DD HH:MM):');
+            if (!confirmedDate) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/viewing-requests/${requestId}/approve`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ confirmed_date: confirmedDate })
+                });
+
+                if (response.ok) {
+                    alert('Viewing request approved successfully!');
+                    loadPropertyRequests();
+                } else {
+                    const result = await response.json();
+                    alert('Error: ' + (result.error || 'Failed to approve request'));
+                }
+            } catch (error) {
+                console.error('Error approving request:', error);
+                alert('Error approving request. Please try again.');
+            }
+        }
+
+        async function rejectRequest(requestId) {
+            const reason = prompt('Please provide a reason for rejection (optional):');
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/viewing-requests/${requestId}/reject`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ reason: reason || null })
+                });
+
+                if (response.ok) {
+                    alert('Viewing request rejected.');
+                    loadPropertyRequests();
+                } else {
+                    const result = await response.json();
+                    alert('Error: ' + (result.error || 'Failed to reject request'));
+                }
+            } catch (error) {
+                console.error('Error rejecting request:', error);
+                alert('Error rejecting request. Please try again.');
+            }
+        }
+
+        async function markCompleted(requestId) {
+            if (!confirm('Mark this viewing as completed?')) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/viewing-requests/${requestId}/complete`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Viewing marked as completed!');
+                    loadPropertyRequests();
+                } else {
+                    const result = await response.json();
+                    alert('Error: ' + (result.error || 'Failed to mark as completed'));
+                }
+            } catch (error) {
+                console.error('Error marking as completed:', error);
+                alert('Error marking as completed. Please try again.');
+            }
+        }
+
+        async function cancelRequest(requestId) {
+            if (!confirm('Are you sure you want to cancel this viewing request?')) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/viewing-requests/${requestId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Viewing request cancelled.');
+                    loadMyRequests();
+                } else {
+                    const result = await response.json();
+                    alert('Error: ' + (result.error || 'Failed to cancel request'));
+                }
+            } catch (error) {
+                console.error('Error cancelling request:', error);
+                alert('Error cancelling request. Please try again.');
+            }
+        }
+
+        // Filter functions
+        function filterMyRequests() {
+            // TODO: Implement filtering
+            console.log('Filter my requests');
+        }
+
+        function filterPropertyRequests() {
+            // TODO: Implement filtering
+            console.log('Filter property requests');
+        }
+    </script>
+</body>
+</html>

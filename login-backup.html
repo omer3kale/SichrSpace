@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - SichrPlace</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .form-input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <i class="fas fa-home text-2xl text-blue-600"></i>
+                        <span class="text-2xl font-bold text-gray-900">SichrPlace</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Create Account
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="min-h-screen flex">
+        <!-- Left Side - Hero -->
+        <div class="hidden lg:flex lg:w-1/2 gradient-bg items-center justify-center p-12 relative">
+            <div class="floating-shapes">
+                <div class="shape w-16 h-16 bg-white rounded-full" style="left: 10%; animation-delay: 0s;"></div>
+                <div class="shape w-8 h-8 bg-white rounded-full" style="left: 20%; animation-delay: 2s;"></div>
+                <div class="shape w-12 h-12 bg-white rounded-full" style="left: 30%; animation-delay: 4s;"></div>
+                <div class="shape w-6 h-6 bg-white rounded-full" style="left: 40%; animation-delay: 6s;"></div>
+                <div class="shape w-10 h-10 bg-white rounded-full" style="left: 60%; animation-delay: 8s;"></div>
+                <div class="shape w-14 h-14 bg-white rounded-full" style="left: 70%; animation-delay: 10s;"></div>
+                <div class="shape w-4 h-4 bg-white rounded-full" style="left: 80%; animation-delay: 12s;"></div>
+                <div class="shape w-18 h-18 bg-white rounded-full" style="left: 90%; animation-delay: 14s;"></div>
+            </div>
+            
+            <div class="max-w-md text-center text-white z-10">
+                <div class="mb-8">
+                    <i class="fas fa-key text-6xl mb-4"></i>
+                    <h1 class="text-4xl font-bold mb-4">Welcome Back</h1>
+                    <p class="text-xl opacity-90">
+                        Sign in to access your personalized apartment viewing experience
+                    </p>
+                </div>
+                
+                <div class="bg-white bg-opacity-10 rounded-lg p-6 backdrop-blur-sm">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold">10K+</div>
+                            <div class="opacity-80">Happy Users</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold">5K+</div>
+                            <div class="opacity-80">Properties</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold">50+</div>
+                            <div class="opacity-80">Cities</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold">99%</div>
+                            <div class="opacity-80">Satisfaction</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-8">
+            <div class="max-w-md w-full">
+                <div class="bg-white rounded-lg shadow-xl p-8 slide-up">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
+                        <p class="text-gray-600">Access your SichrPlace account</p>
+                    </div>
+
+                    <!-- Alert Messages -->
+                    <div id="alertContainer" class="mb-6"></div>
+
+                    <form id="loginForm" class="space-y-6">
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                                Email Address
+                            </label>
+                            <div class="relative">
+                                <input type="email" id="email" name="email" required
+                                       class="form-input w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none transition-colors"
+                                       placeholder="Enter your email">
+                                <i class="fas fa-envelope absolute left-4 top-4 text-gray-400"></i>
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                                Password
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="password" name="password" required
+                                       class="form-input w-full px-4 py-3 pl-12 pr-12 border border-gray-300 rounded-lg focus:outline-none transition-colors"
+                                       placeholder="Enter your password">
+                                <i class="fas fa-lock absolute left-4 top-4 text-gray-400"></i>
+                                <button type="button" id="togglePassword"
+                                        class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="remember" name="remember"
+                                       class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <label for="remember" class="ml-2 text-sm text-gray-600">Keep me signed in</label>
+                            </div>
+                            <a href="forgot-password.html" class="text-sm text-blue-600 hover:underline">
+                                Forgot password?
+                            </a>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submitBtn"
+                                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="submitText">Sign In</span>
+                            <i id="submitSpinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+                        </button>
+                    </form>
+
+                    <!-- Social Login Options -->
+                    <div class="mt-8">
+                        <div class="relative">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 grid grid-cols-2 gap-3">
+                            <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                                <i class="fab fa-google text-red-500"></i>
+                                <span class="ml-2">Google</span>
+                            </button>
+                            <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+                                <i class="fab fa-apple text-black"></i>
+                                <span class="ml-2">Apple</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Register Link -->
+                    <div class="mt-8 text-center">
+                        <p class="text-sm text-gray-600">
+                            New to SichrPlace?
+                            <a href="register.html" class="text-blue-600 hover:underline font-medium">Create an account</a>
+                        </p>
+                    </div>
+
+                    <!-- Quick Access for Demo -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Quick Demo Access:</h4>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <button type="button" onclick="fillDemoCredentials('tenant')" 
+                                    class="p-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors">
+                                Demo Tenant
+                            </button>
+                            <button type="button" onclick="fillDemoCredentials('landlord')" 
+                                    class="p-2 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors">
+                                Demo Landlord
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const submitSpinner = document.getElementById('submitSpinner');
+            
+            // Disable button and show spinner
+            submitBtn.disabled = true;
+            submitText.textContent = 'Signing In...';
+            submitSpinner.classList.remove('hidden');
+            
+            try {
+                const formData = new FormData(this);
+                const data = {
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    remember: formData.get('remember') === 'on'
+                };
+
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', 'Login successful! Redirecting...');
+                    
+                    // Store token
+                    localStorage.setItem('token', result.token);
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    
+                    // Redirect based on user role
+                    setTimeout(() => {
+                        if (result.user.role === 'landlord') {
+                            window.location.href = 'landlord-dashboard.html';
+                        } else if (result.user.role === 'admin') {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'apartments-listing.html';
+                        }
+                    }, 1500);
+                } else {
+                    showAlert('error', result.message || 'Login failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('error', 'Network error. Please check your connection and try again.');
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitText.textContent = 'Sign In';
+                submitSpinner.classList.add('hidden');
+            }
+        });
+
+        // Demo credentials function
+        function fillDemoCredentials(role) {
+            if (role === 'tenant') {
+                document.getElementById('email').value = 'demo-tenant@sichrplace.com';
+                document.getElementById('password').value = 'DemoTenant123!';
+            } else if (role === 'landlord') {
+                document.getElementById('email').value = 'demo-landlord@sichrplace.com';
+                document.getElementById('password').value = 'DemoLandlord123!';
+            }
+        }
+
+        function showAlert(type, message) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800';
+            const iconClass = type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-triangle text-red-500';
+            
+            alertContainer.innerHTML = `
+                <div class="border ${alertClass} px-4 py-3 rounded-lg flex items-center space-x-3">
+                    <i class="fas ${iconClass}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Auto-hide success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertContainer.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        // Check for URL parameters (redirect from registration)
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+            
+            if (message) {
+                if (message === 'registered') {
+                    showAlert('success', 'Registration successful! Please check your email to verify your account, then sign in.');
+                } else if (message === 'verified') {
+                    showAlert('success', 'Email verified successfully! You can now sign in to your account.');
+                } else if (message === 'reset') {
+                    showAlert('success', 'Password reset successfully! You can now sign in with your new password.');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+      background: rgba(249,250,251,0.9);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    header {
+      background: var(--card);
+      color: var(--primary);
+      padding: 0 40px;
+      height: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: 600;
+      font-family: var(--heading-font);
+    }
+
+    .logo img {
+      height: 40px;
+      "
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-family: var(--heading-font);
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-container {
+      background: var(--card);
+      padding: 50px 40px;
+      "
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 460px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      border: 2px solid rgba(37, 99, 235, 0.1);
+    }
+
+    .form-container h1 {
+      margin-bottom: 32px;
+      font-size: 2.2rem;
+      color: var(--primary);
+      font-family: var(--heading-font);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .form-container label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text);
+      font-family: var(--heading-font);
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    .form-container input[type="email"],
+    .form-container input[type="password"] {
+      width: 100%;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      border: 2px solid var(--border);
+      "
+      font-size: 16px;
+      font-family: var(--body-font);
+      transition: all 0.3s ease;
+      background: #fff;
+    }
+
+    .form-container input[type="email"]:focus,
+    .form-container input[type="password"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-container button {
+      width: 100%;
+      padding: 16px;
+      margin-top: 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      "
+      font-size: 16px;
+      font-weight: 600;
+      font-family: var(--heading-font);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .form-container button:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    .form-container button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading-indicator {
+      display: none;
+      margin-top: 20px;
+      color: var(--primary);
+      font-family: var(--heading-font);
+      font-weight: 600;
+    }
+
+    .error-message {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 12px;
+      "
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+      border-left: 4px solid #dc2626;
+    }
+
+    footer {
+      background: rgba(37, 99, 235, 0.95);
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+      font-family: var(--body-font);
+      position: relative;
+      z-index: 10;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .auth-links {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .auth-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .auth-links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .form-container {
+        margin: 20px;
+        padding: 30px 25px;
+      }
+      
+      header {
+        padding: 0 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">
+      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px;">
+      SichrPlace
+    </a>
+    <nav>
+      <a href="index.html">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="form-container">
+      <h1><i class="fas fa-sign-in-alt"></i> Login to SichrPlace</h1>
+      <form id="login-form">
+        <div id="error-message" class="error-message"></div>
+        
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" required placeholder="Enter your email">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required placeholder="Enter your password">
+
+        <div class="auth-links">
+          <div style="display: flex; align-items: center;">
+            <input type="checkbox" id="remember-me" name="remember-me" style="margin-right: 8px;">
+            <label for="remember-me" style="margin: 0; font-size: 14px; color: var(--muted);">Remember Me</label>
+          </div>
+          <a href="/forgot-password">Forgot Password?</a>
+        </div>
+
+        <button type="submit" id="login-btn">Login to Account</button>
+        <div id="loading-indicator" class="loading-indicator">
+          <i class="fas fa-spinner fa-spin"></i> Logging in...
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <p>Don't have an account? <a href="create-account.html">Sign up here</a></p>
+    <p style="margin-top: 10px; font-size: 12px; opacity: 0.8;">© 2025 SichrPlace Team | Secure Apartment Viewing Service</p>
+  </footer>
+
+  <script>
+    // Check if user is already logged in
+    const existingToken = localStorage.getItem('token');
+    if (existingToken) {
+      console.log('✅ User already authenticated');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      // Redirect to appropriate dashboard
+      if (user.role === 'admin') {
+        window.location.href = 'admin-dashboard.html';
+      } else if (user.role === 'landlord') {
+        window.location.href = 'landlord-dashboard.html';
+      } else {
+        window.location.href = 'apartments-listing.html';
+      }
+    }
+
+    // Add demo credentials for testing
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('demo') === 'admin') {
+        document.getElementById('login-email').value = 'sichrplace@gmail.com';
+        document.getElementById('login-password').value = 'Gokhangulec29*';
+        
+        // Add helpful message
+        const form = document.getElementById('loginForm');
+        const demoMessage = document.createElement('div');
+        demoMessage.style.cssText = `
+          background: #EBF8FF; 
+          color: #2563EB; 
+          padding: 12px; 
+          border-radius: 8px;
+          margin-bottom: 16px; 
+          font-size: 14px;
+          text-align: center;
+        `;
+        demoMessage.innerHTML = '<i class="fas fa-info-circle"></i> Demo admin credentials pre-filled';
+        form.insertBefore(demoMessage, form.firstChild);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced GDPR Management - SichrPlace Admin</title>
+    <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563EB;
+            --secondary: #F9FAFB;
+            --accent: #40E0D0;
+            --text: #222;
+            --muted: #6b7280;
+            --card: #fff;
+            --radius: 18px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --heading-font: "Poppins", sans-serif;
+            --body-font: "Roboto", sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--body-font);
+            background: var(--secondary);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+
+        /* Header matching index.html */
+        header {
+            background: var(--card);
+            box-shadow: var(--shadow);
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--heading-font);
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 40px;
+            "
+        }
+
+        nav {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            position: relative;
+        }
+
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-family: var(--heading-font);
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        .admin-header {
+            background: linear-gradient(120deg, var(--primary) 60%, var(--accent) 100%);
+            color: #fff;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .admin-header h1 {
+            font-family: var(--heading-font);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .admin-header p {
+            font-size: 1.1rem;
+            color: #e0e7ff;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: var(--card);
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: var(--heading-font);
+            color: var(--muted);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-size: 1rem;
+        }
+
+        .nav-tab:hover {
+            background-color: #f8f9fa;
+            color: var(--primary);
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--accent);
+            background-color: #f8f9ff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card);
+            "
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid #e0e0e0;
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            font-family: var(--heading-font);
+            font-weight: 600;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            "
+            background: #f8f9fa;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            "
+            margin-bottom: 1rem;
+        }
+
+        .alert-danger {
+            background-color: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-info {
+            background-color: #cce7ff;
+            border: 1px solid #99d6ff;
+            color: #004085;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            "
+            cursor: pointer;
+            font-weight: 600;
+            font-family: var(--heading-font);
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e40af;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-info {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #2BC4B6;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            "
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table th {
+            background-color: var(--secondary);
+            font-weight: 600;
+            color: var(--primary);
+            font-family: var(--heading-font);
+        }
+
+        .table tr:hover {
+            background-color: var(--secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            "
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .compliance-score {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            "
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .score-excellent {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .score-good {
+            background: linear-gradient(45deg, #17a2b8, #20c997);
+        }
+
+        .score-acceptable {
+            background: linear-gradient(45deg, #ffc107, #fd7e14);
+        }
+
+        .score-needs-improvement {
+            background: linear-gradient(45deg, #fd7e14, #dc3545);
+        }
+
+        .score-critical {
+            background: linear-gradient(45deg, #dc3545, #6f42c1);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            "
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            "
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            float: right;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            "
+        }
+
+        .pagination button:hover {
+            background: #f8f9fa;
+        }
+
+        .pagination button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Footer matching index.html */
+        footer {
+            background: var(--primary);
+            color: #fff;
+            padding: 32px 0 16px 0;
+            text-align: center;
+            margin-top: 60px;
+            flex-shrink: 0;
+        }
+
+        .footer-links {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            font-family: var(--heading-font);
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .footer-social {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .footer-social a {
+            color: #fff;
+            font-size: 1.3rem;
+            transition: color 0.2s;
+        }
+
+        .footer-social a:hover {
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+
+            .table {
+                font-size: 0.9rem;
+            }
+
+            .table th,
+            .table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">
+            <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px;">
+            SichrPlace
+        </a>
+        <nav>
+            <a href="apartments-listing.html">Apartments</a>
+            <a href="admin-dashboard.html">Admin Dashboard</a>
+            <a href="index.html">Back to Home</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="admin-header">
+            <h1>🛡️ Advanced GDPR Management</h1>
+            <p>Comprehensive privacy compliance monitoring and management dashboard</p>
+        </div>
+
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+        <button class="nav-tab" onclick="showTab('consent')">✅ Consent Management</button>
+        <button class="nav-tab" onclick="showTab('breaches')">🚨 Data Breaches</button>
+        <button class="nav-tab" onclick="showTab('dpia')">📋 DPIA Management</button>
+        <button class="nav-tab" onclick="showTab('compliance')">📈 Compliance Scan</button>
+        <button class="nav-tab" onclick="showTab('logs')">📝 Processing Logs</button>
+        <button class="nav-tab" onclick="showTab('reports')">📄 Reports</button>
+    </div>
+
+    <div class="container">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>📊 Compliance Overview</h3>
+                    <div id="complianceScore" class="compliance-score">
+                        <div class="loading">Loading compliance score...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>✅ Consent Statistics</h3>
+                    <div id="consentStats" class="stat-grid">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🚨 Data Breaches</h3>
+                    <div id="breachStats" class="stat-grid">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📋 DPIA Status</h3>
+                    <div id="dpiaStats" class="stat-grid">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🚨 Critical Alerts</h3>
+                <div id="criticalAlerts"></div>
+            </div>
+
+            <div class="card">
+                <h3>📈 Recent Activity</h3>
+                <div id="recentActivity"></div>
+            </div>
+        </div>
+
+        <!-- Consent Management Tab -->
+        <div id="consent" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>✅ Consent Purposes Management</h3>
+                    <div>
+                        <button class="btn btn-warning" onclick="cleanupExpiredConsents()">🧹 Cleanup Expired</button>
+                        <button class="btn btn-primary" onclick="refreshConsentData()">🔄 Refresh</button>
+                    </div>
+                </div>
+                <div id="consentTable"></div>
+            </div>
+        </div>
+
+        <!-- Data Breaches Tab -->
+        <div id="breaches" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>🚨 Data Breach Management</h3>
+                    <button class="btn btn-danger" onclick="showModal('reportBreachModal')">🚨 Report New Breach</button>
+                </div>
+                <div id="breachTable"></div>
+            </div>
+        </div>
+
+        <!-- DPIA Management Tab -->
+        <div id="dpia" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>📋 Data Processing Impact Assessments</h3>
+                    <button class="btn btn-primary" onclick="showModal('createDpiaModal')">📝 Create New DPIA</button>
+                </div>
+                <div id="dpiaTable"></div>
+            </div>
+        </div>
+
+        <!-- Compliance Scan Tab -->
+        <div id="compliance" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>📈 Privacy Compliance Scan</h3>
+                    <button class="btn btn-primary" onclick="runComplianceScan()">🔍 Run Full Scan</button>
+                </div>
+                <div id="complianceScanResults"></div>
+            </div>
+        </div>
+
+        <!-- Processing Logs Tab -->
+        <div id="logs" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>📝 Data Processing Logs</h3>
+                    <div>
+                        <select id="logFilter" onchange="filterLogs()">
+                            <option value="">All Actions</option>
+                            <option value="user_created">User Created</option>
+                            <option value="data_accessed">Data Accessed</option>
+                            <option value="data_modified">Data Modified</option>
+                            <option value="consent_recorded">Consent Recorded</option>
+                            <option value="breach_discovered">Breach Discovered</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="refreshLogs()">🔄 Refresh</button>
+                    </div>
+                </div>
+                <div id="logsTable"></div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>📊 Compliance Reports</h3>
+                    <div class="form-group">
+                        <label class="form-label">Report Period</label>
+                        <select id="reportPeriod" class="form-control">
+                            <option value="7">Last 7 days</option>
+                            <option value="30">Last 30 days</option>
+                            <option value="90">Last 90 days</option>
+                            <option value="365">Last year</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Export Format</label>
+                        <select id="exportFormat" class="form-control">
+                            <option value="json">JSON</option>
+                            <option value="csv">CSV</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="exportComplianceReport()">📥 Export Report</button>
+                </div>
+
+                <div class="card">
+                    <h3>🔄 Automated Tasks</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <button class="btn btn-success" onclick="runDailyComplianceCheck()">✅ Run Daily Check</button>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <button class="btn btn-warning" onclick="cleanupOldData()">🧹 Cleanup Old Data</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-info" onclick="sendComplianceReminders()">📧 Send Reminders</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="reportBreachModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('reportBreachModal')">&times;</span>
+            <h3>🚨 Report Data Breach</h3>
+            <form id="reportBreachForm">
+                <div class="form-group">
+                    <label class="form-label">Incident Title</label>
+                    <input type="text" name="title" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Severity</label>
+                    <select name="severity" class="form-control" required>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data Types Affected</label>
+                    <select name="dataTypesAffected" class="form-control" multiple>
+                        <option value="personal_data">Personal Data</option>
+                        <option value="sensitive_data">Sensitive Data</option>
+                        <option value="financial_data">Financial Data</option>
+                        <option value="health_data">Health Data</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-danger">🚨 Report Breach</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="createDpiaModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('createDpiaModal')">&times;</span>
+            <h3>📝 Create New DPIA</h3>
+            <form id="createDpiaForm">
+                <div class="form-group">
+                    <label class="form-label">Processing Activity Name</label>
+                    <input type="text" name="processingActivityName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data Controller</label>
+                    <input type="text" name="dataController" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Processing Purpose</label>
+                    <textarea name="processingPurpose" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data Categories</label>
+                    <select name="dataCategories" class="form-control" multiple>
+                        <option value="identity">Identity Data</option>
+                        <option value="contact">Contact Data</option>
+                        <option value="financial">Financial Data</option>
+                        <option value="behavioral">Behavioral Data</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">📝 Create DPIA</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentPage = 1;
+        let currentTab = 'dashboard';
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+        });
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            currentTab = tabName;
+            
+            // Load tab-specific data
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'consent':
+                    loadConsentData();
+                    break;
+                case 'breaches':
+                    loadBreachData();
+                    break;
+                case 'dpia':
+                    loadDpiaData();
+                    break;
+                case 'logs':
+                    loadLogsData();
+                    break;
+            }
+        }
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/admin/advanced-gdpr/compliance/dashboard');
+                const data = await response.json();
+                
+                updateComplianceScore(data);
+                updateStatistics(data);
+                loadCriticalAlerts();
+                loadRecentActivity(data.recentActivity);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function updateComplianceScore(data) {
+            // This would typically come from a compliance scan
+            const scoreElement = document.getElementById('complianceScore');
+            scoreElement.innerHTML = `
+                <div class="score-circle score-good">
+                    <span>85%</span>
+                </div>
+                <p><strong>Good Compliance Level</strong></p>
+                <p>Most requirements are met, minor improvements needed</p>
+            `;
+        }
+
+        function updateStatistics(data) {
+            const consentStats = document.getElementById('consentStats');
+            consentStats.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${data.consents.total}</div>
+                    <div class="stat-label">Total Consents</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${data.consents.active}</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${data.consents.expired}</div>
+                    <div class="stat-label">Expired</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${Math.round((data.consents.active / data.consents.total) * 100)}%</div>
+                    <div class="stat-label">Active Rate</div>
+                </div>
+            `;
+
+            const breachStats = document.getElementById('breachStats');
+            breachStats.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${data.breaches.total}</div>
+                    <div class="stat-label">Total Breaches</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${data.breaches.unresolved}</div>
+                    <div class="stat-label">Unresolved</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${data.breaches.unreported}</div>
+                    <div class="stat-label">Unreported</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${data.breaches.unreported > 0 ? '🚨' : '✅'}</div>
+                    <div class="stat-label">Status</div>
+                </div>
+            `;
+
+            const dpiaStats = document.getElementById('dpiaStats');
+            dpiaStats.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${data.dpias.total}</div>
+                    <div class="stat-label">Total DPIAs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${data.dpias.approved}</div>
+                    <div class="stat-label">Approved</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${data.dpias.needsReview}</div>
+                    <div class="stat-label">Need Review</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${data.dpias.needsReview > 0 ? '⚠️' : '✅'}</div>
+                    <div class="stat-label">Status</div>
+                </div>
+            `;
+        }
+
+        async function loadCriticalAlerts() {
+            const alertsElement = document.getElementById('criticalAlerts');
+            
+            // Mock critical alerts - in real implementation, this would come from API
+            const alerts = [
+                { type: 'danger', message: '2 GDPR requests are overdue (>30 days)' },
+                { type: 'warning', message: '15 consent purposes require renewal' },
+                { type: 'info', message: 'Daily compliance check completed successfully' }
+            ];
+
+            alertsElement.innerHTML = alerts.map(alert => `
+                <div class="alert alert-${alert.type}">
+                    ${alert.message}
+                </div>
+            `).join('');
+        }
+
+        function loadRecentActivity(activities) {
+            const activityElement = document.getElementById('recentActivity');
+            
+            if (!activities || activities.length === 0) {
+                activityElement.innerHTML = '<p class="text-muted">No recent activity</p>';
+                return;
+            }
+
+            activityElement.innerHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Data Type</th>
+                            <th>Legal Basis</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${activities.map(activity => `
+                            <tr>
+                                <td>${activity.action}</td>
+                                <td>${activity.dataType}</td>
+                                <td>${activity.legalBasis}</td>
+                                <td>${new Date(activity.createdAt).toLocaleString()}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Load consent data
+        async function loadConsentData() {
+            try {
+                const response = await fetch('/api/admin/advanced-gdpr/consent-purposes');
+                const data = await response.json();
+                
+                const tableElement = document.getElementById('consentTable');
+                if (data.consents.length === 0) {
+                    tableElement.innerHTML = '<p>No consent records found</p>';
+                    return;
+                }
+
+                tableElement.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Purpose</th>
+                                <th>Status</th>
+                                <th>Consent Date</th>
+                                <th>Expiry Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.consents.map(consent => `
+                                <tr>
+                                    <td>${consent.userId?.username || 'Unknown'}</td>
+                                    <td>${consent.purpose}</td>
+                                    <td>
+                                        <span class="status-badge ${consent.consented ? 'status-success' : 'status-danger'}">
+                                            ${consent.consented ? 'Consented' : 'Withdrawn'}
+                                        </span>
+                                    </td>
+                                    <td>${new Date(consent.consentTimestamp).toLocaleDateString()}</td>
+                                    <td>${new Date(consent.expiryDate).toLocaleDateString()}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="viewConsent('${consent._id}')">View</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error loading consent data:', error);
+            }
+        }
+
+        // Load breach data
+        async function loadBreachData() {
+            try {
+                const response = await fetch('/api/admin/advanced-gdpr/data-breaches');
+                const data = await response.json();
+                
+                const tableElement = document.getElementById('breachTable');
+                if (data.breaches.length === 0) {
+                    tableElement.innerHTML = '<p>No data breaches reported</p>';
+                    return;
+                }
+
+                tableElement.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Severity</th>
+                                <th>Status</th>
+                                <th>Discovered</th>
+                                <th>Reported to Authority</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.breaches.map(breach => `
+                                <tr>
+                                    <td>${breach.title}</td>
+                                    <td>
+                                        <span class="status-badge ${getSeverityClass(breach.severity)}">
+                                            ${breach.severity.toUpperCase()}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge ${getStatusClass(breach.status)}">
+                                            ${breach.status}
+                                        </span>
+                                    </td>
+                                    <td>${new Date(breach.discoveredAt).toLocaleDateString()}</td>
+                                    <td>${breach.reportedToAuthority ? '✅ Yes' : '❌ No'}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="viewBreach('${breach._id}')">View</button>
+                                        <button class="btn btn-warning btn-sm" onclick="updateBreachStatus('${breach._id}')">Update</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error loading breach data:', error);
+            }
+        }
+
+        // Load DPIA data
+        async function loadDpiaData() {
+            try {
+                const response = await fetch('/api/admin/advanced-gdpr/dpias');
+                const data = await response.json();
+                
+                const tableElement = document.getElementById('dpiaTable');
+                if (data.dpias.length === 0) {
+                    tableElement.innerHTML = '<p>No DPIAs found</p>';
+                    return;
+                }
+
+                tableElement.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Processing Activity</th>
+                                <th>Status</th>
+                                <th>Risk Level</th>
+                                <th>Created</th>
+                                <th>Next Review</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.dpias.map(dpia => `
+                                <tr>
+                                    <td>${dpia.processingActivity.name}</td>
+                                    <td>
+                                        <span class="status-badge ${getStatusClass(dpia.status)}">
+                                            ${dpia.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge ${getRiskClass(dpia.riskAssessment?.overallRisk)}">
+                                            ${dpia.riskAssessment?.overallRisk || 'N/A'}
+                                        </span>
+                                    </td>
+                                    <td>${new Date(dpia.createdAt).toLocaleDateString()}</td>
+                                    <td>${dpia.reviewSchedule?.nextReview ? new Date(dpia.reviewSchedule.nextReview).toLocaleDateString() : 'Not scheduled'}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="viewDpia('${dpia._id}')">View</button>
+                                        <button class="btn btn-warning btn-sm" onclick="scheduleReview('${dpia._id}')">Schedule Review</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error loading DPIA data:', error);
+            }
+        }
+
+        // Load logs data
+        async function loadLogsData() {
+            try {
+                const filter = document.getElementById('logFilter')?.value || '';
+                const url = filter ? `/api/admin/advanced-gdpr/processing-logs?action=${filter}` : '/api/admin/advanced-gdpr/processing-logs';
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                const tableElement = document.getElementById('logsTable');
+                if (data.logs.length === 0) {
+                    tableElement.innerHTML = '<p>No processing logs found</p>';
+                    return;
+                }
+
+                tableElement.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>User</th>
+                                <th>Data Type</th>
+                                <th>Legal Basis</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.logs.map(log => `
+                                <tr>
+                                    <td>${log.action}</td>
+                                    <td>${log.userId?.username || 'System'}</td>
+                                    <td>${log.dataType}</td>
+                                    <td>${log.legalBasis}</td>
+                                    <td>${new Date(log.createdAt).toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error loading logs data:', error);
+            }
+        }
+
+        // Utility functions
+        function getSeverityClass(severity) {
+            switch(severity) {
+                case 'critical': return 'status-danger';
+                case 'high': return 'status-danger';
+                case 'medium': return 'status-warning';
+                case 'low': return 'status-success';
+                default: return 'status-warning';
+            }
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'resolved': return 'status-success';
+                case 'approved': return 'status-success';
+                case 'investigating': return 'status-warning';
+                case 'draft': return 'status-warning';
+                case 'discovered': return 'status-danger';
+                default: return 'status-warning';
+            }
+        }
+
+        function getRiskClass(risk) {
+            switch(risk) {
+                case 'high': return 'status-danger';
+                case 'medium': return 'status-warning';
+                case 'low': return 'status-success';
+                default: return 'status-warning';
+            }
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Action functions
+        async function cleanupExpiredConsents() {
+            try {
+                const response = await fetch('/api/admin/advanced-gdpr/consent-purposes/cleanup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'deactivate_expired' })
+                });
+                
+                const result = await response.json();
+                alert(`Cleanup completed: ${result.affected} consents processed`);
+                loadConsentData();
+            } catch (error) {
+                alert('Error during cleanup: ' + error.message);
+            }
+        }
+
+        async function runComplianceScan() {
+            const resultsElement = document.getElementById('complianceScanResults');
+            resultsElement.innerHTML = '<div class="loading">Running compliance scan...</div>';
+            
+            try {
+                const response = await fetch('/api/admin/advanced-gdpr/compliance/scan');
+                const data = await response.json();
+                
+                resultsElement.innerHTML = `
+                    <div class="compliance-score">
+                        <div class="score-circle score-${data.summary.complianceLevel.toLowerCase().replace(' ', '-')}">
+                            <span>${data.overallScore}%</span>
+                        </div>
+                        <p><strong>${data.summary.complianceLevel} Compliance Level</strong></p>
+                        <p>${data.summary.totalIssues} issues found, ${data.summary.criticalIssues} critical</p>
+                    </div>
+                    
+                    ${data.issues.length > 0 ? `
+                        <div class="card">
+                            <h4>🚨 Issues Found</h4>
+                            ${data.issues.map(issue => `
+                                <div class="alert alert-warning">${issue}</div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    ${data.recommendations.immediate.length > 0 ? `
+                        <div class="card">
+                            <h4>⚡ Immediate Actions Required</h4>
+                            <ul>
+                                ${data.recommendations.immediate.map(rec => `<li>${rec}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                `;
+            } catch (error) {
+                resultsElement.innerHTML = `<div class="alert alert-danger">Error running scan: ${error.message}</div>`;
+            }
+        }
+
+        async function runDailyComplianceCheck() {
+            try {
+                const response = await fetch('/api/admin/advanced-gdpr/compliance/daily-check', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                alert('Daily compliance check completed successfully');
+                loadDashboardData();
+            } catch (error) {
+                alert('Error running daily check: ' + error.message);
+            }
+        }
+
+        async function exportComplianceReport() {
+            try {
+                const period = document.getElementById('reportPeriod').value;
+                const format = document.getElementById('exportFormat').value;
+                
+                const dateFrom = new Date();
+                dateFrom.setDate(dateFrom.getDate() - parseInt(period));
+                
+                const url = `/api/admin/advanced-gdpr/compliance/export?format=${format}&dateFrom=${dateFrom.toISOString()}`;
+                window.open(url, '_blank');
+            } catch (error) {
+                alert('Error exporting report: ' + error.message);
+            }
+        }
+
+        // Form submissions
+        document.getElementById('reportBreachForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const breachData = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/admin/advanced-gdpr/data-breaches', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(breachData)
+                });
+                
+                if (response.ok) {
+                    alert('Breach reported successfully');
+                    hideModal('reportBreachModal');
+                    loadBreachData();
+                } else {
+                    throw new Error('Failed to report breach');
+                }
+            } catch (error) {
+                alert('Error reporting breach: ' + error.message);
+            }
+        });
+
+        document.getElementById('createDpiaForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const dpiaData = {
+                processingActivity: {
+                    name: formData.get('processingActivityName'),
+                    description: formData.get('processingPurpose')
+                },
+                dataController: formData.get('dataController'),
+                dataCategories: formData.getAll('dataCategories')
+            };
+            
+            try {
+                const response = await fetch('/api/admin/advanced-gdpr/dpias', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dpiaData)
+                });
+                
+                if (response.ok) {
+                    alert('DPIA created successfully');
+                    hideModal('createDpiaModal');
+                    loadDpiaData();
+                } else {
+                    throw new Error('Failed to create DPIA');
+                }
+            } catch (error) {
+                alert('Error creating DPIA: ' + error.message);
+            }
+        });
+
+        // Refresh functions
+        function refreshConsentData() { loadConsentData(); }
+        function refreshLogs() { loadLogsData(); }
+        function filterLogs() { loadLogsData(); }
+
+        // Placeholder functions for detailed views
+        function viewConsent(id) { alert('View consent details: ' + id); }
+        function viewBreach(id) { alert('View breach details: ' + id); }
+        function viewDpia(id) { alert('View DPIA details: ' + id); }
+        function updateBreachStatus(id) { alert('Update breach status: ' + id); }
+        function scheduleReview(id) { alert('Schedule DPIA review: ' + id); }
+        function cleanupOldData() { alert('Data cleanup functionality would be implemented here'); }
+        function sendComplianceReminders() { alert('Compliance reminders sent'); }
+    </script>
+
+    <footer>
+        <div class="footer-links">
+            <a href="about.html">About</a>
+            <a href="faq.html">FAQ</a>
+            <a href="customer-service.html">Customer Service</a>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="terms-of-service.html">Terms of Service</a>
+        </div>
+        <div class="footer-social">
+            <a href="https://www.linkedin.com/company/sichrplace/" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.facebook.com/sichrplace" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/sichrplace" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.tiktok.com/@sichrplace" target="_blank"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <p style="margin-top:16px;">&copy; 2025 SichrPlace. All rights reserved.<br>
+            Created by <a href="https://www.linkedin.com/in/z%C3%A9t%C3%A9ny-dobos/?originalSubdomain=hu" style="color:#40E0D0;">Zétény Dobos</a> and <a href="https://www.linkedin.com/in/%C3%B6mer-%C3%BC%C3%A7kale-482787202/" style="color:#40E0D0;">Ömer Üçkale</a>.
+        </p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Test - SichrPlace</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563EB">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SichrPlace">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="icon" href="img/favicon.ico">
+    
+    <!-- PWA Styles -->
+    <link rel="stylesheet" href="css/pwa-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #2563EB;
+            --secondary: #F9FAFB;
+            --text: #222;
+            --muted: #6b7280;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--secondary);
+            color: var(--text);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .test-section h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .test-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 10px 10px 0;
+            font-size: 14px;
+        }
+        
+        .test-button:hover {
+            background: #1d4ed8;
+        }
+        
+        .test-result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-mobile-alt"></i> SichrPlace PWA Test Page</h1>
+        
+        <!-- PWA Status -->
+        <div class="test-section">
+            <h2>🚀 PWA Installation Status</h2>
+            <div id="installation-status">
+                <div class="status warning">
+                    <i class="fas fa-clock"></i>
+                    Checking installation status...
+                </div>
+            </div>
+            <p>This shows whether the app is installed or can be installed as a PWA.</p>
+        </div>
+        
+        <!-- Service Worker Status -->
+        <div class="test-section">
+            <h2>⚙️ Service Worker Status</h2>
+            <div id="sw-status">
+                <div class="status warning">
+                    <i class="fas fa-clock"></i>
+                    Registering service worker...
+                </div>
+            </div>
+            <p>Service worker handles offline functionality and caching.</p>
+        </div>
+        
+        <!-- Push Notifications -->
+        <div class="test-section">
+            <h2>🔔 Push Notifications</h2>
+            <div id="notification-status">
+                <div class="status warning">
+                    <i class="fas fa-clock"></i>
+                    Checking notification support...
+                </div>
+            </div>
+            <div id="notification-controls" style="display: none;">
+                <button class="test-button" onclick="requestNotificationPermission()">
+                    <i class="fas fa-bell"></i> Request Permission
+                </button>
+                <button class="test-button" onclick="subscribeToPush()">
+                    <i class="fas fa-rss"></i> Subscribe to Push
+                </button>
+                <button class="test-button" onclick="testNotification()">
+                    <i class="fas fa-paper-plane"></i> Test Notification
+                </button>
+            </div>
+            <div id="notification-result" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <!-- Offline Features -->
+        <div class="test-section">
+            <h2>🌐 Offline Features</h2>
+            <div id="offline-status">
+                <div class="status success">
+                    <i class="fas fa-wifi"></i>
+                    Online
+                </div>
+            </div>
+            <button class="test-button" onclick="testOfflineCache()">
+                <i class="fas fa-download"></i> Test Cache
+            </button>
+            <button class="test-button" onclick="simulateOffline()">
+                <i class="fas fa-wifi-slash"></i> Simulate Offline
+            </button>
+            <div id="offline-result" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <!-- PWA Features List -->
+        <div class="test-section">
+            <h2>✨ PWA Features</h2>
+            <ul class="feature-list" id="feature-list">
+                <!-- Features will be populated by JavaScript -->
+            </ul>
+        </div>
+        
+        <!-- Browser Compatibility -->
+        <div class="test-section">
+            <h2>🌏 Browser Compatibility</h2>
+            <div id="browser-info">
+                <!-- Browser info will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- PWA Initialization -->
+    <script src="js/pwa-init.js"></script>
+    
+    <script>
+        // PWA Test Functions
+        let pwaTest = {
+            init() {
+                this.checkInstallationStatus();
+                this.checkServiceWorkerStatus();
+                this.checkNotificationSupport();
+                this.setupOfflineDetection();
+                this.checkPWAFeatures();
+                this.displayBrowserInfo();
+            },
+            
+            checkInstallationStatus() {
+                const statusEl = document.getElementById('installation-status');
+                
+                // Check if app is installed
+                if (window.matchMedia('(display-mode: standalone)').matches) {
+                    statusEl.innerHTML = `
+                        <div class="status success">
+                            <i class="fas fa-check-circle"></i>
+                            App is installed and running in standalone mode
+                        </div>
+                    `;
+                } else if (window.navigator.standalone === true) {
+                    statusEl.innerHTML = `
+                        <div class="status success">
+                            <i class="fas fa-check-circle"></i>
+                            App is installed (iOS)
+                        </div>
+                    `;
+                } else {
+                    statusEl.innerHTML = `
+                        <div class="status warning">
+                            <i class="fas fa-download"></i>
+                            App is not installed - available for installation
+                        </div>
+                    `;
+                }
+            },
+            
+            checkServiceWorkerStatus() {
+                const statusEl = document.getElementById('sw-status');
+                
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistration().then(registration => {
+                        if (registration) {
+                            statusEl.innerHTML = `
+                                <div class="status success">
+                                    <i class="fas fa-check-circle"></i>
+                                    Service Worker registered and active
+                                </div>
+                            `;
+                        } else {
+                            statusEl.innerHTML = `
+                                <div class="status warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Service Worker not registered yet
+                                </div>
+                            `;
+                        }
+                    });
+                } else {
+                    statusEl.innerHTML = `
+                        <div class="status error">
+                            <i class="fas fa-times-circle"></i>
+                            Service Worker not supported
+                        </div>
+                    `;
+                }
+            },
+            
+            checkNotificationSupport() {
+                const statusEl = document.getElementById('notification-status');
+                const controlsEl = document.getElementById('notification-controls');
+                
+                if ('Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window) {
+                    const permission = Notification.permission;
+                    
+                    if (permission === 'granted') {
+                        statusEl.innerHTML = `
+                            <div class="status success">
+                                <i class="fas fa-check-circle"></i>
+                                Push notifications enabled
+                            </div>
+                        `;
+                    } else if (permission === 'denied') {
+                        statusEl.innerHTML = `
+                            <div class="status error">
+                                <i class="fas fa-times-circle"></i>
+                                Push notifications denied
+                            </div>
+                        `;
+                    } else {
+                        statusEl.innerHTML = `
+                            <div class="status warning">
+                                <i class="fas fa-bell"></i>
+                                Push notifications available - permission needed
+                            </div>
+                        `;
+                    }
+                    
+                    controlsEl.style.display = 'block';
+                } else {
+                    statusEl.innerHTML = `
+                        <div class="status error">
+                            <i class="fas fa-times-circle"></i>
+                            Push notifications not supported
+                        </div>
+                    `;
+                }
+            },
+            
+            setupOfflineDetection() {
+                const statusEl = document.getElementById('offline-status');
+                
+                const updateOnlineStatus = () => {
+                    if (navigator.onLine) {
+                        statusEl.innerHTML = `
+                            <div class="status success">
+                                <i class="fas fa-wifi"></i>
+                                Online
+                            </div>
+                        `;
+                    } else {
+                        statusEl.innerHTML = `
+                            <div class="status warning">
+                                <i class="fas fa-wifi-slash"></i>
+                                Offline
+                            </div>
+                        `;
+                    }
+                };
+                
+                window.addEventListener('online', updateOnlineStatus);
+                window.addEventListener('offline', updateOnlineStatus);
+                updateOnlineStatus();
+            },
+            
+            checkPWAFeatures() {
+                const features = [
+                    { name: 'Service Worker', supported: 'serviceWorker' in navigator },
+                    { name: 'Web App Manifest', supported: 'manifest' in document.createElement('link') },
+                    { name: 'Push Notifications', supported: 'PushManager' in window },
+                    { name: 'Background Sync', supported: 'serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype },
+                    { name: 'Add to Home Screen', supported: 'beforeinstallprompt' in window || window.navigator.standalone !== undefined },
+                    { name: 'Offline Storage', supported: 'caches' in window },
+                    { name: 'Web Share API', supported: 'share' in navigator },
+                    { name: 'Fullscreen API', supported: 'requestFullscreen' in document.documentElement },
+                ];
+                
+                const listEl = document.getElementById('feature-list');
+                listEl.innerHTML = features.map(feature => `
+                    <li>
+                        <i class="fas fa-${feature.supported ? 'check-circle' : 'times-circle'}" 
+                           style="color: ${feature.supported ? '#10b981' : '#ef4444'}"></i>
+                        <span>${feature.name}</span>
+                        <div class="status ${feature.supported ? 'success' : 'error'}">
+                            ${feature.supported ? 'Supported' : 'Not Supported'}
+                        </div>
+                    </li>
+                `).join('');
+            },
+            
+            displayBrowserInfo() {
+                const infoEl = document.getElementById('browser-info');
+                const ua = navigator.userAgent;
+                
+                let browser = 'Unknown';
+                if (ua.includes('Chrome')) browser = 'Chrome';
+                else if (ua.includes('Firefox')) browser = 'Firefox';
+                else if (ua.includes('Safari')) browser = 'Safari';
+                else if (ua.includes('Edge')) browser = 'Edge';
+                
+                const info = {
+                    'Browser': browser,
+                    'User Agent': ua,
+                    'Platform': navigator.platform,
+                    'Language': navigator.language,
+                    'Online': navigator.onLine ? 'Yes' : 'No',
+                    'Cookie Enabled': navigator.cookieEnabled ? 'Yes' : 'No'
+                };
+                
+                infoEl.innerHTML = Object.entries(info).map(([key, value]) => `
+                    <div style="margin: 8px 0; padding: 8px; background: #f8fafc; border-radius: 4px;">
+                        <strong>${key}:</strong> ${value}
+                    </div>
+                `).join('');
+            }
+        };
+        
+        // Test Functions
+        async function requestNotificationPermission() {
+            const resultEl = document.getElementById('notification-result');
+            resultEl.style.display = 'block';
+            
+            try {
+                const permission = await Notification.requestPermission();
+                resultEl.textContent = `Notification permission: ${permission}`;
+                
+                // Update status
+                pwaTest.checkNotificationSupport();
+            } catch (error) {
+                resultEl.textContent = `Error requesting permission: ${error.message}`;
+            }
+        }
+        
+        async function subscribeToPush() {
+            const resultEl = document.getElementById('notification-result');
+            resultEl.style.display = 'block';
+            
+            try {
+                const registration = await navigator.serviceWorker.getRegistration();
+                if (!registration) {
+                    throw new Error('Service worker not registered');
+                }
+                
+                // Get VAPID public key
+                const response = await fetch('/api/push/vapid-public-key');
+                const { publicKey } = await response.json();
+                
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(publicKey)
+                });
+                
+                resultEl.textContent = `Push subscription successful!\nEndpoint: ${subscription.endpoint}`;
+            } catch (error) {
+                resultEl.textContent = `Error subscribing to push: ${error.message}`;
+            }
+        }
+        
+        function testNotification() {
+            const resultEl = document.getElementById('notification-result');
+            resultEl.style.display = 'block';
+            
+            if (Notification.permission === 'granted') {
+                new Notification('SichrPlace PWA Test', {
+                    body: 'This is a test notification from your PWA!',
+                    icon: '/img/pwa-icon-192.png',
+                    badge: '/img/pwa-icon-72.png',
+                    tag: 'test-notification'
+                });
+                resultEl.textContent = 'Test notification sent!';
+            } else {
+                resultEl.textContent = 'Notification permission not granted.';
+            }
+        }
+        
+        async function testOfflineCache() {
+            const resultEl = document.getElementById('offline-result');
+            resultEl.style.display = 'block';
+            
+            try {
+                const cache = await caches.open('sichrplace-test');
+                await cache.add('/');
+                
+                const keys = await cache.keys();
+                resultEl.textContent = `Cache test successful!\nCached ${keys.length} items.`;
+            } catch (error) {
+                resultEl.textContent = `Cache test failed: ${error.message}`;
+            }
+        }
+        
+        function simulateOffline() {
+            const resultEl = document.getElementById('offline-result');
+            resultEl.style.display = 'block';
+            
+            // Temporarily override navigator.onLine
+            Object.defineProperty(navigator, 'onLine', {
+                value: false,
+                writable: true,
+                configurable: true
+            });
+            
+            // Dispatch offline event
+            window.dispatchEvent(new Event('offline'));
+            
+            resultEl.textContent = 'Simulated offline mode. Refresh page to reset.';
+            
+            // Reset after 5 seconds
+            setTimeout(() => {
+                Object.defineProperty(navigator, 'onLine', {
+                    value: true,
+                    writable: true,
+                    configurable: true
+                });
+                window.dispatchEvent(new Event('online'));
+            }, 5000);
+        }
+        
+        // Helper function
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding)
+                .replace(/\-/g, '+')
+                .replace(/_/g, '/');
+
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+        
+        // Initialize tests when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            pwaTest.init();
+        });
+    </script>
+</body>
+</html>

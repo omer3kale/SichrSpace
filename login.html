@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - SichrPlace</title>
+    
+    <!-- Favicon and Icons -->
+    <link rel="icon" href="img/favicon.ico" sizes="any">
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="icon" href="img/favicon-96x96.png" sizes="96x96" type="image/png">
+    <link rel="icon" href="img/web-app-manifest-192x192.png" sizes="192x192" type="image/png">
+    <link rel="icon" href="img/web-app-manifest-512x512.png" sizes="512x512" type="image/png">
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="css/logo-system.css">
+    <script src="js/language-switcher.js" defer></script>
+    <script src="js/logo-cookie-manager.js" defer></script>
+    
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-dark: #1d4ed8;
+            --primary-darker: #134cca;
+            --primary-light: #b1c7f8;
+            --primary-lighter: #DBEAFE;
+            --primary-hover: #5484ef;
+            --primary-accent: #60A5FA;
+            --secondary: #F9FAFB;
+            --accent: #40E0D0;
+            --text: #222;
+            --muted: #6b7280;
+            --card: #fff;
+            --danger: #EF4444;
+            --success: #10b981;
+            --background: #FFFFFF;
+            --border: #E5E7EB;
+            --radius: 18px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --heading-font: "Poppins", sans-serif;
+            --body-font: "Roboto", sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--body-font);
+            background: linear-gradient(135deg, var(--primary-lighter) 0%, var(--secondary) 50%, var(--primary-light) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            33% { transform: translate(-48%, -52%) rotate(1deg); }
+            66% { transform: translate(-52%, -48%) rotate(-1deg); }
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-card {
+            background: var(--background);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-accent));
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-section h1 {
+            font-family: var(--heading-font);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-section p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--background);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: var(--muted);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border-left: 4px solid #dc2626;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            color: #059669;
+            border-left: 4px solid #059669;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-links p {
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .nav-back {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .nav-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-2px);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .login-card {
+                padding: 2rem;
+            }
+            
+            .nav-back {
+                position: static;
+                margin-bottom: 2rem;
+                color: var(--primary);
+                background: var(--secondary);
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="nav-back">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+
+    <div class="container">
+        <div class="login-card">
+            <div class="logo-section">
+                <div class="logo-placeholder header-logo" data-type="header">
+                    <div class="sichrplace-logo header-logo">
+                        <div class="sichrplace-shield large sichrplace-certified"></div>
+                        <span class="sichrplace-text">SichrPlace</span>
+                        <span class="german-certification">German Certified</span>
+                    </div>
+                </div>
+                <h1 style="margin-top: 15px;" data-translate="nav.login">Sign In</h1>
+                <p>Sign in to your secure apartment viewing account</p>
+            </div>
+
+            <form id="loginForm">
+                <div id="alertMessage" class="alert"></div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-control" 
+                        placeholder="Enter your email address"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-control" 
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <div class="form-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn" id="loginBtn">
+                    <span class="spinner" id="spinner"></span>
+                    <span id="btnText">Sign In</span>
+                </button>
+            </form>
+
+            <div class="footer-links">
+                <p>Don't have an account? <a href="create-account.html">Create account</a></p>
+                <p style="font-size: 0.75rem; margin-top: 1rem;">
+                    © 2025 SichrPlace. Secure apartment viewing platform.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Authentication handler
+        class AuthHandler {
+            constructor() {
+                this.form = document.getElementById('loginForm');
+                this.emailInput = document.getElementById('email');
+                this.passwordInput = document.getElementById('password');
+                this.rememberInput = document.getElementById('remember');
+                this.loginBtn = document.getElementById('loginBtn');
+                this.spinner = document.getElementById('spinner');
+                this.btnText = document.getElementById('btnText');
+                this.alertMessage = document.getElementById('alertMessage');
+                
+                this.init();
+            }
+
+            init() {
+                this.form.addEventListener('submit', this.handleLogin.bind(this));
+                this.checkExistingAuth();
+                this.setupDemoCredentials();
+            }
+
+            async handleLogin(e) {
+                e.preventDefault();
+                
+                const email = this.emailInput.value.trim();
+                const password = this.passwordInput.value;
+                const remember = this.rememberInput.checked;
+
+                if (!email || !password) {
+                    this.showAlert('Please fill in all fields', 'error');
+                    return;
+                }
+
+                this.setLoading(true);
+                this.hideAlert();
+
+                try {
+                    const response = await fetch('/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password,
+                            remember: remember
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        this.showAlert('Login successful! Redirecting...', 'success');
+                        
+                        // Store authentication data
+                        localStorage.setItem('token', result.token);
+                        localStorage.setItem('user', JSON.stringify(result.user));
+                        
+                        // Store in sessionStorage if remember is not checked
+                        if (!remember) {
+                            sessionStorage.setItem('token', result.token);
+                            sessionStorage.setItem('user', JSON.stringify(result.user));
+                        }
+
+                        console.log('✅ Login successful:', result.user);
+                        
+                        // Redirect based on user role
+                        setTimeout(() => {
+                            this.redirectUser(result.user.role);
+                        }, 1500);
+                    } else {
+                        this.showAlert(result.message || 'Login failed. Please check your credentials.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    this.showAlert('Network error. Please check your connection and try again.', 'error');
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+
+            redirectUser(role) {
+                switch (role) {
+                    case 'admin':
+                        window.location.href = 'admin-dashboard.html';
+                        break;
+                    case 'landlord':
+                        window.location.href = 'landlord-dashboard.html';
+                        break;
+                    case 'tenant':
+                    default:
+                        window.location.href = 'apartments-listing.html';
+                        break;
+                }
+            }
+
+            checkExistingAuth() {
+                const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                if (token) {
+                    const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+                    console.log('✅ User already authenticated, redirecting...');
+                    this.redirectUser(user.role || 'tenant');
+                }
+            }
+
+            setupDemoCredentials() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('demo') === 'admin') {
+                    this.emailInput.value = 'sichrplace@gmail.com';
+                    this.passwordInput.value = 'Gokhangulec29*';
+                    
+                    this.showAlert('Demo admin credentials pre-filled for testing', 'success');
+                }
+            }
+
+            setLoading(loading) {
+                this.loginBtn.disabled = loading;
+                this.spinner.style.display = loading ? 'block' : 'none';
+                this.btnText.textContent = loading ? 'Signing In...' : 'Sign In';
+            }
+
+            showAlert(message, type = 'error') {
+                this.alertMessage.textContent = message;
+                this.alertMessage.className = `alert alert-${type}`;
+                this.alertMessage.style.display = 'block';
+                
+                // Auto-hide success messages
+                if (type === 'success') {
+                    setTimeout(() => this.hideAlert(), 3000);
+                }
+            }
+
+            hideAlert() {
+                this.alertMessage.style.display = 'none';
+            }
+        }
+
+        // Initialize authentication when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new AuthHandler();
+        });
+    </script>
+
+    <!-- SichrPlace Footer -->
+    <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid #E5E7EB; background: var(--secondary);">
+        <div class="footer-brand" style="text-align: center; margin: 20px 0;">
+            <img src="img/SichrPlaceLogo_944x944.jpg" alt="SichrPlace Logo" class="footer-logo" style="height: 48px; width: auto; margin-bottom: 10px;">
+            <div class="footer-brand-text" style="color: #6B7280; font-size: 14px;">
+                Your Trusted Rental Platform
+            </div>
+        </div>
+        <div class="footer-links" style="text-align: center; margin: 15px 0;">
+            <a href="privacy-policy.html" style="color: #6B7280; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
+            <a href="terms-of-service.html" style="color: #6B7280; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms of Service</a>
+            <a href="index.html" style="color: #6B7280; text-decoration: none; margin: 0 15px; font-size: 14px;">Home</a>
+        </div>
+        <p style="text-align: center; color: #9CA3AF; font-size: 12px; margin: 10px 0 0 0;">&copy; 2025 SichrPlace. All rights reserved.</p>
+    </footer>
+</body>
+</html>

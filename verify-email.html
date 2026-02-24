@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - SichrPlace</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <i class="fas fa-home text-2xl text-blue-600"></i>
+                        <span class="text-2xl font-bold text-gray-900">SichrPlace</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="login.html" class="text-gray-600 hover:text-blue-600 transition-colors">
+                        Back to Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div class="bg-white rounded-lg shadow-xl p-8 text-center">
+                <!-- Email Icon -->
+                <div class="mx-auto mb-6">
+                    <i class="fas fa-envelope-open-text text-6xl text-blue-600 bounce"></i>
+                </div>
+
+                <!-- Content Container -->
+                <div id="contentContainer">
+                    <!-- Initial State -->
+                    <div id="initialState">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Check Your Email</h2>
+                        <p class="text-gray-600 mb-6">
+                            We've sent a verification link to<br>
+                            <strong id="emailDisplay" class="text-blue-600"></strong>
+                        </p>
+                        
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <div class="flex">
+                                <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
+                                <div class="text-sm text-blue-800">
+                                    <p><strong>Didn't receive the email?</strong></p>
+                                    <ul class="mt-2 space-y-1">
+                                        <li>• Check your spam/junk folder</li>
+                                        <li>• Verify the email address is correct</li>
+                                        <li>• Wait a few minutes for delivery</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <button id="resendBtn" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50">
+                                <span id="resendText">Resend Verification Email</span>
+                                <i id="resendSpinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+                            </button>
+                            
+                            <button id="changeEmailBtn" class="w-full bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+                                Change Email Address
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Success State -->
+                    <div id="successState" class="hidden">
+                        <div class="mb-6">
+                            <i class="fas fa-check-circle text-6xl text-green-500 pulse"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Email Verified!</h2>
+                        <p class="text-gray-600 mb-6">
+                            Your email address has been successfully verified. You can now sign in to your SichrPlace account.
+                        </p>
+                        <a href="login.html?message=verified" class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors inline-block">
+                            Continue to Sign In
+                        </a>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="errorState" class="hidden">
+                        <div class="mb-6">
+                            <i class="fas fa-exclamation-triangle text-6xl text-red-500"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Verification Failed</h2>
+                        <p class="text-gray-600 mb-6" id="errorMessage">
+                            The verification link is invalid or has expired. Please request a new verification email.
+                        </p>
+                        <button id="retryBtn" class="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-red-700 transition-colors">
+                            Send New Verification Email
+                        </button>
+                    </div>
+
+                    <!-- Change Email Form -->
+                    <div id="changeEmailForm" class="hidden">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Change Email Address</h2>
+                        <p class="text-gray-600 mb-6">
+                            Enter a new email address to receive the verification link.
+                        </p>
+                        
+                        <form id="emailChangeForm" class="space-y-4">
+                            <div>
+                                <label for="newEmail" class="block text-sm font-medium text-gray-700 mb-1">
+                                    New Email Address
+                                </label>
+                                <div class="relative">
+                                    <input type="email" id="newEmail" name="newEmail" required
+                                           class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                                           placeholder="Enter new email address">
+                                    <i class="fas fa-envelope absolute left-4 top-4 text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <button type="submit" id="updateEmailBtn" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                                    <span id="updateText">Update Email & Send Verification</span>
+                                    <i id="updateSpinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+                                </button>
+                                
+                                <button type="button" id="cancelChangeBtn" class="w-full bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Alert Messages -->
+                <div id="alertContainer" class="mt-6"></div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="bg-white rounded-lg shadow-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">Need Help?</h3>
+                <div class="space-y-3 text-sm text-gray-600">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-question-circle text-blue-500 mt-1"></i>
+                        <div>
+                            <strong>Still not receiving emails?</strong><br>
+                            Contact our support team at <a href="mailto:support@sichrplace.com" class="text-blue-600 hover:underline">support@sichrplace.com</a>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-clock text-blue-500 mt-1"></i>
+                        <div>
+                            <strong>Verification links expire in 24 hours</strong><br>
+                            Request a new one if yours has expired
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userEmail = '';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get email from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email');
+            const token = urlParams.get('token');
+            
+            if (email) {
+                userEmail = email;
+                document.getElementById('emailDisplay').textContent = email;
+            }
+
+            // If token is present, verify it immediately
+            if (token) {
+                verifyEmailToken(token);
+            }
+
+            // Event listeners
+            document.getElementById('resendBtn').addEventListener('click', resendVerificationEmail);
+            document.getElementById('changeEmailBtn').addEventListener('click', showChangeEmailForm);
+            document.getElementById('cancelChangeBtn').addEventListener('click', hideChangeEmailForm);
+            document.getElementById('retryBtn').addEventListener('click', resendVerificationEmail);
+            document.getElementById('emailChangeForm').addEventListener('submit', handleEmailChange);
+        });
+
+        async function verifyEmailToken(token) {
+            try {
+                const response = await fetch('/api/auth/verify-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ token })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showState('success');
+                } else {
+                    showState('error', result.message || 'Verification failed');
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                showState('error', 'Network error occurred. Please try again.');
+            }
+        }
+
+        async function resendVerificationEmail() {
+            const resendBtn = document.getElementById('resendBtn');
+            const resendText = document.getElementById('resendText');
+            const resendSpinner = document.getElementById('resendSpinner');
+
+            resendBtn.disabled = true;
+            resendText.textContent = 'Sending...';
+            resendSpinner.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/api/auth/resend-verification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: userEmail })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', 'Verification email sent successfully! Please check your inbox.');
+                } else {
+                    showAlert('error', result.message || 'Failed to send verification email');
+                }
+            } catch (error) {
+                console.error('Resend error:', error);
+                showAlert('error', 'Network error. Please try again.');
+            } finally {
+                resendBtn.disabled = false;
+                resendText.textContent = 'Resend Verification Email';
+                resendSpinner.classList.add('hidden');
+            }
+        }
+
+        async function handleEmailChange(e) {
+            e.preventDefault();
+            
+            const updateBtn = document.getElementById('updateEmailBtn');
+            const updateText = document.getElementById('updateText');
+            const updateSpinner = document.getElementById('updateSpinner');
+            const newEmail = document.getElementById('newEmail').value;
+
+            updateBtn.disabled = true;
+            updateText.textContent = 'Updating...';
+            updateSpinner.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/api/auth/change-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        oldEmail: userEmail,
+                        newEmail: newEmail 
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    userEmail = newEmail;
+                    document.getElementById('emailDisplay').textContent = newEmail;
+                    hideChangeEmailForm();
+                    showAlert('success', 'Email updated! Verification sent to your new address.');
+                } else {
+                    showAlert('error', result.message || 'Failed to update email');
+                }
+            } catch (error) {
+                console.error('Email change error:', error);
+                showAlert('error', 'Network error. Please try again.');
+            } finally {
+                updateBtn.disabled = false;
+                updateText.textContent = 'Update Email & Send Verification';
+                updateSpinner.classList.add('hidden');
+            }
+        }
+
+        function showState(state, message = '') {
+            const states = ['initialState', 'successState', 'errorState', 'changeEmailForm'];
+            
+            states.forEach(s => {
+                document.getElementById(s).classList.add('hidden');
+            });
+
+            document.getElementById(state).classList.remove('hidden');
+
+            if (state === 'error' && message) {
+                document.getElementById('errorMessage').textContent = message;
+            }
+        }
+
+        function showChangeEmailForm() {
+            showState('changeEmailForm');
+        }
+
+        function hideChangeEmailForm() {
+            showState('initialState');
+            document.getElementById('newEmail').value = '';
+        }
+
+        function showAlert(type, message) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800';
+            const iconClass = type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-triangle text-red-500';
+            
+            alertContainer.innerHTML = `
+                <div class="border ${alertClass} px-4 py-3 rounded-lg flex items-center space-x-3">
+                    <i class="fas ${iconClass}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

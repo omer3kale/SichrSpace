@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayPal Checkout - SichrPlace</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: #f4f6fa; margin: 0; color: #222; }
+    .container { max-width: 420px; margin: 60px auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 36px 32px; }
+    h1 { color: #2563EB; font-size: 1.5rem; margin-bottom: 18px; }
+    .desc { color: #6b7280; margin-bottom: 24px; }
+    .amount { font-size: 2rem; font-weight: 600; color: #222; margin-bottom: 24px; }
+    #paypal-button-container { margin-bottom: 18px; }
+    .result { margin-top: 24px; font-size: 1.1rem; }
+    .success { color: #22c55e; }
+    .error { color: #ef4444; }
+    .back-link { display: inline-block; margin-top: 24px; color: #2563EB; text-decoration: none; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PayPal Checkout</h1>
+    <div class="desc">Complete your payment securely with PayPal.</div>
+    <div class="amount" id="amount-display">€10.00</div>
+    <div id="paypal-button-container"></div>
+    <div class="result" id="result"></div>
+    <a href="apartments-listing.html" class="back-link">&larr; Back to Listings</a>
+  </div>
+  <script>
+    let paypalClientId = '';
+    let environment = 'sandbox';
+    let amount = 10.00;
+    // Fetch PayPal config
+    // Use standardized PayPal client ID instead of fetching from API
+    paypalClientId = 'AcPYlXozR8VS9kJSk7rv5MW36lMV66ZMyqZKjM0YVuvt0dJ1cIyHRvDmGeux0qu3gBOh6XswI5gin2WO';
+    environment = 'production';
+    
+    // Dynamically load PayPal JS SDK with standardized configuration
+    const script = document.createElement('script');
+    script.src = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=EUR&locale=de_DE&components=buttons&enable-funding=venmo,paylater&intent=capture`;
+    script.onload = renderPayPalButton;
+    document.body.appendChild(script);
+    function renderPayPalButton() {
+      if (!window.paypal) return;
+      paypal.Buttons({
+        createOrder: function(data, actions) {
+          // Call backend to create order
+          return fetch('/api/paypal/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount, currency: 'EUR', description: 'SichrPlace Premium', returnUrl: window.location.href, cancelUrl: window.location.href })
+          })
+          .then(res => res.json())
+          .then(data => data.paymentId);
+        },
+        onApprove: function(data, actions) {
+          // Show success message
+          document.getElementById('result').innerHTML = '<span class="success">Payment approved! Thank you for your purchase.</span>';
+        },
+        onError: function(err) {
+          document.getElementById('result').innerHTML = '<span class="error">Payment failed: ' + err + '</span>';
+        },
+        onCancel: function(data) {
+          document.getElementById('result').innerHTML = '<span class="error">Payment cancelled.</span>';
+        }
+      }).render('#paypal-button-container');
+    }
+  </script>
+</body>
+</html>

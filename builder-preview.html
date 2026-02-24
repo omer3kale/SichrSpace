@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SichrPlace Workspace Builder Preview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&family=Roboto:300,400,500,700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --radius: 18px;
+      --card: #FFFFFF;
+      --background: #FFFFFF;
+      --foreground: #222222;
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+    }
+
+    body { font-family: var(--body-font); background: var(--secondary); margin: 0; color: var(--foreground); }
+    header { background: var(--primary); color: #fff; padding: 24px; font-size: 1.5rem; font-family: var(--heading-font); }
+    .preview-root { max-width: 700px; margin: 40px auto; background: var(--card); " box-shadow: var(--shadow); padding: 32px; }
+    h2 { color: var(--primary); margin-top: 0; font-family: var(--heading-font); }
+    ul { list-style: none; padding: 0; }
+    li { margin-bottom: 18px; }
+    a { color: var(--primary); font-size: 1.1rem; text-decoration: none; font-family: var(--body-font); }
+    a:hover { text-decoration: underline; }
+    .section { margin-bottom: 32px; }
+    .file-path { color: var(--muted); font-size: 0.95em; margin-left: 8px; font-family: var(--body-font); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: #2563EB; font-weight: 700;">
+      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 40px;">
+    </a>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span><i class="fa fa-cubes"></i> Workspace Builder Preview</span>
+    </div>
+    <div id="test-mode-banner" style="display:none;background:#facc15;color:#222;padding:10px 0;text-align:center;font-weight:600;font-size:1.1em;letter-spacing:0.5px;position:relative;z-index:1001;">
+      <i class="fa fa-flask"></i> TEST MODE ENABLED: You are viewing a safe, read-only preview. All actions are disabled.
+      <span id="test-session-timer" style="margin-left:18px;font-weight:400;font-size:0.98em;color:#7c4700;"></span>
+    </div>
+  </header>
+  <button id="feedback-fab" style="display:none;position:fixed;bottom:32px;right:32px;z-index:1002;background:#2563EB;color:#fff;border:none;border-radius:50%;width:56px;height:56px;box-shadow:0 2px 8px rgba(0,0,0,0.18);font-size:2em;cursor:pointer;align-items:center;justify-content:center;">
+    <i class="fa fa-comment-dots"></i>
+  </button>
+  <div id="feedback-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.25);z-index:1003;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:32px 28px;border-radius:12px;max-width:420px;margin:auto;box-shadow:0 2px 16px rgba(0,0,0,0.12);">
+      <h3 style="color:#2563EB;margin-top:0;">Test Session Feedback</h3>
+      <p style="margin-bottom:8px;">Please share your experience or report any issues you found during testing:</p>
+      <textarea id="feedback-text" rows="5" style="width:100%;padding:8px 10px;font-size:1.05em;border-radius:6px;border:1px solid #bbb;"></textarea>
+      <div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end;">
+        <button onclick="hideFeedbackModal()" style="padding:6px 16px;background:#e0e7ff;color:#2563EB;border:none;border-radius:6px;cursor:pointer;">Cancel</button>
+        <button onclick="submitFeedback()" style="padding:6px 16px;background:#2563EB;color:#fff;border:none;border-radius:6px;cursor:pointer;">Submit</button>
+      </div>
+      <div id="feedback-success" style="display:none;color:#16a34a;margin-top:12px;font-weight:500;">Thank you for your feedback!</div>
+    </div>
+  </div>
+  <div class="preview-root">
+    <div class="section" id="test-link-section">
+      <h2><i class="fa fa-link"></i> Test User Workspace Link</h2>
+      <p>Share this link with users to let them preview the workspace in test mode:</p>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input id="test-link-input" type="text" value="[YOUR_WORKSPACE_URL]/builder-preview.html?test=1" readonly style="width:340px;padding:6px 10px;font-size:1.05em;">
+        <button onclick="copyTestLink()" style="padding:6px 16px;background:#2563EB;color:#fff;border:none;border-radius:6px;cursor:pointer;">Copy Link</button>
+        <button onclick="showTestInfoModal()" style="padding:6px 16px;background:#e0e7ff;color:#2563EB;border:none;border-radius:6px;cursor:pointer;">What does this do?</button>
+      </div>
+    </div>
+    <div id="test-info-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.25);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:#fff;padding:32px 28px;border-radius:12px;max-width:420px;margin:auto;box-shadow:0 2px 16px rgba(0,0,0,0.12);">
+        <h3 style="color:#2563EB;margin-top:0;">Test User Workspace Preview</h3>
+        <p>This link allows users to preview the entire workspace in a safe, read-only test mode. No real data will be changed, and all features are available for exploration and feedback.</p>
+        <ul style="color:#2563EB;font-size:1.05em;">
+          <li>All navigation and UI is available</li>
+          <li>Test data is shown (no real user data)</li>
+          <li>Actions are disabled or simulated</li>
+        </ul>
+        <button onclick="hideTestInfoModal()" style="margin-top:18px;padding:6px 16px;background:#2563EB;color:#fff;border:none;border-radius:6px;cursor:pointer;">Close</button>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Core Pages</h2>
+      <ul>
+        <li><a href="index.html" target="_blank"><i class="fa fa-home"></i> index.html</a> <span class="file-path">/index.html</span></li>
+        <li><a href="admin-dashboard.html" target="_blank"><i class="fa fa-user-shield"></i> Admin Dashboard</a> <span class="file-path">/admin-dashboard.html</span></li>
+        <li><a href="admin.html" target="_blank"><i class="fa fa-user-cog"></i> admin.html</a> <span class="file-path">/admin.html</span></li>
+        <li><a href="apartments-listing.html" target="_blank"><i class="fa fa-list"></i> apartments-listing.html</a> <span class="file-path">/apartments-listing.html</span></li>
+        <li><a href="add-property.html" target="_blank"><i class="fa fa-building"></i> add-property.html</a> <span class="file-path">/add-property.html</span></li>
+        <li><a href="applicant-dashboard.html" target="_blank"><i class="fa fa-user"></i> applicant-dashboard.html</a> <span class="file-path">/applicant-dashboard.html</span></li>
+        <li><a href="applicant-basic.html" target="_blank"><i class="fa fa-user"></i> applicant-basic.html</a> <span class="file-path">/applicant-basic.html</span></li>
+        <li><a href="create-account.html" target="_blank"><i class="fa fa-user-plus"></i> create-account.html</a> <span class="file-path">/create-account.html</span></li>
+        <li><a href="login.html" target="_blank"><i class="fa fa-sign-in-alt"></i> login.html</a> <span class="file-path">/login.html</span></li>
+        <li><a href="landlord-dashboard.html" target="_blank"><i class="fa fa-user-tie"></i> landlord-dashboard.html</a> <span class="file-path">/landlord-dashboard.html</span></li>
+        <li><a href="landlord-basic.html" target="_blank"><i class="fa fa-user-tie"></i> landlord-basic.html</a> <span class="file-path">/landlord-basic.html</span></li>
+        <li><a href="landlord-extended.html" target="_blank"><i class="fa fa-user-tie"></i> landlord-extended.html</a> <span class="file-path">/landlord-extended.html</span></li>
+        <li><a href="marketplace.html" target="_blank"><i class="fa fa-store"></i> marketplace.html</a> <span class="file-path">/marketplace.html</span></li>
+        <li><a href="offer.html" target="_blank"><i class="fa fa-file-alt"></i> offer.html</a> <span class="file-path">/offer.html</span></li>
+        <li><a href="viewing-request.html" target="_blank"><i class="fa fa-calendar-check"></i> viewing-request.html</a> <span class="file-path">/viewing-request.html</span></li>
+        <li><a href="chat.html" target="_blank"><i class="fa fa-comments"></i> chat.html</a> <span class="file-path">/chat.html</span></li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>React Components & Pages (src/)</h2>
+      <ul>
+        <li><a href="src/pages/ChatPage.jsx" target="_blank"><i class="fa fa-code"></i> ChatPage.jsx</a> <span class="file-path">/src/pages/ChatPage.jsx</span></li>
+        <li><a href="src/pages/ChatPage.css" target="_blank"><i class="fa fa-css3"></i> ChatPage.css</a> <span class="file-path">/src/pages/ChatPage.css</span></li>
+        <li><a href="src/components/ChatHeader.jsx" target="_blank"><i class="fa fa-code"></i> ChatHeader.jsx</a> <span class="file-path">/src/components/ChatHeader.jsx</span></li>
+        <li><a href="src/components/ChatInputBar.jsx" target="_blank"><i class="fa fa-code"></i> ChatInputBar.jsx</a> <span class="file-path">/src/components/ChatInputBar.jsx</span></li>
+        <li><a href="src/components/ChatMessages.jsx" target="_blank"><i class="fa fa-code"></i> ChatMessages.jsx</a> <span class="file-path">/src/components/ChatMessages.jsx</span></li>
+        <li><a href="src/components/ConversationList.jsx" target="_blank"><i class="fa fa-code"></i> ConversationList.jsx</a> <span class="file-path">/src/components/ConversationList.jsx</span></li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Backend & Server Files</h2>
+      <ul>
+        <li><a href="backend/app.js" target="_blank"><i class="fa fa-server"></i> backend/app.js</a></li>
+        <li><a href="backend/server.js" target="_blank"><i class="fa fa-server"></i> backend/server.js</a></li>
+        <li><a href="backend/package.json" target="_blank"><i class="fa fa-file-code"></i> backend/package.json</a></li>
+        <li><a href="backend/swagger.json" target="_blank"><i class="fa fa-file-code"></i> backend/swagger.json</a></li>
+        <li><a href="backend/Dockerfile" target="_blank"><i class="fa fa-cube"></i> backend/Dockerfile</a></li>
+        <li><a href="backend/.env" target="_blank"><i class="fa fa-key"></i> backend/.env</a></li>
+        <li><a href="backend/.env.test" target="_blank"><i class="fa fa-key"></i> backend/.env.test</a></li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Backend API, Models, Utils, Routes, Tests</h2>
+      <ul>
+        <li><a href="backend/api/conversations.js" target="_blank"><i class="fa fa-code"></i> api/conversations.js</a></li>
+        <li><a href="backend/api/csrf-token.js" target="_blank"><i class="fa fa-code"></i> api/csrf-token.js</a></li>
+        <li><a href="backend/api/send-message.js" target="_blank"><i class="fa fa-code"></i> api/send-message.js</a></li>
+        <li><a href="backend/api/upload-apartment.js" target="_blank"><i class="fa fa-code"></i> api/upload-apartment.js</a></li>
+        <li><a href="backend/api/viewing-confirmed.js" target="_blank"><i class="fa fa-code"></i> api/viewing-confirmed.js</a></li>
+        <li><a href="backend/api/viewing-didnt-work-out.js" target="_blank"><i class="fa fa-code"></i> api/viewing-didnt-work-out.js</a></li>
+        <li><a href="backend/api/viewing-ready.js" target="_blank"><i class="fa fa-code"></i> api/viewing-ready.js</a></li>
+        <li><a href="backend/api/viewing-request.js" target="_blank"><i class="fa fa-code"></i> api/viewing-request.js</a></li>
+        <li><a href="backend/models/Apartment.js" target="_blank"><i class="fa fa-database"></i> models/Apartment.js</a></li>
+        <li><a href="backend/models/Message.js" target="_blank"><i class="fa fa-database"></i> models/Message.js</a></li>
+        <li><a href="backend/models/Offer.js" target="_blank"><i class="fa fa-database"></i> models/Offer.js</a></li>
+        <li><a href="backend/models/User.js" target="_blank"><i class="fa fa-database"></i> models/User.js</a></li>
+        <li><a href="backend/models/ViewingRequest.js" target="_blank"><i class="fa fa-database"></i> models/ViewingRequest.js</a></li>
+        <li><a href="backend/routes/admin.js" target="_blank"><i class="fa fa-route"></i> routes/admin.js</a></li>
+        <li><a href="backend/routes/auth.js" target="_blank"><i class="fa fa-route"></i> routes/auth.js</a></li>
+        <li><a href="backend/routes/messages.js" target="_blank"><i class="fa fa-route"></i> routes/messages.js</a></li>
+        <li><a href="backend/tests/fixtures/apartment.jpg" target="_blank"><i class="fa fa-image"></i> tests/fixtures/apartment.jpg</a></li>
+      </ul>
+      <ul style="margin-top:10px;">
+        <li><b>backend/tests/</b>
+          <ul>
+            <li>admin-protected-route.test.js</li>
+            <li>admin.test.js</li>
+            <li>apartment-details.test.js</li>
+            <li>apartments.test.js</li>
+            <li>auth.test.js</li>
+            <li>booking-requests.test.js</li>
+            <li>booking.test.js</li>
+            <li>csrf-token.test.js</li>
+            <li>get-messages.test.js</li>
+            <li>health.test.js</li>
+            <li>messages.test.js</li>
+            <li>send-message.test.js</li>
+            <li>upload-apartment.test.js</li>
+            <li>fixtures/
+              <ul><li>apartment.jpg</li></ul>
+            </li>
+          </ul>
+        </li>
+        <li><b>backend/api/</b>
+          <ul>
+            <li>conversations.js</li>
+            <li>csrf-token.js</li>
+            <li>send-message.js</li>
+            <li>upload-apartment.js</li>
+            <li>viewing-confirmed.js</li>
+            <li>viewing-didnt-work-out.js</li>
+            <li>viewing-ready.js</li>
+            <li>viewing-request.js</li>
+          </ul>
+        </li>
+        <li><b>backend/models/</b>
+          <ul>
+            <li>Apartment.js</li>
+            <li>Message.js</li>
+            <li>Offer.js</li>
+            <li>User.js</li>
+            <li>ViewingRequest.js</li>
+          </ul>
+        </li>
+        <li><b>backend/utils/</b>
+          <ul>
+            <li>emailTemplates.js</li>
+            <li>mailer.js</li>
+            <li>seedAdmin.js</li>
+          </ul>
+        </li>
+        <li><b>backend/middleware/</b>
+          <ul>
+            <li>auth.js</li>
+            <li>errorHandler.js</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Frontend Source Structure</h2>
+      <ul>
+        <li><b>src/components/</b>
+          <ul>
+            <li>ChatHeader.jsx</li>
+            <li>ChatInputBar.jsx</li>
+            <li>ChatMessages.jsx</li>
+            <li>ConversationList.jsx</li>
+          </ul>
+        </li>
+        <li><b>src/pages/</b>
+          <ul>
+            <li>ChatPage.jsx</li>
+            <li>ChatPage.css</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Archive Structure</h2>
+      <ul>
+        <li><b>Archive/img/</b>
+          <ul>
+            <li>apartment1.jpg</li>
+            <li>apartment2.jpg</li>
+            <li>koeln.jpg</li>
+            <li>koeln2.jpg</li>
+            <li>koeln3.jpg</li>
+            <li>koeln4.jpg</li>
+            <li>koeln5.jpg</li>
+            <li>koeln6.jpg</li>
+            <li>logo.jpg</li>
+          </ul>
+        </li>
+        <li><b>Archive/js/</b>
+          <ul>
+            <li>offer.js</li>
+          </ul>
+        </li>
+      </ul>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Server Controllers & Routes</h2>
+      <ul>
+        <li><a href="server/controllers/adminController.js" target="_blank"><i class="fa fa-cogs"></i> controllers/adminController.js</a></li>
+        <li><a href="server/routes/messages.js" target="_blank"><i class="fa fa-route"></i> routes/messages.js</a></li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Workspace Utilities</h2>
+      <ul>
+        <li><a href="utils/mailer.js" target="_blank"><i class="fa fa-envelope"></i> utils/mailer.js</a></li>
+      </ul>
+    </div>
+    <!-- Admin Feedback Management Section (hidden in test mode) -->
+    <div class="section" id="admin-feedback-section" style="display:none;">
+      <h2><i class="fa fa-comments"></i> Feedback Management <span style="font-size:0.7em;color:#888;">(Admin Only)</span></h2>
+      <div style="margin-bottom:10px;">
+        <button id="load-feedback-btn" style="padding:6px 16px;background:#2563EB;color:#fff;border:none;border-radius:6px;cursor:pointer;">View Feedback</button>
+        <button id="download-feedback-btn" style="padding:6px 16px;background:#e0e7ff;color:#2563EB;border:none;border-radius:6px;cursor:pointer;margin-left:8px;">Download Log</button>
+        <button id="clear-feedback-btn" style="padding:6px 16px;background:#ef4444;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-left:8px;">Clear All</button>
+      </div>
+      <div id="feedback-log-container" style="background:#f4f6fa;border-radius:8px;padding:16px;max-height:320px;overflow:auto;font-size:1em;color:#222;border:1px solid #e5e7eb;"></div>
+      <div id="feedback-admin-status" style="margin-top:10px;font-size:1em;color:#16a34a;display:none;"></div>
+      <div style="margin-top:8px;color:#888;font-size:0.95em;">Feedback is only visible to admins. All actions require a valid admin token.</div>
+      <div style="margin-top:8px;">
+        <input id="admin-token-input" type="password" placeholder="Admin Token" style="width:220px;padding:6px 10px;font-size:1em;border-radius:6px;border:1px solid #bbb;">
+      </div>
+    </div>
+    <div class="section">
+      <h2>Uploads & Empty Folders</h2>
+      <ul>
+        <li><span class="fa fa-folder"></span> uploads/ (empty)</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>More Archive & Backend Files</h2>
+      <ul>
+        <li><a href="Archive/implementationsteps.txt" target="_blank"><i class="fa fa-file-alt"></i> Archive/implementationsteps.txt</a></li>
+        <li><a href="Archive/Apartment search platform.pdf" target="_blank"><i class="fa fa-file-pdf"></i> Archive/Apartment search platform.pdf</a></li>
+        <li><a href="backend/uploads/" target="_blank"><i class="fa fa-folder"></i> backend/uploads/</a></li>
+      </ul>
+        <li><a href="backend/middleware/auth.js" target="_blank"><i class="fa fa-shield-alt"></i> middleware/auth.js</a></li>
+        <li><a href="backend/middleware/errorHandler.js" target="_blank"><i class="fa fa-shield-alt"></i> middleware/errorHandler.js</a></li>
+        <li><a href="backend/utils/emailTemplates.js" target="_blank"><i class="fa fa-envelope"></i> utils/emailTemplates.js</a></li>
+        <li><a href="backend/utils/mailer.js" target="_blank"><i class="fa fa-envelope"></i> utils/mailer.js</a></li>
+        <li><a href="backend/utils/seedAdmin.js" target="_blank"><i class="fa fa-user-shield"></i> utils/seedAdmin.js</a></li>
+        <li><a href="backend/tests/admin-protected-route.test.js" target="_blank"><i class="fa fa-vial"></i> tests/admin-protected-route.test.js</a></li>
+        <li><a href="backend/tests/admin.test.js" target="_blank"><i class="fa fa-vial"></i> tests/admin.test.js</a></li>
+        <li><a href="backend/tests/apartment-details.test.js" target="_blank"><i class="fa fa-vial"></i> tests/apartment-details.test.js</a></li>
+        <li><a href="backend/tests/apartments.test.js" target="_blank"><i class="fa fa-vial"></i> tests/apartments.test.js</a></li>
+        <li><a href="backend/tests/auth.test.js" target="_blank"><i class="fa fa-vial"></i> tests/auth.test.js</a></li>
+        <li><a href="backend/tests/booking-requests.test.js" target="_blank"><i class="fa fa-vial"></i> tests/booking-requests.test.js</a></li>
+        <li><a href="backend/tests/booking.test.js" target="_blank"><i class="fa fa-vial"></i> tests/booking.test.js</a></li>
+        <li><a href="backend/tests/csrf-token.test.js" target="_blank"><i class="fa fa-vial"></i> tests/csrf-token.test.js</a></li>
+        <li><a href="backend/tests/get-messages.test.js" target="_blank"><i class="fa fa-vial"></i> tests/get-messages.test.js</a></li>
+        <li><a href="backend/tests/health.test.js" target="_blank"><i class="fa fa-vial"></i> tests/health.test.js</a></li>
+        <li><a href="backend/tests/messages.test.js" target="_blank"><i class="fa fa-vial"></i> tests/messages.test.js</a></li>
+        <li><a href="backend/tests/send-message.test.js" target="_blank"><i class="fa fa-vial"></i> tests/send-message.test.js</a></li>
+        <li><a href="backend/tests/upload-apartment.test.js" target="_blank"><i class="fa fa-vial"></i> tests/upload-apartment.test.js</a></li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Archive JS & Images</h2>
+      <ul>
+        <li><a href="Archive/js/offer.js" target="_blank"><i class="fa fa-js"></i> Archive/js/offer.js</a></li>
+        <li><a href="Archive/img/apartment1.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/apartment1.jpg</a></li>
+        <li><a href="Archive/img/apartment2.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/apartment2.jpg</a></li>
+        <li><a href="Archive/img/koeln.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/koeln.jpg</a></li>
+        <li><a href="Archive/img/koeln2.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/koeln2.jpg</a></li>
+        <li><a href="Archive/img/koeln3.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/koeln3.jpg</a></li>
+        <li><a href="Archive/img/koeln4.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/koeln4.jpg</a></li>
+        <li><a href="Archive/img/koeln5.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/koeln5.jpg</a></li>
+        <li><a href="Archive/img/koeln6.jpg" target="_blank"><i class="fa fa-image"></i> Archive/img/koeln6.jpg</a></li>
+        <li><a href="Archive/img/logo-shield.svg" target="_blank"><i class="fa fa-image"></i> Archive/img/logo-shield.svg</a></li>
+      </ul>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Images & Media</h2>
+      <ul>
+        <li><a href="img/apartment1.jpg" target="_blank"><i class="fa fa-image"></i> apartment1.jpg</a></li>
+        <li><a href="img/apartment2.jpg" target="_blank"><i class="fa fa-image"></i> apartment2.jpg</a></li>
+        <li><a href="img/koeln.jpg" target="_blank"><i class="fa fa-image"></i> koeln.jpg</a></li>
+        <li><a href="img/koeln2.jpg" target="_blank"><i class="fa fa-image"></i> koeln2.jpg</a></li>
+        <li><a href="img/koeln3.jpg" target="_blank"><i class="fa fa-image"></i> koeln3.jpg</a></li>
+        <li><a href="img/koeln4.jpg" target="_blank"><i class="fa fa-image"></i> koeln4.jpg</a></li>
+        <li><a href="img/koeln5.jpg" target="_blank"><i class="fa fa-image"></i> koeln5.jpg</a></li>
+        <li><a href="img/koeln6.jpg" target="_blank"><i class="fa fa-image"></i> koeln6.jpg</a></li>
+        <li><a href="img/logo-shield.svg" target="_blank"><i class="fa fa-image"></i> logo.jpg</a></li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Documentation & Resources</h2>
+      <ul>
+        <li><a href="# Code Citations.md" target="_blank"><i class="fa fa-file-alt"></i> # Code Citations.md</a></li>
+        <li><a href="Apartment search platform.pdf" target="_blank"><i class="fa fa-file-pdf"></i> Apartment search platform.pdf</a></li>
+        <li><a href="implementationsteps.txt" target="_blank"><i class="fa fa-file-alt"></i> implementationsteps.txt</a></li>
+        <li><a href="SichrPlace.zip" target="_blank"><i class="fa fa-file-archive"></i> SichrPlace.zip</a></li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Archive Pages</h2>
+      <ul>
+        <li><a href="Archive/index.html" target="_blank"><i class="fa fa-archive"></i> Archive index.html</a> <span class="file-path">/Archive/index.html</span></li>
+        <li><a href="Archive/apartments-listing.html" target="_blank"><i class="fa fa-list"></i> Archive apartments-listing.html</a> <span class="file-path">/Archive/apartments-listing.html</span></li>
+        <li><a href="Archive/apartment-offers.html" target="_blank"><i class="fa fa-building"></i> Archive apartment-offers.html</a> <span class="file-path">/Archive/apartment-offers.html</span></li>
+        <li><a href="Archive/applicant-dashboard.html" target="_blank"><i class="fa fa-user"></i> Archive applicant-dashboard.html</a> <span class="file-path">/Archive/applicant-dashboard.html</span></li>
+        <li><a href="Archive/applicant-basic.html" target="_blank"><i class="fa fa-user"></i> Archive applicant-basic.html</a> <span class="file-path">/Archive/applicant-basic.html</span></li>
+        <li><a href="Archive/create-account.html" target="_blank"><i class="fa fa-user-plus"></i> Archive create-account.html</a> <span class="file-path">/Archive/create-account.html</span></li>
+        <li><a href="Archive/landlord-dashboard.html" target="_blank"><i class="fa fa-user-tie"></i> Archive landlord-dashboard.html</a> <span class="file-path">/Archive/landlord-dashboard.html</span></li>
+        <li><a href="Archive/landlord-basic.html" target="_blank"><i class="fa fa-user-tie"></i> Archive landlord-basic.html</a> <span class="file-path">/Archive/landlord-basic.html</span></li>
+        <li><a href="Archive/landlord-extended.html" target="_blank"><i class="fa fa-user-tie"></i> Archive landlord-extended.html</a> <span class="file-path">/Archive/landlord-extended.html</span></li>
+        <li><a href="Archive/login.html" target="_blank"><i class="fa fa-sign-in-alt"></i> Archive login.html</a> <span class="file-path">/Archive/login.html</span></li>
+        <li><a href="Archive/offer.html" target="_blank"><i class="fa fa-file-alt"></i> Archive offer.html</a> <span class="file-path">/Archive/offer.html</span></li>
+      </ul>
+    </div>
+    <div class="section">
+      <h2>Other Resources</h2>
+      <ul>
+        <li><a href="Apartment search platform.pdf" target="_blank"><i class="fa fa-file-pdf"></i> Apartment search platform.pdf</a></li>
+        <li><a href="implementationsteps.txt" target="_blank"><i class="fa fa-file-alt"></i> implementationsteps.txt</a></li>
+      </ul>
+    </div>
+    <div style="color:#888; font-size:0.95em; margin-top:32px;">This preview page is auto-generated for workspace navigation and builder testing. For full dynamic features, run a local server.</div>
+  </div>
+</body>
+  <script>
+    // --- ADMIN FEEDBACK MANAGEMENT UI ---
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('test') !== '1') {
+        // Show admin feedback section
+        const adminSection = document.getElementById('admin-feedback-section');
+        if (adminSection) adminSection.style.display = 'block';
+        // Helper: get admin token
+        function getToken() {
+          return document.getElementById('admin-token-input').value.trim();
+        }
+        // Helper: show status
+        function showStatus(msg, color) {
+          const el = document.getElementById('feedback-admin-status');
+          el.textContent = msg;
+          el.style.color = color || '#16a34a';
+          el.style.display = 'block';
+          setTimeout(() => { el.style.display = 'none'; }, 2200);
+        }
+        // Load feedback log
+        document.getElementById('load-feedback-btn').onclick = function() {
+          const token = getToken();
+          if (!token) return showStatus('Enter admin token', '#ef4444');
+          fetch('/api/feedback', {
+            headers: { 'x-admin-token': token }
+          })
+          .then(res => {
+            if (!res.ok) throw new Error('Invalid token or error');
+            return res.json();
+          })
+          .then(data => {
+            const log = data.feedback || [];
+            const container = document.getElementById('feedback-log-container');
+            if (!log.length) {
+              container.innerHTML = '<em>No feedback yet.</em>';
+              return;
+            }
+            container.innerHTML = log.map(f =>
+              `<div style='margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #e5e7eb;'>
+                <div style='color:#2563EB;font-weight:500;'>${f.time ? new Date(f.time).toLocaleString() : ''}</div>
+                <div style='margin:6px 0;'>${f.feedback ? f.feedback.replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''}</div>
+                <div style='color:#888;font-size:0.95em;'>Session: ${f.session && f.session.length ? f.session.length + ' actions' : 'N/A'}</div>
+              </div>`
+            ).join('');
+            showStatus('Loaded feedback log');
+          })
+          .catch(() => showStatus('Failed to load feedback', '#ef4444'));
+        };
+        // Download feedback log
+        document.getElementById('download-feedback-btn').onclick = function() {
+          const token = getToken();
+          if (!token) return showStatus('Enter admin token', '#ef4444');
+          fetch('/api/feedback/download', {
+            headers: { 'x-admin-token': token }
+          })
+          .then(res => {
+            if (!res.ok) throw new Error('Invalid token or error');
+            return res.blob();
+          })
+          .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'feedback-log.json';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            showStatus('Downloaded log');
+          })
+          .catch(() => showStatus('Failed to download', '#ef4444'));
+        };
+        // Clear feedback log
+        document.getElementById('clear-feedback-btn').onclick = function() {
+          const token = getToken();
+          if (!token) return showStatus('Enter admin token', '#ef4444');
+          if (!confirm('Are you sure you want to clear all feedback?')) return;
+          fetch('/api/feedback', {
+            method: 'DELETE',
+            headers: { 'x-admin-token': token }
+          })
+          .then(res => {
+            if (!res.ok) throw new Error('Invalid token or error');
+            return res.json();
+          })
+          .then(() => {
+            document.getElementById('feedback-log-container').innerHTML = '<em>No feedback yet.</em>';
+            showStatus('Feedback log cleared');
+          })
+          .catch(() => showStatus('Failed to clear', '#ef4444'));
+        };
+      }
+    })();
+    function copyTestLink() {
+      const input = document.getElementById('test-link-input');
+      input.select();
+      input.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      alert('Test link copied to clipboard!');
+    }
+    function showTestInfoModal() {
+      document.getElementById('test-info-modal').style.display = 'flex';
+    }
+    function hideTestInfoModal() {
+      document.getElementById('test-info-modal').style.display = 'none';
+    }
+
+    // --- TEST MODE CUSTOMIZATION ---
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('test') === '1') {
+        // Show banner and feedback button
+        const banner = document.getElementById('test-mode-banner');
+        if (banner) banner.style.display = 'block';
+        const fab = document.getElementById('feedback-fab');
+        if (fab) fab.style.display = 'flex';
+        // Start session timer
+        let start = Date.now();
+        function updateTimer() {
+          const now = Date.now();
+          const elapsed = Math.floor((now - start) / 1000);
+          const min = Math.floor(elapsed / 60);
+          const sec = elapsed % 60;
+          const timer = document.getElementById('test-session-timer');
+          if (timer) timer.textContent = `Session: ${min}m ${sec < 10 ? '0' : ''}${sec}s`;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+        // Disable all forms
+        document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+              e.preventDefault();
+              alert('Test mode: Form submission is disabled.');
+              logTestAction('Form submission blocked', form.action || form.id || 'unknown form');
+            });
+          });
+          // Disable all buttons except test link/copy/info/feedback
+          document.querySelectorAll('button').forEach(btn => {
+            if (!btn.closest('#test-link-section') && !btn.closest('#test-info-modal') && btn.id !== 'feedback-fab' && !btn.closest('#feedback-modal')) {
+              btn.disabled = true;
+              btn.style.opacity = 0.6;
+              btn.title = 'Disabled in test mode';
+            }
+          });
+          // Optionally, replace sensitive data with mock/test data
+          document.body.innerHTML = document.body.innerHTML.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, 'sichrplace@gmail.com');
+        });
+        // Feedback modal logic
+        window.showFeedbackModal = function() {
+          document.getElementById('feedback-modal').style.display = 'flex';
+          document.getElementById('feedback-success').style.display = 'none';
+          document.getElementById('feedback-text').value = '';
+        };
+        window.hideFeedbackModal = function() {
+          document.getElementById('feedback-modal').style.display = 'none';
+        };
+        window.submitFeedback = function() {
+          const text = document.getElementById('feedback-text').value.trim();
+          if (!text) {
+            alert('Please enter your feedback.');
+            return;
+          }
+          // Send feedback to backend
+          const btns = document.querySelectorAll('#feedback-modal button');
+          btns.forEach(b => b.disabled = true);
+          fetch('/api/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ feedback: text, session: window.testActionLog || [] })
+          })
+          .then(res => {
+            if (!res.ok) throw new Error('Failed to submit feedback');
+            return res.json();
+          })
+          .then(() => {
+            document.getElementById('feedback-success').style.display = 'block';
+            setTimeout(() => {
+              document.getElementById('feedback-modal').style.display = 'none';
+            }, 1200);
+            logTestAction('Feedback submitted', text);
+          })
+          .catch(() => {
+            alert('There was a problem submitting your feedback. Please try again later.');
+          })
+          .finally(() => {
+            btns.forEach(b => b.disabled = false);
+          });
+        };
+        // Floating button event
+        fab && fab.addEventListener('click', showFeedbackModal);
+        // Log test actions
+        window.testActionLog = [];
+        window.logTestAction = function(action, detail) {
+          window.testActionLog.push({
+            time: new Date().toISOString(),
+            action,
+            detail
+          });
+          // Optionally, send to server or store in localStorage
+        };
+        // Log navigation
+        document.querySelectorAll('a').forEach(a => {
+          a.addEventListener('click', function(e) {
+            logTestAction('Navigation', a.href);
+          });
+        });
+      }
+    })();
+  </script>
+</html>
