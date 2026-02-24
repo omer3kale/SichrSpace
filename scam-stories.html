@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scam Stories - SichrPlace</title>
+    <meta name="description" content="Real stories and warnings about rental scams in Germany. Learn how to protect yourself and avoid fraudulent apartment listings.">
+    
+    <!-- Favicon and Icons -->
+    <link rel="icon" href="img/favicon.ico" sizes="any">
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="icon" href="img/favicon-96x96.png" sizes="96x96" type="image/png">
+    <link rel="icon" href="img/web-app-manifest-192x192.png" sizes="192x192" type="image/png">
+    <link rel="icon" href="img/web-app-manifest-512x512.png" sizes="512x512" type="image/png">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/logo-system.css">
+    
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-dark: #1d4ed8;
+            --primary-darker: #134cca;
+            --primary-light: #b1c7f8;
+            --primary-lighter: #DBEAFE;
+            --primary-hover: #5484ef;
+            --primary-accent: #60A5FA;
+            --secondary: #F9FAFB;
+            --accent: #40E0D0;
+            --text: #222;
+            --muted: #6b7280;
+            --card: #fff;
+            --radius: 18px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --border: #e1e5e9;
+            --heading-font: "Poppins", sans-serif;
+            --body-font: "Roboto", sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            font-family: var(--body-font);
+            background: var(--secondary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        /* Header Design - EXACTLY matching index.html */
+        header {
+            background: var(--card);
+            box-shadow: var(--shadow);
+            padding: 0 40px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            text-decoration: none;
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+        }
+        
+        .brand-text {
+            font-family: var(--heading-font);
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+        
+        .sichrplace-text {
+            color: var(--primary);
+        }
+        
+        nav {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            position: relative;
+        }
+        
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-family: var(--heading-font);
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        
+        nav a:hover {
+            color: var(--accent);
+        }
+        
+        .cart-icon {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-radius: 50%;
+            background: var(--primary-lighter);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .cart-icon:hover {
+            background: var(--primary) !important;
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        .cart-icon i {
+            font-size: 1.1rem;
+        }
+        
+        /* Language Switcher Styles - EXACTLY matching index.html */
+        .language-switcher {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .language-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--heading-font);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+        
+        .language-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .language-btn i:last-child {
+            font-size: 0.7rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .language-btn.active i:last-child {
+            transform: rotate(180deg);
+        }
+        
+        .language-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 140px;
+            z-index: 1000;
+            overflow: hidden;
+            margin-top: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .language-dropdown.active {
+            display: block;
+            animation: fadeInDown 0.2s ease-out;
+        }
+        
+        .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--text);
+            text-decoration: none;
+            font-family: var(--body-font);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        
+        .lang-option:last-child {
+            border-bottom: none;
+        }
+        
+        .lang-option:hover {
+            background: var(--secondary);
+        }
+        
+        .lang-option.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .flag-emoji {
+            font-size: 16px;
+            line-height: 1;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Main Content Styles */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-family: var(--heading-font);
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+        
+        .page-header p {
+            font-size: 1.1rem;
+            color: var(--muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .warning-banner {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        
+        .warning-banner i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .story-grid {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .story-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .story-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .story-header {
+            background: linear-gradient(135deg, #fef3c7, #fcd34d);
+            padding: 20px;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .story-header.danger {
+            background: linear-gradient(135deg, #fee2e2, #fca5a5);
+            border-left-color: #ef4444;
+        }
+        
+        .story-header h3 {
+            font-family: var(--heading-font);
+            margin: 0 0 8px 0;
+            color: var(--text);
+            font-size: 1.3rem;
+        }
+        
+        .story-meta {
+            font-size: 0.9rem;
+            color: var(--muted);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .story-content {
+            padding: 25px;
+        }
+        
+        .story-content p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+        
+        .red-flags {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .red-flags h4 {
+            color: #dc2626;
+            font-family: var(--heading-font);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .red-flags ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .red-flags li {
+            margin-bottom: 8px;
+            color: #7f1d1d;
+        }
+        
+        .prevention-tips {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-top: 40px;
+        }
+        
+        .prevention-tips h2 {
+            font-family: var(--heading-font);
+            color: var(--primary);
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+        
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .tip-card {
+            background: var(--secondary);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .tip-card h4 {
+            font-family: var(--heading-font);
+            color: var(--text);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tip-card i {
+            color: var(--accent);
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: var(--accent);
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 20px;
+            }
+            
+            nav {
+                gap: 16px;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .story-content {
+                padding: 20px;
+            }
+            
+            .prevention-tips {
+                padding: 20px;
+            }
+        }
+    </style>
+    
+    <script src="js/translation-handler.js" defer></script>
+    <script src="js/logo-cookie-manager.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="header-logo">
+            <a href="index.html" class="logo" aria-label="SichrPlace">
+                <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:block;">
+                <span class="brand-text">
+                    <span class="sichrplace-text">SichrPlace</span>
+                    <span class="certified-badge" style="display:none;">Verified</span>
+                </span>
+            </a>
+        </div>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+            <span class="menu-bar"></span>
+            <span class="menu-bar"></span>
+            <span class="menu-bar"></span>
+        </button>
+        <nav class="main-nav" id="main-nav">
+            <a href="login.html" data-translate="nav.login">Login</a>
+            <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
+            
+            <!-- View link for viewing requests -->
+            <a href="viewing-request.html" data-translate="nav.view">View</a>
+            
+            <!-- Marketplace Cart Icon - Enhanced Visibility -->
+            <a href="marketplace.html" class="cart-icon" title="Marketplace - Buy & Sell" aria-label="Marketplace" data-translate-title="nav.marketplace.title" data-translate-aria="nav.marketplace.aria">
+                <svg class="cart-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M7.01 18.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 2.999-.001Zm10 0a1.5 1.5 0 1 1-3.001 0 1.5 1.5 0 0 1 3.001 0ZM6.16 7l.44 2h11.56a1 1 0 0 1 .98 1.204l-1.2 6a1 1 0 0 1-.98.796H8.18a1 1 0 0 1-.98-.804L5.53 4.5H3a1 1 0 1 1 0-2h3a1 1 0 0 1 .98.804L7.62 7H6.16Z" fill="currentColor" />
+                </svg>
+                <span class="cart-label" data-translate="nav.marketplace.label">Marketplace</span>
+            </a>
+            
+            <!-- Language Switcher moved to the rightmost position -->
+            <div class="language-switcher">
+                <button class="language-btn" id="language-btn" aria-label="Switch Language">
+                    <i class="fas fa-globe"></i>
+                    <span id="current-lang">EN</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="language-dropdown" id="language-dropdown">
+                    <a href="#" data-lang="en" class="lang-option active">
+                        <span class="flag-emoji">🇺🇸</span>
+                        English
+                    </a>
+                    <a href="#" data-lang="de" class="lang-option">
+                        <span class="flag-emoji">🇩🇪</span>
+                        Deutsch
+                    </a>
+                    <a href="#" data-lang="tr" class="lang-option">
+                        <span class="flag-emoji">🇹🇷</span>
+                        Türkçe
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
+
+            <div class="page-header">
+                <h1><i class="fas fa-shield-alt"></i> Rental Scam Stories & Protection</h1>
+                <p>Learn from real experiences and protect yourself from rental scams in Germany. These stories help you identify red flags and stay safe while searching for apartments.</p>
+            </div>
+
+            <div class="warning-banner">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h2>Stay Alert - Scammers Are Active!</h2>
+                <p>Rental scams are unfortunately common in Germany's competitive housing market. Learn to spot the warning signs and protect yourself.</p>
+            </div>
+
+            <div class="story-grid">
+                <div class="story-card">
+                    <div class="story-header danger">
+                        <h3>🚨 The "Too Good to Be True" Apartment</h3>
+                        <div class="story-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Cologne</span>
+                            <span><i class="fas fa-calendar"></i> September 2025</span>
+                            <span><i class="fas fa-euro-sign"></i> €400/month claimed</span>
+                        </div>
+                    </div>
+                    <div class="story-content">
+                        <p><strong>Student Sarah's Story:</strong> "I found a beautiful 2-bedroom apartment in Cologne city center for only €400/month. The landlord claimed he was traveling and needed to rent it urgently."</p>
+                        
+                        <div class="red-flags">
+                            <h4><i class="fas fa-flag"></i> Red Flags Identified:</h4>
+                            <ul>
+                                <li>Price significantly below market rate</li>
+                                <li>Landlord claimed to be traveling/abroad</li>
+                                <li>Demanded deposit before viewing</li>
+                                <li>Poor German/English in communications</li>
+                                <li>Only communicated via email</li>
+                            </ul>
+                        </div>
+                        
+                        <p><strong>Outcome:</strong> Sarah wisely refused to send money without viewing. Later discovered the same photos were used in multiple fake listings across different cities.</p>
+                        
+                        <p><strong>Money Lost:</strong> €0 (Smart decision!)</p>
+                    </div>
+                </div>
+
+                <div class="story-card">
+                    <div class="story-header danger">
+                        <h3>⚠️ The Fake Viewing Scam</h3>
+                        <div class="story-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Berlin</span>
+                            <span><i class="fas fa-calendar"></i> August 2025</span>
+                            <span><i class="fas fa-euro-sign"></i> €150 viewing fee</span>
+                        </div>
+                    </div>
+                    <div class="story-content">
+                        <p><strong>Professional Mark's Experience:</strong> "A 'property manager' requested €150 upfront for a viewing, claiming it was to cover administration costs and ensure serious applicants only."</p>
+                        
+                        <div class="red-flags">
+                            <h4><i class="fas fa-flag"></i> Red Flags Identified:</h4>
+                            <ul>
+                                <li>Requested payment before viewing</li>
+                                <li>No official company registration</li>
+                                <li>Generic email address (not company domain)</li>
+                                <li>Pressure to pay immediately</li>
+                                <li>No physical office address</li>
+                            </ul>
+                        </div>
+                        
+                        <p><strong>Outcome:</strong> Mark paid the fee but the "property manager" disappeared. The apartment address didn't exist.</p>
+                        
+                        <p><strong>Money Lost:</strong> €150</p>
+                    </div>
+                </div>
+
+                <div class="story-card">
+                    <div class="story-header">
+                        <h3>✅ Success Story: How SichrPlace Protected Anna</h3>
+                        <div class="story-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Munich</span>
+                            <span><i class="fas fa-calendar"></i> September 2025</span>
+                            <span><i class="fas fa-shield-check"></i> Protected</span>
+                        </div>
+                    </div>
+                    <div class="story-content">
+                        <p><strong>Anna's Safe Experience:</strong> "I was looking for a student apartment in Munich and found SichrPlace. They verified everything before I even saw the listing."</p>
+                        
+                        <p><strong>SichrPlace Protection Features Used:</strong></p>
+                        <ul>
+                            <li><strong>Landlord Verification:</strong> All landlords are identity-verified</li>
+                            <li><strong>Property Authentication:</strong> Photos and documents verified</li>
+                            <li><strong>Secure Payments:</strong> No direct money transfers to strangers</li>
+                            <li><strong>Professional Viewing Service:</strong> Our team conducted the viewing</li>
+                            <li><strong>Digital Contract:</strong> Legal, secure contract process</li>
+                        </ul>
+                        
+                        <p><strong>Outcome:</strong> Anna found her perfect apartment through SichrPlace's secure platform and moved in safely.</p>
+                        
+                        <p><strong>Money Saved from Scams:</strong> Potentially hundreds of euros</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prevention-tips">
+                <h2><i class="fas fa-lightbulb"></i> How to Protect Yourself</h2>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h4><i class="fas fa-search"></i> Research First</h4>
+                        <p>Always verify the landlord's identity and check if the property really exists. Use Google Street View to verify addresses.</p>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <h4><i class="fas fa-eye"></i> Never Pay Before Viewing</h4>
+                        <p>Legitimate landlords never ask for money before you've seen the apartment. Always insist on viewing first.</p>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <h4><i class="fas fa-shield-alt"></i> Use Verified Platforms</h4>
+                        <p>Use platforms like SichrPlace that verify landlords and properties. Avoid dealing with unverified individuals.</p>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <h4><i class="fas fa-phone"></i> Meet in Person</h4>
+                        <p>Always meet the landlord or authorized agent in person. Video calls can be helpful but not sufficient alone.</p>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <h4><i class="fas fa-file-contract"></i> Check Legal Documents</h4>
+                        <p>Verify ownership documents, rental license, and ensure contracts are in proper German legal format.</p>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <h4><i class="fas fa-users"></i> Get Second Opinions</h4>
+                        <p>Ask friends, use student forums, or consult housing services at your university for advice.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-banner" style="margin-top: 40px;">
+                <h3><i class="fas fa-hands-helping"></i> Found a Scam? Report It!</h3>
+                <p>Help protect others by reporting suspected scams to <strong>sichrplace@gmail.com</strong> or local authorities.</p>
+                <p style="margin-top: 15px;">
+                    <a href="customer-service.html" style="color: white; text-decoration: underline; font-weight: 600;">
+                        Contact our support team →
+                    </a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Language switcher functionality (matching index.html)
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageBtn = document.getElementById('language-btn');
+            const languageDropdown = document.getElementById('language-dropdown');
+            const currentLangSpan = document.getElementById('current-lang');
+            
+            if (languageBtn && languageDropdown) {
+                // Toggle dropdown
+                languageBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    languageDropdown.classList.toggle('active');
+                    languageBtn.classList.toggle('active');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!languageBtn.contains(e.target) && !languageDropdown.contains(e.target)) {
+                        languageDropdown.classList.remove('active');
+                        languageBtn.classList.remove('active');
+                    }
+                });
+                
+                // Handle language selection
+                const langOptions = document.querySelectorAll('.lang-option');
+                langOptions.forEach(option => {
+                    option.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Remove active class from all options
+                        langOptions.forEach(opt => opt.classList.remove('active'));
+                        // Add active class to selected option
+                        this.classList.add('active');
+                        
+                        // Update current language display
+                        const selectedLang = this.getAttribute('data-lang').toUpperCase();
+                        currentLangSpan.textContent = selectedLang;
+                        
+                        // Close dropdown
+                        languageDropdown.classList.remove('active');
+                        languageBtn.classList.remove('active');
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

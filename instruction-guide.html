@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Guide - SichrPlace</title>
+    
+    <!-- Favicon and Icons -->
+    <link rel="icon" href="img/favicon.ico" sizes="any">
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    
+    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/logo-system.css" rel="stylesheet">
+    <script src="js/translation-handler.js" defer></script>
+    <script src="js/logo-cookie-manager.js" defer></script>
+    
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-dark: #1d4ed8;
+            --primary-light: #DBEAFE;
+            --secondary: #F9FAFB;
+            --accent: #40E0D0;
+            --text: #222;
+            --muted: #6b7280;
+            --card: #fff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --border: #E5E7EB;
+            --radius: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --heading-font: "Poppins", sans-serif;
+            --body-font: "Roboto", sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--body-font);
+            background: var(--secondary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: var(--heading-font);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .main-content {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: var(--heading-font);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: var(--muted);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .toc {
+            background: var(--primary-light);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .toc h3 {
+            font-family: var(--heading-font);
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .toc-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .toc-list li a {
+            display: block;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .toc-list li a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            font-family: var(--heading-font);
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        .section h3 {
+            font-family: var(--heading-font);
+            font-size: 1.4rem;
+            color: var(--text);
+            margin: 25px 0 15px 0;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .step-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        .step-title {
+            font-family: var(--heading-font);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--info) 0%, var(--primary) 100%);
+            color: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #fef3cd;
+            border-left: 4px solid var(--warning);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .success-box {
+            background: #d1fae5;
+            border-left: 4px solid var(--success);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-family: var(--heading-font);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .screenshot {
+            max-width: 100%;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin: 20px 0;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .toc-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">🏠 SichrPlace</a>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="apartments-listing.html">Apartments</a>
+                    <a href="marketplace.html">Marketplace</a>
+                    <a href="about.html">About</a>
+                    <a href="login.html">Login</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <h1 class="page-title">📖 Complete User Guide</h1>
+            <p class="page-subtitle">Everything you need to know about using SichrPlace - Your trusted rental platform</p>
+
+            <!-- Table of Contents -->
+            <div class="toc">
+                <h3>📋 Quick Navigation</h3>
+                <ul class="toc-list">
+                    <li><a href="#getting-started">Getting Started</a></li>
+                    <li><a href="#account-creation">Creating Your Account</a></li>
+                    <li><a href="#browsing-apartments">Browsing Apartments</a></li>
+                    <li><a href="#using-filters">Using Filters</a></li>
+                    <li><a href="#marketplace">Marketplace Features</a></li>
+                    <li><a href="#safety-tips">Safety Tips</a></li>
+                    <li><a href="#troubleshooting">Troubleshooting</a></li>
+                    <li><a href="#contact-support">Getting Help</a></li>
+                </ul>
+            </div>
+
+            <!-- Getting Started Section -->
+            <section id="getting-started" class="section">
+                <h2>🚀 Getting Started</h2>
+                
+                <div class="highlight-box">
+                    <h3>Welcome to SichrPlace!</h3>
+                    <p>SichrPlace is your trusted platform for finding secure, verified rental accommodations. We prioritize safety, transparency, and ease of use to help you find the perfect place to call home.</p>
+                </div>
+
+                <h3>Key Features</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🏠</div>
+                        <div class="feature-title">Verified Listings</div>
+                        <p>All apartments undergo strict verification to ensure quality and safety.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-title">Secure Platform</div>
+                        <p>Advanced security measures protect your personal information and transactions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🛒</div>
+                        <div class="feature-title">Marketplace</div>
+                        <p>Buy and sell furniture, appliances, and other rental essentials.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <div class="feature-title">Direct Communication</div>
+                        <p>Chat directly with landlords and other users through our secure messaging system.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Account Creation Section -->
+            <section id="account-creation" class="section">
+                <h2>👤 Creating Your Account</h2>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Navigate to Sign Up
+                    </div>
+                    <p>Click the "Login" button in the top navigation, then select "Create account" at the bottom of the login form.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Choose Your Account Type
+                    </div>
+                    <p>Select whether you're a:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Tenant:</strong> Looking for a place to rent</li>
+                        <li><strong>Landlord:</strong> Want to list your property</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        Fill Out Your Information
+                    </div>
+                    <p>Provide accurate information including:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Full name</li>
+                        <li>Valid email address</li>
+                        <li>Secure password (minimum 6 characters)</li>
+                        <li>Phone number</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <h4>⚠️ Account Creation Issues</h4>
+                    <p>If you encounter a "Network error" during account creation, this may be due to server maintenance. Please try again in a few minutes or contact support.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        Verify Your Email
+                    </div>
+                    <p>Check your email for a verification link and click it to activate your account.</p>
+                </div>
+            </section>
+
+            <!-- Browsing Apartments Section -->
+            <section id="browsing-apartments" class="section">
+                <h2>🔍 Browsing Apartments</h2>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Access the Listings
+                    </div>
+                    <p>Click "Apartments" in the main navigation or use the search button on the homepage.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Browse Available Properties
+                    </div>
+                    <p>Scroll through the listings to see:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Property photos</li>
+                        <li>Price per month</li>
+                        <li>Location and area</li>
+                        <li>Key features and amenities</li>
+                        <li>Availability dates</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        View Detailed Information
+                    </div>
+                    <p>Click on any listing to see:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Full property description</li>
+                        <li>All available photos</li>
+                        <li>Landlord information</li>
+                        <li>Contact details</li>
+                        <li>Lease terms and conditions</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Using Filters Section -->
+            <section id="using-filters" class="section">
+                <h2>🎯 Using Advanced Filters</h2>
+
+                <p>Our comprehensive filtering system helps you find exactly what you're looking for:</p>
+
+                <h3>Basic Filters</h3>
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Location & Dates
+                    </div>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>City/Area:</strong> Search by specific location</li>
+                        <li><strong>Move-in Date:</strong> When you want to start renting</li>
+                        <li><strong>Move-out Date:</strong> When you plan to leave</li>
+                        <li><strong>Available From/Until:</strong> Property availability window</li>
+                    </ul>
+                </div>
+
+                <h3>Property Details</h3>
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Room & Space Options
+                    </div>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Property Type:</strong> Shared room, private room, studio, apartment, house, flat share</li>
+                        <li><strong>Number of Rooms:</strong> Total rooms in the property</li>
+                        <li><strong>Bathrooms:</strong> Private, shared, or number of bathrooms</li>
+                        <li><strong>Max Roommates:</strong> How many people you're comfortable living with</li>
+                    </ul>
+                </div>
+
+                <h3>Rental Terms</h3>
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        Duration & Pricing
+                    </div>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Price Range:</strong> Maximum monthly rent you can afford</li>
+                        <li><strong>Rental Duration:</strong> Short-term, medium-term, long-term, or temporary</li>
+                        <li><strong>Minimum Stay:</strong> Shortest rental period accepted</li>
+                    </ul>
+                </div>
+
+                <h3>Amenities & Features</h3>
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        Comfort & Convenience
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div>
+                            <strong>Basic Amenities:</strong>
+                            <!-- End-to-End Process (Step-by-step) -->
+                        <section id="end-to-end" class="section">
+                            <h2>🧭 End-to-End: From Search to Signed Lease</h2>
+                            <p>This compact, step-by-step flow shows the entire experience from finding a property to signing a lease. Use this as a quick reference or follow the expanded sections below for details.</p>
+
+                            <div class="step-card">
+                                <div class="step-title">
+                                    <span class="step-number">1</span>
+                                    Discover Listings
+                                </div>
+                                <p>Search by city or address, apply filters (price, bedrooms, property type), then open listing details to view photos, amenities and availability.</p>
+                            </div>
+
+                            <div class="step-card">
+                                <div class="step-title">
+                                    <span class="step-number">2</span>
+                                    Contact & Schedule
+                                </div>
+                                <p>Use the "Contact" or "Schedule Viewing" button on a listing. Provide preferred dates and a short message. We coordinate professional viewings on your behalf.</p>
+                            </div>
+
+                            <div class="step-card">
+                                <div class="step-title">
+                                    <span class="step-number">3</span>
+                                    View & Verify
+                                </div>
+                                <p>Attend the viewing. Verify the apartment and landlord ID. After viewing, leave feedback and ask for additional photos or documents if needed.</p>
+                            </div>
+
+                            <div class="step-card">
+                                <div class="step-title">
+                                    <span class="step-number">4</span>
+                                    Negotiate & Confirm
+                                </div>
+                                <p>Agree on terms with the landlord. Use our messaging to confirm rent, move-in date, and any deposit requirements. Keep all communications in-platform for safety.</p>
+                            </div>
+
+                            <div class="step-card">
+                                <div class="step-title">
+                                    <span class="step-number">5</span>
+                                    Payments (Pilot) & Receipt
+                                </div>
+                                <p>If the listing uses platform-managed payments (pilot), follow the guided payment flow. Otherwise, arrange payment with the landlord and obtain a receipt. Never wire money without verification.</p>
+                            </div>
+
+                            <div class="step-card">
+                                <div class="step-title">
+                                    <span class="step-number">6</span>
+                                    Sign Agreement & Move In
+                                </div>
+                                <p>Sign the lease digitally or in person. Save a copy of the lease and receipts. Confirm move-in logistics with the landlord (keys, inventory checklist).</p>
+                            </div>
+
+                            <div class="step-card">
+                                <div class="step-title">
+                                    <span class="step-number">7</span>
+                                    Aftercare & Support
+                                </div>
+                                <p>Need help? Contact support through email or live chat. Report suspicious listings immediately.</p>
+                            </div>
+
+                            <p style="margin-top:12px; font-style:italic; color:var(--muted);">Tip: For detailed instructions on each step, scroll to the related sections below (Account Creation, Browsing, Filters, Marketplace, Troubleshooting).</p>
+
+                        </section>
+
+                            <!-- Account Creation Section -->
+                                <li>Kitchen</li>
+                                <li>Heating</li>
+                                <li>Air Conditioning</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Appliances:</strong>
+                            <ul style="margin-left: 15px;">
+                                <li>Washing Machine</li>
+                                <li>Dryer</li>
+                                <li>Dishwasher</li>
+                                <li>TV</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Building Features:</strong>
+                            <ul style="margin-left: 15px;">
+                                <li>Lift</li>
+                                <li>Parking</li>
+                                <li>Balcony</li>
+                                <li>Garden</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Special Features:</strong>
+                            <ul style="margin-left: 15px;">
+                                <li>Wheelchair Accessible</li>
+                                <li>Pets Allowed</li>
+                                <li>Private Bathroom</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Bed Types Available</h3>
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">5</span>
+                        Sleeping Arrangements
+                    </div>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Single Bed:</strong> Perfect for one person</li>
+                        <li><strong>Double Bed:</strong> Comfortable for couples</li>
+                        <li><strong>Queen/King Bed:</strong> Spacious sleeping options</li>
+                        <li><strong>Hochbett (Bunk Bed):</strong> Space-saving option</li>
+                        <li><strong>Sofa Bed:</strong> Multi-purpose furniture</li>
+                        <li><strong>No Bed Provided:</strong> Bring your own bed</li>
+                    </ul>
+                </div>
+
+                <div class="success-box">
+                    <h4>💡 Pro Tip</h4>
+                    <p>Use multiple filters together to narrow down your search. The more specific you are, the better matches you'll find!</p>
+                </div>
+            </section>
+
+            <!-- Marketplace Section -->
+            <section id="marketplace" class="section">
+                <h2>🛒 Marketplace Features</h2>
+
+                <p>Our marketplace allows you to buy and sell items essential for your rental experience:</p>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Accessing the Marketplace
+                    </div>
+                    <p>Click the shopping cart icon in the top navigation or select "Marketplace" from the menu.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Browse Categories
+                    </div>
+                    <ul style="margin-left: 20px;">
+                        <li>Furniture (beds, chairs, tables, sofas)</li>
+                        <li>Appliances (fridges, washing machines, microwaves)</li>
+                        <li>Home decor and accessories</li>
+                        <li>Electronics and gadgets</li>
+                        <li>Kitchen essentials</li>
+                        <li>Study and work equipment</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        Buying Items
+                    </div>
+                    <p>Contact sellers directly through our secure messaging system to arrange purchases and pickups.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        Selling Items
+                    </div>
+                    <p>List your unwanted items when moving out or upgrading your living space.</p>
+                </div>
+            </section>
+
+            <!-- Safety Tips Section -->
+            <section id="safety-tips" class="section">
+                <h2>🛡️ Safety Tips</h2>
+
+                <div class="warning-box">
+                    <h4>🚨 Important Safety Guidelines</h4>
+                    <p>Your safety is our top priority. Please follow these guidelines when using SichrPlace:</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Verify Listings
+                    </div>
+                    <ul style="margin-left: 20px;">
+                        <li>Always request to see the property in person before paying</li>
+                        <li>Verify the landlord's identity and ownership documents</li>
+                        <li>Be cautious of deals that seem too good to be true</li>
+                        <li>Check for proper business licenses if dealing with agencies</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Secure Communication
+                    </div>
+                    <ul style="margin-left: 20px;">
+                        <li>Use our platform's messaging system for initial communications</li>
+                        <li>Never share personal financial information via chat</li>
+                        <li>Meet in public places for initial discussions</li>
+                        <li>Bring a friend when viewing properties</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        Financial Safety
+                    </div>
+                    <ul style="margin-left: 20px;">
+                        <li>Never wire money or transfer funds upfront</li>
+                        <li>Use secure payment methods with buyer protection</li>
+                        <li>Get receipts for all payments made</li>
+                        <li>Read and understand all contract terms</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        Report Suspicious Activity
+                    </div>
+                    <p>If you encounter any suspicious listings, users, or activities, report them immediately to our support team.</p>
+                </div>
+            </section>
+
+            <!-- Troubleshooting Section -->
+            <section id="troubleshooting" class="section">
+                <h2>🔧 Troubleshooting Common Issues</h2>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Account Creation Problems
+                    </div>
+                    <p><strong>Issue:</strong> "Network error. Please try again" message</p>
+                    <p><strong>Solutions:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Check your internet connection</li>
+                        <li>Clear your browser cache and cookies</li>
+                        <li>Try a different browser or device</li>
+                        <li>Contact support if the issue persists</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Language Switcher Issues
+                    </div>
+                    <p><strong>Issue:</strong> Language dropdown disappears when clicked</p>
+                    <p><strong>Solutions:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Refresh the page</li>
+                        <li>Clear browser cache</li>
+                        <li>Disable browser extensions temporarily</li>
+                        <li>Try using keyboard navigation (Tab key)</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        Page Not Found Errors
+                    </div>
+                    <p><strong>Issue:</strong> Footer links return "page not found"</p>
+                    <p><strong>Solutions:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Try accessing pages directly from the main navigation</li>
+                        <li>Check if you're using the correct URL</li>
+                        <li>Contact support to report broken links</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        Mobile Display Issues
+                    </div>
+                    <p><strong>Issue:</strong> Website doesn't display properly on mobile</p>
+                    <p><strong>Solutions:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Rotate your device to landscape mode</li>
+                        <li>Zoom out to see full content</li>
+                        <li>Use the desktop version if mobile issues persist</li>
+                        <li>Update your mobile browser</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Contact Support Section -->
+            <section id="contact-support" class="section">
+                <h2>💬 Getting Help</h2>
+
+                <div class="highlight-box">
+                    <h3>Need Assistance?</h3>
+                    <p>Our support team is here to help you have the best experience possible on SichrPlace.</p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📧</div>
+                        <div class="feature-title">Email Support</div>
+                        <p>Send us detailed questions and we'll respond within 24 hours.</p>
+                        <div class="code-block">support@sichrplace.com</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <div class="feature-title">Live Chat</div>
+                        <p>Get instant help with our live chat feature (available during business hours).</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📞</div>
+                        <div class="feature-title">Phone Support</div>
+                        <p>Call us for urgent issues or complex questions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">❓</div>
+                        <div class="feature-title">FAQ Section</div>
+                        <p>Check our FAQ page for quick answers to common questions.</p>
+                        <a href="faq.html" style="color: var(--primary);">Visit FAQ</a>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <h4>📝 When Contacting Support</h4>
+                    <p>Please provide:</p>
+                    <ul style="margin-left: 20px;">
+                        <li>Your account email address</li>
+                        <li>Detailed description of the issue</li>
+                        <li>Screenshots if applicable</li>
+                        <li>Browser and device information</li>
+                        <li>Steps you've already tried</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="highlight-box" style="text-align: center; margin-top: 40px;">
+                <h3>🎉 Ready to Get Started?</h3>
+                <p>Now that you know how to use SichrPlace, it's time to find your perfect rental!</p>
+                <div style="margin-top: 20px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <a href="apartments-listing.html" style="background: white; color: var(--primary); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">Browse Apartments</a>
+                    <a href="create-account.html" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid white;">Create Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: var(--primary); color: #fff; padding: 32px 0 16px 0; text-align: center; margin-top: 60px;">
+        <div style="margin-bottom: 12px; display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;">
+            <a href="about.html" style="color:#fff;text-decoration:none;font-weight:500;transition:color 0.2s;">About</a>
+            <a href="faq.html" style="color:#fff;text-decoration:none;font-weight:500;transition:color 0.2s;">FAQ</a>
+            <a href="customer-service.html" style="color:#fff;text-decoration:none;font-weight:500;transition:color 0.2s;">Customer Service</a>
+            <a href="marketplace.html" style="color:#fff;text-decoration:none;font-weight:500;transition:color 0.2s;">Marketplace</a>
+        </div>
+        <div style="margin-top:10px;display:flex;justify-content:center;gap:18px;">
+            <a href="https://www.linkedin.com/company/sichrplace/" target="_blank" style="color:#fff;font-size:1.3rem;transition:color 0.2s;"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.facebook.com/sichrplace" target="_blank" style="color:#fff;font-size:1.3rem;transition:color 0.2s;"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/sichrplace" target="_blank" style="color:#fff;font-size:1.3rem;transition:color 0.2s;"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.tiktok.com/@sichrplace" target="_blank" style="color:#fff;font-size:1.3rem;transition:color 0.2s;"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <p style="margin-top:16px;">&copy; 2025 SichrPlace. All rights reserved.<br>
+            Created by <a href="https://www.linkedin.com/in/z%C3%A9t%C3%A9ny-dobos/?originalSubdomain=hu" style="color:#40E0D0;">Zétény Dobos</a> and <a href="https://www.linkedin.com/in/%C3%B6mer-%C3%BC%C3%A7kale-482787202/" style="color:#40E0D0;">Ömer Üçkale</a>.
+        </p>
+    </footer>
+</body>
+</html>

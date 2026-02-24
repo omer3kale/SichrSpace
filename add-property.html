@@ -8,9 +8,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- PayPal SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id=AcPYlXozR8VS9kJSk7rv5MW36lMV66ZMyqZKjM0YVuvt0dJ1cIyHRvDmGeux0qu3gBOh6XswI5gin2WO&currency=EUR&locale=de_DE&components=buttons&enable-funding=venmo,paylater"></script>
-  <script src="js/paypal-integration.js"></script>
+  <!-- 🔥 BULLETPROOF PAYPAL INTEGRATION -->
+  <script src="js/bulletproof-paypal-integration.js"></script>
   
   <style>
     :root {
@@ -77,7 +76,6 @@
 
     .logo img {
       height: 40px;
-      "
     }
 
     nav {
@@ -99,6 +97,37 @@
       color: var(--accent);
     }
 
+    .cart-icon {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 40px !important;
+      height: 40px !important;
+      padding: 0 !important;
+      border-radius: 8px !important;
+      background: transparent !important;
+      color: var(--primary) !important;
+      box-shadow: none !important;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .cart-icon:hover {
+      background: transparent !important;
+      color: var(--accent) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: none !important;
+    }
+
+    .cart-label {
+      display: none !important;
+    }
+
+    .cart-icon-svg,
+    .cart-icon i,
+    .cart-icon .cart-fallback {
+      color: currentColor !important;
+    }
+
     .container {
       max-width: 950px;
       margin: 60px auto 0 auto;
@@ -116,12 +145,10 @@
       width: 60px;
       height: 4px;
       background: linear-gradient(90deg, var(--primary), var(--accent));
-      "
     }
 
     .form-card {
       background: var(--card);
-      "
       padding: 40px 32px;
       box-shadow: var(--shadow);
       margin-bottom: 40px;
@@ -170,7 +197,6 @@
       width: 100%;
       padding: 18px 24px;
       border: 1px solid var(--border);
-      "
       font-size: 1.1rem;
       font-family: var(--body-font);
       transition: border-color 0.3s, box-shadow 0.3s;
@@ -191,7 +217,6 @@
 
     .file-upload {
       border: 2px dashed var(--border);
-      "
       padding: 3rem 2rem;
       text-align: center;
       cursor: pointer;
@@ -224,7 +249,6 @@
 
     .file-preview-item {
       position: relative;
-      "
       overflow: hidden;
       background: var(--secondary);
       box-shadow: 0 1px 4px rgba(0,0,0,0.04);
@@ -243,7 +267,6 @@
       background: var(--danger);
       color: white;
       border: none;
-      "
       width: 28px;
       height: 28px;
       cursor: pointer;
@@ -259,7 +282,6 @@
       gap: 0.5rem;
       padding: 18px 32px;
       border: none;
-      "
       font-size: 1.1rem;
       font-weight: 600;
       font-family: var(--heading-font);
@@ -301,7 +323,6 @@
 
     .success-message, .error-message {
       padding: 16px 18px;
-      "
       margin-bottom: 18px;
       display: none;
       font-family: var(--body-font);
@@ -334,7 +355,6 @@
       gap: 12px;
       padding: 12px 16px;
       background: #f9fafb;
-      "
       cursor: pointer;
       transition: all 0.2s;
       border: 1px solid transparent;
@@ -360,6 +380,84 @@
     .amenity-item span {
       font-family: var(--body-font);
       font-size: 1rem;
+    }
+
+    /* Rent Type Selection Styles */
+    .rent-type-selection {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .rent-type-option {
+      font-weight: normal !important;
+      display: block;
+      background: #f9fafb;
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .rent-type-option:hover {
+      background: rgba(64, 224, 208, 0.05);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(64, 224, 208, 0.15);
+    }
+
+    .rent-type-option input[type="radio"] {
+      display: none;
+    }
+
+    .rent-type-option input[type="radio"]:checked + .rent-type-content {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+    }
+
+    .rent-type-option input[type="radio"]:checked + .rent-type-content i {
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .rent-type-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .rent-type-content i {
+      font-size: 1.8rem;
+      color: var(--primary);
+      transition: all 0.3s ease;
+      min-width: 24px;
+    }
+
+    .rent-type-info {
+      flex: 1;
+    }
+
+    .rent-type-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+      font-family: var(--heading-font);
+    }
+
+    .rent-type-description {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 768px) {
+      .rent-type-selection {
+        grid-template-columns: 1fr;
+      }
     }
 
     .premium-features-grid {
@@ -442,13 +540,57 @@
 </head>
 <body>
   <header>
-    <img src="img/SichrPlaceLogo_944x944.jpg" class="logo" data-type="logo" alt="SichrPlace" style="height: 70px;">
-    <a href="index.html" class="logo">
-    </a>
-    <nav>
-      <a href="landlord-dashboard.html" style="color: white; text-decoration: none;">
-        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    <div class="header-logo">
+      <a href="index.html" class="logo" aria-label="SichrPlace">
+        <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:block;">
+        <span class="brand-text">
+          <span class="sichrplace-text">SichrPlace</span>
+          <span class="certified-badge" style="display:none;">Verified</span>
+        </span>
       </a>
+    </div>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+    </button>
+    <nav class="main-nav" id="main-nav">
+      <a href="login.html" data-translate="nav.login">Login</a>
+      <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
+      
+      <!-- View link for viewing requests -->
+      <a href="viewing-request.html" data-translate="nav.view">View</a>
+      
+      <!-- Marketplace Cart Icon - Enhanced Visibility -->
+      <a href="marketplace.html" class="cart-icon" title="Marketplace - Buy & Sell" aria-label="Marketplace" data-translate-title="nav.marketplace.title" data-translate-aria="nav.marketplace.aria">
+        <svg class="cart-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7.01 18.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 2.999-.001Zm10 0a1.5 1.5 0 1 1-3.001 0 1.5 1.5 0 0 1 3.001 0ZM6.16 7l.44 2h11.56a1 1 0 0 1 .98 1.204l-1.2 6a1 1 0 0 1-.98.796H8.18a1 1 0 0 1-.98-.804L5.53 4.5H3a1 1 0 1 1 0-2h3a1 1 0 0 1 .98.804L7.62 7H6.16Z" fill="currentColor" />
+        </svg>
+        <span class="cart-label" data-translate="nav.marketplace.label">Marketplace</span>
+      </a>
+      
+      <!-- Language Switcher moved to the rightmost position -->
+      <div class="language-switcher">
+        <button class="language-btn" id="language-btn" aria-label="Switch Language">
+          <i class="fas fa-globe"></i>
+          <span id="current-lang">EN</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="language-dropdown">
+          <a href="#" data-lang="en" class="lang-option active">
+            <span class="flag-emoji">🇺🇸</span>
+            English
+          </a>
+          <a href="#" data-lang="de" class="lang-option">
+            <span class="flag-emoji">🇩🇪</span>
+            Deutsch
+          </a>
+          <a href="#" data-lang="tr" class="lang-option">
+            <span class="flag-emoji">🇹🇷</span>
+            Türkçe
+          </a>
+        </div>
+      </div>
     </nav>
   </header>
 
@@ -558,13 +700,40 @@
         <div class="form-row">
           <div class="form-group">
             <label for="rent">Monthly Rent (€) *</label>
-            <input type="number" id="rent" name="rent" required
+            <input type="number" id="rent" name="rent_amount" required
                    placeholder="1200" min="1">
           </div>
           <div class="form-group">
             <label for="deposit">Security Deposit (€)</label>
-            <input type="number" id="deposit" name="deposit"
+            <input type="number" id="deposit" name="deposit_amount"
                    placeholder="2400" min="0">
+          </div>
+        </div>
+
+        <!-- Rent Type (German Market Standard) -->
+        <div class="form-group">
+          <label>Rent Type *</label>
+          <div class="rent-type-selection">
+            <label class="rent-type-option">
+              <input type="radio" name="rent-type" value="kalt" required>
+              <div class="rent-type-content">
+                <i class="fas fa-snowflake"></i>
+                <div class="rent-type-info">
+                  <div class="rent-type-title">Kaltmiete (Cold Rent)</div>
+                  <div class="rent-type-description">Base rent without utilities (heating, water, electricity)</div>
+                </div>
+              </div>
+            </label>
+            <label class="rent-type-option">
+              <input type="radio" name="rent-type" value="warm" required>
+              <div class="rent-type-content">
+                <i class="fas fa-fire"></i>
+                <div class="rent-type-info">
+                  <div class="rent-type-title">Warmmiete (Warm Rent)</div>
+                  <div class="rent-type-description">Rent including utilities (heating, water, sometimes electricity)</div>
+                </div>
+              </div>
+            </label>
           </div>
         </div>
 
@@ -790,6 +959,9 @@
       const area = document.getElementById('area').value;
       const deposit = document.getElementById('deposit').value;
       
+      // Get rent type selection
+      const rentType = document.querySelector('input[name="rent-type"]:checked');
+      
       // Validate required fields with enhanced checks
       if (title.length < 5) {
         showError('Property title must be at least 5 characters long');
@@ -815,6 +987,12 @@
       
       if (rent <= 0 || rent > 50000) {
         showError('Monthly rent must be between €1 and €50,000');
+        return;
+      }
+      
+      // Validate rent type selection
+      if (!rentType) {
+        showError('Please select rent type (Kaltmiete or Warmmiete)');
         return;
       }
       
@@ -923,57 +1101,96 @@
       initializePayPalFeatures();
     });
 
-    // PayPal Integration for Add Property Premium Features
+    // 🔥 BULLETPROOF PAYPAL INTEGRATION FOR ADD PROPERTY PREMIUM FEATURES
     function initializePayPalFeatures() {
-      if (typeof PayPalIntegration !== 'undefined') {
-        const paypalIntegration = new PayPalIntegration();
+      if (typeof window.bulletproofPayPal !== 'undefined') {
+        console.log('✅ Initializing bulletproof PayPal for premium property features');
         
         // Featured Listing PayPal Button
         if (document.getElementById('featured-add-property-paypal')) {
-          paypalIntegration.createPremiumPaymentButton(
+          window.bulletproofPayPal.createMarketplacePaymentButton(
             'featured-add-property-paypal',
-            'Featured Listing',
-            '19.99',
-            'Feature your property at the top of search results',
-            function(data) {
-              console.log('Featured listing payment successful:', data);
-              showAddPropertySuccess('Your property will be featured for 30 days! 🌟');
-              markFeatureAsPurchased('featured-add-property-paypal', 'Featured');
+            {
+              itemId: 'feature_listing_' + Date.now(),
+              itemData: {
+                title: 'Featured Property Listing',
+                price: 19.99,
+                description: 'Feature your property at the top of search results for 30 days',
+                sellerEmail: 'premium@sichrplace.com'
+              },
+              onSuccess: (result) => {
+                console.log('✅ Featured listing payment successful:', result);
+                showAddPropertySuccess('Your property will be featured for 30 days! 🌟');
+                markFeatureAsPurchased('featured-add-property-paypal', 'Featured');
+              },
+              onError: (error) => {
+                console.error('❌ Featured listing payment failed:', error);
+                alert('Payment failed. Please try again.');
+              },
+              onCancel: () => {
+                console.log('Payment cancelled by user');
+              }
             }
           );
         }
 
         // Premium Photos PayPal Button
         if (document.getElementById('premium-photos-paypal')) {
-          paypalIntegration.createPremiumPaymentButton(
+          window.bulletproofPayPal.createMarketplacePaymentButton(
             'premium-photos-paypal',
-            'Premium Photos',
-            '12.99',
-            'Professional photo enhancement and virtual staging',
-            function(data) {
-              console.log('Premium photos payment successful:', data);
-              showAddPropertySuccess('Premium photo enhancement activated! 📸');
-              markFeatureAsPurchased('premium-photos-paypal', 'Enhanced');
+            {
+              itemId: 'premium_photos_' + Date.now(),
+              itemData: {
+                title: 'Premium Photo Enhancement',
+                price: 12.99,
+                description: 'Professional photo enhancement and virtual staging',
+                sellerEmail: 'premium@sichrplace.com'
+              },
+              onSuccess: (result) => {
+                console.log('✅ Premium photos payment successful:', result);
+                showAddPropertySuccess('Premium photo enhancement activated! 📸');
+                markFeatureAsPurchased('premium-photos-paypal', 'Enhanced');
+              },
+              onError: (error) => {
+                console.error('❌ Premium photos payment failed:', error);
+                alert('Payment failed. Please try again.');
+              },
+              onCancel: () => {
+                console.log('Payment cancelled by user');
+              }
             }
           );
         }
 
         // Priority Listing PayPal Button
         if (document.getElementById('priority-listing-paypal')) {
-          paypalIntegration.createPremiumPaymentButton(
+          window.bulletproofPayPal.createMarketplacePaymentButton(
             'priority-listing-paypal',
-            'Priority Listing',
-            '9.99',
-            'Show your property first in search results',
-            function(data) {
-              console.log('Priority listing payment successful:', data);
-              showAddPropertySuccess('Priority listing activated for 14 days! 🚀');
-              markFeatureAsPurchased('priority-listing-paypal', 'Priority');
+            {
+              itemId: 'priority_listing_' + Date.now(),
+              itemData: {
+                title: 'Priority Property Listing',
+                price: 9.99,
+                description: 'Show your property first in search results for 14 days',
+                sellerEmail: 'premium@sichrplace.com'
+              },
+              onSuccess: (result) => {
+                console.log('✅ Priority listing payment successful:', result);
+                showAddPropertySuccess('Priority listing activated for 14 days! 🚀');
+                markFeatureAsPurchased('priority-listing-paypal', 'Priority');
+              },
+              onError: (error) => {
+                console.error('❌ Priority listing payment failed:', error);
+                alert('Payment failed. Please try again.');
+              },
+              onCancel: () => {
+                console.log('Payment cancelled by user');
+              }
             }
           );
         }
       } else {
-        console.warn('PayPal integration not available. Please ensure paypal-integration.js is loaded.');
+        console.warn('⚠️ Bulletproof PayPal integration not available. Please ensure bulletproof-paypal-integration.js is loaded.');
       }
     }
 
@@ -1015,8 +1232,8 @@
   <!-- SichrPlace Footer -->
   <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid #E5E7EB; background: var(--secondary);">
       <div class="footer-brand" style="text-align: center; margin: 20px 0;">
-          <img src="img/SichrPlaceLogo_944x944.jpg" alt="SichrPlace Logo" class="footer-logo" style="height: 48px; width: auto; margin-bottom: 10px;">
-          <div class="footer-brand-text" style="color: #6B7280; font-size: 14px;">
+          
+        <div class="footer-brand-text" style="color: #6B7280; font-size: 14px;">
               Your Trusted Rental Platform
           </div>
       </div>
@@ -1027,5 +1244,6 @@
       </div>
       <p style="text-align: center; color: #9CA3AF; font-size: 12px; margin: 10px 0 0 0;">&copy; 2025 SichrPlace. All rights reserved.</p>
   </footer>
+  <script src="js/translation-handler.js"></script>
 </body>
 </html>

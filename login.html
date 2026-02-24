@@ -17,7 +17,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap">
     <link rel="stylesheet" href="css/logo-system.css">
-    <script src="js/language-switcher.js" defer></script>
+    <script src="js/translation-handler.js" defer></script>
     <script src="js/logo-cookie-manager.js" defer></script>
     
     <style>
@@ -54,11 +54,11 @@
             font-family: var(--body-font);
             background: linear-gradient(135deg, var(--primary-lighter) 0%, var(--secondary) 50%, var(--primary-light) 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
             color: var(--text);
             position: relative;
             overflow-x: hidden;
+            margin: 0;
+            padding: 0;
         }
 
         body::before {
@@ -86,6 +86,15 @@
             align-items: center;
             justify-content: center;
             padding: 2rem;
+            min-height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            margin: 0;
+            box-sizing: border-box;
         }
 
         .login-card {
@@ -99,6 +108,17 @@
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .sichrplace-logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-family: var(--heading-font);
+            font-weight: 700;
+            font-size: 1.8rem;
+            padding-top: 0.5rem;
         }
 
         .login-card::before {
@@ -113,20 +133,20 @@
 
         .logo-section {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .logo-section h1 {
             font-family: var(--heading-font);
             font-size: 2rem;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--text);
             margin-bottom: 0.5rem;
         }
 
         .logo-section p {
             color: var(--muted);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .form-group {
@@ -292,64 +312,170 @@
             text-decoration: underline;
         }
 
-        .nav-back {
-            position: absolute;
-            top: 2rem;
-            left: 2rem;
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .nav-back:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(-2px);
-        }
-
         @media (max-width: 640px) {
             .container {
                 padding: 1rem;
             }
             
             .login-card {
-                padding: 2rem;
+                padding: 2rem 1.5rem;
+                max-width: 95%;
+                margin: 0 auto;
             }
             
-            .nav-back {
-                position: static;
-                margin-bottom: 2rem;
-                color: var(--primary);
-                background: var(--secondary);
+            .sichrplace-logo {
+                font-size: 1.5rem;
             }
+        }
+        
+        /* Header Styles - Hidden for centered login */
+        header {
+            display: none;
+        }
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-text {
+            display: flex;
+            align-items: baseline;
+            font-family: var(--heading-font);
+            font-weight: 700;
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+
+        .sichr-text {
+            color: var(--primary);
+        }
+
+        .place-text {
+            color: var(--primary);
+        }
+        .logo img {
+            height: 40px;
+            width: auto;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.1));
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--heading-font);
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+        }
+        header nav {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            position: relative;
+        }
+        header nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-family: var(--heading-font);
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        header nav a:hover {
+            color: var(--accent);
+        }
+        .cart-icon {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .cart-icon:hover {
+            background: var(--primary) !important;
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        .cart-icon i {
+            font-size: 1.1rem;
         }
     </style>
 </head>
 <body>
-    <a href="index.html" class="nav-back">
-        <i class="fas fa-arrow-left"></i>
-        Back to Home
-    </a>
-
+    <header>
+        <div class="header-logo">
+            <a href="index.html" class="logo" aria-label="SichrPlace">
+                <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:block;">
+                <span class="brand-text">
+                    <span class="sichrplace-text">SichrPlace</span>
+                    <span class="certified-badge" style="display:none;">Verified</span>
+                </span>
+            </a>
+        </div>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+            <span class="menu-bar"></span>
+            <span class="menu-bar"></span>
+            <span class="menu-bar"></span>
+        </button>
+        <nav class="main-nav" id="main-nav">
+            <a href="login.html" data-translate="nav.login">Login</a>
+            <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
+            
+            <!-- View link for viewing requests -->
+            <a href="viewing-request.html" data-translate="nav.view">View</a>
+            
+            <!-- Marketplace Cart Icon - Enhanced Visibility -->
+            <a href="marketplace.html" class="cart-icon" title="Marketplace - Buy & Sell" aria-label="Marketplace" data-translate-title="nav.marketplace.title" data-translate-aria="nav.marketplace.aria">
+                <svg class="cart-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M7.01 18.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 2.999-.001Zm10 0a1.5 1.5 0 1 1-3.001 0 1.5 1.5 0 0 1 3.001 0ZM6.16 7l.44 2h11.56a1 1 0 0 1 .98 1.204l-1.2 6a1 1 0 0 1-.98.796H8.18a1 1 0 0 1-.98-.804L5.53 4.5H3a1 1 0 1 1 0-2h3a1 1 0 0 1 .98.804L7.62 7H6.16Z" fill="currentColor" />
+                </svg>
+                <span class="cart-label" data-translate="nav.marketplace.label">Marketplace</span>
+            </a>
+            
+            <!-- Language Switcher moved to the rightmost position -->
+            <div class="language-switcher">
+                <button class="language-btn" id="language-btn" aria-label="Switch Language">
+                    <i class="fas fa-globe"></i>
+                    <span id="current-lang">EN</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="language-dropdown" id="language-dropdown">
+                    <a href="#" data-lang="en" class="lang-option active">
+                        <span class="flag-emoji">🇺🇸</span>
+                        English
+                    </a>
+                    <a href="#" data-lang="de" class="lang-option">
+                        <span class="flag-emoji">🇩🇪</span>
+                        Deutsch
+                    </a>
+                    <a href="#" data-lang="tr" class="lang-option">
+                        <span class="flag-emoji">🇹🇷</span>
+                        Türkçe
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
     <div class="container">
         <div class="login-card">
+            <div class="sichrplace-logo">
+                <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:inline-block;margin-right:10px;vertical-align:middle;">
+                <span style="vertical-align:middle;">
+                    <span style="color: var(--primary);">Sichr</span><span style="color: var(--primary);">Place</span>
+                </span>
+            </div>
+            
             <div class="logo-section">
-                <div class="logo-placeholder header-logo" data-type="header">
-                    <div class="sichrplace-logo header-logo">
-                        <div class="sichrplace-shield large sichrplace-certified"></div>
-                        <span class="sichrplace-text">SichrPlace</span>
-                        <span class="german-certification">German Certified</span>
-                    </div>
-                </div>
-                <h1 style="margin-top: 15px;" data-translate="nav.login">Sign In</h1>
-                <p>Sign in to your secure apartment viewing account</p>
+                <p>Sign in to your SichrPlace account</p>
             </div>
 
             <form id="loginForm">
@@ -357,26 +483,12 @@
 
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        class="form-control" 
-                        placeholder="Enter your email address"
-                        required
-                    >
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email address" required>
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        class="form-control" 
-                        placeholder="Enter your password"
-                        required
-                    >
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
                 </div>
 
                 <div class="form-options">
@@ -423,7 +535,8 @@
                 this.checkExistingAuth();
                 this.setupDemoCredentials();
             }
-
+            
+            // Handles the login form submission - BULLETPROOF VERSION
             async handleLogin(e) {
                 e.preventDefault();
                 
@@ -431,8 +544,14 @@
                 const password = this.passwordInput.value;
                 const remember = this.rememberInput.checked;
 
+                // Enhanced validation
                 if (!email || !password) {
                     this.showAlert('Please fill in all fields', 'error');
+                    return;
+                }
+
+                if (!this.isValidEmail(email)) {
+                    this.showAlert('Please enter a valid email address', 'error');
                     return;
                 }
 
@@ -440,48 +559,159 @@
                 this.hideAlert();
 
                 try {
+                    console.log('🔐 [LOGIN START]', {
+                        timestamp: new Date().toISOString(),
+                        email: email,
+                        remember: remember,
+                        endpoint: '/auth/login',
+                        frontend_url: window.location.href
+                    });
+
+                    // Add timeout protection (30 seconds)
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
                     const response = await fetch('/auth/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Accept': 'application/json',
                         },
-                        body: JSON.stringify({
-                            email: email,
-                            password: password,
-                            remember: remember
-                        })
+                        body: JSON.stringify({ email, password, remember }),
+                        signal: controller.signal
                     });
 
+                    clearTimeout(timeoutId);
+
+                    console.log('📡 [RESPONSE]', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        ok: response.ok,
+                        headers: Object.fromEntries([...response.headers.entries()])
+                    });
+
+                    // Validate response content type
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Unexpected response type: ${contentType}. Expected JSON. Server may be down.`);
+                    }
+
                     const result = await response.json();
+                    console.log('📝 [RESPONSE DATA]', {
+                        success: result.success,
+                        hasToken: !!result.token,
+                        hasUser: !!result.user,
+                        message: result.message,
+                        requestId: result.requestId
+                    });
 
                     if (response.ok && result.success) {
-                        this.showAlert('Login successful! Redirecting...', 'success');
-                        
-                        // Store authentication data
-                        localStorage.setItem('token', result.token);
-                        localStorage.setItem('user', JSON.stringify(result.user));
-                        
-                        // Store in sessionStorage if remember is not checked
-                        if (!remember) {
-                            sessionStorage.setItem('token', result.token);
-                            sessionStorage.setItem('user', JSON.stringify(result.user));
+                        // Validate token before storing
+                        if (!result.token || typeof result.token !== 'string' || result.token.length < 10) {
+                            throw new Error('Invalid token received from server');
                         }
 
-                        console.log('✅ Login successful:', result.user);
+                        if (!result.user || !result.user.id || !result.user.role) {
+                            throw new Error('Invalid user data received from server');
+                        }
+
+                        console.log('✅ [LOGIN SUCCESS]', {
+                            userId: result.user.id,
+                            role: result.user.role,
+                            tokenLength: result.token.length,
+                            emailVerified: result.user.emailVerified
+                        });
+
+                        this.showAlert('Login successful! Redirecting...', 'success');
+
+                        // Store authentication data CORRECTLY
+                        try {
+                            if (remember) {
+                                // REMEMBER ME: Store in localStorage only
+                                localStorage.setItem('token', result.token);
+                                localStorage.setItem('user', JSON.stringify(result.user));
+                                // Clear sessionStorage to avoid conflicts
+                                sessionStorage.removeItem('token');
+                                sessionStorage.removeItem('user');
+                                console.log('💾 [STORAGE] Saved to localStorage (remember=true)');
+                            } else {
+                                // NO REMEMBER: Store in sessionStorage only
+                                sessionStorage.setItem('token', result.token);
+                                sessionStorage.setItem('user', JSON.stringify(result.user));
+                                // Clear localStorage to avoid conflicts
+                                localStorage.removeItem('token');
+                                localStorage.removeItem('user');
+                                console.log('💾 [STORAGE] Saved to sessionStorage (remember=false)');
+                            }
+                        } catch (storageError) {
+                            console.error('❌ [STORAGE FAILED]', storageError);
+                            this.showAlert('Login successful but session storage failed. Try with "Remember me" checked.', 'warning');
+                            return;
+                        }
+
+                        // Wait to ensure storage completes before redirect
+                        await new Promise(resolve => setTimeout(resolve, 500));
                         
-                        // Redirect based on user role
-                        setTimeout(() => {
-                            this.redirectUser(result.user.role);
-                        }, 1500);
+                        // Verify storage worked
+                        const storedToken = remember 
+                            ? localStorage.getItem('token')
+                            : sessionStorage.getItem('token');
+                        
+                        if (!storedToken) {
+                            console.error('❌ [STORAGE VERIFICATION FAILED]');
+                            this.showAlert('Session storage failed. Please try again or enable cookies.', 'error');
+                            return;
+                        }
+
+                        console.log('✅ [STORAGE VERIFIED] Token stored successfully');
+                        this.redirectUser(result.user.role);
+                        
                     } else {
-                        this.showAlert(result.message || 'Login failed. Please check your credentials.', 'error');
+                        const errorMsg = result.message || result.error || 'Login failed. Please check your credentials.';
+                        console.warn('⚠️ [LOGIN FAILED]', {
+                            status: response.status,
+                            message: errorMsg,
+                            errors: result.errors,
+                            requestId: result.requestId
+                        });
+                        this.showAlert(errorMsg, 'error');
                     }
+
                 } catch (error) {
-                    console.error('Login error:', error);
-                    this.showAlert('Network error. Please check your connection and try again.', 'error');
+                    console.error('❌ [LOGIN ERROR]', {
+                        name: error.name,
+                        message: error.message,
+                        stack: error.stack,
+                        timestamp: new Date().toISOString()
+                    });
+
+                    let errorMessage = 'Login failed. ';
+                    
+                    if (error.name === 'AbortError') {
+                        errorMessage += 'Request timed out after 30 seconds. Please check your internet connection and try again.';
+                    } else if (error.message.includes('fetch') || error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+                        errorMessage += 'Cannot connect to server. Please ensure you have internet connection and the backend server is running.';
+                    } else if (error.message.includes('Unexpected response type')) {
+                        errorMessage += 'Server returned invalid response. Backend may be down or misconfigured.';
+                    } else if (error.message.includes('Invalid token')) {
+                        errorMessage += 'Authentication token invalid. Please contact support.';
+                    } else if (error.message.includes('Invalid user data')) {
+                        errorMessage += 'Server returned invalid user data. Please contact support.';
+                    } else {
+                        errorMessage += error.message || 'An unexpected error occurred.';
+                    }
+
+                    errorMessage += ' (Check browser console for details)';
+                    this.showAlert(errorMessage, 'error');
+                    
                 } finally {
                     this.setLoading(false);
                 }
+            }
+
+            // Email validation helper
+            isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
             }
 
             redirectUser(role) {
@@ -493,8 +723,9 @@
                         window.location.href = 'landlord-dashboard.html';
                         break;
                     case 'tenant':
+                    case 'applicant':
                     default:
-                        window.location.href = 'apartments-listing.html';
+                        window.location.href = 'applicant-dashboard.html';
                         break;
                 }
             }
@@ -512,7 +743,7 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.get('demo') === 'admin') {
                     this.emailInput.value = 'sichrplace@gmail.com';
-                    this.passwordInput.value = 'Gokhangulec29*';
+                    this.passwordInput.value = '';
                     
                     this.showAlert('Demo admin credentials pre-filled for testing', 'success');
                 }
@@ -545,21 +776,6 @@
             new AuthHandler();
         });
     </script>
-
-    <!-- SichrPlace Footer -->
-    <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid #E5E7EB; background: var(--secondary);">
-        <div class="footer-brand" style="text-align: center; margin: 20px 0;">
-            <img src="img/SichrPlaceLogo_944x944.jpg" alt="SichrPlace Logo" class="footer-logo" style="height: 48px; width: auto; margin-bottom: 10px;">
-            <div class="footer-brand-text" style="color: #6B7280; font-size: 14px;">
-                Your Trusted Rental Platform
-            </div>
-        </div>
-        <div class="footer-links" style="text-align: center; margin: 15px 0;">
-            <a href="privacy-policy.html" style="color: #6B7280; text-decoration: none; margin: 0 15px; font-size: 14px;">Privacy Policy</a>
-            <a href="terms-of-service.html" style="color: #6B7280; text-decoration: none; margin: 0 15px; font-size: 14px;">Terms of Service</a>
-            <a href="index.html" style="color: #6B7280; text-decoration: none; margin: 0 15px; font-size: 14px;">Home</a>
-        </div>
-        <p style="text-align: center; color: #9CA3AF; font-size: 12px; margin: 10px 0 0 0;">&copy; 2025 SichrPlace. All rights reserved.</p>
-    </footer>
+    <script src="js/translation-handler.js"></script>
 </body>
 </html>

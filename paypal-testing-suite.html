@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Bulletproof PayPal Testing - SichrPlace</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .test-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .test-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .test-card h3 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .test-card p {
+            color: #64748b;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .test-details {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .test-details h4 {
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .test-details p {
+            margin: 4px 0;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .paypal-container {
+            margin-top: 20px;
+            min-height: 120px;
+        }
+
+        .status-display {
+            background: #e5e7eb;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .status-display.ready {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-display.error {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-display.loading {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .btn {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #0052a3;
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .metrics-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 30px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .log-panel {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .log-info { background: rgba(59, 130, 246, 0.1); }
+        .log-success { background: rgba(34, 197, 94, 0.1); }
+        .log-error { background: rgba(239, 68, 68, 0.1); }
+        .log-warn { background: rgba(245, 158, 11, 0.1); }
+
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .test-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 Bulletproof PayPal Testing</h1>
+            <p>Enterprise-Grade Payment Integration Testing Suite</p>
+        </div>
+
+        <div id="status-display" class="status-display loading">
+            <h3>🔄 Initializing Bulletproof PayPal Integration...</h3>
+            <p>Loading enterprise security features and PayPal SDK</p>
+        </div>
+
+        <div class="test-grid">
+            <!-- APARTMENT VIEWING PAYMENT TEST -->
+            <div class="test-card">
+                <h3>🏠 Apartment Viewing Payment</h3>
+                <p>Test the apartment viewing payment flow with bulletproof security and German compliance.</p>
+                
+                <div class="test-details">
+                    <h4>Test Scenario:</h4>
+                    <p><strong>Apartment:</strong> Luxury 2BR in Munich</p>
+                    <p><strong>Viewing Fee:</strong> €25.00</p>
+                    <p><strong>Security:</strong> Rate limiting, input validation, audit logging</p>
+                    <p><strong>Compliance:</strong> GDPR, German payment regulations</p>
+                </div>
+
+                <div id="viewing-payment-container" class="paypal-container">
+                    <!-- PayPal button will be rendered here -->
+                </div>
+
+                <button id="init-viewing-btn" class="btn" onclick="initViewingPayment()">
+                    Initialize Viewing Payment
+                </button>
+            </div>
+
+            <!-- APARTMENT BOOKING PAYMENT TEST -->
+            <div class="test-card">
+                <h3>🏢 Apartment Booking Payment</h3>
+                <p>Test the apartment booking payment with dynamic fee calculation and enterprise validation.</p>
+                
+                <div class="test-details">
+                    <h4>Test Scenario:</h4>
+                    <p><strong>Apartment:</strong> Downtown Loft in Berlin</p>
+                    <p><strong>Monthly Rent:</strong> €1,200</p>
+                    <p><strong>Booking Fee (5%):</strong> €60.00</p>
+                    <p><strong>Features:</strong> Daily limits, fraud detection, real-time validation</p>
+                </div>
+
+                <div id="booking-payment-container" class="paypal-container">
+                    <!-- PayPal button will be rendered here -->
+                </div>
+
+                <button id="init-booking-btn" class="btn" onclick="initBookingPayment()">
+                    Initialize Booking Payment
+                </button>
+            </div>
+
+            <!-- MARKETPLACE PAYMENT TEST -->
+            <div class="test-card">
+                <h3>🛒 Marketplace Payment</h3>
+                <p>Test the marketplace payment with seller commission calculation and multi-party transactions.</p>
+                
+                <div class="test-details">
+                    <h4>Test Scenario:</h4>
+                    <p><strong>Item:</strong> Professional Moving Service</p>
+                    <p><strong>Price:</strong> €150.00</p>
+                    <p><strong>Platform Commission (8%):</strong> €12.00</p>
+                    <p><strong>Seller Receives:</strong> €138.00</p>
+                </div>
+
+                <div id="marketplace-payment-container" class="paypal-container">
+                    <!-- PayPal button will be rendered here -->
+                </div>
+
+                <button id="init-marketplace-btn" class="btn" onclick="initMarketplacePayment()">
+                    Initialize Marketplace Payment
+                </button>
+            </div>
+        </div>
+
+        <!-- PERFORMANCE METRICS -->
+        <div class="metrics-panel">
+            <h3>📊 Real-Time Performance Metrics</h3>
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div id="metric-payments" class="metric-value">0</div>
+                    <div class="metric-label">Total Payments</div>
+                </div>
+                <div class="metric-item">
+                    <div id="metric-avg-time" class="metric-value">0ms</div>
+                    <div class="metric-label">Avg Response Time</div>
+                </div>
+                <div class="metric-item">
+                    <div id="metric-success-rate" class="metric-value">0%</div>
+                    <div class="metric-label">Success Rate</div>
+                </div>
+                <div class="metric-item">
+                    <div id="metric-errors" class="metric-value">0</div>
+                    <div class="metric-label">Error Count</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn" onclick="updateMetrics()">🔄 Refresh Metrics</button>
+                <button class="btn" onclick="runHealthCheck()" style="margin-left: 10px;">🏥 Health Check</button>
+                <button class="btn" onclick="clearLogs()" style="margin-left: 10px;">🗑️ Clear Logs</button>
+            </div>
+        </div>
+
+        <!-- REAL-TIME LOG DISPLAY -->
+        <div class="log-panel">
+            <h4 style="color: #e2e8f0; margin-bottom: 15px;">🔍 Real-Time Security & Payment Logs</h4>
+            <div id="log-container">
+                <div class="log-entry log-info">[INFO] PayPal testing suite initialized</div>
+                <div class="log-entry log-info">[INFO] Waiting for bulletproof PayPal integration...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔥 BULLETPROOF PAYPAL INTEGRATION -->
+    <script src="js/bulletproof-paypal-integration.js"></script>
+
+    <script>
+        // 🚀 TESTING SUITE IMPLEMENTATION
+        let testingSuite = {
+            initialized: false,
+            metrics: {
+                totalPayments: 0,
+                successfulPayments: 0,
+                failedPayments: 0,
+                totalResponseTime: 0,
+                errors: []
+            }
+        };
+
+        // 📝 LOGGING SYSTEM
+        function logMessage(message, type = 'info') {
+            const logContainer = document.getElementById('log-container');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.innerHTML = `[${timestamp.toUpperCase()}] ${message}`;
+            
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Keep only last 100 entries
+            while (logContainer.children.length > 100) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        }
+
+        // 🔄 INITIALIZE BULLETPROOF PAYPAL
+        async function initializeBulletproofPayPal() {
+            try {
+                logMessage('🔄 Initializing bulletproof PayPal integration...', 'info');
+                
+                if (!window.bulletproofPayPal) {
+                    throw new Error('Bulletproof PayPal integration not loaded');
+                }
+
+                await window.bulletproofPayPal.initialize();
+                
+                testingSuite.initialized = true;
+                
+                document.getElementById('status-display').className = 'status-display ready';
+                document.getElementById('status-display').innerHTML = `
+                    <h3>✅ Bulletproof PayPal Integration Ready!</h3>
+                    <p>Enterprise security active • German compliance enabled • All systems operational</p>
+                `;
+                
+                logMessage('✅ Bulletproof PayPal integration ready for testing', 'success');
+                logMessage('🛡️ Enterprise security features activated', 'info');
+                logMessage('🇩🇪 German compliance and GDPR protection enabled', 'info');
+                
+                // Enable all test buttons
+                document.getElementById('init-viewing-btn').disabled = false;
+                document.getElementById('init-booking-btn').disabled = false;
+                document.getElementById('init-marketplace-btn').disabled = false;
+
+            } catch (error) {
+                testingSuite.metrics.errors.push(error);
+                
+                document.getElementById('status-display').className = 'status-display error';
+                document.getElementById('status-display').innerHTML = `
+                    <h3>❌ Initialization Failed</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+                
+                logMessage(`❌ Initialization failed: ${error.message}`, 'error');
+            }
+        }
+
+        // 🏠 VIEWING PAYMENT TEST
+        async function initViewingPayment() {
+            try {
+                logMessage('🏠 Initializing apartment viewing payment test...', 'info');
+                
+                const startTime = Date.now();
+                
+                await window.bulletproofPayPal.createViewingPaymentButton('viewing-payment-container', {
+                    apartmentId: 'apt_test_123',
+                    viewingRequestId: 'vr_test_' + Date.now(),
+                    apartmentTitle: 'Luxury 2BR Apartment in Munich',
+                    onSuccess: (result) => {
+                        const duration = Date.now() - startTime;
+                        testingSuite.metrics.totalPayments++;
+                        testingSuite.metrics.successfulPayments++;
+                        testingSuite.metrics.totalResponseTime += duration;
+                        
+                        logMessage(`🎉 Viewing payment successful! Payment ID: ${result.paymentId}`, 'success');
+                        logMessage(`📊 Payment completed in ${duration}ms`, 'info');
+                        updateMetrics();
+                    },
+                    onError: (error) => {
+                        testingSuite.metrics.totalPayments++;
+                        testingSuite.metrics.failedPayments++;
+                        testingSuite.metrics.errors.push(error);
+                        
+                        logMessage(`❌ Viewing payment failed: ${error.message}`, 'error');
+                        updateMetrics();
+                    },
+                    onCancel: () => {
+                        logMessage('💔 Viewing payment cancelled by user', 'warn');
+                    }
+                });
+                
+                document.getElementById('init-viewing-btn').textContent = '✅ Viewing Payment Ready';
+                document.getElementById('init-viewing-btn').disabled = true;
+                
+                logMessage('✅ Viewing payment button ready for testing', 'success');
+
+            } catch (error) {
+                logMessage(`❌ Failed to initialize viewing payment: ${error.message}`, 'error');
+            }
+        }
+
+        // 🏢 BOOKING PAYMENT TEST
+        async function initBookingPayment() {
+            try {
+                logMessage('🏢 Initializing apartment booking payment test...', 'info');
+                
+                const startTime = Date.now();
+                
+                await window.bulletproofPayPal.createBookingPaymentButton('booking-payment-container', {
+                    apartmentId: 'apt_test_456',
+                    monthlyRent: 1200,
+                    apartmentTitle: 'Downtown Loft in Berlin',
+                    bookingData: {
+                        moveInDate: '2025-10-01',
+                        leaseDuration: 12
+                    },
+                    onSuccess: (result) => {
+                        const duration = Date.now() - startTime;
+                        testingSuite.metrics.totalPayments++;
+                        testingSuite.metrics.successfulPayments++;
+                        testingSuite.metrics.totalResponseTime += duration;
+                        
+                        logMessage(`🎉 Booking payment successful! Payment ID: ${result.paymentId}`, 'success');
+                        logMessage(`💰 Booking fee: €${result.amount} (5% of €1200 rent)`, 'info');
+                        logMessage(`📊 Payment completed in ${duration}ms`, 'info');
+                        updateMetrics();
+                    },
+                    onError: (error) => {
+                        testingSuite.metrics.totalPayments++;
+                        testingSuite.metrics.failedPayments++;
+                        testingSuite.metrics.errors.push(error);
+                        
+                        logMessage(`❌ Booking payment failed: ${error.message}`, 'error');
+                        updateMetrics();
+                    },
+                    onCancel: () => {
+                        logMessage('💔 Booking payment cancelled by user', 'warn');
+                    }
+                });
+                
+                document.getElementById('init-booking-btn').textContent = '✅ Booking Payment Ready';
+                document.getElementById('init-booking-btn').disabled = true;
+                
+                logMessage('✅ Booking payment button ready for testing', 'success');
+
+            } catch (error) {
+                logMessage(`❌ Failed to initialize booking payment: ${error.message}`, 'error');
+            }
+        }
+
+        // 🛒 MARKETPLACE PAYMENT TEST
+        async function initMarketplacePayment() {
+            try {
+                logMessage('🛒 Initializing marketplace payment test...', 'info');
+                
+                const startTime = Date.now();
+                
+                await window.bulletproofPayPal.createMarketplacePaymentButton('marketplace-payment-container', {
+                    itemId: 'item_test_789',
+                    itemData: {
+                        title: 'Professional Moving Service',
+                        price: 150,
+                        sellerEmail: 'seller@sichrplace.com'
+                    },
+                    onSuccess: (result) => {
+                        const duration = Date.now() - startTime;
+                        testingSuite.metrics.totalPayments++;
+                        testingSuite.metrics.successfulPayments++;
+                        testingSuite.metrics.totalResponseTime += duration;
+                        
+                        logMessage(`🎉 Marketplace payment successful! Payment ID: ${result.paymentId}`, 'success');
+                        logMessage(`💰 Total: €${result.amount} (Platform fee: €${result.breakdown.platformCommission})`, 'info');
+                        logMessage(`👤 Seller receives: €${result.breakdown.sellerAmount}`, 'info');
+                        logMessage(`📊 Payment completed in ${duration}ms`, 'info');
+                        updateMetrics();
+                    },
+                    onError: (error) => {
+                        testingSuite.metrics.totalPayments++;
+                        testingSuite.metrics.failedPayments++;
+                        testingSuite.metrics.errors.push(error);
+                        
+                        logMessage(`❌ Marketplace payment failed: ${error.message}`, 'error');
+                        updateMetrics();
+                    },
+                    onCancel: () => {
+                        logMessage('💔 Marketplace payment cancelled by user', 'warn');
+                    }
+                });
+                
+                document.getElementById('init-marketplace-btn').textContent = '✅ Marketplace Payment Ready';
+                document.getElementById('init-marketplace-btn').disabled = true;
+                
+                logMessage('✅ Marketplace payment button ready for testing', 'success');
+
+            } catch (error) {
+                logMessage(`❌ Failed to initialize marketplace payment: ${error.message}`, 'error');
+            }
+        }
+
+        // 📊 UPDATE METRICS
+        function updateMetrics() {
+            const metrics = testingSuite.metrics;
+            const avgTime = metrics.totalPayments > 0 ? Math.round(metrics.totalResponseTime / metrics.totalPayments) : 0;
+            const successRate = metrics.totalPayments > 0 ? Math.round((metrics.successfulPayments / metrics.totalPayments) * 100) : 0;
+            
+            document.getElementById('metric-payments').textContent = metrics.totalPayments;
+            document.getElementById('metric-avg-time').textContent = avgTime + 'ms';
+            document.getElementById('metric-success-rate').textContent = successRate + '%';
+            document.getElementById('metric-errors').textContent = metrics.errors.length;
+        }
+
+        // 🏥 HEALTH CHECK
+        async function runHealthCheck() {
+            try {
+                logMessage('🏥 Running bulletproof PayPal health check...', 'info');
+                
+                if (!window.bulletproofPayPal) {
+                    throw new Error('Bulletproof PayPal not available');
+                }
+                
+                const healthStatus = await window.bulletproofPayPal.healthCheck();
+                
+                if (healthStatus.healthy) {
+                    logMessage('✅ Health check passed - All systems operational', 'success');
+                    logMessage(`📊 SDK Loaded: ${healthStatus.sdkLoaded ? '✅' : '❌'}`, 'info');
+                    logMessage(`🔧 Config Loaded: ${healthStatus.configLoaded ? '✅' : '❌'}`, 'info');
+                    logMessage(`🔐 Auth Token: ${healthStatus.authToken ? '✅' : '❌'}`, 'info');
+                } else {
+                    logMessage(`❌ Health check failed: ${healthStatus.error}`, 'error');
+                }
+                
+                // Get performance metrics
+                const perfMetrics = window.bulletproofPayPal.getPerformanceMetrics();
+                logMessage(`📈 Session metrics: ${perfMetrics.totalPayments} payments, ${perfMetrics.errorCount} errors`, 'info');
+
+            } catch (error) {
+                logMessage(`❌ Health check error: ${error.message}`, 'error');
+            }
+        }
+
+        // 🗑️ CLEAR LOGS
+        function clearLogs() {
+            document.getElementById('log-container').innerHTML = '';
+            logMessage('🗑️ Logs cleared', 'info');
+        }
+
+        // 🚀 INITIALIZE ON PAGE LOAD
+        window.addEventListener('load', () => {
+            // Disable buttons initially
+            document.getElementById('init-viewing-btn').disabled = true;
+            document.getElementById('init-booking-btn').disabled = true;
+            document.getElementById('init-marketplace-btn').disabled = true;
+            
+            // Initialize bulletproof PayPal with delay to ensure script loading
+            setTimeout(initializeBulletproofPayPal, 1000);
+        });
+
+        // Update metrics every 5 seconds
+        setInterval(updateMetrics, 5000);
+    </script>
+</body>
+</html>

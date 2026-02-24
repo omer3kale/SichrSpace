@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-    <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Applicant Dashboard</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&family=Roboto:300,400,500,700&display=swap">
     <link rel="stylesheet" href="css/logo-system.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="css/logo-system.css">
+  
+  <!-- 🔥 BULLETPROOF PAYPAL INTEGRATION -->
+  <script src="js/bulletproof-paypal-integration.js"></script>
+  <script src="js/smart-matching.js" defer></script>
+  
   <style>
     :root {
       --primary: #2563EB;
@@ -32,7 +37,121 @@
       color: var(--foreground);
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
     }
+    
+    header {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 0 40px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .sichrplace-text {
+      font-family: var(--heading-font);
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--primary);
+      line-height: 1;
+    }
+    
+    .certified-badge {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    
+    .logo img {
+      height: 40px;
+      width: auto;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.1));
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    
+    header nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      position: relative;
+    }
+    
+    header nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-family: var(--heading-font);
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    
+    header nav a:hover {
+      color: var(--accent);
+    }
+    
+    .cart-icon {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 40px !important;
+      height: 40px !important;
+      padding: 0 !important;
+      border-radius: 8px !important;
+      background: transparent !important;
+      color: var(--primary) !important;
+      transition: color 0.2s ease, transform 0.2s ease;
+      position: relative;
+      box-shadow: none !important;
+    }
+    
+    .cart-icon:hover {
+      background: transparent !important;
+      color: var(--accent) !important;
+      transform: translateY(-1px) !important;
+      box-shadow: none !important;
+    }
+    
+    .cart-icon i {
+      font-size: 1.1rem;
+      color: currentColor !important;
+    }
+
+    .cart-label {
+      display: none !important;
+    }
+    
+    .main-layout {
+      display: flex;
+      flex: 1;
+    }
+    
     .sidebar {
       width: 240px;
       background: var(--card);
@@ -66,7 +185,6 @@
       color: var(--foreground);
       text-decoration: none;
       font-size: 16px;
-      "
       transition: background 0.2s, color 0.2s;
       font-family: var(--body-font);
     }
@@ -90,7 +208,6 @@
     }
     .dashboard-card {
       background: var(--card);
-      "
       box-shadow: var(--shadow);
       padding: 28px 32px;
       flex: 1 1 320px;
@@ -99,6 +216,228 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+    }
+
+    .smart-matching-section {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      border-radius: var(--radius);
+      margin-bottom: 32px;
+    }
+
+    .smart-matching-section h2 {
+      margin-top: 0;
+      font-size: 1.6rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .smart-matching-intro {
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .smart-matching-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .smart-matching-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .smart-match-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .smart-match-list.smart-match-list-loading::after {
+      content: '⏳ Berechnung läuft…';
+      text-align: center;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .smart-match-card {
+      background: var(--secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .smart-match-card-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .smart-match-card-header > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .smart-match-score {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #eef2ff;
+      color: var(--primary);
+      border-radius: 12px;
+      padding: 6px 12px;
+      font-weight: 700;
+      min-width: 56px;
+    }
+
+    .smart-match-location {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .smart-match-price {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .smart-match-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .smart-match-distance {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .smart-match-insights {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .smart-match-amenities {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .smart-match-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .smart-match-action {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: opacity 0.2s ease;
+    }
+
+    .smart-match-action:hover {
+      opacity: 0.85;
+    }
+
+    .smart-matching-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .smart-matching-form label {
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    .smart-matching-form input,
+    .smart-matching-form select,
+    .smart-matching-form textarea {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-family: var(--body-font);
+      font-size: 0.95rem;
+      background: var(--secondary);
+    }
+
+    .smart-matching-form textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .smart-matching-budget {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+    }
+
+    .smart-matching-form button {
+      align-self: flex-start;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: opacity 0.2s ease;
+    }
+
+    .smart-matching-form button:hover {
+      opacity: 0.9;
+    }
+
+    .smart-matching-alert {
+      display: none;
+    }
+
+    .smart-matching-alert-message {
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .smart-matching-alert-info { background: #e0f2fe; color: #0369a1; }
+    .smart-matching-alert-success { background: #dcfce7; color: #15803d; }
+    .smart-matching-alert-warning { background: #fef3c7; color: #b45309; }
+    .smart-matching-alert-error { background: #fee2e2; color: #b91c1c; }
+
+    .smart-matching-empty {
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .smart-matching-empty-icon {
+      font-size: 1.8rem;
     }
     .dashboard-card h3 {
       margin: 0 0 8px 0;
@@ -113,9 +452,9 @@
       font-size: 15px;
       font-family: var(--body-font);
     }
-    .profile-section, .messages-section, .wishlist-section, .applications-section {
+    .profile-section, .messages-section, .wishlist-section, .applications-section, .tenant-screening-section {
       background: var(--card);
-      "
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 32px;
       margin-bottom: 32px;
@@ -138,7 +477,7 @@
     .message-list {
       width: 32%;
       background: var(--secondary);
-      "
+
       padding: 16px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.04);
       min-width: 180px;
@@ -156,7 +495,7 @@
     }
     .message-list li {
       padding: 10px 8px;
-      "
+
       cursor: pointer;
       color: var(--foreground);
       transition: background 0.2s;
@@ -169,7 +508,7 @@
     .message-box {
       flex: 1;
       background: var(--secondary);
-      "
+
       padding: 16px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.04);
       display: flex;
@@ -182,7 +521,7 @@
       margin-bottom: 10px;
       padding: 10px;
       border: 1px solid var(--border);
-      "
+
       background: var(--card);
       min-height: 120px;
     }
@@ -203,7 +542,7 @@
       width: calc(100% - 80px);
       padding: 10px;
       border: 1px solid var(--border);
-      "
+
       font-size: 15px;
       font-family: var(--body-font);
       background: var(--background);
@@ -220,7 +559,7 @@
       background-color: var(--primary);
       color: white;
       border: none;
-      "
+
       cursor: pointer;
       font-size: 15px;
       font-family: var(--body-font);
@@ -232,7 +571,7 @@
     .wishlist-item {
       padding: 10px;
       border: 1px solid var(--border);
-      "
+
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
@@ -254,7 +593,7 @@
       background-color: #EF4444;
       color: white;
       border: none;
-      "
+
       cursor: pointer;
     }
     .wishlist-item button:hover {
@@ -309,22 +648,398 @@
         gap: 8px;
       }
     }
+
+    /* Tenant Screening Styles */
+    .tenant-screening-section {
+      padding: 32px;
+    }
+
+    .screening-intro {
+      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      padding: 20px;
+      border-radius: 12px;
+      color: var(--primary);
+      font-weight: 500;
+      margin-bottom: 32px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .screening-progress-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+
+    .progress-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .progress-item {
+      background: var(--secondary);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .progress-item:hover {
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .progress-icon {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .progress-content h4 {
+      color: var(--primary);
+      margin: 0 0 8px 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .progress-status {
+      color: var(--muted);
+      margin: 0 0 16px 0;
+      font-size: 0.9rem;
+    }
+
+    .start-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+
+    .start-btn:hover {
+      background: #1D4ED8;
+    }
+
+    .overall-progress {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .progress-bar {
+      background: var(--border);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .progress-fill {
+      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    .quick-calculator-card {
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 32px;
+      border: 1px solid #BBF7D0;
+    }
+
+    .calculator-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 16px;
+      align-items: end;
+      margin: 20px 0;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-weight: 500;
+      color: var(--foreground);
+      font-size: 0.9rem;
+    }
+
+    .input-group input {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .calculate-btn {
+      background: #10B981;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .calculate-btn:hover {
+      background: #059669;
+    }
+
+    .calculation-result {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .result-status {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .result-details {
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .result-advice {
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .benefits-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+
+    .benefits-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 0 0;
+    }
+
+    .benefits-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--foreground);
+    }
+
+    .benefits-list li:last-child {
+      border-bottom: none;
+    }
+
+    .benefits-list strong {
+      color: var(--primary);
+    }
+
+    .screening-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .primary-action-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .primary-action-btn:hover {
+      background: #1D4ED8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+    }
+
+    .secondary-action-btn {
+      background: var(--secondary);
+      color: var(--primary);
+      border: 1px solid var(--border);
+      padding: 16px 32px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .secondary-action-btn:hover {
+      background: var(--border);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .calculator-inputs {
+        grid-template-columns: 1fr;
+      }
+      
+      .screening-actions {
+        flex-direction: column;
+      }
+      
+      .progress-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
-    <script src="js/language-switcher.js" defer></script>
+  <script src="js/translation-handler.js" defer></script>
     <script src="js/logo-cookie-manager.js" defer></script>
 </head>
 <body>
-  <!-- Sidebar -->
+  <header>
+    <div class="header-logo">
+      <a href="index.html" class="logo" aria-label="SichrPlace">
+        <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:block;">
+        <span class="brand-text">
+          <span class="sichrplace-text">SichrPlace</span>
+          <span class="certified-badge" style="display:none;">Verified</span>
+        </span>
+      </a>
+    </div>
+    <nav class="main-nav" id="main-nav">
+      <a href="login.html" data-translate="nav.login">Login</a>
+      <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
+      
+      <!-- View link for viewing requests -->
+      <a href="viewing-request.html" data-translate="nav.view">View</a>
+      
+      <!-- Marketplace Cart Icon - Enhanced Visibility -->
+      <a href="marketplace.html" class="cart-icon" title="Marketplace - Buy & Sell" aria-label="Marketplace" data-translate-title="nav.marketplace.title" data-translate-aria="nav.marketplace.aria">
+        <svg class="cart-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7.01 18.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 2.999-.001Zm10 0a1.5 1.5 0 1 1-3.001 0 1.5 1.5 0 0 1 3.001 0ZM6.16 7l.44 2h11.56a1 1 0 0 1 .98 1.204l-1.2 6a1 1 0 0 1-.98.796H8.18a1 1 0 0 1-.98-.804L5.53 4.5H3a1 1 0 1 1 0-2h3a1 1 0 0 1 .98.804L7.62 7H6.16Z" fill="currentColor" />
+        </svg>
+        <span class="cart-label" data-translate="nav.marketplace.label">Marketplace</span>
+      </a>
+      
+      <!-- Language Switcher -->
+      <div class="language-switcher">
+        <button class="language-btn" id="language-btn" aria-label="Switch Language" style="
+          background: var(--primary);
+          color: white;
+          border: none;
+          padding: 8px 12px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-family: var(--heading-font);
+          font-weight: 600;
+          font-size: 0.9rem;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          transition: all 0.2s ease;
+        ">
+          <i class="fas fa-globe"></i>
+          <span id="current-lang">EN</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="language-dropdown" style="
+          position: absolute;
+          top: 100%;
+          right: 0;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          min-width: 140px;
+          z-index: 1000;
+          display: none;
+          margin-top: 8px;
+          border: 1px solid #e1e5e9;
+        ">
+          <a href="#" data-lang="en" class="lang-option active" style="
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--text);
+            text-decoration: none;
+            font-family: var(--body-font);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid #f1f1f1;
+          ">
+            <span class="flag-emoji">🇺🇸</span>
+            English
+          </a>
+          <a href="#" data-lang="de" class="lang-option" style="
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--text);
+            text-decoration: none;
+            font-family: var(--body-font);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid #f1f1f1;
+          ">
+            <span class="flag-emoji">🇩🇪</span>
+            Deutsch
+          </a>
+          <a href="#" data-lang="tr" class="lang-option" style="
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--text);
+            text-decoration: none;
+            font-family: var(--body-font);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+          ">
+            <span class="flag-emoji">🇹🇷</span>
+            Türkçe
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+  
+  <div class="main-layout">
+    <!-- Sidebar -->
   <div class="sidebar">
     <h2 style="display: flex; align-items: center; gap: 8px; margin-left: 12px;">
-      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 32px; "">
+
     </h2>
     <nav class="sidebar-nav">
-      <a href="#" id="profile-link" class="active"><i class="fa fa-user"></i> Profile</a>
-      <a href="#" id="applications-link"><i class="fa fa-home"></i> My Applications</a>
-      <a href="#" id="wishlist-link"><i class="fa fa-heart"></i> Wishlist</a>
-      <a href="#" id="lastSeen-link"><i class="fa fa-clock"></i> Last Seen</a>
-      <a href="#" id="messages-link"><i class="fa fa-comments"></i> Messages</a>
+  <a href="#" id="profile-link" class="active"><i class="fa fa-user"></i> Profile</a>
+  <a href="#" id="applications-link"><i class="fa fa-home"></i> My Applications</a>
+  <a href="#" id="smartMatching-link"><i class="fa fa-wand-magic-sparkles"></i> Smart Matching</a>
+  <a href="#" id="tenantScreening-link"><i class="fa fa-shield-alt"></i> Tenant Qualifying</a>
+  <a href="#" id="wishlist-link"><i class="fa fa-heart"></i> Wishlist</a>
+  <a href="#" id="lastSeen-link"><i class="fa fa-clock"></i> Last Seen</a>
+  <a href="#" id="messages-link"><i class="fa fa-comments"></i> Messages</a>
     </nav>
   </div>
 
@@ -333,7 +1048,7 @@
     <!-- Dashboard cards -->
     <div class="dashboard-cards">
       <div class="dashboard-card">
-        <h3><i class="fa fa-home"></i> My Applications</h3>
+        <h3><i class="fa fa-home"></i> My Booking Request Applications</h3>
         <p>Track the status of your apartment applications and viewings here.</p>
         <!-- Viewing Agreement & Contract Generation -->
         <div class="viewing-actions" style="margin-top:18px;">
@@ -356,6 +1071,7 @@
     <!-- Section content will be loaded here -->
     <div id="section-content"></div>
   </div>
+  </div> <!-- End main-layout -->
 
   <script>
     // Section content templates
@@ -389,8 +1105,6 @@
             <option value="no">No</option>
           </select>
 
-          <label for="age">How old are you?</label>
-          <input type="number" id="age" name="age" placeholder="Enter your age" required>
 
           <label for="telefon">Telefon Number:</label>
           <input type="tel" id="telefon" name="telefon" placeholder="Enter your phone number" required>
@@ -408,8 +1122,11 @@
             <option value="wg">WG (Shared Apartment)</option>
           </select>
 
-          <label for="disabilities">Any kind of disabilities?</label>
-          <textarea id="disabilities" name="disabilities" rows="3" placeholder="Describe any disabilities (if applicable)"></textarea>
+          <label for="hobbies">Hobbies and Interests</label>
+          <textarea id="hobbies" name="hobbies" rows="3" placeholder="Sports, arts, music..."></textarea>
+
+          <label for="mbti">Personality type (MBTI)</label>
+          <input type="text" id="mbti" name="mbti" placeholder="e.g., INFJ, ENTP..." maxlength="4">
 
           <label for="pets">Do you have pets?</label>
           <select id="pets" name="pets" required>
@@ -430,7 +1147,7 @@
       `,
       applications: `
         <div class="applications-section">
-          <h2>My Applications</h2>
+          <h2>My Booking Request Applications</h2>
           <table>
             <thead>
               <tr>
@@ -443,6 +1160,7 @@
                 <th>Payer</th>
                 <th>Status</th>
                 <th>Last Updated</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="applications-table-body">
@@ -450,6 +1168,171 @@
             </tbody>
           </table>
           <div id="applications-status"></div>
+        </div>
+      `,
+      smartMatching: `
+        <section class="smart-matching-section">
+          <h2><i class="fa fa-wand-magic-sparkles"></i> Smart Matching</h2>
+          <p class="smart-matching-intro">Discover personalised apartment matches and keep your preferences in sync with the latest market offers.</p>
+          <div id="smart-matching-alert" class="smart-matching-alert"></div>
+          <div class="smart-matching-grid">
+            <div class="smart-matching-column">
+              <h3>Top Recommendations</h3>
+              <div id="tenant-match-list" class="smart-match-list"></div>
+            </div>
+            <div class="smart-matching-column">
+              <h3>Update Preferences</h3>
+              <form id="tenant-preferences-form" class="smart-matching-form">
+                <div>
+                  <label for="budgetMin">Monthly Budget (€)</label>
+                  <div class="smart-matching-budget">
+                    <input type="number" id="budgetMin" name="budgetMin" min="0" placeholder="Min">
+                    <input type="number" id="budgetMax" name="budgetMax" min="0" placeholder="Max">
+                  </div>
+                </div>
+                <div>
+                  <label for="preferredCities">Preferred Cities</label>
+                  <input type="text" id="preferredCities" name="preferredCities" placeholder="Berlin, Hamburg">
+                </div>
+                <div>
+                  <label for="propertyTypes">Property Types</label>
+                  <input type="text" id="propertyTypes" name="propertyTypes" placeholder="Apartment, Studio">
+                </div>
+                <div>
+                  <label for="amenities">Must-have Amenities</label>
+                  <textarea id="amenities" name="amenities" placeholder="Balcony, Elevator, Parking"></textarea>
+                </div>
+                <div>
+                  <label for="maxDistanceKm">Max Distance (km)</label>
+                  <input type="number" id="maxDistanceKm" name="maxDistanceKm" min="0" placeholder="10">
+                </div>
+                <div>
+                  <label for="moveInDate">Preferred Move-In Date</label>
+                  <input type="date" id="moveInDate" name="moveInDate">
+                </div>
+                <div>
+                  <label for="petFriendly">Pet Policy</label>
+                  <select id="petFriendly" name="petFriendly">
+                    <option value="">No preference</option>
+                    <option value="true">Pets allowed</option>
+                    <option value="false">No pets</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="furnished">Furnishing</label>
+                  <select id="furnished" name="furnished">
+                    <option value="">No preference</option>
+                    <option value="true">Furnished</option>
+                    <option value="false">Unfurnished</option>
+                  </select>
+                </div>
+                <button type="submit"><i class="fa fa-save"></i> Save Preferences</button>
+              </form>
+            </div>
+          </div>
+        </section>
+      `,
+      tenantScreening: `
+        <div class="tenant-screening-section">
+          <h2><i class="fa fa-shield-alt"></i> Tenant Qualifying - Increase Your Chances</h2>
+          <p class="screening-intro">Complete your tenant qualification to stand out to landlords. German landlords prefer tenants with verified credentials.</p>
+          
+          <!-- Screening Progress Overview -->
+          <div class="screening-progress-card">
+            <h3>Your Screening Progress</h3>
+            <div class="progress-grid">
+              <div class="progress-item" id="schufa-progress">
+                <div class="progress-icon">🏦</div>
+                <div class="progress-content">
+                  <h4>SCHUFA Credit Check</h4>
+                  <p class="progress-status">Not Started</p>
+                  <button class="start-btn" onclick="startSchufaCheck()">Start SCHUFA Check</button>
+                </div>
+              </div>
+              
+              <div class="progress-item" id="employment-progress">
+                <div class="progress-icon">💼</div>
+                <div class="progress-content">
+                  <h4>Employment Verification</h4>
+                  <p class="progress-status">Not Started</p>
+                  <button class="start-btn" onclick="startEmploymentVerification()">Verify Employment</button>
+                </div>
+              </div>
+              
+              <div class="progress-item" id="references-progress">
+                <div class="progress-icon">🏠</div>
+                <div class="progress-content">
+                  <h4>Landlord References</h4>
+                  <p class="progress-status">Not Started</p>
+                  <button class="start-btn" onclick="startLandlordReferences()">Add References</button>
+                </div>
+              </div>
+              
+              <div class="progress-item" id="financial-progress">
+                <div class="progress-icon">💰</div>
+                <div class="progress-content">
+                  <h4>Financial Qualification</h4>
+                  <p class="progress-status">Not Started</p>
+                  <button class="start-btn" onclick="startFinancialQualification()">Calculate Income</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="overall-progress">
+              <h4>Overall Completion: <span id="overall-percentage">0%</span></h4>
+              <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Income Calculator -->
+          <div class="quick-calculator-card">
+            <h3>💡 Quick 3x Rent Rule Calculator</h3>
+            <p>Check if your income meets German rental requirements (3x monthly rent)</p>
+            
+            <div class="calculator-inputs">
+              <div class="input-group">
+                <label for="monthly-rent">Monthly Rent (€):</label>
+                <input type="number" id="monthly-rent" placeholder="1200" min="0" step="50">
+              </div>
+              
+              <div class="input-group">
+                <label for="monthly-income">Your Net Monthly Income (€):</label>
+                <input type="number" id="monthly-income" placeholder="3600" min="0" step="100">
+              </div>
+              
+              <button class="calculate-btn" onclick="calculateRentRatio()">Calculate</button>
+            </div>
+            
+            <div class="calculation-result" id="calculation-result" style="display: none;">
+              <div class="result-status" id="result-status"></div>
+              <div class="result-details" id="result-details"></div>
+              <div class="result-advice" id="result-advice"></div>
+            </div>
+          </div>
+
+          <!-- Benefits Section -->
+          <div class="benefits-card">
+            <h3>🎯 Why Complete Tenant Qualifying?</h3>
+            <ul class="benefits-list">
+              <li><strong>Higher Acceptance Rate:</strong> Verified tenants are 3x more likely to get approved</li>
+              <li><strong>Faster Applications:</strong> Skip the paperwork with pre-verified documents</li>
+              <li><strong>Better Apartments:</strong> Access to premium listings requiring verified tenants</li>
+              <li><strong>Landlord Trust:</strong> Show you're a reliable tenant from day one</li>
+              <li><strong>German Compliance:</strong> Meet all German rental market standards</li>
+            </ul>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="screening-actions">
+            <button class="primary-action-btn" onclick="openTenantScreeningDashboard()">
+              <i class="fa fa-chart-line"></i> Open Full Qualifying Dashboard
+            </button>
+            <button class="secondary-action-btn" onclick="downloadScreeningGuide()">
+              <i class="fa fa-download"></i> Download Qualifying Guide (PDF)
+            </button>
+          </div>
         </div>
       `,
       wishlist: `
@@ -507,6 +1390,21 @@
       if (section === 'wishlist') loadWishlist();
       if (section === 'messages') loadConversations();
       if (section === 'applications') loadApplications();
+      if (section === 'tenantScreening') initializeTenantScreening();
+      if (section === 'smartMatching') initializeTenantMatchingUI();
+    }
+
+    function initializeTenantMatchingUI() {
+      if (!window.SmartMatchingUI) {
+        console.warn('SmartMatchingUI module not loaded');
+        return;
+      }
+
+      window.SmartMatchingUI.initTenantDashboard({
+        matchListSelector: '#tenant-match-list',
+        preferenceFormSelector: '#tenant-preferences-form',
+        alertSelector: '#smart-matching-alert'
+      });
     }
 
     links.forEach(link => {
@@ -682,6 +1580,13 @@
         statusDiv.textContent = "";
         applications.forEach(app => {
           const tr = document.createElement('tr');
+          const isApproved = app.status && app.status.toLowerCase() === 'approved';
+          const paymentButton = isApproved ? 
+            `<button onclick="initiateBookingPayment('${app.apartmentId}', ${app.monthlyRent || 1200}, '${app.apartmentTitle || 'Apartment'}')" 
+                     class="booking-payment-btn">
+              <i class="fa fa-credit-card"></i> Pay Booking Fee
+             </button>` : '';
+          
           tr.innerHTML = `
             <td>${app.apartmentId || ''}</td>
             <td>${app.move_in || ''}</td>
@@ -690,8 +1595,13 @@
             <td>${app.reason || ''}</td>
             <td>${app.habits || ''}</td>
             <td>${app.payer || ''}</td>
-            <td>${app.status || 'Pending'}</td>
+            <td>
+              <span class="status-badge status-${(app.status || 'pending').toLowerCase()}">
+                ${app.status || 'Pending'}
+              </span>
+            </td>
             <td>${app.updatedAt ? new Date(app.updatedAt).toLocaleString() : ''}</td>
+            <td>${paymentButton}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -731,6 +1641,617 @@
         });
       }
     });
+
+    // Tenant Screening Functions
+    function initializeTenantScreening() {
+      // Load any existing screening data and update progress
+      updateScreeningProgress();
+    }
+
+    function updateScreeningProgress() {
+      // This would typically fetch data from your API
+      // For now, we'll simulate some progress
+      const progress = {
+        schufa: 0,
+        employment: 0,
+        references: 0,
+        financial: 0
+      };
+
+      const totalProgress = (progress.schufa + progress.employment + progress.references + progress.financial) / 4;
+      
+      document.getElementById('overall-percentage').textContent = Math.round(totalProgress) + '%';
+      document.getElementById('progress-fill').style.width = totalProgress + '%';
+    }
+
+    function startSchufaCheck() {
+      window.open('tenant-screening-schufa.html', '_blank');
+    }
+
+    function startEmploymentVerification() {
+      window.open('tenant-screening-employment.html', '_blank');
+    }
+
+    function startLandlordReferences() {
+      window.open('tenant-screening-references.html', '_blank');
+    }
+
+    function startFinancialQualification() {
+      window.open('tenant-screening-financial.html', '_blank');
+    }
+
+    function calculateRentRatio() {
+      const monthlyRent = parseFloat(document.getElementById('monthly-rent').value);
+      const monthlyIncome = parseFloat(document.getElementById('monthly-income').value);
+      const resultDiv = document.getElementById('calculation-result');
+      const statusDiv = document.getElementById('result-status');
+      const detailsDiv = document.getElementById('result-details');
+      const adviceDiv = document.getElementById('result-advice');
+
+      if (!monthlyRent || !monthlyIncome) {
+        alert('Please enter both rent and income amounts');
+        return;
+      }
+
+      const requiredIncome = monthlyRent * 3;
+      const ratio = monthlyIncome / monthlyRent;
+      const meetsRequirement = ratio >= 3;
+
+      resultDiv.style.display = 'block';
+
+      if (meetsRequirement) {
+        resultDiv.style.background = '#F0FDF4';
+        resultDiv.style.border = '1px solid #BBF7D0';
+        statusDiv.innerHTML = '✅ You meet the 3x rent requirement!';
+        statusDiv.style.color = '#059669';
+        detailsDiv.innerHTML = `Your income (€${monthlyIncome}) is ${ratio.toFixed(1)}x the monthly rent.`;
+        adviceDiv.innerHTML = 'Great! You qualify for most German rental applications. Consider completing your full tenant screening to maximize your chances.';
+        adviceDiv.style.background = '#DCFCE7';
+        adviceDiv.style.color = '#059669';
+      } else {
+        resultDiv.style.background = '#FEF2F2';
+        resultDiv.style.border = '1px solid #FECACA';
+        statusDiv.innerHTML = '⚠️ Income below 3x rent requirement';
+        statusDiv.style.color = '#DC2626';
+        detailsDiv.innerHTML = `You need €${requiredIncome} monthly income. You currently have €${monthlyIncome} (${ratio.toFixed(1)}x rent).`;
+        const shortfall = requiredIncome - monthlyIncome;
+        adviceDiv.innerHTML = `You need €${shortfall} more monthly income, or consider a guarantor, or look for apartments under €${Math.floor(monthlyIncome / 3)}/month.`;
+        adviceDiv.style.background = '#FEE2E2';
+        adviceDiv.style.color = '#DC2626';
+      }
+    }
+
+    function openTenantScreeningDashboard() {
+      window.open('tenant-screening-dashboard.html', '_blank');
+    }
+
+    function downloadScreeningGuide() {
+      // Create a simple guide or link to an existing PDF
+      const guideContent = `
+🏠 SICHRPLACE TENANT SCREENING GUIDE
+
+Complete this checklist to maximize your rental application success:
+
+✅ SCHUFA Credit Check
+- Obtain your SCHUFA report online
+- Ensure credit score is above 500
+- Address any negative entries
+
+✅ Employment Verification  
+- 3 recent pay slips
+- Employment contract
+- Employer confirmation letter
+- Tax returns (last year)
+
+✅ Landlord References
+- Contact details of previous landlords
+- Rental history for past 2-3 years
+- Character references
+
+✅ Financial Qualification
+- Bank statements (3 months)
+- Proof of savings/deposits
+- Additional income sources
+- Guarantor information (if needed)
+
+🎯 Pro Tips:
+- Apply within 24 hours of viewing
+- Prepare all documents in advance
+- Be honest about your situation
+- Show enthusiasm for the property
+
+Good luck with your apartment search!
+      `;
+      
+      const blob = new Blob([guideContent], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sichrplace-tenant-screening-guide.txt';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
+    
+    // 🔥 BULLETPROOF PAYPAL BOOKING PAYMENT INTEGRATION
+    
+    // Initialize PayPal on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize bulletproof PayPal after other scripts
+      setTimeout(initializeBulletproofPayPalBooking, 1000);
+    });
+    
+    async function initializeBulletproofPayPalBooking() {
+      try {
+        console.log('🔄 Initializing bulletproof PayPal for apartment booking...');
+        
+        // Wait for bulletproof PayPal integration to load
+        if (typeof window.bulletproofPayPal === 'undefined') {
+          console.warn('⚠️ Bulletproof PayPal integration not loaded');
+          return;
+        }
+        
+        console.log('✅ Bulletproof PayPal integration ready for booking payments!');
+        
+      } catch (error) {
+        console.error('❌ PayPal booking initialization failed:', error);
+      }
+    }
+    
+    // 🏢 APARTMENT BOOKING PAYMENT FUNCTION (5% of monthly rent)
+    async function initiateBookingPayment(apartmentId, monthlyRent, apartmentTitle = 'Apartment Booking') {
+      try {
+        // Check if user is logged in
+        const token = localStorage.getItem('userToken');
+        if (!token) {
+          alert('Please login to pay booking fee');
+          window.location.href = 'login.html';
+          return;
+        }
+        
+        // Calculate booking fee (5% of monthly rent, min €50, max €500)
+        const bookingFee = Math.max(50, Math.min(monthlyRent * 0.05, 500));
+        
+        // Show payment modal
+        const modal = createBookingPaymentModal(apartmentId, apartmentTitle, monthlyRent, bookingFee);
+        document.body.appendChild(modal);
+        
+        // Initialize PayPal button in modal
+        await window.bulletproofPayPal.createBookingPaymentButton('booking-paypal-button', {
+          apartmentId: apartmentId,
+          monthlyRent: monthlyRent,
+          apartmentTitle: apartmentTitle,
+          bookingData: {
+            moveInDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
+            leaseDuration: 12
+          },
+          onSuccess: (result) => {
+            console.log('✅ Booking payment successful:', result);
+            showBookingPaymentSuccess(result, apartmentTitle, bookingFee);
+            modal.remove();
+          },
+          onError: (error) => {
+            console.error('❌ Booking payment failed:', error);
+            showBookingPaymentError(error);
+          },
+          onCancel: () => {
+            console.log('❌ Booking payment cancelled');
+            modal.remove();
+          }
+        });
+        
+      } catch (error) {
+        console.error('❌ Failed to initiate booking payment:', error);
+        alert('Failed to initialize booking payment. Please try again.');
+      }
+    }
+    
+    // 🎨 CREATE BOOKING PAYMENT MODAL
+    function createBookingPaymentModal(apartmentId, apartmentTitle, monthlyRent, bookingFee) {
+      const modal = document.createElement('div');
+      modal.className = 'booking-payment-modal';
+      modal.innerHTML = `
+        <div class="booking-payment-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="booking-payment-content">
+          <div class="booking-payment-header">
+            <h2><i class="fa fa-home"></i> Apartment Booking Payment</h2>
+            <button class="close-btn" onclick="this.parentElement.parentElement.remove()">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="booking-payment-details">
+            <div class="apartment-info">
+              <h3><i class="fa fa-building"></i> ${apartmentTitle}</h3>
+              <div class="rent-info">
+                <div class="rent-item">
+                  <span class="label">Monthly Rent:</span>
+                  <span class="value">€${monthlyRent.toFixed(2)}</span>
+                </div>
+                <div class="rent-item">
+                  <span class="label">Booking Fee (5%):</span>
+                  <span class="value">€${bookingFee.toFixed(2)}</span>
+                </div>
+              </div>
+              
+              <p><i class="fa fa-info-circle"></i> Booking payment includes:</p>
+              <ul>
+                <li><i class="fa fa-check"></i> Apartment reservation for 7 days</li>
+                <li><i class="fa fa-check"></i> Priority booking status</li>
+                <li><i class="fa fa-check"></i> Landlord notification</li>
+                <li><i class="fa fa-check"></i> Booking confirmation document</li>
+                <li><i class="fa fa-check"></i> Move-in coordination</li>
+              </ul>
+            </div>
+            
+            <div class="payment-amount">
+              <div class="amount-display">
+                <span class="currency">€</span>
+                <span class="amount">${bookingFee.toFixed(2)}</span>
+              </div>
+              <p class="amount-description">Booking Fee (5% of monthly rent)</p>
+            </div>
+            
+            <div class="paypal-container">
+              <div id="booking-paypal-button"></div>
+            </div>
+            
+            <div class="payment-security">
+              <p><i class="fa fa-shield-alt"></i> Secure payment powered by PayPal</p>
+              <p><i class="fa fa-lock"></i> Booking fee applied to first month's rent</p>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Add modal styles
+      const styles = `
+        <style>
+          .booking-payment-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          
+          .booking-payment-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+          }
+          
+          .booking-payment-content {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+          }
+          
+          .booking-payment-header {
+            padding: 30px 30px 20px;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          
+          .booking-payment-header h2 {
+            margin: 0;
+            color: #2563EB;
+            font-size: 24px;
+            font-weight: 600;
+          }
+          
+          .booking-payment-details {
+            padding: 30px;
+          }
+          
+          .apartment-info h3 {
+            color: #374151;
+            margin: 0 0 20px 0;
+            font-size: 20px;
+          }
+          
+          .rent-info {
+            background: #F9FAFB;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+          }
+          
+          .rent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+          }
+          
+          .rent-item .label {
+            color: #6B7280;
+            font-weight: 500;
+          }
+          
+          .rent-item .value {
+            color: #374151;
+            font-weight: 600;
+            font-size: 18px;
+          }
+          
+          .apartment-info p {
+            color: #6B7280;
+            margin: 20px 0 10px 0;
+            font-weight: 500;
+          }
+          
+          .apartment-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+          
+          .apartment-info li {
+            padding: 8px 0;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          }
+          
+          .apartment-info li i {
+            color: #10B981;
+            width: 16px;
+          }
+          
+          .payment-amount {
+            text-align: center;
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #10B981, #40E0D0);
+            border-radius: 15px;
+            color: white;
+          }
+          
+          .amount-display {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 5px;
+          }
+          
+          .currency {
+            font-size: 32px;
+            opacity: 0.9;
+          }
+          
+          .amount-description {
+            font-size: 16px;
+            opacity: 0.9;
+            margin: 0;
+          }
+          
+          .paypal-container {
+            margin: 30px 0;
+          }
+          
+          .payment-security {
+            text-align: center;
+            margin-top: 20px;
+          }
+          
+          .payment-security p {
+            margin: 5px 0;
+            color: #6B7280;
+            font-size: 14px;
+          }
+          
+          .payment-security i {
+            color: #10B981;
+            margin-right: 5px;
+          }
+          
+          .booking-payment-btn {
+            background: linear-gradient(135deg, #10B981, #40E0D0);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+          
+          .booking-payment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+          }
+          
+          .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+          }
+          
+          .status-pending {
+            background: #FEF3C7;
+            color: #D97706;
+          }
+          
+          .status-approved {
+            background: #D1FAE5;
+            color: #065F46;
+          }
+          
+          .status-rejected {
+            background: #FEE2E2;
+            color: #991B1B;
+          }
+        </style>
+      `;
+      
+      modal.innerHTML = styles + modal.innerHTML;
+      return modal;
+    }
+    
+    // ✅ BOOKING PAYMENT SUCCESS
+    function showBookingPaymentSuccess(paymentResult, apartmentTitle, bookingFee) {
+      const successModal = document.createElement('div');
+      successModal.className = 'payment-success-modal';
+      successModal.innerHTML = `
+        <div class="payment-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="payment-success-content">
+          <div class="success-icon">
+            <i class="fa fa-check-circle"></i>
+          </div>
+          <h2>Booking Confirmed!</h2>
+          <p>Your apartment booking for <strong>${apartmentTitle}</strong> is confirmed</p>
+          <div class="payment-details">
+            <p><strong>Payment ID:</strong> ${paymentResult.paymentId || 'N/A'}</p>
+            <p><strong>Booking Fee:</strong> €${bookingFee.toFixed(2)}</p>
+            <p><strong>Status:</strong> Reserved for 7 days</p>
+          </div>
+          <div class="success-actions">
+            <button onclick="window.location.reload()" class="btn-primary">
+              <i class="fa fa-refresh"></i> Refresh Dashboard
+            </button>
+            <button onclick="this.parentElement.parentElement.remove()" class="btn-secondary">
+              <i class="fa fa-times"></i> Close
+            </button>
+          </div>
+        </div>
+        <style>
+          .payment-success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          
+          .payment-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+          }
+          
+          .payment-success-content {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: successSlideIn 0.5s ease-out;
+          }
+          
+          .success-icon {
+            font-size: 80px;
+            color: #10B981;
+            margin-bottom: 20px;
+            animation: successBounce 0.6s ease-out 0.2s both;
+          }
+          
+          .payment-success-content h2 {
+            color: #374151;
+            margin: 0 0 15px 0;
+            font-size: 28px;
+          }
+          
+          .payment-details {
+            background: #F9FAFB;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+          }
+          
+          .payment-details p {
+            margin: 8px 0;
+            color: #374151;
+          }
+          
+          .success-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+          }
+          
+          .success-actions button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+          
+          .btn-primary {
+            background: #2563EB;
+            color: white;
+          }
+          
+          .btn-primary:hover {
+            background: #1D4ED8;
+            transform: translateY(-2px);
+          }
+          
+          .btn-secondary {
+            background: #F3F4F6;
+            color: #374151;
+          }
+          
+          .btn-secondary:hover {
+            background: #E5E7EB;
+          }
+        </style>
+      `;
+      
+      document.body.appendChild(successModal);
+      
+      // Track successful booking payment
+      trackBookingPayment(paymentResult.apartmentId, paymentResult.paymentId, bookingFee);
+    }
+    
+    // ❌ BOOKING PAYMENT ERROR
+    function showBookingPaymentError(error) {
+      alert(`Booking payment failed: ${error.message || 'Unknown error occurred'}. Please try again.`);
+    }
+    
+    // 📊 TRACK BOOKING PAYMENT
+    async function trackBookingPayment(apartmentId, paymentId, amount) {
+      try {
+        console.log('📊 Tracking booking payment:', { apartmentId, paymentId, amount });
+        // Additional analytics tracking can be added here
+      } catch (error) {
+        console.error('Failed to track booking payment:', error);
+      }
+    }
   </script>
 </body>
 </html>

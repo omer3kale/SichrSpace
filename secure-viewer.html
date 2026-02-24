@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <title>SichrPlace - Secure Video Viewer</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -40,7 +39,7 @@
     }
     .viewer-container {
       background: var(--card);
-      "
+      border-radius: var(--radius);
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
       padding: 40px;
       max-width: 900px;
@@ -56,7 +55,7 @@
     }
     .video-container {
       background: #000;
-      "
+      border-radius: var(--radius);
       overflow: hidden;
       position: relative;
       margin: 30px 0;
@@ -69,7 +68,7 @@
     .security-notice {
       background: var(--warning-bg);
       border: 1px solid var(--warning);
-      "
+      border-radius: var(--radius);
       padding: 20px;
       margin: 20px 0;
       border-left: 5px solid var(--warning);
@@ -77,14 +76,14 @@
     .video-info {
       text-align: left;
       background: var(--secondary);
-      "
+      border-radius: var(--radius);
       padding: 20px;
       margin: 20px 0;
     }
     .error-message {
       background: var(--danger-bg);
       border: 1px solid var(--danger);
-      "
+      border-radius: var(--radius);
       padding: 20px;
       color: var(--danger);
       margin: 20px 0;
@@ -99,7 +98,7 @@
       color: white;
       border: none;
       padding: 12px 24px;
-      "
+      border-radius: var(--radius);
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
@@ -116,8 +115,10 @@
 <body>
   <div class="viewer-container">
     <div class="sichrplace-logo">
-      <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 32px; " margin-right: 8px; vertical-align: middle;">
-      <i class="fa fa-home"></i> SichrPlace
+      <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:inline-block;margin-right:10px;vertical-align:middle;">
+      <span style="vertical-align:middle;">
+        <span style="color: var(--primary);">Sichr</span><span style="color: var(--primary);">Place</span>
+      </span>
     </div>
     
     <div id="loading" class="loading">

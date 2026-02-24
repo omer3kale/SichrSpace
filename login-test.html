@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Test - SichrPlace</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: #2563EB; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        button:disabled { background: #ccc; }
+        .alert { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .alert.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status { margin: 15px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔐 SichrPlace Login Test</h1>
+    <div class="status">
+        <strong>Environment Check:</strong>
+        <div id="envCheck">Checking...</div>
+    </div>
+    
+    <form id="loginTest">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" value="test@sichrplace.com" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" value="Test123!" required>
+        </div>
+        <button type="submit" id="loginBtn">Test Login</button>
+    </form>
+
+    <div id="result"></div>
+    <div id="networkLog"></div>
+
+    <script>
+        // Environment and endpoint testing
+        const testEndpoints = [
+            '/auth/login',
+            '/.netlify/functions/auth-login',
+            '/api/auth/login'
+        ];
+
+        let workingEndpoint = null;
+
+        async function checkEnvironment() {
+            const envDiv = document.getElementById('envCheck');
+            const checks = [];
+            
+            // Check current URL
+            checks.push(`Current URL: ${window.location.origin}`);
+            
+            // Test each endpoint
+            for (let endpoint of testEndpoints) {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'OPTIONS',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    if (response.status !== 404) {
+                        checks.push(`✅ ${endpoint} - Available (${response.status})`);
+                        if (!workingEndpoint) workingEndpoint = endpoint;
+                    } else {
+                        checks.push(`❌ ${endpoint} - Not Found (404)`);
+                    }
+                } catch (error) {
+                    checks.push(`⚠️ ${endpoint} - Error: ${error.message}`);
+                }
+            }
+            
+            envDiv.innerHTML = checks.join('<br>');
+            
+            if (workingEndpoint) {
+                showResult(`Working endpoint found: ${workingEndpoint}`, 'success');
+            } else {
+                showResult('No working endpoints found. Login may not work.', 'error');
+            }
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `alert ${type}`;
+            resultDiv.innerHTML = message;
+        }
+
+        function logNetwork(message) {
+            const logDiv = document.getElementById('networkLog');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${time}] ${message}</div>`;
+            console.log(`[LOGIN TEST] ${message}`);
+        }
+
+        document.getElementById('loginTest').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Testing...';
+            
+            // Clear previous results
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('networkLog').innerHTML = '<h3>Network Log:</h3>';
+            
+            const endpoint = workingEndpoint || '/auth/login';
+            logNetwork(`Attempting login to: ${endpoint}`);
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password, remember: false })
+                });
+                
+                logNetwork(`Response status: ${response.status} ${response.statusText}`);
+                logNetwork(`Response headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}`);
+                
+                const data = await response.json();
+                logNetwork(`Response data: ${JSON.stringify(data, null, 2)}`);
+                
+                if (response.ok && data.success) {
+                    showResult('✅ LOGIN SUCCESSFUL! Authentication is working correctly.', 'success');
+                    logNetwork('✅ Login test passed');
+                } else {
+                    showResult(`❌ Login failed: ${data.message || 'Unknown error'}`, 'error');
+                    logNetwork(`❌ Login failed: ${data.message}`);
+                }
+                
+            } catch (error) {
+                logNetwork(`❌ Network error: ${error.message}`);
+                showResult(`❌ Network Error: ${error.message}`, 'error');
+            }
+            
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Test Login';
+        });
+
+        // Run environment check on page load
+        checkEnvironment();
+    </script>
+</body>
+</html>

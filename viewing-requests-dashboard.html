@@ -740,7 +740,7 @@
             }
 
             container.innerHTML = requests.map(request => `
-                <div class="request-card">
+                <div class="request-card" data-status="${request.status}" data-date="${request.requested_date ? request.requested_date.split('T')[0] : request.created_at.split('T')[0]}">
                     <div class="request-header">
                         <div class="request-info">
                             <h3>${request.apartment_title || 'Apartment'}</h3>
@@ -808,7 +808,7 @@
             }
 
             container.innerHTML = requests.map(request => `
-                <div class="request-card">
+                <div class="request-card" data-status="${request.status}" data-date="${request.requested_date ? request.requested_date.split('T')[0] : request.created_at.split('T')[0]}">
                     <div class="request-header">
                         <div class="request-info">
                             <h3>${request.apartment_title || 'Apartment'}</h3>
@@ -951,9 +951,49 @@
         }
 
         // Modal functions
-        function viewRequestDetails(requestId) {
-            // TODO: Implement request details modal
-            console.log('View request details:', requestId);
+        async function viewRequestDetails(requestId) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/viewing-requests/${requestId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch request details');
+
+                const result = await response.json();
+                const request = result.data;
+
+                // Create and show modal
+                const modal = `
+                    <div id="details-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;">
+                        <div style="background:white;border-radius:16px;padding:32px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;">
+                            <h3 style="color:#2563eb;margin:0 0 20px 0;">Viewing Request Details</h3>
+                            <div style="margin-bottom:16px;"><strong>Status:</strong> ${request.status}</div>
+                            <div style="margin-bottom:16px;"><strong>Apartment:</strong> ${request.apartment?.titel || 'N/A'}</div>
+                            <div style="margin-bottom:16px;"><strong>Requester:</strong> ${request.requester?.vorname || ''} ${request.requester?.nachname || ''}</div>
+                            <div style="margin-bottom:16px;"><strong>Requested Date:</strong> ${request.requested_date ? new Date(request.requested_date).toLocaleString() : 'N/A'}</div>
+                            <div style="margin-bottom:16px;"><strong>Phone:</strong> ${request.phone || 'N/A'}</div>
+                            <div style="margin-bottom:16px;"><strong>Message:</strong> ${request.message || 'No message'}</div>
+                            ${request.confirmed_date ? `<div style="margin-bottom:16px;"><strong>Confirmed Date:</strong> ${new Date(request.confirmed_date).toLocaleString()}</div>` : ''}
+                            ${request.notes ? `<div style="margin-bottom:16px;"><strong>Notes:</strong> ${request.notes}</div>` : ''}
+                            <button onclick="closeDetailsModal()" style="background:#2563eb;color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;width:100%;">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', modal);
+            } catch (error) {
+                console.error('Error fetching request details:', error);
+                alert('Failed to load request details');
+            }
+        }
+
+        function closeDetailsModal() {
+            const modal = document.getElementById('details-modal');
+            if (modal) modal.remove();
         }
 
         function closeModal() {
@@ -1068,13 +1108,61 @@
 
         // Filter functions
         function filterMyRequests() {
-            // TODO: Implement filtering
-            console.log('Filter my requests');
+            const statusFilter = document.getElementById('my-requests-status-filter').value;
+            const dateFrom = document.getElementById('my-requests-date-from').value;
+            const dateTo = document.getElementById('my-requests-date-to').value;
+
+            const cards = document.querySelectorAll('#my-requests-list .request-card');
+            cards.forEach(card => {
+                const status = card.dataset.status;
+                const date = card.dataset.date;
+
+                let shouldShow = true;
+
+                // Status filter
+                if (statusFilter && status !== statusFilter) {
+                    shouldShow = false;
+                }
+
+                // Date range filter
+                if (dateFrom && date < dateFrom) {
+                    shouldShow = false;
+                }
+                if (dateTo && date > dateTo) {
+                    shouldShow = false;
+                }
+
+                card.style.display = shouldShow ? 'block' : 'none';
+            });
         }
 
         function filterPropertyRequests() {
-            // TODO: Implement filtering
-            console.log('Filter property requests');
+            const statusFilter = document.getElementById('property-requests-status-filter').value;
+            const dateFrom = document.getElementById('property-requests-date-from').value;
+            const dateTo = document.getElementById('property-requests-date-to').value;
+
+            const cards = document.querySelectorAll('#property-requests-list .request-card');
+            cards.forEach(card => {
+                const status = card.dataset.status;
+                const date = card.dataset.date;
+
+                let shouldShow = true;
+
+                // Status filter
+                if (statusFilter && status !== statusFilter) {
+                    shouldShow = false;
+                }
+
+                // Date range filter
+                if (dateFrom && date < dateFrom) {
+                    shouldShow = false;
+                }
+                if (dateTo && date > dateTo) {
+                    shouldShow = false;
+                }
+
+                card.style.display = shouldShow ? 'block' : 'none';
+            });
         }
     </script>
 </body>

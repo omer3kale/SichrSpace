@@ -6,6 +6,7 @@
   <title>Analytics & Reporting Dashboard</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="js/translation-handler.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
@@ -115,9 +116,59 @@
   </style>
 </head>
 <body>
-  <header>
-    <a href="/" class="logo"><i class="fas fa-chart-line"></i> Analytics Dashboard</a>
-    <a href="apartments-listing.html" style="color:#2563EB;text-decoration:none;font-weight:500;">Back to Listings</a>
+    <header>
+    <div class="header-logo">
+      <a href="index.html" class="logo" aria-label="SichrPlace">
+        <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:block;">
+        <span class="brand-text">
+          <span class="sichrplace-text">SichrPlace</span>
+          <span class="certified-badge" style="display:none;">Verified</span>
+        </span>
+      </a>
+    </div>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+    </button>
+    <nav class="main-nav" id="main-nav">
+      <a href="login.html" data-translate="nav.login">Login</a>
+      <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
+      
+      <!-- View link for viewing requests -->
+      <a href="viewing-request.html" data-translate="nav.view">View</a>
+      
+      <!-- Marketplace Cart Icon - Enhanced Visibility -->
+      <a href="marketplace.html" class="cart-icon" title="Marketplace - Buy & Sell" aria-label="Marketplace" data-translate-title="nav.marketplace.title" data-translate-aria="nav.marketplace.aria">
+        <svg class="cart-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7.01 18.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 2.999-.001Zm10 0a1.5 1.5 0 1 1-3.001 0 1.5 1.5 0 0 1 3.001 0ZM6.16 7l.44 2h11.56a1 1 0 0 1 .98 1.204l-1.2 6a1 1 0 0 1-.98.796H8.18a1 1 0 0 1-.98-.804L5.53 4.5H3a1 1 0 1 1 0-2h3a1 1 0 0 1 .98.804L7.62 7H6.16Z" fill="currentColor" />
+        </svg>
+        <span class="cart-label" data-translate="nav.marketplace.label">Marketplace</span>
+      </a>
+      
+      <!-- Language Switcher moved to the rightmost position -->
+      <div class="language-switcher">
+        <button class="language-btn" id="language-btn" aria-label="Switch Language">
+          <i class="fas fa-globe"></i>
+          <span id="current-lang">EN</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="language-dropdown">
+          <a href="#" data-lang="en" class="lang-option active">
+            <span class="flag-emoji">🇺🇸</span>
+            English
+          </a>
+          <a href="#" data-lang="de" class="lang-option">
+            <span class="flag-emoji">🇩🇪</span>
+            Deutsch
+          </a>
+          <a href="#" data-lang="tr" class="lang-option">
+            <span class="flag-emoji">🇹🇷</span>
+            Türkçe
+          </a>
+        </div>
+      </div>
+    </nav>
   </header>
   <div class="dashboard-container">
     <div class="dashboard-cards" id="dashboard-cards">

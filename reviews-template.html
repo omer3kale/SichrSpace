@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apartment Reviews - SichrPlace</title>
+  
+  <!-- 
+    ========================================
+    SichrPlace Review System Template
+    ========================================
+    
+    Created: October 2025
+    Purpose: Complete review and rating system for apartment listings
+    
+    Usage: 
+    1. Copy the reviews section into your apartment detail pages
+    2. Replace {{APARTMENT_ID}} with the actual apartment ID
+    3. Include reviews.css and reviews.js in your page
+    
+    Features:
+    - Star rating system (1-5 stars)
+    - Review submission with title and comment
+    - User moderation workflow
+    - Anonymous reviewer display
+    - Rating distribution visualization
+    - Responsive design matching SichrPlace aesthetic
+    
+    © 2024-2025 SichrPlace. All rights reserved.
+    ========================================
+  -->
+  
+  <!-- Favicon and Icons -->
+  <link rel="icon" href="img/favicon.ico" sizes="any">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- SichrPlace Core Styles -->
+  <link rel="stylesheet" href="css/logo-system.css">
+  
+  <!-- Review System Styles -->
+  <link rel="stylesheet" href="css/reviews.css">
+  
+  <!-- Scripts -->
+  <script src="js/translation-handler.js" defer></script>
+  <script src="js/logo-cookie-manager.js" defer></script>
+  <script src="js/reviews.js" defer></script>
+  
+  <style>
+    :root {
+      --primary: #2563EB;
+      --secondary: #F9FAFB;
+      --accent: #40E0D0;
+      --text: #222;
+      --muted: #6b7280;
+      --card: #fff;
+      --radius: 18px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --heading-font: "Poppins", sans-serif;
+      --body-font: "Roboto", sans-serif;
+    }
+    
+    body {
+      margin: 0;
+      font-family: var(--body-font);
+      background: var(--secondary);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    main {
+      flex: 1 0 auto;
+    }
+    
+    header {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 0 40px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .sichrplace-text {
+      font-family: var(--heading-font);
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--primary);
+      line-height: 1;
+    }
+    
+    .certified-badge {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--heading-font);
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+    }
+    
+    .logo img {
+      height: 48px;
+      width: auto;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.1));
+    }
+    
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+    
+    .menu-bar {
+      width: 25px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    
+    nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    
+    nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-family: var(--heading-font);
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    
+    nav a:hover {
+      color: var(--accent);
+    }
+    
+    .cart-icon {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: var(--primary) !important;
+      color: white !important;
+      gap: 6px;
+    }
+    
+    .cart-icon-svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .cart-label {
+      font-size: 0.9rem;
+    }
+    
+    .language-switcher {
+      position: relative;
+    }
+    
+    .language-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--card);
+      border: 2px solid var(--primary);
+      border-radius: 8px;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .language-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .language-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      min-width: 150px;
+      overflow: hidden;
+    }
+    
+    .language-dropdown.active {
+      display: block;
+    }
+    
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    
+    .lang-option:hover {
+      background: var(--secondary);
+    }
+    
+    .lang-option.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .flag-emoji {
+      font-size: 1.2rem;
+    }
+    
+    footer {
+      background: #1f2937;
+      color: #f3f4f6;
+      padding: 3rem 2rem 1.5rem;
+      flex-shrink: 0;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    
+    .footer-section h3 {
+      color: var(--accent);
+      margin-bottom: 1rem;
+      font-family: var(--heading-font);
+    }
+    
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .footer-section ul li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .footer-section a {
+      color: #d1d5db;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .footer-section a:hover {
+      color: var(--accent);
+    }
+    
+    .footer-bottom {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #374151;
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
+    
+    footer {
+      background: #1f2937;
+      color: #f3f4f6;
+      padding: 3rem 2rem 1.5rem;
+      flex-shrink: 0;
+    }
+    
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .footer-links a {
+      color: #d1d5db;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+    
+    .footer-social {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .footer-social a {
+      color: #9ca3af;
+      font-size: 1.5rem;
+      transition: all 0.2s;
+    }
+    
+    .footer-social a:hover {
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+    
+    footer p {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+    
+    footer p a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    
+    footer p a:hover {
+      opacity: 0.8;
+    }
+    
+    @media (max-width: 768px) {
+      header {
+        padding: 0 20px;
+      }
+      
+      .menu-toggle {
+        display: flex;
+        z-index: 101;
+      }
+      
+      nav {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transform: translateY(-100%);
+        opacity: 0;
+        transition: all 0.3s;
+        pointer-events: none;
+      }
+      
+      nav.active {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+      }
+      
+      .cart-label {
+        display: inline;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-logo">
+      <a href="index.html" class="logo" aria-label="SichrPlace">
+        <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:block;">
+        <span class="brand-text">
+          <span class="sichrplace-text">SichrPlace</span>
+          <span class="certified-badge" style="display:none;">Verified</span>
+        </span>
+      </a>
+    </div>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+    </button>
+    <nav class="main-nav" id="main-nav">
+      <a href="login.html" data-translate="nav.login">Login</a>
+      <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
+      
+      <!-- View link for viewing requests -->
+      <a href="viewing-request.html" data-translate="nav.view">View</a>
+      
+      <!-- Marketplace Cart Icon - Enhanced Visibility -->
+      <a href="marketplace.html" class="cart-icon" title="Marketplace - Buy & Sell" aria-label="Marketplace" data-translate-title="nav.marketplace.title" data-translate-aria="nav.marketplace.aria">
+        <svg class="cart-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7.01 18.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 2.999-.001Zm10 0a1.5 1.5 0 1 1-3.001 0 1.5 1.5 0 0 1 3.001 0ZM6.16 7l.44 2h11.56a1 1 0 0 1 .98 1.204l-1.2 6a1 1 0 0 1-.98.796H8.18a1 1 0 0 1-.98-.804L5.53 4.5H3a1 1 0 1 1 0-2h3a1 1 0 0 1 .98.804L7.62 7H6.16Z" fill="currentColor" />
+        </svg>
+        <span class="cart-label" data-translate="nav.marketplace.label">Marketplace</span>
+      </a>
+      
+      <!-- Language Switcher moved to the rightmost position -->
+      <div class="language-switcher">
+        <button class="language-btn" id="language-btn" aria-label="Switch Language">
+          <i class="fas fa-globe"></i>
+          <span id="current-lang">EN</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="language-dropdown">
+          <a href="#" data-lang="en" class="lang-option active">
+            <span class="flag-emoji">🇺🇸</span>
+            English
+          </a>
+          <a href="#" data-lang="de" class="lang-option">
+            <span class="flag-emoji">🇩🇪</span>
+            Deutsch
+          </a>
+          <a href="#" data-lang="tr" class="lang-option">
+            <span class="flag-emoji">🇹🇷</span>
+            Türkçe
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+<!-- ==================== Reviews Section ==================== -->
+<section id="reviews-section" class="reviews-section">
+  <div class="container">
+    
+    <!-- Review Statistics -->
+    <div id="review-stats" class="review-stats">
+      <!-- Stats will be populated by JavaScript -->
+      <div class="stats-summary">
+        <div class="average-rating">
+          <span class="rating-number">0</span>
+          <div class="rating-stars"></div>
+          <span class="total-reviews">No reviews yet</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews Header -->
+    <div class="reviews-header">
+      <h2>Tenant Reviews</h2>
+      <div class="review-controls">
+        <button id="write-review-btn" class="write-review-btn">
+          ✍️ Write a Review
+        </button>
+        <select id="review-sort" class="review-sort">
+          <option value="recent">Most Recent</option>
+          <option value="highest">Highest Rated</option>
+          <option value="lowest">Lowest Rated</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div id="reviews-list" class="reviews-list">
+      <!-- Review cards will be populated by JavaScript -->
+      <div class="loading-reviews">
+        <div class="spinner"></div>
+        <p>Loading reviews...</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  </main>
+
+<!-- ==================== Review Submission Modal ==================== -->
+<div id="review-modal" class="review-modal">
+  <div class="review-modal-content">
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2>Write a Review</h2>
+      <button type="button" class="close-review-modal" aria-label="Close">
+        &times;
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <form id="review-form" class="review-form">
+        
+        <!-- Star Rating -->
+        <div class="form-group">
+          <label for="review-rating">
+            Your Rating <span class="required">*</span>
+          </label>
+          <div class="rating-input">
+            <span class="star" data-rating="1">★</span>
+            <span class="star" data-rating="2">★</span>
+            <span class="star" data-rating="3">★</span>
+            <span class="star" data-rating="4">★</span>
+            <span class="star" data-rating="5">★</span>
+          </div>
+          <input type="hidden" id="review-rating" name="rating" required>
+          <small>Click to select your rating</small>
+        </div>
+
+        <!-- Review Title -->
+        <div class="form-group">
+          <label for="review-title">
+            Review Title <span class="required">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="review-title" 
+            name="title" 
+            placeholder="Summarize your experience"
+            maxlength="100"
+            required
+          >
+          <div class="char-count">
+            <span id="title-count">0</span>/100 characters
+          </div>
+        </div>
+
+        <!-- Review Comment -->
+        <div class="form-group">
+          <label for="review-comment">
+            Your Review <span class="required">*</span>
+          </label>
+          <textarea 
+            id="review-comment" 
+            name="comment" 
+            placeholder="Share your experience living in this apartment. What did you like? What could be improved?"
+            minlength="10"
+            maxlength="1000"
+            required
+          ></textarea>
+          <div class="char-count">
+            <span id="comment-count">0</span>/1000 characters
+          </div>
+        </div>
+
+        <!-- Privacy Notice -->
+        <div class="privacy-notice">
+          <p style="font-size: 0.85rem; color: #718096; margin: 0;">
+            📌 Your review will be published after moderation. 
+            Your name will be anonymized for privacy.
+          </p>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn-secondary close-review-modal">
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary">
+            Submit Review
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== Initialize Review System ==================== -->
+<script>
+  // Initialize when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    // Replace {{APARTMENT_ID}} with actual apartment ID from your backend
+    const apartmentId = '{{APARTMENT_ID}}'; // Or get from URL/data attribute
+    
+    if (apartmentId && apartmentId !== '{{APARTMENT_ID}}') {
+      const reviewSystem = new ReviewSystem('/api');
+      reviewSystem.init(apartmentId);
+
+      // Character count for title
+      const titleInput = document.getElementById('review-title');
+      const titleCount = document.getElementById('title-count');
+      
+      if (titleInput && titleCount) {
+        titleInput.addEventListener('input', function() {
+          titleCount.textContent = this.value.length;
+          titleCount.parentElement.className = 'char-count';
+          
+          if (this.value.length > 90) {
+            titleCount.parentElement.classList.add('warning');
+          }
+          if (this.value.length === 100) {
+            titleCount.parentElement.classList.add('error');
+          }
+        });
+      }
+
+      // Character count for comment
+      const commentInput = document.getElementById('review-comment');
+      const commentCount = document.getElementById('comment-count');
+      
+      if (commentInput && commentCount) {
+        commentInput.addEventListener('input', function() {
+          commentCount.textContent = this.value.length;
+          commentCount.parentElement.className = 'char-count';
+          
+          if (this.value.length > 900) {
+            commentCount.parentElement.classList.add('warning');
+          }
+          if (this.value.length === 1000) {
+            commentCount.parentElement.classList.add('error');
+          }
+        });
+      }
+    }
+  });
+</script>
+
+<!-- Additional CSS for loading spinner -->
+<style>
+  .loading-reviews {
+    text-align: center;
+    padding: 3rem;
+    color: #718096;
+  }
+
+  .spinner {
+    margin: 0 auto 1rem;
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .privacy-notice {
+    background: #f7fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .reviews-section {
+    padding: 3rem 0;
+  }
+</style>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="about.html" data-translate="footer.about">About</a>
+      <a href="faq.html">FAQ</a>
+      <a href="customer-service.html">Customer Service</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="scam-stories.html">Scam Stories</a>
+      <a href="instruction-guide.html">User Guide</a>
+      <a href="privacy-policy.html" data-translate="footer.privacy">Privacy Policy</a>
+      <a href="terms-of-service.html" data-translate="footer.terms">Terms of Service</a>
+    </div>
+    <div class="footer-social">
+      <a href="https://www.linkedin.com/company/sichrplace/" target="_blank"><i class="fab fa-linkedin"></i></a>
+      <a href="https://www.facebook.com/sichrplace" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/sichrplace" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.tiktok.com/@sichrplace" target="_blank"><i class="fab fa-tiktok"></i></a>
+    </div>
+    
+    <!-- SichrPlace Footer Logo -->
+    <div class="footer-brand" style="text-align: center; margin: 20px 0;">
+      <div class="footer-brand-text" style="color: #6B7280; font-size: 14px;">
+        Your Trusted Rental Platform
+      </div>
+    </div>
+    
+    <p style="margin-top:16px;">&copy; 2025 SichrPlace. All rights reserved.<br>
+      Created by <a href="https://www.linkedin.com/in/z%C3%A9t%C3%A9ny-dobos/?originalSubdomain=hu" style="color:#40E0D0;">Zétény Dobos</a> and <a href="https://www.linkedin.com/in/%C3%B6mer-%C3%BC%C3%A7kale-482787202/" style="color:#40E0D0;">Ömer Üçkale</a>.
+    </p>
+  </footer>
+  
+  <script>
+    // Mobile menu toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.getElementById('menu-toggle');
+      const mainNav = document.getElementById('main-nav');
+      
+      if (menuToggle && mainNav) {
+        menuToggle.addEventListener('click', function() {
+          mainNav.classList.toggle('active');
+          const isExpanded = mainNav.classList.contains('active');
+          menuToggle.setAttribute('aria-expanded', isExpanded);
+        });
+      }
+      
+      // Language switcher
+      const languageBtn = document.getElementById('language-btn');
+      const languageDropdown = document.getElementById('language-dropdown');
+      
+      if (languageBtn && languageDropdown) {
+        languageBtn.addEventListener('click', function() {
+          languageDropdown.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!languageBtn.contains(e.target) && !languageDropdown.contains(e.target)) {
+            languageDropdown.classList.remove('active');
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

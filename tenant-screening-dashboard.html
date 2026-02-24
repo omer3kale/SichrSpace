@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tenant Screening Dashboard - SichrPlace</title>
+  
+  <!-- Favicon and Icons -->
+  <link rel="icon" href="img/favicon.ico" sizes="any">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #2563EB;
+      --primary-dark: #1D4ED8;
+      --primary-hover: #3B82F6;
+      --secondary: #F8FAFC;
+      --accent: #40E0D0;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --error: #EF4444;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+      --card: #FFFFFF;
+      --background: #F9FAFB;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--card);
+      padding: 20px 0;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .logo {
+      font-family: 'Poppins', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: var(--text-muted);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Page Title */
+    .page-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .page-title h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .page-title p {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Apartment Selection */
+    .apartment-selection {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .apartment-selection h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--text);
+    }
+
+    .apartment-selector {
+      display: flex;
+      gap: 15px;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    /* Progress Overview */
+    .progress-overview {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .progress-header h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .overall-progress {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .progress-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary) 0deg, var(--border) 0deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .progress-circle::before {
+      content: '';
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--card);
+      position: absolute;
+    }
+
+    .progress-percentage {
+      font-weight: 700;
+      color: var(--primary);
+      z-index: 1;
+      font-size: 12px;
+    }
+
+    .progress-text {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Screening Steps */
+    .screening-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .step-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 25px;
+      border: 2px solid var(--border);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .step-card.completed {
+      border-color: var(--success);
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    }
+
+    .step-card.in-progress {
+      border-color: var(--warning);
+      background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+    }
+
+    .step-card.not-started {
+      border-color: var(--border);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .step-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+    }
+
+    .step-icon.completed {
+      background: var(--success);
+    }
+
+    .step-icon.in-progress {
+      background: var(--warning);
+    }
+
+    .step-icon.not-started {
+      background: var(--text-muted);
+    }
+
+    .step-info h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--text);
+    }
+
+    .step-status {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .step-status.completed {
+      color: var(--success);
+    }
+
+    .step-status.in-progress {
+      color: var(--warning);
+    }
+
+    .step-status.not-started {
+      color: var(--text-muted);
+    }
+
+    .step-description {
+      margin-bottom: 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .step-details {
+      margin-bottom: 15px;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .detail-label {
+      color: var(--text-muted);
+    }
+
+    .detail-value {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .step-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+
+    /* Status Badge */
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge.success {
+      background: #DCFCE7;
+      color: #166534;
+    }
+
+    .status-badge.warning {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .status-badge.error {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+
+    .status-badge.info {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+
+    /* Results Summary */
+    .results-summary {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 25px;
+      margin-top: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .results-summary h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .summary-item {
+      text-align: center;
+      padding: 20px;
+      border-radius: var(--radius);
+      background: var(--secondary);
+    }
+
+    .summary-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+
+      .header-content {
+        padding: 0 15px;
+      }
+
+      .page-title h1 {
+        font-size: 24px;
+      }
+
+      .apartment-selector {
+        flex-direction: column;
+      }
+
+      .overall-progress {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .step-actions {
+        justify-content: center;
+      }
+    }
+
+    /* Loading States */
+    .loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .loading::after {
+      content: '';
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top: 2px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 15px;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+      border-left: 4px solid;
+    }
+
+    .alert.success {
+      background: #F0FDF4;
+      border-color: var(--success);
+      color: #166534;
+    }
+
+    .alert.warning {
+      background: #FFFBEB;
+      border-color: var(--warning);
+      color: #92400E;
+    }
+
+    .alert.error {
+      background: #FEF2F2;
+      border-color: var(--error);
+      color: #991B1B;
+    }
+
+    .alert.info {
+      background: #EFF6FF;
+      border-color: var(--primary);
+      color: #1E40AF;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <a href="index.html" class="logo">
+        <i class="fas fa-shield-alt"></i> SichrPlace
+      </a>
+      <div class="user-info">
+        <span id="user-name">Max Mustermann</span>
+        <div class="user-avatar" id="user-avatar">MM</div>
+        <a href="applicant-dashboard.html" class="btn btn-secondary btn-sm">
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Page Title -->
+    <div class="page-title">
+      <h1><i class="fas fa-clipboard-check"></i> Tenant Screening Dashboard</h1>
+      <p>Complete your tenant screening to qualify for premium apartments. German landlords require comprehensive verification for rental approval.</p>
+    </div>
+
+    <!-- Apartment Selection -->
+    <div class="apartment-selection">
+      <h2><i class="fas fa-home"></i> Select Apartment for Screening</h2>
+      <div class="apartment-selector">
+        <div class="form-group">
+          <label for="apartment-select">Target Apartment</label>
+          <select id="apartment-select">
+            <option value="">Select an apartment...</option>
+            <option value="apt-001">Modern 2BR in Berlin Mitte - €1,200/month</option>
+            <option value="apt-002">Student Studio in Cologne - €800/month</option>
+            <option value="apt-003">Furnished 1BR in Munich - €1,500/month</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="apartment-id">Or Enter Apartment ID</label>
+          <input type="text" id="apartment-id" placeholder="e.g., APT-12345">
+        </div>
+        <button class="btn btn-primary" id="load-screening-btn">
+          <i class="fas fa-search"></i> Load Screening
+        </button>
+      </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div id="alert-container"></div>
+
+    <!-- Progress Overview -->
+    <div class="progress-overview">
+      <div class="progress-header">
+        <h2><i class="fas fa-tasks"></i> Screening Progress</h2>
+        <div class="overall-progress">
+          <div class="progress-circle" id="progress-circle">
+            <span class="progress-percentage" id="progress-percentage">0%</span>
+          </div>
+          <div>
+            <div class="progress-text">Overall Completion</div>
+            <div id="completion-status" class="status-badge info">Getting Started</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screening Steps -->
+      <div class="screening-steps" id="screening-steps">
+        
+        <!-- SCHUFA Credit Check -->
+        <div class="step-card not-started" id="schufa-step">
+          <div class="step-header">
+            <div class="step-icon not-started">
+              <i class="fas fa-credit-card"></i>
+            </div>
+            <div class="step-info">
+              <h3>SCHUFA Credit Check</h3>
+              <div class="step-status not-started">Not Started</div>
+            </div>
+          </div>
+          <div class="step-description">
+            German credit verification through SCHUFA. Required by most landlords to assess financial reliability and payment history.
+          </div>
+          <div class="step-details">
+            <div class="detail-item">
+              <span class="detail-label">Status:</span>
+              <span class="detail-value" id="schufa-status">Pending</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Credit Score:</span>
+              <span class="detail-value" id="schufa-score">-</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Valid Until:</span>
+              <span class="detail-value" id="schufa-validity">-</span>
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary btn-sm" id="schufa-start-btn">
+              <i class="fas fa-play"></i> Start SCHUFA Check
+            </button>
+            <button class="btn btn-secondary btn-sm" id="schufa-view-btn" style="display: none;">
+              <i class="fas fa-eye"></i> View Results
+            </button>
+          </div>
+        </div>
+
+        <!-- Employment Verification -->
+        <div class="step-card not-started" id="employment-step">
+          <div class="step-header">
+            <div class="step-icon not-started">
+              <i class="fas fa-briefcase"></i>
+            </div>
+            <div class="step-info">
+              <h3>Employment Verification</h3>
+              <div class="step-status not-started">Not Started</div>
+            </div>
+          </div>
+          <div class="step-description">
+            Income verification and 3x rent rule validation. Confirms employment status and financial capability to afford the rental.
+          </div>
+          <div class="step-details">
+            <div class="detail-item">
+              <span class="detail-label">Status:</span>
+              <span class="detail-value" id="employment-status">Pending</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">3x Rent Rule:</span>
+              <span class="detail-value" id="employment-rule">-</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Income Ratio:</span>
+              <span class="detail-value" id="employment-ratio">-</span>
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary btn-sm" id="employment-start-btn">
+              <i class="fas fa-play"></i> Submit Employment Info
+            </button>
+            <button class="btn btn-secondary btn-sm" id="employment-view-btn" style="display: none;">
+              <i class="fas fa-eye"></i> View Results
+            </button>
+          </div>
+        </div>
+
+        <!-- Landlord References -->
+        <div class="step-card not-started" id="references-step">
+          <div class="step-header">
+            <div class="step-icon not-started">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="step-info">
+              <h3>Landlord References</h3>
+              <div class="step-status not-started">Not Started</div>
+            </div>
+          </div>
+          <div class="step-description">
+            Previous landlord references and rental history verification. Automated collection and verification of reference responses.
+          </div>
+          <div class="step-details">
+            <div class="detail-item">
+              <span class="detail-label">Status:</span>
+              <span class="detail-value" id="references-status">Pending</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">References Received:</span>
+              <span class="detail-value" id="references-count">0/0</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Reference Score:</span>
+              <span class="detail-value" id="references-score">-</span>
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary btn-sm" id="references-start-btn">
+              <i class="fas fa-play"></i> Submit References
+            </button>
+            <button class="btn btn-secondary btn-sm" id="references-view-btn" style="display: none;">
+              <i class="fas fa-eye"></i> View Results
+            </button>
+          </div>
+        </div>
+
+        <!-- Financial Qualification -->
+        <div class="step-card not-started" id="financial-step">
+          <div class="step-header">
+            <div class="step-icon not-started">
+              <i class="fas fa-calculator"></i>
+            </div>
+            <div class="step-info">
+              <h3>Financial Qualification</h3>
+              <div class="step-status not-started">Not Started</div>
+            </div>
+          </div>
+          <div class="step-description">
+            Comprehensive financial assessment including affordability analysis, debt-to-income ratio, and German tax considerations.
+          </div>
+          <div class="step-details">
+            <div class="detail-item">
+              <span class="detail-label">Status:</span>
+              <span class="detail-value" id="financial-status">Pending</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Qualification Level:</span>
+              <span class="detail-value" id="financial-level">-</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Affordability Score:</span>
+              <span class="detail-value" id="financial-score">-</span>
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary btn-sm" id="financial-start-btn">
+              <i class="fas fa-play"></i> Calculate Qualification
+            </button>
+            <button class="btn btn-secondary btn-sm" id="financial-view-btn" style="display: none;">
+              <i class="fas fa-eye"></i> View Results
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="results-summary" id="results-summary" style="display: none;">
+      <h2><i class="fas fa-chart-bar"></i> Screening Results Summary</h2>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-value" id="overall-score">-</div>
+          <div class="summary-label">Overall Score</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-value" id="qualification-level">-</div>
+          <div class="summary-label">Qualification Level</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-value" id="approval-status">-</div>
+          <div class="summary-label">Approval Status</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-value" id="next-steps">-</div>
+          <div class="summary-label">Next Steps</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Configuration
+    const API_BASE_URL = '/.netlify/functions/tenant-screening';
+    let currentApartmentId = null;
+    let screeningData = {};
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeScreeningDashboard();
+      setupEventListeners();
+      loadUserInfo();
+    });
+
+    function initializeScreeningDashboard() {
+      // Check if apartment ID is passed via URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const apartmentId = urlParams.get('apartment');
+      
+      if (apartmentId) {
+        document.getElementById('apartment-id').value = apartmentId;
+        loadScreeningData(apartmentId);
+      }
+    }
+
+    function setupEventListeners() {
+      // Load screening button
+      document.getElementById('load-screening-btn').addEventListener('click', handleLoadScreening);
+
+      // Apartment selection
+      document.getElementById('apartment-select').addEventListener('change', function() {
+        const selectedValue = this.value;
+        if (selectedValue) {
+          loadScreeningData(selectedValue);
+        }
+      });
+
+      // Step action buttons
+      document.getElementById('schufa-start-btn').addEventListener('click', () => startSchufaCheck());
+      document.getElementById('employment-start-btn').addEventListener('click', () => startEmploymentVerification());
+      document.getElementById('references-start-btn').addEventListener('click', () => startLandlordReferences());
+      document.getElementById('financial-start-btn').addEventListener('click', () => startFinancialQualification());
+
+      // View results buttons
+      document.getElementById('schufa-view-btn').addEventListener('click', () => viewSchufaResults());
+      document.getElementById('employment-view-btn').addEventListener('click', () => viewEmploymentResults());
+      document.getElementById('references-view-btn').addEventListener('click', () => viewReferencesResults());
+      document.getElementById('financial-view-btn').addEventListener('click', () => viewFinancialResults());
+    }
+
+    function loadUserInfo() {
+      // Mock user data - replace with actual authentication
+      const userData = {
+        name: 'Max Mustermann',
+        email: 'max.mustermann@example.com',
+        initials: 'MM'
+      };
+
+      document.getElementById('user-name').textContent = userData.name;
+      document.getElementById('user-avatar').textContent = userData.initials;
+    }
+
+    function handleLoadScreening() {
+      const apartmentSelect = document.getElementById('apartment-select').value;
+      const apartmentId = document.getElementById('apartment-id').value.trim();
+
+      if (apartmentSelect) {
+        loadScreeningData(apartmentSelect);
+      } else if (apartmentId) {
+        loadScreeningData(apartmentId);
+      } else {
+        showAlert('Please select an apartment or enter an apartment ID', 'warning');
+      }
+    }
+
+    async function loadScreeningData(apartmentId) {
+      currentApartmentId = apartmentId;
+      
+      try {
+        showAlert('Loading screening data...', 'info');
+        
+        // Mock API call - replace with actual API
+        const mockData = {
+          apartmentId: apartmentId,
+          overallCompletion: 25,
+          schufa: {
+            status: 'completed',
+            creditScore: 750,
+            riskCategory: 'LOW',
+            validUntil: '2025-12-22'
+          },
+          employment: {
+            status: 'pending',
+            meetsThreeTimesRule: null,
+            incomeRatio: null
+          },
+          references: {
+            status: 'not_started',
+            referencesReceived: 0,
+            referencesRequested: 0,
+            overallScore: null
+          },
+          financial: {
+            status: 'not_started',
+            qualificationLevel: null,
+            affordabilityScore: null
+          }
+        };
+
+        screeningData = mockData;
+        updateScreeningDisplay();
+        showAlert('Screening data loaded successfully', 'success');
+
+      } catch (error) {
+        console.error('Error loading screening data:', error);
+        showAlert('Failed to load screening data. Please try again.', 'error');
+      }
+    }
+
+    function updateScreeningDisplay() {
+      if (!screeningData) return;
+
+      // Update overall progress
+      updateOverallProgress(screeningData.overallCompletion);
+
+      // Update individual steps
+      updateSchufaStep(screeningData.schufa);
+      updateEmploymentStep(screeningData.employment);
+      updateReferencesStep(screeningData.references);
+      updateFinancialStep(screeningData.financial);
+
+      // Show results summary if screening is complete
+      if (screeningData.overallCompletion >= 100) {
+        showResultsSummary();
+      }
+    }
+
+    function updateOverallProgress(completion) {
+      const progressCircle = document.getElementById('progress-circle');
+      const progressPercentage = document.getElementById('progress-percentage');
+      const completionStatus = document.getElementById('completion-status');
+
+      // Update progress circle
+      const degree = (completion / 100) * 360;
+      progressCircle.style.background = `conic-gradient(var(--primary) ${degree}deg, var(--border) ${degree}deg)`;
+      progressPercentage.textContent = `${completion}%`;
+
+      // Update status badge
+      if (completion === 100) {
+        completionStatus.textContent = 'Complete';
+        completionStatus.className = 'status-badge success';
+      } else if (completion >= 50) {
+        completionStatus.textContent = 'In Progress';
+        completionStatus.className = 'status-badge warning';
+      } else if (completion > 0) {
+        completionStatus.textContent = 'Started';
+        completionStatus.className = 'status-badge info';
+      } else {
+        completionStatus.textContent = 'Getting Started';
+        completionStatus.className = 'status-badge info';
+      }
+    }
+
+    function updateSchufaStep(schufaData) {
+      updateStepCard('schufa', schufaData.status, {
+        'schufa-status': schufaData.status,
+        'schufa-score': schufaData.creditScore ? `${schufaData.creditScore}/1000 (${schufaData.riskCategory})` : '-',
+        'schufa-validity': schufaData.validUntil || '-'
+      });
+    }
+
+    function updateEmploymentStep(employmentData) {
+      updateStepCard('employment', employmentData.status, {
+        'employment-status': employmentData.status,
+        'employment-rule': employmentData.meetsThreeTimesRule ? 'Meets Requirements' : 'Pending',
+        'employment-ratio': employmentData.incomeRatio ? `${employmentData.incomeRatio}:1` : '-'
+      });
+    }
+
+    function updateReferencesStep(referencesData) {
+      updateStepCard('references', referencesData.status, {
+        'references-status': referencesData.status,
+        'references-count': `${referencesData.referencesReceived}/${referencesData.referencesRequested}`,
+        'references-score': referencesData.overallScore ? `${referencesData.overallScore}/100` : '-'
+      });
+    }
+
+    function updateFinancialStep(financialData) {
+      updateStepCard('financial', financialData.status, {
+        'financial-status': financialData.status,
+        'financial-level': financialData.qualificationLevel || '-',
+        'financial-score': financialData.affordabilityScore ? `${financialData.affordabilityScore}/150` : '-'
+      });
+    }
+
+    function updateStepCard(stepPrefix, status, details) {
+      const stepCard = document.getElementById(`${stepPrefix}-step`);
+      const stepIcon = stepCard.querySelector('.step-icon');
+      const stepStatus = stepCard.querySelector('.step-status');
+      const startBtn = document.getElementById(`${stepPrefix}-start-btn`);
+      const viewBtn = document.getElementById(`${stepPrefix}-view-btn`);
+
+      // Update card and icon classes
+      stepCard.className = `step-card ${getStepClass(status)}`;
+      stepIcon.className = `step-icon ${getStepClass(status)}`;
+      
+      // Update status text
+      stepStatus.textContent = formatStatus(status);
+      stepStatus.className = `step-status ${getStepClass(status)}`;
+
+      // Update detail values
+      Object.entries(details).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.textContent = value;
+        }
+      });
+
+      // Update button visibility
+      if (status === 'completed' || status === 'verified') {
+        startBtn.style.display = 'none';
+        viewBtn.style.display = 'inline-flex';
+      } else {
+        startBtn.style.display = 'inline-flex';
+        viewBtn.style.display = 'none';
+      }
+    }
+
+    function getStepClass(status) {
+      switch (status) {
+        case 'completed':
+        case 'verified':
+          return 'completed';
+        case 'pending':
+        case 'in_review':
+        case 'processing':
+          return 'in-progress';
+        default:
+          return 'not-started';
+      }
+    }
+
+    function formatStatus(status) {
+      return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    // Step action handlers
+    function startSchufaCheck() {
+      window.open('tenant-screening-schufa.html?apartment=' + currentApartmentId, '_blank');
+    }
+
+    function startEmploymentVerification() {
+      window.open('tenant-screening-employment.html?apartment=' + currentApartmentId, '_blank');
+    }
+
+    function startLandlordReferences() {
+      window.open('tenant-screening-references.html?apartment=' + currentApartmentId, '_blank');
+    }
+
+    function startFinancialQualification() {
+      window.open('tenant-screening-financial.html?apartment=' + currentApartmentId, '_blank');
+    }
+
+    // View results handlers
+    function viewSchufaResults() {
+      window.open('tenant-screening-schufa.html?apartment=' + currentApartmentId + '&view=results', '_blank');
+    }
+
+    function viewEmploymentResults() {
+      window.open('tenant-screening-employment.html?apartment=' + currentApartmentId + '&view=results', '_blank');
+    }
+
+    function viewReferencesResults() {
+      window.open('tenant-screening-references.html?apartment=' + currentApartmentId + '&view=results', '_blank');
+    }
+
+    function viewFinancialResults() {
+      window.open('tenant-screening-financial.html?apartment=' + currentApartmentId + '&view=results', '_blank');
+    }
+
+    function showResultsSummary() {
+      const resultsSection = document.getElementById('results-summary');
+      resultsSection.style.display = 'block';
+
+      // Mock summary data
+      document.getElementById('overall-score').textContent = '87/100';
+      document.getElementById('qualification-level').textContent = 'GOOD';
+      document.getElementById('approval-status').textContent = 'Approved';
+      document.getElementById('next-steps').textContent = 'Contact Landlord';
+    }
+
+    function showAlert(message, type) {
+      const alertContainer = document.getElementById('alert-container');
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert ${type}`;
+      alertDiv.innerHTML = `
+        <i class="fas fa-${getAlertIcon(type)}"></i>
+        ${message}
+      `;
+
+      alertContainer.appendChild(alertDiv);
+
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        alertDiv.remove();
+      }, 5000);
+    }
+
+    function getAlertIcon(type) {
+      switch (type) {
+        case 'success': return 'check-circle';
+        case 'warning': return 'exclamation-triangle';
+        case 'error': return 'times-circle';
+        default: return 'info-circle';
+      }
+    }
+  </script>
+</body>
+</html>

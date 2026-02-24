@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>SichrPlace - Verified Student Apartments in Germany | Safe Apartment Search Platform</title>
   <link rel="stylesheet" href="css/logo-system.css">
+  <script src="js/language-switcher.js" defer></script>
   <script src="js/logo-cookie-manager.js" defer></script>
   <meta name="description" content="Find safe, verified apartments for students and young professionals in Germany. Secure messaging, trusted landlords, and exclusive offers for AIESEC and university students.">
   <meta name="keywords" content="student apartments Germany, verified apartments, rent apartment Germany, student housing Berlin, landlord listing Germany, AIESEC housing, safe rental Germany, WG, student flat, young professionals, university housing">
@@ -40,8 +41,8 @@
   <!-- PWA Styles -->
   <link rel="stylesheet" href="css/pwa-styles.css">
   
-  <!-- PayPal SDK - Will be configured via environment variables -->
-  <!-- <script src="https://www.paypal.com/sdk/js?client-id=PAYPAL_CLIENT_ID&currency=EUR&locale=de_DE&components=buttons&enable-funding=venmo,paylater"></script> -->
+  <!-- PayPal SDK - SichrPlace LIVE -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AcPYlXozR8VS9kJSk7rv5MW36lMV66ZMyqZKjM0YVuvt0dJ1cIyHRvDmGeux0qu3gBOh6XswI5gin2WO&currency=EUR&locale=de_DE&components=buttons&enable-funding=venmo,paylater"></script>
   
   <style>
     :root {
@@ -144,181 +145,20 @@
       display: flex !important;
       align-items: center;
       justify-content: center;
-      padding: 0;
-      border-radius: 8px;
-      background: transparent !important;
-      color: var(--primary) !important;
-      transition: color 0.2s ease, transform 0.2s ease;
+      padding: 8px;
+      border-radius: 50%;
+      background: var(--primary-lighter);
+      transition: all 0.3s ease;
       position: relative;
-      min-width: 0;
-      height: auto;
-      font-weight: 600;
-      box-shadow: none;
-      text-decoration: none;
     }
     .cart-icon:hover {
-      background: transparent !important;
-      color: var(--accent) !important;
-      transform: translateY(-1px);
-      box-shadow: none;
+      background: var(--primary) !important;
+      color: white !important;
+      transform: translateY(-2px);
     }
-    .cart-label {
-      display: none !important;
+    .cart-icon i {
+      font-size: 1.1rem;
     }
-
-    .cart-icon-svg {
-      width: 1.3rem;
-      height: 1.3rem;
-      flex-shrink: 0;
-      color: currentColor;
-    }
-
-    .menu-toggle {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
-      background: var(--primary);
-      border: none;
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.25);
-      transition: background 0.2s ease, transform 0.2s ease;
-      color: white;
-    }
-
-    .menu-toggle:focus-visible {
-      outline: 3px solid var(--accent);
-      outline-offset: 3px;
-    }
-
-    .menu-toggle:active {
-      transform: scale(0.98);
-    }
-
-    .menu-bar {
-      width: 22px;
-      height: 2px;
-      background: currentColor;
-      border-radius: 999px;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-
-    body.mobile-nav-open {
-      overflow: hidden;
-    }
-
-    .main-nav {
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-    
-    /* Language Switcher Styles */
-    .language-switcher {
-      position: relative;
-      display: inline-block;
-    }
-    
-    .language-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: var(--heading-font);
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
-      outline: none;
-    }
-    
-    .language-btn:hover {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-    
-    .language-btn i:last-child {
-      font-size: 0.7rem;
-      transition: transform 0.2s ease;
-    }
-    
-    .language-btn.active i:last-child {
-      transform: rotate(180deg);
-    }
-    
-    .language-dropdown {
-      display: none;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      min-width: 140px;
-      z-index: 1000;
-      overflow: hidden;
-      margin-top: 8px;
-      border: 1px solid var(--border);
-    }
-    
-    .language-dropdown.active {
-      display: block;
-      animation: fadeInDown 0.2s ease-out;
-    }
-    
-    .language-dropdown.show {
-      display: block;
-      animation: fadeInDown 0.2s ease-out;
-    }
-    
-    .lang-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      color: var(--text);
-      text-decoration: none;
-      font-family: var(--body-font);
-      font-weight: 500;
-      font-size: 0.9rem;
-      transition: background 0.2s ease;
-      border-bottom: 1px solid #f1f1f1;
-    }
-    
-    .lang-option:last-child {
-      border-bottom: none;
-    }
-    
-    .lang-option:hover {
-      background: var(--secondary);
-    }
-    
-    .lang-option.active {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .flag-emoji {
-      font-size: 16px;
-      line-height: 1;
-    }
-    
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
     /* Hero Section */
     .hero {
       background: linear-gradient(135deg, var(--primary) 0%, #1e40af 25%, var(--accent) 75%, #06b6d4 100%);
@@ -359,17 +199,11 @@
       100% { opacity: 1; }
     }
     .hero-content {
-      max-width: 960px;
-      width: 100%;
+      max-width: 700px;
       margin: 0 auto;
-      padding: 0 24px;
       position: relative;
       z-index: 2;
       animation: heroFloat 3s ease-in-out infinite alternate;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 24px;
     }
     
     @keyframes heroFloat {
@@ -480,9 +314,9 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
-      width: min(100%, 560px);
-      margin: 0 auto 24px auto;
-      flex-wrap: wrap;
+      max-width: 480px;
+      margin: 0 auto;
+      margin-bottom: 24px;
     }
     .search-bar input {
       flex: 1;
@@ -512,7 +346,6 @@
       display: flex;
       justify-content: center;
       gap: 16px;
-      flex-wrap: wrap;
     }
     .hero-cta a {
       background: #fff;
@@ -532,41 +365,6 @@
     .hero-cta a:hover {
       background: var(--primary);
       color: #fff;
-    }
-
-    .how-it-works {
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-      padding: 80px 0;
-    }
-
-    .section-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 40px;
-      text-align: center;
-    }
-
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 40px;
-      margin-top: 50px;
-    }
-
-    .quick-tips {
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 40px;
-      margin-top: 60px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      border-left: 6px solid var(--accent);
-    }
-
-    .quick-tip-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      text-align: left;
     }
     /* 5th Stage Feature Styles */
     .matching-section {
@@ -626,9 +424,6 @@
       color: #222;
       font-size: 1rem;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
     /* ...rest of your CSS... */
     .features {
       display: flex;
@@ -640,7 +435,6 @@
     }
     .feature-card {
       background: var(--card);
-      border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 32px 28px;
       flex: 1 1 260px;
@@ -678,7 +472,6 @@
     .slider-container {
       overflow: hidden;
       position: relative;
-      border-radius: 8px;
       box-shadow: var(--shadow);
       background: var(--card);
     }
@@ -705,7 +498,6 @@
     .slider-dot {
       width: 12px;
       height: 12px;
-      border-radius: 50%;
       background: #d1d5db;
       cursor: pointer;
       transition: background 0.2s;
@@ -725,7 +517,6 @@
     }
     .apartment-card {
       background: #f3f4f6;
-      border-radius: 8px;
       padding: 12px;
       display: flex;
       align-items: center;
@@ -736,7 +527,6 @@
     .apartment-card img {
       width: 60px;
       height: 60px;
-      border-radius: 4px;
       object-fit: cover;
     }
     .apartment-card .apartment-info {
@@ -759,7 +549,6 @@
     .apartment-card .badge {
       background: var(--primary);
       color: #fff;
-      border-radius: 12px;
       padding: 2px 10px;
       font-size: 0.85rem;
       margin-left: 8px;
@@ -776,7 +565,6 @@
       max-width: 600px;
       margin: 0 auto;
       background: #f9fafb;
-      border-radius: 8px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.04);
       padding: 24px 18px;
       margin-top: 18px;
@@ -790,7 +578,6 @@
     #opinion-form textarea {
       width: 100%;
       min-height: 60px;
-      padding: 8px;
       border: 1px solid #d1d5db;
       margin-bottom: 10px;
       font-family: var(--body-font);
@@ -800,7 +587,6 @@
       background: var(--primary);
       color: #fff;
       border: none;
-      border-radius: 4px;
       padding: 8px 24px;
       font-family: var(--heading-font);
       font-weight: 600;
@@ -812,7 +598,6 @@
     }
     .opinion-item {
       background: #f3f4f6;
-      border-radius: 4px;
       padding: 10px;
       margin-bottom: 8px;
     }
@@ -824,7 +609,6 @@
     }
     .customer-service-faq-container {
       background: #fff;
-      border-radius: 8px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.06);
       padding: 32px;
     }
@@ -948,74 +732,6 @@
       color: #40E0D0;
     }
     @media (max-width: 900px) {
-      header {
-        padding: 0 20px;
-        height: 72px;
-      }
-      .menu-toggle {
-        display: flex;
-      }
-      .main-nav {
-        position: fixed;
-        top: 72px;
-        right: 0;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-        background: var(--card);
-        padding: 20px 24px;
-        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.18);
-        border-radius: 0 0 0 18px;
-        width: min(320px, 92vw);
-        max-height: calc(100vh - 72px);
-        overflow-y: auto;
-        display: none;
-        opacity: 0;
-        transform: translateY(-16px);
-        pointer-events: none;
-        z-index: 1000;
-      }
-      .main-nav.open {
-        display: flex;
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
-      }
-      .main-nav a,
-      .main-nav .language-switcher {
-        width: 100%;
-      }
-      .main-nav a {
-        padding: 12px 0;
-      }
-      .main-nav .cart-icon {
-        width: 100%;
-        justify-content: center;
-        margin: 8px 0 !important;
-        box-shadow: none !important;
-      }
-      .main-nav.open .cart-label {
-        display: none !important;
-      }
-      .language-switcher {
-        width: 100%;
-      }
-      .language-dropdown {
-        position: static;
-        width: 100%;
-        margin-top: 8px;
-        box-shadow: none;
-        border: 1px solid #e5e7eb;
-      }
-      .hero {
-        padding: 90px 24px 70px 24px;
-      }
-      .hero-content {
-        padding: 0 16px;
-      }
-      .hero h1 {
-        font-size: 2.6rem;
-      }
       .features {
         flex-direction: column;
         gap: 18px;
@@ -1028,15 +744,6 @@
       }
       .hero h1 {
         font-size: 2.2rem;
-      }
-      .section-inner {
-        padding: 0 24px;
-      }
-      .steps-grid {
-        gap: 28px;
-      }
-      .quick-tips {
-        padding: 32px 24px;
       }
       .slider-section {
         padding: 0 0 24px 0;
@@ -1096,132 +803,6 @@
         flex-direction: column;
         gap: 12px;
       }
-
-      .steps-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-      }
-
-      .quick-tips {
-        padding: 30px 20px;
-      }
-
-      .quick-tip-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-      
-      /* Ensure cart icon is prominent on mobile */
-      .cart-icon {
-        min-width: 44px !important;
-        height: 44px !important;
-        padding: 0 !important;
-        margin: 0 8px !important;
-        background: transparent !important;
-        border-radius: 12px !important;
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        box-shadow: none !important;
-        color: var(--primary) !important;
-      }
-      
-      .cart-icon i,
-      .cart-label,
-      .cart-fallback {
-        font-size: 1.4rem !important;
-        color: currentColor !important;
-      }
-    }
-
-    @media (max-width: 600px) {
-      header {
-        padding: 0 16px;
-        height: 64px;
-      }
-      .hero {
-        padding: 72px 16px 60px 16px;
-      }
-      .hero-content {
-        padding: 0 12px;
-      }
-      .hero h1 {
-        font-size: 2.3rem;
-      }
-      .hero p {
-        font-size: 1.05rem;
-        line-height: 1.6;
-      }
-      .hero-buttons {
-        flex-direction: column;
-        gap: 12px;
-      }
-      .search-bar {
-        flex-direction: column;
-      }
-      .search-bar input {
-        width: 100%;
-      }
-      .search-bar button {
-        width: 100%;
-        padding: 14px 16px;
-      }
-      .hero-cta a {
-        width: 100%;
-        text-align: center;
-      }
-      .matching-section,
-      .slider-section,
-      .top-apartments,
-      .customer-service-faq,
-      .feedback-section {
-        padding: 0 16px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .section-inner {
-        padding: 0 16px;
-      }
-      .quick-tips {
-        padding: 28px 18px;
-      }
-      .quick-tip-grid {
-        gap: 18px;
-      }
-      .feature-card {
-        width: 100%;
-        max-width: none;
-      }
-      .footer-links {
-        flex-direction: column;
-        gap: 12px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero {
-        padding: 64px 12px 48px 12px;
-      }
-      .hero h1 {
-        font-size: 1.9rem;
-      }
-      .hero p {
-        font-size: 1rem;
-        margin-bottom: 24px;
-      }
-      .hero-cta {
-        gap: 12px;
-      }
-      .search-bar input {
-        padding: 14px 16px;
-        font-size: 1rem;
-      }
-      .steps-grid {
-        gap: 20px;
-      }
-      .quick-tips {
-        padding: 24px 16px;
-      }
     }
  </style>
  <!-- Facebook Pixel for Landlords -->
@@ -1246,7 +827,7 @@
 <body>
   <header>
     <div class="header-logo">
-      <a href="index.html" class="logo" aria-label="SichrPlace">
+      <a href="/" class="logo" aria-label="SichrPlace">
         <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:block;">
         <span class="brand-text">
           <span class="sichrplace-text">SichrPlace</span>
@@ -1254,48 +835,20 @@
         </span>
       </a>
     </div>
-    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
-      <span class="menu-bar"></span>
-      <span class="menu-bar"></span>
-      <span class="menu-bar"></span>
-    </button>
-    <nav class="main-nav" id="main-nav">
+    <nav>
       <a href="login.html" data-translate="nav.login">Login</a>
       <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
+      
+      <!-- Language Switcher -->
+      <div class="language-switcher"></div>
       
       <!-- View link for viewing requests -->
       <a href="viewing-request.html" data-translate="nav.view">View</a>
       
-      <!-- Marketplace Cart Icon - Enhanced Visibility -->
-      <a href="marketplace.html" class="cart-icon" title="Marketplace - Buy & Sell" aria-label="Marketplace" data-translate-title="nav.marketplace.title" data-translate-aria="nav.marketplace.aria">
-        <svg class="cart-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M7.01 18.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 2.999-.001Zm10 0a1.5 1.5 0 1 1-3.001 0 1.5 1.5 0 0 1 3.001 0ZM6.16 7l.44 2h11.56a1 1 0 0 1 .98 1.204l-1.2 6a1 1 0 0 1-.98.796H8.18a1 1 0 0 1-.98-.804L5.53 4.5H3a1 1 0 1 1 0-2h3a1 1 0 0 1 .98.804L7.62 7H6.16Z" fill="currentColor" />
-        </svg>
-        <span class="cart-label" data-translate="nav.marketplace.label">Marketplace</span>
+      <!-- Marketplace moved to the rightmost position -->
+      <a href="marketplace.html" class="cart-icon" title="Marketplace" aria-label="Marketplace">
+        <i class="fas fa-shopping-cart"></i>
       </a>
-      
-      <!-- Language Switcher moved to the rightmost position -->
-      <div class="language-switcher">
-        <button class="language-btn" id="language-btn" aria-label="Switch Language">
-          <i class="fas fa-globe"></i>
-          <span id="current-lang">EN</span>
-          <i class="fas fa-chevron-down"></i>
-        </button>
-        <div class="language-dropdown" id="language-dropdown">
-          <a href="#" data-lang="en" class="lang-option active">
-            <span class="flag-emoji">🇺🇸</span>
-            English
-          </a>
-          <a href="#" data-lang="de" class="lang-option">
-            <span class="flag-emoji">🇩🇪</span>
-            Deutsch
-          </a>
-          <a href="#" data-lang="tr" class="lang-option">
-            <span class="flag-emoji">🇹🇷</span>
-            Türkçe
-          </a>
-        </div>
-      </div>
     </nav>
   </header>
 
@@ -1407,7 +960,7 @@
       <div id="paypal-result-message" style="display:none;margin-bottom:16px;padding:12px;border-radius:8px;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;font-size:14px;text-align:center;"></div>
       
       <div style="text-align:center;color:#6b7280;font-size:13px;">
-        <i class="fa fa-lock"></i> Managed payments pilot currently in testing — PayPal checkout coming soon
+        <i class="fa fa-lock"></i> Secure payment processed by PayPal
       </div>
     </div>
   </div>
@@ -1416,123 +969,15 @@
     <!-- Hero Section (Landing) -->
     <section class="hero">
       <div class="hero-content">
-        <h1 data-translate="hero.title">Find Your Next Apartment<br>with Confidence</h1>
-        <p data-translate="hero.subtitle">Secure, transparent, and easy apartment search for students and professionals in Germany.</p>
+        <h1>Find Your Next Apartment<br>with Confidence</h1>
+        <p>Secure, transparent, and easy apartment search for students and professionals in Germany.</p>
         <form class="search-bar" action="apartments-listing.html" method="get">
-          <input type="text" name="q" placeholder="Search by city, address, or keyword..." aria-label="Search apartments" data-translate-placeholder="hero.search.placeholder" data-translate-aria="hero.search.aria">
-          <button type="submit"><i class="fa fa-search"></i> <span data-translate="hero.search.button">Search</span></button>
+          <input type="text" name="q" placeholder="Search by city, address, or keyword..." aria-label="Search apartments">
+          <button type="submit"><i class="fa fa-search"></i> Search</button>
         </form>
         <div class="hero-cta">
-          <a href="create-account.html" class="primary" data-translate="hero.cta.getstarted">Get Started</a>
-          <a href="apartments-listing.html" data-translate="hero.cta.browse">Browse Apartments</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- How It Works Section -->
-    <section class="how-it-works">
-      <div class="section-inner">
-        <h2 style="font-size: 2.5rem; color: var(--primary); margin-bottom: 20px; font-family: var(--heading-font);">
-          <i class="fas fa-lightbulb" style="color: var(--accent); margin-right: 12px;"></i>
-          How SichrPlace Works
-        </h2>
-        <p style="font-size: 1.2rem; color: var(--text); margin-bottom: 60px; max-width: 600px; margin-left: auto; margin-right: auto;">
-          Finding your perfect apartment is simple with our streamlined process
-        </p>
-
-        <div class="steps-grid">
-          <!-- Step 1: Browse -->
-          <div style="background: white; padding: 40px 30px; border-radius: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); position: relative; border-top: 4px solid var(--primary);">
-            <div style="background: var(--primary); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin: 0 auto 20px;">1</div>
-            <div style="background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-size: 4rem; margin-bottom: 15px;">
-              <i class="fas fa-search"></i>
-            </div>
-            <h3 style="color: var(--primary); font-size: 1.4rem; margin-bottom: 15px; font-family: var(--heading-font);">Browse Apartments</h3>
-            <p style="color: var(--text); line-height: 1.6; margin-bottom: 20px;">Search for apartments by location, use our simple filters (price, rooms, type), or browse all available listings. Every apartment is verified for safety.</p>
-            <a href="apartments-listing.html" style="display: inline-flex; align-items: center; gap: 8px; color: var(--primary); font-weight: 600; text-decoration: none; padding: 10px 20px; border: 2px solid var(--primary); border-radius: 8px; transition: all 0.3s;" onmouseover="this.style.background='var(--primary)'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='var(--primary)';">
-              <i class="fas fa-arrow-right"></i> Start Browsing
-            </a>
-          </div>
-
-          <!-- Step 2: Schedule Viewing -->
-          <div style="background: white; padding: 40px 30px; border-radius: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); position: relative; border-top: 4px solid var(--accent);">
-            <div style="background: var(--accent); color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin: 0 auto 20px;">2</div>
-            <div style="background: linear-gradient(135deg, var(--accent), var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-size: 4rem; margin-bottom: 15px;">
-              <i class="fas fa-calendar-check"></i>
-            </div>
-            <h3 style="color: var(--primary); font-size: 1.4rem; margin-bottom: 15px; font-family: var(--heading-font);">Schedule a Viewing</h3>
-            <p style="color: var(--text); line-height: 1.6; margin-bottom: 20px;">Found an apartment you like? Click "Schedule Viewing" and fill out the simple form with your contact details and preferred viewing time. We conduct all viewings professionally.</p>
-            <a href="viewing-request.html" style="display: inline-flex; align-items: center; gap: 8px; color: var(--accent); font-weight: 600; text-decoration: none; padding: 10px 20px; border: 2px solid var(--accent); border-radius: 8px; transition: all 0.3s;" onmouseover="this.style.background='var(--accent)'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='var(--accent)';">
-              <i class="fas fa-calendar"></i> Schedule Now
-            </a>
-          </div>
-
-          <!-- Step 3: Managed Payments (pilot) -->
-          <div style="background: white; padding: 40px 30px; border-radius: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); position: relative; border-top: 4px solid #28a745;">
-            <div style="background: #28a745; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin: 0 auto 20px;">3</div>
-            <div style="background: linear-gradient(135deg, #28a745, var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-size: 4rem; margin-bottom: 15px;">
-              <i class="fas fa-shield-alt"></i>
-            </div>
-            <h3 style="color: var(--primary); font-size: 1.4rem; margin-bottom: 15px; font-family: var(--heading-font);">Managed payments (pilot)</h3>
-            <p style="color: var(--text); line-height: 1.6; margin-bottom: 20px;">Platform-handled payments are currently in pilot with selected landlords. Submit your request and our team will guide you through the interim payment flow while the full release is prepared.</p>
-            <div style="display: inline-flex; align-items: center; gap: 8px; color: #28a745; font-weight: 600; padding: 10px 20px; border: 2px solid #28a745; border-radius: 8px;">
-              <i class="fab fa-paypal"></i> Join the payments beta list
-            </div>
-          </div>
-        </div>
-        <!-- Quick link to End-to-End guide -->
-        <div style="text-align:center;margin-top:28px;">
-          <a href="instruction-guide.html#end-to-end" style="display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:10px;border:2px solid var(--primary);text-decoration:none;color:var(--primary);font-weight:600;">See full end-to-end guide</a>
-        </div>
-
-        <!-- Quick Tips -->
-        <div class="quick-tips">
-          <h3 style="color: var(--primary); font-size: 1.8rem; margin-bottom: 25px; text-align: center; font-family: var(--heading-font);">
-            <i class="fas fa-star" style="color: var(--accent); margin-right: 10px;"></i>
-            Quick Tips for Success
-          </h3>
-          <div class="quick-tip-grid">
-            <div style="display: flex; align-items: flex-start; gap: 15px;">
-              <div style="background: var(--primary); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">
-                <i class="fas fa-search" style="font-size: 12px;"></i>
-              </div>
-              <div>
-                <h4 style="color: var(--primary); margin: 0 0 8px 0; font-size: 1.1rem;">Use Location Search</h4>
-                <p style="color: var(--text); margin: 0; line-height: 1.5;">Search by neighborhood names, postal codes, or nearby landmarks for the best results.</p>
-              </div>
-            </div>
-            <div style="display: flex; align-items: flex-start; gap: 15px;">
-              <div style="background: var(--accent); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">
-                <i class="fas fa-clock" style="font-size: 12px;"></i>
-              </div>
-              <div>
-                <h4 style="color: var(--primary); margin: 0 0 8px 0; font-size: 1.1rem;">Book Viewings Early</h4>
-                <p style="color: var(--text); margin: 0; line-height: 1.5;">Popular apartments fill up quickly. Schedule your viewing as soon as you find something you like.</p>
-              </div>
-            </div>
-            <div style="display: flex; align-items: flex-start; gap: 15px;">
-              <div style="background: #28a745; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">
-                <i class="fas fa-shield-alt" style="font-size: 12px;"></i>
-              </div>
-              <div>
-                <h4 style="color: var(--primary); margin: 0 0 8px 0; font-size: 1.1rem;">Stay Safe</h4>
-                <p style="color: var(--text); margin: 0; line-height: 1.5;">All our listings are verified. If something seems suspicious, contact our customer service immediately.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Call to Action -->
-        <div style="text-align: center; margin-top: 50px;">
-          <h3 style="color: var(--primary); font-size: 1.6rem; margin-bottom: 20px; font-family: var(--heading-font);">Ready to Find Your Perfect Apartment?</h3>
-          <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-            <a href="apartments-listing.html" style="display: inline-flex; align-items: center; gap: 10px; background: var(--primary); color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(37, 99, 235, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(37, 99, 235, 0.3)';">
-              <i class="fas fa-home"></i> Browse Apartments
-            </a>
-            <a href="create-account.html" style="display: inline-flex; align-items: center; gap: 10px; background: transparent; color: var(--primary); padding: 15px 30px; border: 2px solid var(--primary); border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s;" onmouseover="this.style.background='var(--primary)'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='var(--primary)';">
-              <i class="fas fa-user-plus"></i> Create Account
-            </a>
-          </div>
+          <a href="create-account.html" class="primary">Get Started</a>
+          <a href="apartments-listing.html">Browse Apartments</a>
         </div>
       </div>
     </section>
@@ -1541,23 +986,23 @@
     <section class="features">
       <div class="feature-card">
         <i class="fa fa-home"></i>
-        <h3 data-translate="features.verified.title">Verified Listings</h3>
-        <p data-translate="features.verified.description">All apartments are verified for authenticity to protect you from scams.</p>
+        <h3>Verified Listings</h3>
+        <p>All apartments are verified for authenticity to protect you from scams.</p>
       </div>
       <div class="feature-card">
         <i class="fa fa-comments"></i>
-        <h3 data-translate="features.messaging.title">Secure Messaging</h3>
-        <p data-translate="features.messaging.description">Chat safely with landlords and renters using our built-in messaging system.</p>
+        <h3>Secure Messaging</h3>
+        <p>Chat safely with landlords and renters using our built-in messaging system.</p>
       </div>
       <div class="feature-card">
         <i class="fa fa-filter"></i>
-        <h3 data-translate="features.filters.title">Advanced Filters</h3>
-        <p data-translate="features.filters.description">Find your perfect home with filters for price, location, facilities, and more.</p>
+        <h3>Advanced Filters</h3>
+        <p>Find your perfect home with filters for price, location, facilities, and more.</p>
       </div>
       <div class="feature-card">
         <i class="fa fa-star"></i>
-        <h3 data-translate="features.rated.title">Top Rated Apartments</h3>
-        <p data-translate="features.rated.description">See the best-rated apartments and reviews from real tenants.</p>
+        <h3>Top Rated Apartments</h3>
+        <p>See the best-rated apartments and reviews from real tenants.</p>
       </div>
     </section>
 
@@ -1605,7 +1050,7 @@
             <h2>Top Rated Apartments</h2>
             <div class="top-apartments-list">
               <div class="apartment-card">
-                <img src="img/apartment1.jpg" alt="Apartment 1" loading="lazy" decoding="async">
+                <img src="img/apartment1.jpg" alt="Apartment 1">
                 <div class="apartment-info">
                   <strong>123 Main St</strong>
                   <span>⭐ 4.8 (32 reviews)</span>
@@ -1615,7 +1060,7 @@
                 <button class="wishlist-btn" onclick="toggleWishlist(this)" title="Add to wishlist"><i class="fa fa-heart"></i></button>
               </div>
               <div class="apartment-card">
-                <img src="img/apartment2.jpg" alt="Apartment 2" loading="lazy" decoding="async">
+                <img src="img/apartment2.jpg" alt="Apartment 2">
                 <div class="apartment-info">
                   <strong>456 Elm St</strong>
                   <span>⭐ 4.7 (21 reviews)</span>
@@ -1624,7 +1069,7 @@
                 <button class="wishlist-btn" onclick="toggleWishlist(this)" title="Add to wishlist"><i class="fa fa-heart"></i></button>
               </div>
               <div class="apartment-card">
-                <img src="img/apartment3.jpg" alt="Apartment 3" loading="lazy" decoding="async">
+                <img src="img/apartment3.jpg" alt="Apartment 3">
                 <div class="apartment-info">
                   <strong>789 Oak Ave</strong>
                   <span>⭐ 4.9 (18 reviews)</span>
@@ -1677,7 +1122,7 @@
         <div class="testimonial" style="background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 22px;max-width:320px;flex:1 1 260px;display:flex;flex-direction:column;align-items:center;text-align:center;">
           <p style="font-size:1.08rem;color:var(--text);margin-bottom:18px;font-style:italic;">"SichrPlace helped me find a safe apartment in Cologne. The process was smooth and transparent!"</p>
           <div class="user" style="display:flex;align-items:center;gap:12px;">
-            <img src="img/user1.jpg" alt="User 1" style="width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,0.08);" loading="lazy" decoding="async">
+            <img src="img/user1.jpg" alt="User 1" style="width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
             <div class="user-info" style="font-family:var(--heading-font);font-weight:600;color:var(--primary);">
               Anna S.<br>
               <span style="font-size:0.95rem;font-weight:400;color:var(--muted);">Student</span>
@@ -1687,7 +1132,7 @@
         <div class="testimonial" style="background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 22px;max-width:320px;flex:1 1 260px;display:flex;flex-direction:column;align-items:center;text-align:center;">
           <p style="font-size:1.08rem;color:var(--text);margin-bottom:18px;font-style:italic;">"As a landlord, I appreciate the verification and messaging tools. Highly recommended!"</p>
           <div class="user" style="display:flex;align-items:center;gap:12px;">
-            <img src="img/user2.jpg" alt="User 2" style="width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,0.08);" loading="lazy" decoding="async">
+            <img src="img/user2.jpg" alt="User 2" style="width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
             <div class="user-info" style="font-family:var(--heading-font);font-weight:600;color:var(--primary);">
               Markus R.<br>
               <span style="font-size:0.95rem;font-weight:400;color:var(--muted);">Landlord</span>
@@ -1697,7 +1142,7 @@
         <div class="testimonial" style="background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 22px;max-width:320px;flex:1 1 260px;display:flex;flex-direction:column;align-items:center;text-align:center;">
           <p style="font-size:1.08rem;color:var(--text);margin-bottom:18px;font-style:italic;">"The advanced filters made it easy to find exactly what I needed. Great platform!"</p>
           <div class="user" style="display:flex;align-items:center;gap:12px;">
-            <img src="img/user3.jpg" alt="User 3" style="width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,0.08);" loading="lazy" decoding="async">
+            <img src="img/user3.jpg" alt="User 3" style="width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
             <div class="user-info" style="font-family:var(--heading-font);font-weight:600;color:var(--primary);">
               Fatima K.<br>
               <span style="font-size:0.95rem;font-weight:400;color:var(--muted);">Young Professional</span>
@@ -1741,10 +1186,6 @@
 
           <!-- Embedded Form -->
           <div class="embedded-form" style="position:relative;">
-            <div id="feedback-loader" role="status" aria-live="polite" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:32px 20px;">
-              <div style="width:32px;height:32px;border-radius:50%;border:3px solid rgba(37,99,235,0.25);border-top-color:var(--primary);animation:spin 1s linear infinite;"></div>
-              <p style="margin:0;color:var(--muted);font-size:0.95rem;">Loading feedback form…</p>
-            </div>
             <iframe 
               src="https://docs.google.com/forms/d/e/1FAIpQLSd11S_WSXvhxQgUlksFdZfvErbBZgaiKA484lsp9-sYIYK_IA/viewform?embedded=true" 
               width="100%" 
@@ -1752,19 +1193,17 @@
               frameborder="0" 
               marginheight="0" 
               marginwidth="0"
-              style="display:none;border-radius:12px;background:#ffffff;box-shadow:inset 0 2px 8px rgba(0,0,0,0.02);"
-              title="SichrPlace User Feedback Form"
-              id="feedback-iframe"
-              aria-hidden="true">
+              style="border-radius:12px;background:#ffffff;box-shadow:inset 0 2px 8px rgba(0,0,0,0.02);"
+              title="SichrPlace User Feedback Form">
               Yükleniyor…
             </iframe>
             
             <!-- Error fallback -->
-            <div class="form-error" id="feedback-fallback" style="display:none;text-align:center;padding:40px;background:#f8f9fa;border-radius:12px;border:2px dashed #e9ecef;" role="alert" aria-hidden="true">
+            <div class="form-error" style="display:none;text-align:center;padding:40px;background:#f8f9fa;border-radius:12px;border:2px dashed #e9ecef;">
               <i class="fas fa-exclamation-triangle" style="color:#ffc107;font-size:24px;margin-bottom:12px;"></i>
-              <p style="color:var(--text);margin-bottom:16px;">We couldn’t load the embedded feedback form. This sometimes happens if cookies or third-party content are blocked.</p>
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSd11S_WSXvhxQgUlksFdZfvErbBZgaiKA484lsp9-sYIYK_IA/viewform" 
-            target="_blank" rel="noopener noreferrer"
+              <p style="color:var(--text);margin-bottom:16px;">Unable to load the embedded form.</p>
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSd11S_WSXvhxQgUlksFdZfvErbBZgaiKA484lsp9-sYIYK_IA/viewform" 
+                 target="_blank" 
                  style="color:var(--primary);font-weight:600;text-decoration:none;border-bottom:2px solid var(--accent);">
                 Click here to open the feedback form in a new tab
               </a>
@@ -1841,6 +1280,29 @@
         </ol>
       </div>
     </section>
+
+    <!-- German Certification Section -->
+    <section class="certification-section" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 40px 20px; margin-top: 40px; text-align: center;">
+      <div style="max-width: 1000px; margin: 0 auto;">
+        <div class="certification-badges" style="display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; flex-wrap: wrap;">
+          <div class="cert-badge" style="background: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2rem;">🏛️</span>
+            <span style="font-weight: 600; color: var(--primary);">German Certified Platform</span>
+          </div>
+          <div class="cert-badge" style="background: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2rem;">🔒</span>
+            <span style="font-weight: 600; color: var(--primary);">Security Verified</span>
+          </div>
+          <div class="cert-badge" style="background: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2rem;">🛡️</span>
+            <span style="font-weight: 600; color: var(--primary);">GDPR Compliant</span>
+          </div>
+        </div>
+        <p style="color: var(--muted); font-size: 0.95rem; max-width: 600px; margin: 0 auto;">
+          German Certified Platform - Our security measures and data protection protocols meet the highest European standards.
+        </p>
+      </div>
+    </section>
   </main>
 
  <!-- Social CTA Bar for Instagram/TikTok/Facebook (BOTTOM) -->
@@ -1889,8 +1351,6 @@
       <a href="faq.html">FAQ</a>
       <a href="customer-service.html">Customer Service</a>
       <a href="marketplace.html">Marketplace</a>
-      <a href="scam-stories.html">Scam Stories</a>
-      <a href="instruction-guide.html">User Guide</a>
       <a href="privacy-policy.html" data-translate="footer.privacy">Privacy Policy</a>
       <a href="terms-of-service.html" data-translate="footer.terms">Terms of Service</a>
     </div>
@@ -1931,66 +1391,6 @@
     
      // Viewing Request Modal logic
     let viewingRequestData = {};
-    let paypalConfigCache = null;
-    let paypalSdkPromise = null;
-    let currentPayPalOrderId = null;
-
-    async function ensurePayPalSdkLoaded() {
-      if (window.paypal) {
-        return true;
-      }
-
-      if (!paypalConfigCache) {
-        try {
-          const response = await fetch('/api/paypal/config');
-          const payload = await response.json().catch(() => ({}));
-
-          if (!response.ok) {
-            throw new Error(payload.error || 'PayPal configuration unavailable');
-          }
-
-          if (!payload.clientId) {
-            throw new Error('PayPal client ID missing from configuration');
-          }
-
-          paypalConfigCache = payload;
-        } catch (error) {
-          throw new Error(`PayPal is not ready yet: ${error.message}`);
-        }
-      }
-
-      if (!paypalSdkPromise) {
-        const sdkUrlParams = new URLSearchParams({
-          'client-id': paypalConfigCache.clientId,
-          currency: paypalConfigCache.currency || 'EUR',
-          intent: 'capture',
-          components: 'buttons',
-          locale: 'de_DE'
-        });
-
-        paypalSdkPromise = new Promise((resolve, reject) => {
-          const existingScript = document.querySelector('script[data-paypal-sdk="true"]');
-          if (existingScript) {
-            existingScript.addEventListener('load', () => resolve(), { once: true });
-            existingScript.addEventListener('error', () => reject(new Error('Failed to load PayPal SDK')), { once: true });
-            return;
-          }
-
-          const script = document.createElement('script');
-          script.src = `https://www.paypal.com/sdk/js?${sdkUrlParams.toString()}`;
-          script.setAttribute('data-paypal-sdk', 'true');
-          script.onload = () => resolve();
-          script.onerror = () => reject(new Error('Failed to load PayPal SDK'));
-          document.head.appendChild(script);
-        }).catch(error => {
-          paypalSdkPromise = null;
-          throw error;
-        });
-      }
-
-      await paypalSdkPromise;
-      return true;
-    }
     
     function openViewingRequestModal() {
       document.getElementById('viewing-request-modal').style.display = 'flex';
@@ -2072,10 +1472,7 @@
       document.getElementById('paypal-payment-modal').style.display = 'flex';
       
       // Initialize PayPal button
-      initializePayPalButton().catch(error => {
-        console.error('Failed to initialise PayPal checkout:', error);
-        resultMessage(`❌ ${error.message}`, 'error');
-      });
+      initializePayPalButton();
     }
     
     function formatDate(dateString) {
@@ -2087,20 +1484,11 @@
       });
     }
     
-    async function initializePayPalButton() {
+    function initializePayPalButton() {
+      // Clear any existing PayPal button
       const container = document.getElementById('paypal-button-container');
-      if (!container) {
-        throw new Error('Missing PayPal button container');
-      }
-
-      container.innerHTML = '<div style="padding:12px;text-align:center;color:#2563eb;">Loading secure checkout…</div>';
-      resultMessage('', 'info');
-
-      await ensurePayPalSdkLoaded();
-
       container.innerHTML = '';
-  currentPayPalOrderId = null;
-
+      
       window.paypal.Buttons({
         style: {
           shape: "rect",
@@ -2130,19 +1518,18 @@
               }),
             });
 
-            const orderData = await response.json().catch(() => ({}));
+            const orderData = await response.json();
 
-            if (!response.ok || !orderData.success || !orderData.orderId) {
-              throw new Error(orderData.error || 'Failed to create PayPal order');
+            if (orderData.success && orderData.paymentId) {
+              // Store payment ID for later use
+              window.currentPaymentId = orderData.paymentId;
+              return orderData.paymentId;
             }
-
-            currentPayPalOrderId = orderData.orderId;
-            return orderData.orderId;
             
+            throw new Error(orderData.error || 'Failed to create PayPal order');
           } catch (error) {
             console.error('PayPal createOrder error:', error);
-            resultMessage(`Could not initiate PayPal Checkout.<br><br>${error.message}`, 'error');
-            throw error;
+            resultMessage(`Could not initiate PayPal Checkout...<br><br>${error.message}`);
           }
         },
 
@@ -2159,17 +1546,12 @@
               }),
             });
 
-            const result = await response.json().catch(() => ({}));
-
-            if (!response.ok || !result.success) {
-              throw new Error(result.error || 'Payment execution failed');
-            }
-
-            if (String(result.status).toUpperCase() === 'COMPLETED') {
+            const result = await response.json();
+            
+            if (result.success && result.status === 'completed') {
               // Payment successful - submit viewing request
-              const transactionId = result.transactionId || data.orderID || currentPayPalOrderId;
-              await submitViewingRequest(transactionId, data.orderID || currentPayPalOrderId);
-              resultMessage(`✅ Payment completed successfully! <br>Your viewing request has been submitted.<br>Transaction ID: ${transactionId}`, 'success');
+              await submitViewingRequest(result.transactionId);
+              resultMessage(`✅ Payment completed successfully! <br>Your viewing request has been submitted.<br>Transaction ID: ${result.transactionId}`);
               
               // Close PayPal modal and show success
               setTimeout(() => {
@@ -2177,47 +1559,30 @@
                 showSuccessMessage('Your viewing request has been submitted successfully! Check your email for confirmation.');
               }, 2000);
             } else {
-              throw new Error('Payment status not completed');
+              throw new Error(result.error || 'Payment execution failed');
             }
           } catch (error) {
             console.error('PayPal onApprove error:', error);
-            resultMessage(`❌ Payment processing failed: ${error.message}`, 'error');
+            resultMessage(`❌ Payment processing failed: ${error.message}`);
           }
         },
 
         onError(err) {
           console.error('PayPal error:', err);
-          resultMessage('PayPal encountered an error. Please try again or contact support.', 'error');
+          resultMessage('PayPal encountered an error. Please try again or contact support.');
         },
 
         onCancel(data) {
           console.log('Payment cancelled:', data);
-          resultMessage('Payment was cancelled. You can try again when ready.', 'warning');
+          resultMessage('Payment was cancelled. You can try again when ready.');
         }
       }).render('#paypal-button-container');
     }
 
     // Function to show result messages in the PayPal modal
-    function resultMessage(message, type = 'info') {
+    function resultMessage(message) {
       const container = document.querySelector('#paypal-result-message');
       if (container) {
-        if (!message) {
-          container.style.display = 'none';
-          container.innerHTML = '';
-          return;
-        }
-
-        const styles = {
-          success: { background: '#ecfdf5', border: '#bbf7d0', color: '#047857' },
-          error: { background: '#fef2f2', border: '#fecaca', color: '#b91c1c' },
-          warning: { background: '#fffbeb', border: '#fcd34d', color: '#b45309' },
-          info: { background: '#eff6ff', border: '#bfdbfe', color: '#1d4ed8' }
-        };
-
-        const palette = styles[type] || styles.info;
-        container.style.background = palette.background;
-        container.style.borderColor = palette.border;
-        container.style.color = palette.color;
         container.innerHTML = message;
         container.style.display = 'block';
       }
@@ -2289,7 +1654,7 @@
     }
 
     // Submit viewing request to backend after successful payment
-    async function submitViewingRequest(transactionId, orderId) {
+    async function submitViewingRequest(transactionId) {
       try {
         const response = await fetch('/api/viewing-request', {
           method: 'POST',
@@ -2299,7 +1664,6 @@
           body: JSON.stringify({
             ...viewingRequestData,
             transactionId: transactionId,
-            paypalOrderId: orderId,
             paymentStatus: 'completed'
           }),
         });
@@ -2356,105 +1720,6 @@
 
 // User opinions logic
     document.addEventListener('DOMContentLoaded', function() {
-      const menuToggle = document.getElementById('menu-toggle');
-      const mainNav = document.getElementById('main-nav');
-      const navLanguageDropdown = document.getElementById('language-dropdown');
-      const languageBtnToggle = document.getElementById('language-btn');
-
-      if (menuToggle && mainNav) {
-        menuToggle.addEventListener('click', function() {
-          const isOpen = mainNav.classList.toggle('open');
-          document.body.classList.toggle('mobile-nav-open', isOpen);
-          menuToggle.setAttribute('aria-expanded', String(isOpen));
-
-          if (!isOpen && navLanguageDropdown && languageBtnToggle) {
-            navLanguageDropdown.classList.remove('active');
-            languageBtnToggle.classList.remove('active');
-          }
-        });
-
-        mainNav.querySelectorAll('a').forEach(function(link) {
-          link.addEventListener('click', function() {
-            if (mainNav.classList.contains('open')) {
-              mainNav.classList.remove('open');
-              document.body.classList.remove('mobile-nav-open');
-              menuToggle.setAttribute('aria-expanded', 'false');
-            }
-          });
-        });
-
-        window.addEventListener('resize', function() {
-          if (window.innerWidth > 900 && mainNav.classList.contains('open')) {
-            mainNav.classList.remove('open');
-            document.body.classList.remove('mobile-nav-open');
-            menuToggle.setAttribute('aria-expanded', 'false');
-            if (navLanguageDropdown && languageBtnToggle) {
-              navLanguageDropdown.classList.remove('active');
-              languageBtnToggle.classList.remove('active');
-            }
-          }
-        });
-      }
-
-      const feedbackIframe = document.getElementById('feedback-iframe');
-      const feedbackLoader = document.getElementById('feedback-loader');
-      const feedbackFallback = document.getElementById('feedback-fallback');
-
-      if (feedbackIframe) {
-        let feedbackLoaded = false;
-
-        if (feedbackLoader) {
-          feedbackLoader.setAttribute('aria-hidden', 'false');
-        }
-        if (feedbackFallback) {
-          feedbackFallback.setAttribute('aria-hidden', 'true');
-        }
-
-        const showForm = () => {
-          if (feedbackLoader) {
-            feedbackLoader.style.display = 'none';
-            feedbackLoader.setAttribute('aria-hidden', 'true');
-          }
-          feedbackIframe.style.display = 'block';
-          feedbackIframe.removeAttribute('aria-hidden');
-          if (feedbackFallback) {
-            feedbackFallback.style.display = 'none';
-            feedbackFallback.setAttribute('aria-hidden', 'true');
-          }
-        };
-
-        const showFallback = () => {
-          if (feedbackLoaded) {
-            return;
-          }
-          if (feedbackLoader) {
-            feedbackLoader.style.display = 'none';
-            feedbackLoader.setAttribute('aria-hidden', 'true');
-          }
-          feedbackIframe.style.display = 'none';
-          feedbackIframe.setAttribute('aria-hidden', 'true');
-          if (feedbackFallback) {
-            feedbackFallback.style.display = 'block';
-            feedbackFallback.setAttribute('aria-hidden', 'false');
-          }
-        };
-
-        feedbackIframe.addEventListener('load', () => {
-          feedbackLoaded = true;
-          showForm();
-        });
-
-        feedbackIframe.addEventListener('error', () => {
-          showFallback();
-        });
-
-        setTimeout(() => {
-          if (!feedbackLoaded) {
-            showFallback();
-          }
-        }, 7000);
-      }
-
       const form = document.getElementById('opinion-form');
       if (form) {
         form.addEventListener('submit', async function(e) {
@@ -2472,9 +1737,6 @@
         });
       }
 
-    // Language Switcher Logic - Handled by translation-handler.js
-    // The translation-handler.js script manages all language switching functionality
-
     // Customer Service form logic
       const csForm = document.getElementById('customer-service-form');
       if (csForm) {
@@ -2489,6 +1751,27 @@
           document.getElementById('customer-service-status').textContent =
             'Your message has been sent. Our team will contact you soon!';
           csForm.reset();
+        });
+      }
+
+      // Notification bell logic
+      const bell = document.getElementById('notification-bell');
+      const dropdown = document.getElementById('notification-dropdown');
+      if (bell && dropdown) {
+        bell.addEventListener('click', function(e) {
+          dropdown.classList.toggle('active');
+          e.stopPropagation();
+        });
+        bell.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            dropdown.classList.toggle('active');
+            e.preventDefault();
+          }
+        });
+        document.addEventListener('click', function(e) {
+          if (!bell.contains(e.target)) {
+            dropdown.classList.remove('active');
+          }
         });
       }
     });
@@ -2546,19 +1829,13 @@
           console.log('- Marketing enabled:', window.ConsentManagerBridge.isMarketingEnabled());
         }
       }, 3000); // Wait longer for Consent Manager to fully initialize
-
+      
       console.log('GDPR-compliant tracking systems with Consent Manager initialized');
       console.log('Clarity implementation:', window.clarityGDPRManagerHybrid?.getImplementationType());
       console.log('Google Analytics active:', window.GoogleAnalyticsManager?.isTrackingActive());
       console.log('Consent Manager bridge active:', !!window.ConsentManagerBridge);
     });
   </script>
-  
-  <!-- SichrPlace Analytics & Error Tracking -->
-  <script src="../js/analytics/sichrplace-analytics.js"></script>
-  
-  <!-- Translation Handler - Unified Language Switching System -->
-  <script src="js/translation-handler.js"></script>
   
   <!-- PWA Initialization -->
   <script src="js/pwa-init.js"></script>

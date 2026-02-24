@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Messages - SichrPlace</title>
-  <link rel="icon" type="image/svg+xml" href="img/logo-shield.svg">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
     <link rel="stylesheet" href="css/logo-system.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -99,10 +98,33 @@
       color: var(--primary);
       text-decoration: none;
     }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-text {
+      display: flex;
+      align-items: baseline;
+      font-family: var(--heading-font);
+      font-weight: 700;
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .sichr-text {
+      color: var(--primary);
+    }
+
+    .place-text {
+      color: var(--primary);
+    }
     
     .logo img {
       height: 40px;
-      "
+      width: auto;
     }
     
     nav {
@@ -132,7 +154,6 @@
       margin: 0 auto;
       background: white;
       box-shadow: var(--shadow);
-      "
     }
 
     /* Sidebar Styles */
@@ -170,7 +191,6 @@
       color: white;
       border: none;
       padding: 10px 16px;
-      "
       cursor: pointer;
       font-weight: 600;
       display: flex;
@@ -194,7 +214,6 @@
       width: 100%;
       padding: 10px 12px;
       border: 1px solid var(--border);
-      "
       font-size: 0.9rem;
       background: var(--surface);
     }
@@ -224,7 +243,6 @@
       height: 20px;
       border: 2px solid var(--border);
       border-top: 2px solid var(--primary);
-      "
       animation: spin 1s linear infinite;
     }
 
@@ -262,7 +280,6 @@
     .avatar {
       width: 44px;
       height: 44px;
-      "
       background: var(--primary);
       color: white;
       display: flex;
@@ -277,7 +294,6 @@
     .avatar img {
       width: 100%;
       height: 100%;
-      "
       object-fit: cover;
     }
 
@@ -289,7 +305,6 @@
       height: 12px;
       background: var(--accent);
       border: 2px solid white;
-      "
     }
 
     .conversation-info {
@@ -310,7 +325,6 @@
       background: var(--accent);
       color: white;
       padding: 2px 6px;
-      "
       font-size: 0.7rem;
       font-weight: 500;
     }
@@ -339,7 +353,6 @@
     .unread-badge {
       background: var(--danger);
       color: white;
-      "
       padding: 2px 6px;
       font-size: 0.7rem;
       font-weight: 600;
@@ -432,7 +445,6 @@
       background: none;
       border: 1px solid var(--border);
       padding: 8px 10px;
-      "
       cursor: pointer;
       color: var(--muted);
       transition: all 0.2s;
@@ -496,7 +508,6 @@
     .message-avatar {
       width: 32px;
       height: 32px;
-      "
       background: var(--primary);
       color: white;
       display: flex;
@@ -520,7 +531,6 @@
     .message-bubble {
       background: white;
       padding: 12px 16px;
-      "
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       position: relative;
     }
@@ -546,7 +556,6 @@
       gap: 6px;
       background: rgba(0, 0, 0, 0.1);
       padding: 6px 10px;
-      "
       text-decoration: none;
       color: inherit;
       font-size: 0.85rem;
@@ -603,7 +612,6 @@
     .typing-dot {
       width: 6px;
       height: 6px;
-      "
       background: var(--muted);
       animation: typing 1.4s infinite ease-in-out;
     }
@@ -633,7 +641,6 @@
       align-items: flex-end;
       gap: 12px;
       background: var(--surface);
-      "
       padding: 8px;
     }
 
@@ -643,7 +650,6 @@
       color: var(--muted);
       cursor: pointer;
       padding: 8px;
-      "
       transition: all 0.2s;
     }
 
@@ -675,7 +681,6 @@
       color: white;
       border: none;
       padding: 8px 10px;
-      "
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
@@ -776,7 +781,6 @@
     .online-indicator {
       width: 8px;
       height: 8px;
-      "
       background: #6b7280;
       position: absolute;
       bottom: 2px;
@@ -799,7 +803,6 @@
       display: none;
       padding: 12px 20px;
       background: var(--secondary);
-      "
       margin: 10px 0;
     }
 
@@ -819,7 +822,6 @@
     .typing-dots span {
       width: 4px;
       height: 4px;
-      "
       background: var(--primary);
       animation: typingPulse 1.4s infinite;
     }
@@ -844,7 +846,6 @@
       display: inline-block;
       width: 12px;
       height: 12px;
-      "
       background: var(--muted);
       margin-left: 5px;
       transition: all 0.3s ease;
@@ -855,22 +856,62 @@
       transform: scale(1.1);
     }
   </style>
-    <script src="js/language-switcher.js" defer></script>
+  <script src="js/translation-handler.js" defer></script>
     <script src="js/logo-cookie-manager.js" defer></script>
 </head>
 <body>
-  <!-- Header Navigation (matching index.html design) -->
   <header>
-    <img src="img/SichrPlaceLogo_944x944.jpg" class="logo" data-type="logo" alt="SichrPlace" style="height: 70px;">
-    <a href="index.html" class="logo">
-      <span class="sichrplace-text">SichrPlace</span>
-    </a>
-    <nav>
-      <a href="apartments-listing.html">Browse</a>
-      <a href="add-property.html">List Property</a>
-      <a href="chat.html" class="active">Messages</a>
-      <a href="landlord-dashboard.html">Dashboard</a>
-      <a href="javascript:void(0)" onclick="logout()">Logout</a>
+    <div class="header-logo">
+      <a href="index.html" class="logo" aria-label="SichrPlace">
+        <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:block;">
+        <span class="brand-text">
+          <span class="sichrplace-text">SichrPlace</span>
+          <span class="certified-badge" style="display:none;">Verified</span>
+        </span>
+      </a>
+    </div>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+    </button>
+    <nav class="main-nav" id="main-nav">
+      <a href="login.html" data-translate="nav.login">Login</a>
+      <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
+      
+      <!-- View link for viewing requests -->
+      <a href="viewing-request.html" data-translate="nav.view">View</a>
+      
+      <!-- Marketplace Cart Icon - Enhanced Visibility -->
+      <a href="marketplace.html" class="cart-icon" title="Marketplace - Buy & Sell" aria-label="Marketplace" data-translate-title="nav.marketplace.title" data-translate-aria="nav.marketplace.aria">
+        <svg class="cart-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7.01 18.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 2.999-.001Zm10 0a1.5 1.5 0 1 1-3.001 0 1.5 1.5 0 0 1 3.001 0ZM6.16 7l.44 2h11.56a1 1 0 0 1 .98 1.204l-1.2 6a1 1 0 0 1-.98.796H8.18a1 1 0 0 1-.98-.804L5.53 4.5H3a1 1 0 1 1 0-2h3a1 1 0 0 1 .98.804L7.62 7H6.16Z" fill="currentColor" />
+        </svg>
+        <span class="cart-label" data-translate="nav.marketplace.label">Marketplace</span>
+      </a>
+      
+      <!-- Language Switcher moved to the rightmost position -->
+      <div class="language-switcher">
+        <button class="language-btn" id="language-btn" aria-label="Switch Language">
+          <i class="fas fa-globe"></i>
+          <span id="current-lang">EN</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="language-dropdown">
+          <a href="#" data-lang="en" class="lang-option active">
+            <span class="flag-emoji">🇺🇸</span>
+            English
+          </a>
+          <a href="#" data-lang="de" class="lang-option">
+            <span class="flag-emoji">🇩🇪</span>
+            Deutsch
+          </a>
+          <a href="#" data-lang="tr" class="lang-option">
+            <span class="flag-emoji">🇹🇷</span>
+            Türkçe
+          </a>
+        </div>
+      </div>
     </nav>
   </header>
 
@@ -880,7 +921,7 @@
     <div class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <h1 style="display: flex; align-items: center; gap: 10px;">
-          <img src="img/logo-shield.svg" alt="SichrPlace Logo" style="height: 28px;">
+
           <i class="fas fa-comments"></i> Messages
         </h1>
         <button class="new-message-btn" onclick="openNewMessageModal()">
@@ -1885,8 +1926,7 @@
         background: ${colors[type]};
         color: white;
         padding: 16px 20px;
-        "
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         z-index: 10000;
         max-width: 300px;
         font-weight: 500;
@@ -1941,3 +1981,4 @@
   </script>
 </body>
 </html>
+

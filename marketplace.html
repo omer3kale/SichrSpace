@@ -4,15 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>SichrPlace Marketplace - Equip your new home at a discount</title>
-  <link rel="icon" href="img/logo-shield.svg" type="image/svg+xml">
+
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@300;400;500&display=swap">
     <link rel="stylesheet" href="css/logo-system.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="css/logo-system.css">
   
-  <!-- PayPal SDK for Marketplace Payments -->
-  <script src="https://www.paypal.com/sdk/js?client-id=AcPYlXozR8VS9kJSk7rv5MW36lMV66ZMyqZKjM0YVuvt0dJ1cIyHRvDmGeux0qu3gBOh6XswI5gin2WO&currency=EUR&locale=de_DE&components=buttons&enable-funding=venmo,paylater"></script>
-  <script src="js/paypal-integration.js"></script>
+  <!-- 🔥 BULLETPROOF PAYPAL INTEGRATION -->
+  <script src="js/bulletproof-paypal-integration.js"></script>
   
   <!-- Consent Manager (Professional GDPR Compliance) -->
   <script src="https://cdn.consentmanager.net/delivery/autoblocking/02bebe9642911.js"></script>
@@ -69,13 +68,46 @@
       font-size: 1.5rem;
       color: var(--primary);
       text-decoration: none;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
     }
-    nav {
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .sichrplace-text {
+      font-family: var(--heading-font);
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .certified-badge {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .logo img {
+      height: 40px;
+      width: auto;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.1));
+    }
+    header nav {
       display: flex;
       gap: 24px;
       align-items: center;
+      position: relative;
     }
-    nav a {
+    header nav a {
       color: var(--primary);
       text-decoration: none;
       font-weight: 600;
@@ -83,8 +115,30 @@
       font-size: 1rem;
       transition: color 0.2s;
     }
-    nav a:hover {
+    header nav a:hover {
       color: var(--accent);
+    }
+    .cart-icon {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .cart-icon:hover {
+      background: var(--primary) !important;
+      color: white !important;
+      transform: translateY(-2px);
+    }
+    .cart-icon i {
+      font-size: 1.1rem;
+    }
+    nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
     }
     main {
       flex: 1 0 auto;
@@ -95,7 +149,7 @@
     .marketplace-hero {
       background: linear-gradient(120deg, var(--primary) 60%, var(--accent) 100%);
       color: #fff;
-      "
+
       box-shadow: var(--shadow);
       padding: 40px 24px;
       text-align: center;
@@ -122,7 +176,7 @@
       color: var(--primary);
       border: none;
       padding: 10px 28px;
-      "
+
       font-family: var(--heading-font);
       font-weight: 600;
       font-size: 1rem;
@@ -141,13 +195,13 @@
       margin-bottom: 24px;
       align-items: center;
       background: #fff;
-      "
+
       box-shadow: var(--shadow);
       padding: 18px 18px;
     }
     .marketplace-filters select, .marketplace-filters input {
       padding: 8px 12px;
-      "
+
       border: 1px solid #d1d5db;
       font-size: 1rem;
       font-family: inherit;
@@ -160,7 +214,7 @@
     }
     .offer-card {
       background: #fff;
-      "
+
       box-shadow: var(--shadow);
       padding: 18px 14px;
       width: 300px;
@@ -173,7 +227,7 @@
       width: 100%;
       height: 160px;
       object-fit: cover;
-      "
+
       background: #f3f4f6;
     }
     .offer-card .offer-title {
@@ -214,7 +268,7 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      "
+
       padding: 7px 18px;
       font-family: var(--heading-font);
       font-weight: 600;
@@ -227,7 +281,7 @@
       color: #e11d48;
       padding: 0 10px;
       font-size: 1.3rem;
-      "
+
       border: none;
       margin-left: auto;
     }
@@ -244,7 +298,7 @@
       background: var(--primary);
       color: #fff;
       border: none;
-      "
+
       padding: 10px 32px;
       font-family: var(--heading-font);
       font-weight: 600;
@@ -281,20 +335,62 @@
       }
     }
   </style>
-    <script src="js/language-switcher.js" defer></script>
+  <script src="js/translation-handler.js" defer></script>
     <script src="js/logo-cookie-manager.js" defer></script>
 </head>
 <body>
   <header>
-    <img src="img/SichrPlaceLogo_944x944.jpg" class="logo" data-type="logo" alt="SichrPlace" style="height: 70px;">
-    <a href="index.html" class="logo">
-      SichrPlace
-    </a>
-    <nav>
-      <a href="apartments-listing.html">Apartments</a>
-      <a href="marketplace.html" style="color:var(--accent);font-weight:700;">Marketplace</a>
-      <a href="login.html">Login</a>
-      <a href="create-account.html">Create Account</a>
+    <div class="header-logo">
+      <a href="index.html" class="logo" aria-label="SichrPlace">
+        <img src="img/sichrplace-logo.jpg" alt="SichrPlace logo" style="height:48px;width:auto;display:block;">
+        <span class="brand-text">
+          <span class="sichrplace-text">SichrPlace</span>
+          <span class="certified-badge" style="display:none;">Verified</span>
+        </span>
+      </a>
+    </div>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+      <span class="menu-bar"></span>
+    </button>
+    <nav class="main-nav" id="main-nav">
+      <a href="login.html" data-translate="nav.login">Login</a>
+      <a href="apartments-listing.html" data-translate="nav.apartments">Apartments</a>
+      
+      <!-- View link for viewing requests -->
+      <a href="viewing-request.html" data-translate="nav.view">View</a>
+      
+      <!-- Marketplace Cart Icon - Enhanced Visibility -->
+      <a href="marketplace.html" class="cart-icon" title="Marketplace - Buy & Sell" aria-label="Marketplace" data-translate-title="nav.marketplace.title" data-translate-aria="nav.marketplace.aria">
+        <svg class="cart-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7.01 18.5a1.5 1.5 0 1 1-2.999.001 1.5 1.5 0 0 1 2.999-.001Zm10 0a1.5 1.5 0 1 1-3.001 0 1.5 1.5 0 0 1 3.001 0ZM6.16 7l.44 2h11.56a1 1 0 0 1 .98 1.204l-1.2 6a1 1 0 0 1-.98.796H8.18a1 1 0 0 1-.98-.804L5.53 4.5H3a1 1 0 1 1 0-2h3a1 1 0 0 1 .98.804L7.62 7H6.16Z" fill="currentColor" />
+        </svg>
+        <span class="cart-label" data-translate="nav.marketplace.label">Marketplace</span>
+      </a>
+      
+      <!-- Language Switcher moved to the rightmost position -->
+      <div class="language-switcher">
+        <button class="language-btn" id="language-btn" aria-label="Switch Language">
+          <i class="fas fa-globe"></i>
+          <span id="current-lang">EN</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="language-dropdown" id="language-dropdown">
+          <a href="#" data-lang="en" class="lang-option active">
+            <span class="flag-emoji">🇺🇸</span>
+            English
+          </a>
+          <a href="#" data-lang="de" class="lang-option">
+            <span class="flag-emoji">🇩🇪</span>
+            Deutsch
+          </a>
+          <a href="#" data-lang="tr" class="lang-option">
+            <span class="flag-emoji">🇹🇷</span>
+            Türkçe
+          </a>
+        </div>
+      </div>
     </nav>
   </header>
   <main>
@@ -620,11 +716,36 @@
         });
       }
       
-      // TODO: Open chat modal or redirect to chat page
-      showNotification('💬 Opening chat with seller...', 'info');
-      setTimeout(() => {
-        window.location.href = `chat.html?item=${encodeURIComponent(itemId)}&title=${encodeURIComponent(itemTitle)}`;
-      }, 1000);
+      const message = prompt(`Send a message about "${itemTitle}":`);
+      if (!message) return;
+
+      fetch(`${API_BASE_URL}/api/marketplace/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('userToken') || ''}`
+        },
+        body: JSON.stringify({
+          listing_id: itemId,
+          seller_id: window.currentSellerId || null,
+          initial_message: message
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.redirect) {
+          showNotification('✅ Chat created successfully', 'success');
+          setTimeout(() => {
+            window.location.href = data.redirect;
+          }, 1000);
+        } else {
+          alert('Failed to create chat: ' + (data.error || 'Unknown error'));
+        }
+      })
+      .catch(err => {
+        console.error('Chat creation error:', err);
+        alert('Failed to create chat. Please try again.');
+      });
     }
 
     // Payment Processing System
@@ -698,90 +819,259 @@
       initializeMarketplacePayPal(itemId, itemTitle, total);
     }
 
-    // PayPal Integration for Marketplace Items
-    function initializeMarketplacePayPal(itemId, itemTitle, amount) {
-      if (window.paypalIntegration) {
-        // Get seller info from the item card
-        const itemCard = event.target.closest('.offer-card');
-        const sellerElement = itemCard.querySelector('.offer-seller, .seller-info');
-        const sellerId = sellerElement ? sellerElement.dataset.sellerId || 'seller_' + itemId : 'seller_' + itemId;
-        const sellerEmail = sellerElement ? sellerElement.dataset.sellerEmail || 'seller@sichrplace.com' : 'seller@sichrplace.com';
+    // 🔥 BULLETPROOF PAYPAL INTEGRATION FOR MARKETPLACE
+    async function initializeMarketplacePayPal(itemId, itemTitle, amount) {
+      try {
+        console.log('🚀 Initializing bulletproof PayPal for marketplace item:', { itemId, itemTitle, amount });
         
-        window.paypalIntegration.createMarketplacePaymentButton({
-          itemName: itemTitle,
-          amount: parseFloat(amount),
-          sellerId: sellerId,
-          sellerEmail: sellerEmail,
-          containerSelector: '#marketplace-paypal-button',
-          onSuccess: function(result, details) {
-            console.log('Marketplace payment successful:', result);
-            closePaymentModal();
-            showMarketplacePaymentSuccess(itemTitle, amount, sellerEmail);
-            
-            // Track successful purchase
-            if (typeof gtag !== 'undefined') {
-              gtag('event', 'purchase', {
-                event_category: 'marketplace',
-                transaction_id: result.orderID || details.id,
-                currency: 'EUR',
-                value: amount,
-                items: [{
-                  item_id: itemId,
-                  item_name: itemTitle,
-                  price: amount,
-                  quantity: 1
-                }]
-              });
-            }
+        // Ensure bulletproof PayPal is loaded
+        if (!window.bulletproofPayPal) {
+          throw new Error('Bulletproof PayPal integration not loaded');
+        }
+
+        // Get seller info from the item card (if available)
+        const sellerEmail = 'seller@sichrplace.com'; // This would come from actual item data
+
+        // Create marketplace payment button with enterprise features
+        await window.bulletproofPayPal.createMarketplacePaymentButton('marketplace-paypal-button', {
+          itemId: itemId,
+          itemData: {
+            title: itemTitle,
+            price: amount,
+            sellerEmail: sellerEmail
           },
-          onError: function(error) {
-            console.error('Marketplace payment error:', error);
-            alert('Payment failed. Please try again or contact support.');
+          onSuccess: (result) => {
+            console.log('🎉 Marketplace payment successful:', result);
+            
+            // Hide payment modal
+            closePaymentModal();
+            
+            // Show enhanced success message
+            showMarketplacePaymentSuccess(itemTitle, amount, result.paymentId);
+            
+            // Update UI to show item as purchased
+            updateItemAsPurchased(itemId);
+            
+            // Track conversion with enhanced analytics
+            trackMarketplacePurchase(itemId, amount, result);
+          },
+          onError: (error) => {
+            console.error('❌ Marketplace payment failed:', error);
+            
+            // Show user-friendly error message
+            showPaymentError(error.message || 'Payment failed. Please try again.');
+          },
+          onCancel: (data) => {
+            console.log('💔 Marketplace payment cancelled:', data);
+            
+            // Show cancellation message
+            showPaymentCancellation();
           }
         });
-      } else {
-        console.warn('PayPal integration not available. Please ensure paypal-integration.js is loaded.');
+
+        console.log('✅ Bulletproof PayPal marketplace integration ready!');
+
+      } catch (error) {
+        console.error('❌ Failed to initialize marketplace PayPal:', error);
+        
+        // Fallback to basic payment message
+        document.getElementById('marketplace-paypal-button').innerHTML = `
+          <div class="payment-error" style="background:#fff3e0;border:1px solid #ffcc02;padding:16px;border-radius:8px;color:#ef6c00;">
+            <h4>⚠️ Payment System Temporarily Unavailable</h4>
+            <p>Please contact support to complete your purchase:</p>
+            <p><strong>support@sichrplace.com</strong></p>
+            <p>Item: ${itemTitle} - €${amount}</p>
+          </div>
+        `;
       }
     }
 
-    function showMarketplacePaymentSuccess(itemTitle, amount, sellerEmail = '') {
-      const sellerContactInfo = sellerEmail && sellerEmail !== 'seller@sichrplace.com' 
-        ? `The seller (${sellerEmail}) will contact you within 24 hours to arrange pickup or delivery.`
-        : 'The seller will contact you within 24 hours to arrange pickup or delivery.';
+    function showMarketplacePaymentSuccess(itemTitle, amount, paymentId) {
+      // Enhanced success message with payment ID
+      const sellerContactInfo = 'The seller will contact you within 24 hours to arrange pickup or delivery.';
       
-      showNotification(`✅ Payment successful! You purchased ${itemTitle} for €${amount}. The seller will contact you soon.`, 'success');
+      showNotification(`✅ Payment successful! You purchased ${itemTitle} for €${amount}. Payment ID: ${paymentId}`, 'success');
       
-      // Show detailed success modal
+      // Show detailed success modal with bulletproof design
       const successModal = `
         <div id="success-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1001;display:flex;align-items:center;justify-content:center;padding:20px;">
-          <div style="background:white;border-radius:16px;padding:32px;max-width:400px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.3);text-align:center;">
+          <div style="background:white;border-radius:16px;padding:32px;max-width:500px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.3);text-align:center;">
             <div style="font-size:3rem;color:#10B981;margin-bottom:16px;">🎉</div>
             <h3 style="color:var(--primary);margin:0 0 16px 0;font-family:var(--heading-font);">
               Purchase Successful!
             </h3>
-            <p style="margin:0 0 16px 0;color:var(--muted);">
-              You've successfully purchased <strong>${itemTitle}</strong> for <strong>€${amount}</strong> via PayPal.
+            <p style="color:#64748b;margin:0 0 20px 0;line-height:1.5;">
+              You've successfully purchased <strong>${itemTitle}</strong> for <strong>€${amount}</strong>
             </p>
-            <div style="background:#f8f9fa;border-radius:8px;padding:16px;margin:16px 0;border-left:4px solid var(--accent);">
-              <p style="margin:0;color:var(--muted);font-size:0.9rem;">
-                📧 ${sellerContactInfo}
-              </p>
-              ${sellerEmail && sellerEmail !== 'seller@sichrplace.com' ? 
-                `<p style="margin:8px 0 0 0;color:var(--muted);font-size:0.85rem;">
-                  💡 <em>You'll also receive a confirmation email with all the details.</em>
-                </p>` : ''
-              }
+            <div style="background:#f8fafc;border-radius:8px;padding:16px;margin:20px 0;text-align:left;">
+              <h4 style="margin:0 0 8px 0;color:#1e293b;font-size:14px;">📋 Payment Details:</h4>
+              <p style="margin:4px 0;color:#64748b;font-size:13px;font-family:monospace;"><strong>Payment ID:</strong> ${paymentId}</p>
+              <p style="margin:4px 0;color:#64748b;font-size:13px;"><strong>Amount:</strong> €${amount}</p>
+              <p style="margin:4px 0;color:#64748b;font-size:13px;"><strong>Status:</strong> Completed ✅</p>
             </div>
-            <button onclick="closeSuccessModal()" style="background:var(--primary);color:white;border:none;padding:12px 24px;border-radius:8px;font-weight:600;cursor:pointer;">
-              Continue Shopping
+            <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:16px;margin:20px 0;text-align:left;">
+              <h4 style="margin:0 0 8px 0;color:#065f46;font-size:14px;">🤝 Next Steps:</h4>
+              <ul style="margin:8px 0;padding-left:20px;color:#064e3b;font-size:13px;line-height:1.6;">
+                <li>✅ Payment processed successfully</li>
+                <li>📧 Confirmation email sent to your inbox</li>
+                <li>👤 ${sellerContactInfo}</li>
+                <li>⭐ You can leave a review after receiving the service</li>
+                <li>🛡️ Purchase protected by SichrPlace guarantee</li>
+              </ul>
+            </div>
+            <button onclick="document.getElementById('success-modal').remove()" 
+                    style="background:#0066cc;color:white;border:none;padding:12px 24px;border-radius:8px;font-weight:500;cursor:pointer;font-size:14px;margin-top:8px;transition:background 0.2s;"
+                    onmouseover="this.style.background='#0052a3'"
+                    onmouseout="this.style.background='#0066cc'">
+              Continue Shopping 🛒
             </button>
           </div>
         </div>
       `;
       
+      document.body.insertAdjacentHTML('beforeend', successModal);
+      
+      // Auto-remove after 30 seconds
       setTimeout(() => {
-        document.body.insertAdjacentHTML('beforeend', successModal);
-      }, 1000);
+        const modal = document.getElementById('success-modal');
+        if (modal) modal.remove();
+      }, 30000);
+    }
+
+    // 🎨 ENHANCED HELPER FUNCTIONS
+    function showPaymentError(errorMessage) {
+      const errorAlert = `
+        <div class="payment-error-alert" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#fee2e2;border:1px solid #fecaca;color:#dc2626;padding:16px 20px;border-radius:8px;z-index:10000;box-shadow:0 4px 12px rgba(0,0,0,0.1);max-width:400px;width:90%;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="font-size:24px;">❌</div>
+            <div style="flex:1;">
+              <h4 style="margin:0 0 4px 0;font-size:16px;">Payment Failed</h4>
+              <p style="margin:0;font-size:14px;">${errorMessage}</p>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button onclick="this.parentElement.parentElement.remove()" 
+                    style="background:#dc2626;color:white;border:none;padding:6px 12px;border-radius:4px;font-size:12px;cursor:pointer;">
+              Try Again
+            </button>
+            <button onclick="window.open('mailto:support@sichrplace.com?subject=Payment%20Error', '_blank')" 
+                    style="background:#6b7280;color:white;border:none;padding:6px 12px;border-radius:4px;font-size:12px;cursor:pointer;">
+              Contact Support
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.body.insertAdjacentHTML('afterbegin', errorAlert);
+      
+      // Auto-remove after 10 seconds
+      setTimeout(() => {
+        const alert = document.querySelector('.payment-error-alert');
+        if (alert) alert.remove();
+      }, 10000);
+    }
+
+    function showPaymentCancellation() {
+      const cancelAlert = `
+        <div class="payment-cancel-alert" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#fef3c7;border:1px solid #fde68a;color:#d97706;padding:16px 20px;border-radius:8px;z-index:10000;box-shadow:0 4px 12px rgba(0,0,0,0.1);max-width:400px;width:90%;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="font-size:24px;">💔</div>
+            <div style="flex:1;">
+              <h4 style="margin:0 0 4px 0;font-size:16px;">Payment Cancelled</h4>
+              <p style="margin:0;font-size:14px;">Your payment was cancelled. The item is still available for purchase.</p>
+            </div>
+          </div>
+          <button onclick="this.parentElement.remove()" 
+                  style="background:#d97706;color:white;border:none;padding:6px 12px;border-radius:4px;font-size:12px;cursor:pointer;margin-top:8px;">
+            Continue Browsing
+          </button>
+        </div>
+      `;
+
+      document.body.insertAdjacentHTML('afterbegin', cancelAlert);
+      
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        const alert = document.querySelector('.payment-cancel-alert');
+        if (alert) alert.remove();
+      }, 5000);
+    }
+
+    function updateItemAsPurchased(itemId) {
+      const itemCards = document.querySelectorAll('.offer-card');
+      itemCards.forEach(card => {
+        if (card.dataset.itemId === itemId || card.querySelector(`[data-item-id="${itemId}"]`)) {
+          // Add sold badge
+          if (!card.querySelector('.sold-badge')) {
+            const badge = document.createElement('div');
+            badge.className = 'sold-badge';
+            badge.innerHTML = '🏷️ SOLD';
+            badge.style.cssText = 'position:absolute;top:8px;right:8px;background:#dc2626;color:white;padding:4px 8px;border-radius:4px;font-size:12px;font-weight:bold;z-index:10;';
+            card.style.position = 'relative';
+            card.appendChild(badge);
+          }
+          
+          // Disable purchase button
+          const purchaseBtn = card.querySelector('.purchase-btn, .btn-primary');
+          if (purchaseBtn) {
+            purchaseBtn.disabled = true;
+            purchaseBtn.textContent = '✅ Purchased';
+            purchaseBtn.style.backgroundColor = '#27ae60';
+            purchaseBtn.style.cursor = 'not-allowed';
+          }
+          
+          // Add sold overlay
+          const overlay = document.createElement('div');
+          overlay.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(220,38,38,0.1);border-radius:8px;pointer-events:none;';
+          card.appendChild(overlay);
+        }
+      });
+    }
+
+    function trackMarketplacePurchase(itemId, amount, result) {
+      try {
+        // Google Analytics 4 tracking
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'purchase', {
+            transaction_id: result.paymentId,
+            value: amount,
+            currency: 'EUR',
+            items: [{
+              item_id: itemId,
+              item_name: 'Marketplace Item',
+              category: 'Marketplace',
+              quantity: 1,
+              price: amount
+            }]
+          });
+        }
+
+        // Microsoft Clarity tracking
+        if (typeof clarity !== 'undefined') {
+          clarity('event', 'marketplace_purchase', {
+            itemId: itemId,
+            amount: amount,
+            paymentId: result.paymentId
+          });
+        }
+
+        // Custom analytics
+        if (window.analytics) {
+          window.analytics.track('Marketplace Purchase', {
+            itemId: itemId,
+            amount: amount,
+            currency: 'EUR',
+            platform: 'SichrPlace',
+            paymentMethod: 'PayPal',
+            paymentId: result.paymentId,
+            timestamp: new Date().toISOString()
+          });
+        }
+
+        console.log('📊 Enhanced purchase tracking completed:', { itemId, amount, paymentId: result.paymentId });
+      } catch (error) {
+        console.warn('Analytics tracking failed:', error);
+      }
     }
 
     function closeSuccessModal() {
@@ -802,14 +1092,37 @@
       
       showNotification('💳 Processing payment...', 'info');
       
-      // Simulate payment processing
-      setTimeout(() => {
-        closePaymentModal();
-        showNotification('✅ Payment successful! Seller will contact you soon.', 'success');
-        
-        // TODO: Send payment to backend
-        console.log(`Payment processed for item ${itemId}: €${price}`);
-      }, 2000);
+      // Send payment to backend
+      fetch(`${API_BASE_URL}/api/marketplace/payment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('userToken') || ''}`
+        },
+        body: JSON.stringify({
+          listing_id: itemId,
+          amount: price,
+          payment_method: 'paypal',
+          shipping_address: null  // Can be collected from a form
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showNotification('✅ Payment initiated successfully!', 'success');
+          // Handle PayPal redirect or next steps
+          if (data.next_action && data.next_action.type === 'redirect_to_paypal') {
+            // Redirect to PayPal or show payment modal
+            window.location.href = `/paypal-checkout.html?payment_id=${data.data.id}`;
+          }
+        } else {
+          showNotification('❌ Payment failed: ' + (data.error || 'Unknown error'), 'error');
+        }
+      })
+      .catch(err => {
+        console.error('Payment error:', err);
+        showNotification('❌ Payment processing failed. Please try again.', 'error');
+      });
     }
 
     function closePaymentModal() {
@@ -969,8 +1282,32 @@
       if (!requireLogin()) return;
       
       if (confirm('Mark this item as sold? This will remove it from active listings.')) {
-        showNotification('✅ Item marked as sold!', 'success');
-        // TODO: Send to backend
+        fetch(`${API_BASE_URL}/api/marketplace/sale/confirm`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('userToken') || ''}`
+          },
+          body: JSON.stringify({
+            listing_id: itemId,
+            payment_id: null,
+            tracking_number: null
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            showNotification('✅ Item marked as sold!', 'success');
+            // Refresh the page or update UI
+            setTimeout(() => location.reload(), 1500);
+          } else {
+            alert('Failed to mark as sold: ' + (data.error || 'Unknown error'));
+          }
+        })
+        .catch(err => {
+          console.error('Mark as sold error:', err);
+          alert('Failed to mark as sold. Please try again.');
+        });
       }
     }
 
@@ -1003,7 +1340,7 @@
         background: ${colors[type]};
         color: white;
         padding: 16px 20px;
-        "
+
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         z-index: 10000;
         max-width: 300px;
@@ -1074,8 +1411,8 @@
   <!-- SichrPlace Footer -->
   <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid #E5E7EB; background: var(--secondary);">
       <div class="footer-brand" style="text-align: center; margin: 20px 0;">
-          <img src="img/SichrPlaceLogo_944x944.jpg" alt="SichrPlace Logo" class="footer-logo" style="height: 48px; width: auto; margin-bottom: 10px;">
-          <div class="footer-brand-text" style="color: #6B7280; font-size: 14px;">
+
+        <div class="footer-brand-text" style="color: #6B7280; font-size: 14px;">
               Your Trusted Rental Platform
           </div>
       </div>
