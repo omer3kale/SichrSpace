@@ -1,0 +1,72 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources
+> Task :testClasses
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+> Task :test
+
+StripeWebhookController > POST /api/payments/stripe/webhook — valid event ? 200 FAILED
+    java.lang.AssertionError at StripeWebhookControllerTest.java:39
+
+StripeWebhookController > POST /api/payments/stripe/webhook — no auth required (permitAll) FAILED
+    java.lang.AssertionError at StripeWebhookControllerTest.java:70
+
+StripeWebhookController > POST /api/payments/stripe/webhook — invalid signature ? 400 FAILED
+    java.lang.AssertionError at StripeWebhookControllerTest.java:55
+
+StripeWebhookController > POST /api/payments/stripe/webhook — missing Stripe-Signature header ? 400 FAILED
+    java.lang.AssertionError at StripeWebhookControllerTest.java:79
+
+PaymentTransactionServiceImpl > markRefundedByProviderId_updatesStatus() FAILED
+    java.lang.IllegalArgumentException at PaymentTransactionServiceTest.java:280
+
+PaymentTransactionServiceImpl > markCompletedByProviderId_updatesStatus() FAILED
+    java.lang.IllegalArgumentException at PaymentTransactionServiceTest.java:234
+
+PaymentTransactionServiceImpl > markFailedByProviderId_setsFailureReason() FAILED
+    java.lang.IllegalArgumentException at PaymentTransactionServiceTest.java:257
+
+StripeWebhookService > Unknown event type is ignored without error FAILED
+    org.mockito.exceptions.misusing.UnnecessaryStubbingException at MockitoExtension.java:192
+
+StripeWebhookService > Invalid signature throws IllegalArgumentException FAILED
+    org.opentest4j.AssertionFailedError at StripeWebhookServiceTest.java:117
+        Caused by: com.google.gson.JsonSyntaxException at StripeWebhookServiceTest.java:118
+            Caused by: java.lang.IllegalStateException at StripeWebhookServiceTest.java:118
+
+2026-02-22 12:28:16.969 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2026-02-22 12:28:16.969 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@287638b8]]
+2026-02-22 12:28:16.969 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2026-02-22 12:28:16.977 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-22 12:28:17.479 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-02-22 12:28:17.482 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-02-22 12:28:17.484 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2026-02-22 12:28:17.484 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@1c257764]]
+2026-02-22 12:28:17.484 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2026-02-22 12:28:17.487 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-22 12:28:17.490 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2026-02-22 12:28:17.491 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+
+> Task :test FAILED
+
+600 tests completed, 9 failed
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':test'.
+> There were failing tests. See the report at: file:///C:/Users/range/.redhat/build/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.5/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUÝLD FAILED in 47s
+5 actionable tasks: 2 executed, 3 up-to-date

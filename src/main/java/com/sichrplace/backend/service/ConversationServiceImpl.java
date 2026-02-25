@@ -9,14 +9,18 @@ import com.sichrplace.backend.model.Conversation;
 import com.sichrplace.backend.model.Message;
 import com.sichrplace.backend.model.Notification;
 import com.sichrplace.backend.model.User;
+import com.sichrplace.backend.model.ConversationArchive;
 import com.sichrplace.backend.repository.ApartmentRepository;
+import com.sichrplace.backend.repository.ConversationArchiveRepository;
 import com.sichrplace.backend.repository.ConversationRepository;
 import com.sichrplace.backend.repository.MessageRepository;
 import com.sichrplace.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +34,18 @@ import java.util.Optional;
 public class ConversationServiceImpl implements ConversationService {
 
     private final ConversationRepository conversationRepository;
+    private final ConversationArchiveRepository conversationArchiveRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final ApartmentRepository apartmentRepository;
     private final NotificationService notificationService;
+
+    /**
+     * Optional: injected when the WebSocket context is active.
+     * Null in pure unit tests (Mockito context) — null-checked before use.
+     */
+    @Autowired(required = false)
+    private SimpMessagingTemplate messagingTemplate;
 
     @Override
     @Transactional
@@ -103,7 +115,7 @@ public class ConversationServiceImpl implements ConversationService {
     @Override
     @Transactional(readOnly = true)
     public Page<ConversationDto> getUserConversations(Long userId, Pageable pageable) {
-        return conversationRepository.findByParticipant(userId, pageable)
+        return conversationRepository.findByParticipantExcludingArchived(userId, pageable)
                 .map(c -> {
                     ConversationDto dto = ConversationDto.fromEntity(c, userId);
                     dto.setUnreadCount(messageRepository.countUnreadByConversation(c.getId(), userId));
@@ -185,7 +197,16 @@ public class ConversationServiceImpl implements ConversationService {
         );
 
         log.info("User {} sent message in conversation {}", userId, conversationId);
-        return MessageDto.fromEntity(saved);
+
+        MessageDto dto = MessageDto.fromEntity(saved);
+
+        // Push message to conversation topic (WebSocket realtime) — all participants
+        if (messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/conversations." + conversationId, dto);
+            log.debug("WS push message conversationId={}", conversationId);
+        }
+
+        return dto;
     }
 
     @Override
@@ -249,5 +270,54 @@ public class ConversationServiceImpl implements ConversationService {
     @Transactional(readOnly = true)
     public long getTotalUnreadCount(Long userId) {
         return messageRepository.countTotalUnread(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<MessageDto> searchMessages(Long userId, String query, Pageable pageable) {
+        return messageRepository.searchByUserAndContent(userId, query, pageable)
+                .map(MessageDto::fromEntity);
+    }
+
+    @Override
+    @Transactional
+    public boolean archiveConversation(Long userId, Long conversationId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
+
+        if (!conversation.hasParticipant(userId)) {
+            throw new SecurityException("Not authorized to access this conversation");
+        }
+
+        boolean alreadyArchived = conversationArchiveRepository
+                .existsByConversationIdAndUserId(conversationId, userId);
+
+        if (alreadyArchived) {
+            conversationArchiveRepository.deleteByConversationIdAndUserId(conversationId, userId);
+            log.info("User {} unarchived conversation {}", userId, conversationId);
+            return false;
+        } else {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            ConversationArchive archive = ConversationArchive.builder()
+                    .conversation(conversation)
+                    .user(user)
+                    .archivedAt(Instant.now())
+                    .build();
+            conversationArchiveRepository.save(archive);
+            log.info("User {} archived conversation {}", userId, conversationId);
+            return true;
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ConversationDto> getArchivedConversations(Long userId, Pageable pageable) {
+        return conversationRepository.findArchivedByParticipant(userId, pageable)
+                .map(c -> {
+                    ConversationDto dto = ConversationDto.fromEntity(c, userId);
+                    dto.setUnreadCount(messageRepository.countUnreadByConversation(c.getId(), userId));
+                    return dto;
+                });
     }
 }

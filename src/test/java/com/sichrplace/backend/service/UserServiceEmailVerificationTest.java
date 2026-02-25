@@ -1,5 +1,6 @@
 package com.sichrplace.backend.service;
 
+import com.sichrplace.backend.exception.AuthException;
 import com.sichrplace.backend.model.EmailVerificationToken;
 import com.sichrplace.backend.model.User;
 import com.sichrplace.backend.repository.EmailVerificationTokenRepository;
@@ -105,7 +106,7 @@ class UserServiceEmailVerificationTest {
         }
 
         @Test
-        @DisplayName("expired token → throws IllegalStateException")
+        @DisplayName("expired token → throws AuthException with TOKEN_EXPIRED")
         void expiredToken_throws() {
             EmailVerificationToken evt = EmailVerificationToken.builder()
                     .id(11L)
@@ -119,14 +120,14 @@ class UserServiceEmailVerificationTest {
             when(emailVerificationTokenRepository.findByTokenHash(anyString()))
                     .thenReturn(Optional.of(evt));
 
-            IllegalStateException ex = assertThrows(IllegalStateException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.verifyEmail("expiredToken"));
-            assertTrue(ex.getMessage().contains("expired"));
+            assertEquals("TOKEN_EXPIRED", ex.getErrorCode());
             verify(userRepository, never()).save(any());
         }
 
         @Test
-        @DisplayName("used token → throws IllegalStateException")
+        @DisplayName("used token → throws AuthException with TOKEN_ALREADY_USED")
         void usedToken_throws() {
             EmailVerificationToken evt = EmailVerificationToken.builder()
                     .id(12L)
@@ -140,20 +141,21 @@ class UserServiceEmailVerificationTest {
             when(emailVerificationTokenRepository.findByTokenHash(anyString()))
                     .thenReturn(Optional.of(evt));
 
-            IllegalStateException ex = assertThrows(IllegalStateException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.verifyEmail("usedToken"));
-            assertTrue(ex.getMessage().contains("already been used"));
+            assertEquals("TOKEN_ALREADY_USED", ex.getErrorCode());
             verify(userRepository, never()).save(any());
         }
 
         @Test
-        @DisplayName("invalid (non-existent) token → throws IllegalArgumentException")
+        @DisplayName("invalid (non-existent) token → throws AuthException with INVALID_TOKEN")
         void invalidToken_throws() {
             when(emailVerificationTokenRepository.findByTokenHash(anyString()))
                     .thenReturn(Optional.empty());
 
-            assertThrows(IllegalArgumentException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.verifyEmail("bogusToken"));
+            assertEquals("INVALID_TOKEN", ex.getErrorCode());
             verify(userRepository, never()).save(any());
         }
     }

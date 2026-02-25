@@ -2,6 +2,7 @@ package com.sichrplace.backend.service;
 
 import com.sichrplace.backend.dto.UserAuthDto;
 import com.sichrplace.backend.dto.UserDto;
+import com.sichrplace.backend.exception.AuthException;
 import com.sichrplace.backend.model.User;
 import com.sichrplace.backend.repository.EmailVerificationTokenRepository;
 import com.sichrplace.backend.repository.PasswordResetTokenRepository;
@@ -46,6 +47,7 @@ class UserServiceRegistrationLoginTest {
     @Mock private EmailService emailService;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private JwtTokenProvider jwtTokenProvider;
+    @Mock private RefreshTokenService refreshTokenService;
 
     @InjectMocks private UserServiceImpl userService;
 
@@ -60,7 +62,7 @@ class UserServiceRegistrationLoginTest {
                 .firstName("Alice")
                 .lastName("Tester")
                 .role(User.UserRole.TENANT)
-                .emailVerified(false)
+                .emailVerified(true)
                 .isActive(true)
                 .createdAt(Instant.now())
                 .build();
@@ -84,7 +86,7 @@ class UserServiceRegistrationLoginTest {
             });
             when(emailVerificationTokenRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
             when(jwtTokenProvider.generateAccessToken(any())).thenReturn("access-jwt");
-            when(jwtTokenProvider.generateRefreshToken(any())).thenReturn("refresh-jwt");
+            when(refreshTokenService.createToken(any(), any())).thenReturn("raw-refresh");
             when(jwtTokenProvider.getAccessTokenExpirationMs()).thenReturn(86400000L);
 
             UserAuthDto result = userService.register(
@@ -94,32 +96,44 @@ class UserServiceRegistrationLoginTest {
             assertNotNull(result);
             assertEquals("bob@example.com", result.getEmail());
             assertEquals("access-jwt", result.getAccessToken());
-            assertEquals("refresh-jwt", result.getRefreshToken());
+            assertEquals("raw-refresh", result.getRefreshToken());
             // Verify verification token was issued
             verify(emailVerificationTokenRepository).save(any());
             verify(emailService).sendEmail(eq("bob@example.com"), anyString(), anyString());
         }
 
         @Test
-        @DisplayName("duplicate email → throws IllegalArgumentException")
+        @DisplayName("duplicate email → throws AuthException with EMAIL_TAKEN")
         void duplicateEmail_throws() {
             when(userRepository.existsByEmail("alice@example.com")).thenReturn(true);
 
-            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.register(
-                            "alice@example.com", "pass", "A", "B", User.UserRole.TENANT
+                            "alice@example.com", "StrongP@ss1", "A", "B", User.UserRole.TENANT
                     ));
-            assertTrue(ex.getMessage().contains("already registered"));
+            assertEquals("EMAIL_TAKEN", ex.getErrorCode());
         }
 
         @Test
-        @DisplayName("ADMIN role → throws IllegalArgumentException")
+        @DisplayName("ADMIN role → throws AuthException with ADMIN_SELF_REGISTER")
         void adminRole_throws() {
-            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.register(
-                            "admin@example.com", "pass", "A", "B", User.UserRole.ADMIN
+                            "admin@example.com", "StrongP@ss1", "A", "B", User.UserRole.ADMIN
                     ));
-            assertTrue(ex.getMessage().contains("ADMIN"));
+            assertEquals("ADMIN_SELF_REGISTER", ex.getErrorCode());
+        }
+
+        @Test
+        @DisplayName("weak password → throws AuthException with PASSWORD_WEAK")
+        void weakPassword_throws() {
+            when(userRepository.existsByEmail("new@example.com")).thenReturn(false);
+
+            AuthException ex = assertThrows(AuthException.class,
+                    () -> userService.register(
+                            "new@example.com", "nouppercase1!", "A", "B", User.UserRole.TENANT
+                    ));
+            assertEquals("PASSWORD_WEAK", ex.getErrorCode());
         }
     }
 
@@ -136,7 +150,7 @@ class UserServiceRegistrationLoginTest {
             when(passwordEncoder.matches("StrongP@ss1", "$2a$10$hashedPassword")).thenReturn(true);
             when(userRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
             when(jwtTokenProvider.generateAccessToken(any())).thenReturn("access-jwt");
-            when(jwtTokenProvider.generateRefreshToken(any())).thenReturn("refresh-jwt");
+            when(refreshTokenService.createToken(any(), any())).thenReturn("raw-refresh");
             when(jwtTokenProvider.getAccessTokenExpirationMs()).thenReturn(86400000L);
 
             UserAuthDto result = userService.login("alice@example.com", "StrongP@ss1");
@@ -147,33 +161,35 @@ class UserServiceRegistrationLoginTest {
         }
 
         @Test
-        @DisplayName("wrong password → throws IllegalArgumentException")
+        @DisplayName("wrong password → throws AuthException with INVALID_CREDENTIALS")
         void wrongPassword_throws() {
             when(userRepository.findByEmail("alice@example.com")).thenReturn(Optional.of(existingUser));
             when(passwordEncoder.matches("wrong", "$2a$10$hashedPassword")).thenReturn(false);
 
-            assertThrows(IllegalArgumentException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.login("alice@example.com", "wrong"));
+            assertEquals("INVALID_CREDENTIALS", ex.getErrorCode());
         }
 
         @Test
-        @DisplayName("unknown email → throws IllegalArgumentException")
+        @DisplayName("unknown email → throws AuthException with INVALID_CREDENTIALS")
         void unknownEmail_throws() {
             when(userRepository.findByEmail("nobody@example.com")).thenReturn(Optional.empty());
 
-            assertThrows(IllegalArgumentException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.login("nobody@example.com", "pass"));
+            assertEquals("INVALID_CREDENTIALS", ex.getErrorCode());
         }
 
         @Test
-        @DisplayName("deactivated account → throws IllegalArgumentException")
+        @DisplayName("deactivated account → throws AuthException with ACCOUNT_DEACTIVATED")
         void deactivatedAccount_throws() {
             existingUser.setIsActive(false);
             when(userRepository.findByEmail("alice@example.com")).thenReturn(Optional.of(existingUser));
 
-            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.login("alice@example.com", "pass"));
-            assertTrue(ex.getMessage().contains("deactivated"));
+            assertEquals("ACCOUNT_DEACTIVATED", ex.getErrorCode());
         }
     }
 
@@ -221,6 +237,58 @@ class UserServiceRegistrationLoginTest {
         assertEquals("Alicia", result.getFirstName());
         assertEquals("Tester", result.getLastName());  // unchanged
         assertEquals("Berlin", result.getCity());
+    }
+
+    @Test
+    @DisplayName("full update applies all optional profile fields")
+    void fullUpdate_allOptionalFields() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        UserDto update = new UserDto();
+        update.setFirstName("A1");
+        update.setLastName("B1");
+        update.setBio("Bio here");
+        update.setPhone("+491234");
+        update.setCity("Hamburg");
+        update.setCountry("DE");
+
+        UserDto result = userService.updateUser(1L, update);
+
+        assertEquals("A1", result.getFirstName());
+        assertEquals("B1", result.getLastName());
+        assertEquals("Bio here", result.getBio());
+        assertEquals("+491234", result.getPhone());
+        assertEquals("Hamburg", result.getCity());
+        assertEquals("DE", result.getCountry());
+    }
+
+    @Test
+    @DisplayName("updateUser unknown user throws")
+    void updateUser_unknown_throws() {
+        when(userRepository.findById(404L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.updateUser(404L, new UserDto()));
+    }
+
+    @Test
+    @DisplayName("getUserByEmail existing returns DTO")
+    void getUserByEmail_existing() {
+        when(userRepository.findByEmail("alice@example.com")).thenReturn(Optional.of(existingUser));
+
+        UserDto result = userService.getUserByEmail("alice@example.com");
+
+        assertEquals("alice@example.com", result.getEmail());
+    }
+
+    @Test
+    @DisplayName("getUserByEmail unknown throws")
+    void getUserByEmail_unknown_throws() {
+        when(userRepository.findByEmail("none@example.com")).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.getUserByEmail("none@example.com"));
     }
 
     // ─── emailExists ────────────────────────────────────────────────

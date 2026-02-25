@@ -190,10 +190,16 @@
 | Feature | Endpoints | Tables Touched | Wiring Status | Tests |
 |---------|-----------|---------------|---------------|-------|
 | **Execute Saved Search** | `POST /api/saved-searches/{id}/execute` | saved_searches, apartments | **FULLY WIRED** — JPA Specifications, `ApartmentSpecifications.java`, paginated results | 6 unit tests (`SavedSearchServiceTest`) |
-| **Password Reset** | `POST /api/auth/forgot-password`, `POST /api/auth/reset-password` | users, password_reset_tokens | **FULLY WIRED** — SHA-256 token hashing, 1-hour expiry, single-use | 6 unit tests (`UserServicePasswordResetTest`) |
+| **Password Reset** | `POST /api/auth/forgot-password`, `POST /api/auth/reset-password` | users, password_reset_tokens | **FULLY WIRED** — SHA-256 token hashing, 1-hour expiry, single-use | 13 tests (`UserServicePasswordResetTest`, `UserControllerPasswordResetTest`) |
 | **VR Stats + Complete** | `GET /api/viewing-requests/statistics`, `PUT /api/viewing-requests/{id}/complete` | viewing_requests, viewing_request_transitions | **FULLY WIRED** — state-machine enforcement, transition logging | 9 unit tests (`ViewingRequestServiceExtendedTest`) |
 | **Email Verification** (v1.3.0) | `POST /api/auth/verify-email`, `POST /api/auth/resend-verification` | email_verification_tokens, users | **FULLY WIRED** — SHA-256 token hashing, 24-hour expiry, single-use, anti-enumeration | 7 unit tests (`UserServiceEmailVerificationTest`) |
 | **Health Check** (v1.3.0) | `GET /api/health` | — | **FULLY WIRED** — returns status, app name, timestamp, uptime | 2 integration tests (`HealthControllerTest`) |
+
+### 2.2.1  Living Spec Migration Status
+
+| Feature | Migration Status | Implementation Source of Truth | Legacy MDs now redundant |
+|---------|------------------|-------------------------------|--------------------------|
+| Password Reset | **Spec → code migrated** | `UserServiceImpl#forgotPassword`, `UserServiceImpl#resetPassword`, `UserController#forgotPassword`, `UserController#resetPassword`, `UserServicePasswordResetTest`, `UserControllerPasswordResetTest` | `docs/generated/frontend_integration/auth_password_reset.md` (marked legacy; remove after final QA verification) |
 
 ### 2.3  Endpoints returning TODO/placeholder behavior
 

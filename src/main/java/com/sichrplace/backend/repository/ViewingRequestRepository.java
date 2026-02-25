@@ -28,6 +28,27 @@ public interface ViewingRequestRepository extends JpaRepository<ViewingRequest, 
     @Query("SELECT COUNT(vr) FROM ViewingRequest vr WHERE vr.apartment.owner.id = :ownerId")
     long countByLandlordId(@Param("ownerId") Long ownerId);
 
+    /** Find all viewing requests for apartments owned by a specific landlord. */
+    @Query("SELECT vr FROM ViewingRequest vr WHERE vr.apartment.owner.id = :ownerId ORDER BY vr.createdAt DESC")
+    List<ViewingRequest> findByLandlordId(@Param("ownerId") Long ownerId);
+
     @Query("SELECT COUNT(vr) FROM ViewingRequest vr WHERE vr.apartment.owner.id = :ownerId AND vr.status = :status")
     long countByLandlordIdAndStatus(@Param("ownerId") Long ownerId, @Param("status") ViewingRequest.ViewingStatus status);
+
+    /** Find viewing request linked to a specific payment transaction. */
+    java.util.Optional<ViewingRequest> findByPaymentTransactionId(Long paymentTransactionId);
+
+    /** FTL-17: Admin listing with status filter. */
+    Page<ViewingRequest> findByStatus(ViewingRequest.ViewingStatus status, Pageable pageable);
+
+    /** FTL-16: Check for existing active (PENDING or CONFIRMED) viewing request for same tenant + apartment. */
+    boolean existsByTenantIdAndApartmentIdAndStatusIn(
+            Long tenantId, Long apartmentId, java.util.Collection<ViewingRequest.ViewingStatus> statuses);
+
+    /** Check if a tenant has a COMPLETED viewing for a specific apartment (review eligibility). */
+    boolean existsByTenantIdAndApartmentIdAndStatus(
+            Long tenantId, Long apartmentId, ViewingRequest.ViewingStatus status);
+
+    /** Count paid viewings for a user (viewing credits). */
+    long countByTenantIdAndPaymentRequiredTrue(Long tenantId);
 }

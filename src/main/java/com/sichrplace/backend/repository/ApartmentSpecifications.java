@@ -5,6 +5,7 @@ import com.sichrplace.backend.model.Apartment;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,37 @@ public final class ApartmentSpecifications {
             }
             if (f.getHasBalcony() != null) {
                 predicates.add(cb.equal(root.get("hasBalcony"), f.getHasBalcony()));
+            }
+
+            // ── FTL v2 §4 additions ──
+
+            if (f.getPropertyType() != null && !f.getPropertyType().isBlank()) {
+                try {
+                    Apartment.PropertyType pt = Apartment.PropertyType.valueOf(
+                            f.getPropertyType().toUpperCase(java.util.Locale.ROOT));
+                    predicates.add(cb.equal(root.get("propertyType"), pt));
+                } catch (IllegalArgumentException ignored) {
+                    // unknown property type — skip filter
+                }
+            }
+            if (f.getAvailableFrom() != null) {
+                // apartments available on or before the requested date
+                predicates.add(cb.lessThanOrEqualTo(root.get("availableFrom"), f.getAvailableFrom()));
+            }
+            if (f.getHasWifi() != null) {
+                predicates.add(cb.equal(root.get("hasWifi"), f.getHasWifi()));
+            }
+            if (f.getHasWashingMachine() != null) {
+                predicates.add(cb.equal(root.get("hasWashingMachine"), f.getHasWashingMachine()));
+            }
+            if (f.getHasDishwasher() != null) {
+                predicates.add(cb.equal(root.get("hasDishwasher"), f.getHasDishwasher()));
+            }
+            if (f.getHasAirConditioning() != null) {
+                predicates.add(cb.equal(root.get("hasAirConditioning"), f.getHasAirConditioning()));
+            }
+            if (f.getHasHeating() != null) {
+                predicates.add(cb.equal(root.get("hasHeating"), f.getHasHeating()));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

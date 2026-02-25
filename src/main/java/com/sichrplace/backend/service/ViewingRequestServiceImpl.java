@@ -1,10 +1,12 @@
 package com.sichrplace.backend.service;
 
+import com.sichrplace.backend.dto.PaymentSessionDto;
 import com.sichrplace.backend.dto.ViewingRequestDto;
 import com.sichrplace.backend.dto.ViewingRequestStatsDto;
 import com.sichrplace.backend.dto.ViewingRequestTransitionDto;
 import com.sichrplace.backend.dto.CreateViewingRequestRequest;
 import com.sichrplace.backend.model.Apartment;
+import com.sichrplace.backend.model.PaymentTransaction;
 import com.sichrplace.backend.model.User;
 import com.sichrplace.backend.model.ViewingRequest;
 import com.sichrplace.backend.model.ViewingRequestTransition;
@@ -12,14 +14,19 @@ import com.sichrplace.backend.repository.ApartmentRepository;
 import com.sichrplace.backend.repository.UserRepository;
 import com.sichrplace.backend.repository.ViewingRequestRepository;
 import com.sichrplace.backend.repository.ViewingRequestTransitionRepository;
+import com.sichrplace.backend.dto.PaymentProviderSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +40,17 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
     private final ViewingRequestTransitionRepository transitionRepository;
     private final ApartmentRepository apartmentRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final PaymentTransactionService paymentTransactionService;
+    private final PaymentProviderRouter paymentProviderRouter;
+    private final NotificationService notificationService;
+
+    /**
+     * Optional: injected when the WebSocket context is active.
+     * Null in pure unit tests (Mockito context) — null-checked before use.
+     */
+    @Autowired(required = false)
+    private SimpMessagingTemplate messagingTemplate;
 
     @Override
     public ViewingRequestDto createViewingRequest(Long tenantId, CreateViewingRequestRequest request) {
@@ -50,11 +68,22 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
             throw new IllegalArgumentException("Cannot request a viewing for your own apartment");
         }
 
+        // FTL-16: Prevent duplicate active viewing requests for the same tenant + apartment
+        boolean hasActiveRequest = viewingRequestRepository.existsByTenantIdAndApartmentIdAndStatusIn(
+                tenantId, request.getApartmentId(),
+                java.util.List.of(ViewingRequest.ViewingStatus.PENDING, ViewingRequest.ViewingStatus.CONFIRMED));
+        if (hasActiveRequest) {
+            throw new IllegalStateException(
+                    "You already have an active viewing request for this apartment");
+        }
+
         ViewingRequest viewingRequest = ViewingRequest.builder()
                 .apartment(apartment)
                 .tenant(tenant)
                 .proposedDateTime(request.getProposedDateTime())
                 .message(request.getMessage())
+                .questions(request.getQuestions())
+                .attentionPoints(request.getAttentionPoints())
                 .status(ViewingRequest.ViewingStatus.PENDING)
                 .build();
 
@@ -72,6 +101,16 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
 
         log.info("Viewing request created id={}, tenantId={}, apartmentId={}",
                 viewingRequest.getId(), tenantId, request.getApartmentId());
+
+        // FTL-24: Email landlord about new viewing request
+        String tenantName = tenant.getFirstName() + " " + tenant.getLastName();
+        sendStatusEmail(
+                apartment.getOwner().getEmail(),
+                "New viewing request received",
+                apartment.getTitle(),
+                viewingRequest.getProposedDateTime(),
+                "Tenant " + tenantName + " has requested a viewing. Please review and respond.");
+
         return ViewingRequestDto.fromEntity(viewingRequest);
     }
 
@@ -155,6 +194,15 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<ViewingRequestDto> getViewingRequestsReceivedByLandlord(Long landlordId) {
+        return viewingRequestRepository.findByLandlordId(landlordId)
+                .stream()
+                .map(ViewingRequestDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ViewingRequestDto confirmViewingRequest(Long id, Long ownerId) {
         ViewingRequest viewingRequest = viewingRequestRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Viewing request not found"));
@@ -186,7 +234,26 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
                 .build());
 
         log.info("Viewing request confirmed id={}, ownerId={}", id, ownerId);
-        return ViewingRequestDto.fromEntity(viewingRequest);
+
+        ViewingRequestDto dto = ViewingRequestDto.fromEntity(viewingRequest);
+
+        // Email tenant about confirmation
+        sendStatusEmail(
+                viewingRequest.getTenant().getEmail(),
+                "Viewing request confirmed",
+                viewingRequest.getApartment().getTitle(),
+                viewingRequest.getConfirmedDateTime(),
+                "Your viewing has been confirmed.");
+
+        // Push status update to the tenant (WebSocket realtime)
+        if (messagingTemplate != null) {
+            Long tenantId = viewingRequest.getTenant().getId();
+            messagingTemplate.convertAndSendToUser(
+                    tenantId.toString(), "/queue/viewing-requests", dto);
+            log.debug("WS push viewing-request CONFIRMED id={} tenantId={}", id, tenantId);
+        }
+
+        return dto;
     }
 
     @Override
@@ -222,7 +289,29 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
                 .build());
 
         log.info("Viewing request declined id={}, ownerId={}", id, ownerId);
-        return ViewingRequestDto.fromEntity(viewingRequest);
+
+        ViewingRequestDto dto = ViewingRequestDto.fromEntity(viewingRequest);
+
+        // Email tenant about decline
+        String declineNote = (reason != null && !reason.isBlank())
+                ? "Reason: " + reason
+                : "No reason provided.";
+        sendStatusEmail(
+                viewingRequest.getTenant().getEmail(),
+                "Viewing request declined",
+                viewingRequest.getApartment().getTitle(),
+                viewingRequest.getProposedDateTime(),
+                "Your viewing request was declined. " + declineNote);
+
+        // Push status update to the tenant (WebSocket realtime)
+        if (messagingTemplate != null) {
+            Long tenantId = viewingRequest.getTenant().getId();
+            messagingTemplate.convertAndSendToUser(
+                    tenantId.toString(), "/queue/viewing-requests", dto);
+            log.debug("WS push viewing-request DECLINED id={} tenantId={}", id, tenantId);
+        }
+
+        return dto;
     }
 
     @Override
@@ -256,6 +345,15 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
                 .build());
 
         log.info("Viewing request cancelled id={}, tenantId={}", id, tenantId);
+
+        // Email landlord about cancellation
+        String tenantName = tenant.getFirstName() + " " + tenant.getLastName();
+        sendStatusEmail(
+                viewingRequest.getApartment().getOwner().getEmail(),
+                "Viewing request cancelled",
+                viewingRequest.getApartment().getTitle(),
+                viewingRequest.getProposedDateTime(),
+                "Tenant " + tenantName + " cancelled the viewing.");
     }
 
     @Override
@@ -314,7 +412,62 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
                 .build());
 
         log.info("Viewing request completed id={}, userId={}", id, userId);
+
+        // Email the other party about completion
+        User otherParty = isTenant
+                ? viewingRequest.getApartment().getOwner()
+                : viewingRequest.getTenant();
+        sendStatusEmail(
+                otherParty.getEmail(),
+                "Viewing request completed",
+                viewingRequest.getApartment().getTitle(),
+                viewingRequest.getConfirmedDateTime(),
+                "The viewing has been marked as completed.");
+
+        // Send "please rate your experience" email to the tenant
+        User tenant = viewingRequest.getTenant();
+        sendStatusEmail(
+                tenant.getEmail(),
+                "Rate your viewing experience",
+                viewingRequest.getApartment().getTitle(),
+                viewingRequest.getConfirmedDateTime(),
+                "Your viewing is complete! Please take a moment to rate your experience "
+                + "and leave a review for this apartment.");
+
+        // Notify tenant to leave a review
+        notificationService.createNotification(
+                tenant.getId(),
+                com.sichrplace.backend.model.Notification.NotificationType.VIEWING_COMPLETED_REVIEW_PROMPT,
+                "Rate Your Viewing",
+                "Your viewing of \"" + viewingRequest.getApartment().getTitle()
+                        + "\" is complete. Please leave a review!",
+                com.sichrplace.backend.model.Notification.NotificationPriority.NORMAL,
+                "/apartments/" + viewingRequest.getApartment().getId() + "/reviews/new"
+        );
+
         return ViewingRequestDto.fromEntity(viewingRequest);
+    }
+
+    // ─── Email helper ───────────────────────────────────────────────
+
+    /**
+     * Sends a status-change notification email.
+     * Catches and logs exceptions so that a mail failure never breaks the main workflow.
+     */
+    private void sendStatusEmail(String to, String subject, String apartmentTitle,
+                                  LocalDateTime dateTime, String detail) {
+        try {
+            String formattedDate = (dateTime != null)
+                    ? dateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
+                    : "N/A";
+            String body = String.format(
+                    "Apartment: %s%nScheduled: %s%n%n%s",
+                    apartmentTitle, formattedDate, detail);
+            emailService.sendEmail(to, subject, body);
+            log.info("Status email sent — to={} subject={}", to, subject);
+        } catch (Exception e) {
+            log.error("Failed to send status email to={} subject={} error={}", to, subject, e.getMessage(), e);
+        }
     }
 
     @Override
@@ -382,5 +535,101 @@ public class ViewingRequestServiceImpl implements ViewingRequestService {
                 .cancelledCount(cancelled)
                 .averageResponseTimeHours(avgResponseHours)
                 .build();
+    }
+
+    @Override
+    public ViewingRequestDto markViewingAsPaymentRequired(Long viewingId, BigDecimal amount,
+                                                          String currency, String provider) {
+        ViewingRequest viewingRequest = viewingRequestRepository.findById(viewingId)
+                .orElseThrow(() -> new IllegalArgumentException("Viewing request not found"));
+
+        PaymentTransaction transaction = paymentTransactionService.createTransaction(
+                provider, amount, currency, String.valueOf(viewingId));
+
+        viewingRequest.setPaymentRequired(true);
+        viewingRequest.setPaymentTransaction(transaction);
+        viewingRequest = viewingRequestRepository.save(viewingRequest);
+
+        log.info("Viewing request {} marked as payment-required, transaction={}", viewingId, transaction.getId());
+        return ViewingRequestDto.fromEntity(viewingRequest);
+    }
+
+    @Override
+    public ViewingRequestDto clearPaymentRequirement(Long viewingId) {
+        ViewingRequest viewingRequest = viewingRequestRepository.findById(viewingId)
+                .orElseThrow(() -> new IllegalArgumentException("Viewing request not found"));
+
+        viewingRequest.setPaymentRequired(false);
+        viewingRequest.setPaymentTransaction(null);
+        viewingRequest = viewingRequestRepository.save(viewingRequest);
+
+        log.info("Payment requirement cleared for viewing request {}", viewingId);
+        return ViewingRequestDto.fromEntity(viewingRequest);
+    }
+
+    @Override
+    public PaymentSessionDto createPaymentSession(Long viewingRequestId, Long userId, String provider) {
+        ViewingRequest viewingRequest = viewingRequestRepository.findById(viewingRequestId)
+                .orElseThrow(() -> new IllegalArgumentException("Viewing request not found"));
+
+        // Only the tenant of this viewing request can start a payment session
+        if (!viewingRequest.getTenant().getId().equals(userId)) {
+            throw new SecurityException("Not authorized to create a payment session for this viewing request");
+        }
+
+        if (!viewingRequest.isPaymentRequired()) {
+            throw new IllegalStateException("Payment is not required for this viewing request");
+        }
+
+        PaymentTransaction transaction = viewingRequest.getPaymentTransaction();
+        if (transaction == null) {
+            transaction = paymentTransactionService.createTransaction(
+                    provider, BigDecimal.valueOf(50), "EUR", String.valueOf(viewingRequestId));
+            viewingRequest.setPaymentTransaction(transaction);
+            viewingRequestRepository.save(viewingRequest);
+        }
+
+        // Call external provider to create checkout session
+        PaymentProviderClient providerClient = paymentProviderRouter.resolve(transaction.getProvider());
+        PaymentProviderSession providerSession = providerClient.createCheckoutSession(transaction, viewingRequest);
+
+        // Update transaction with provider details and mark PENDING
+        transaction = paymentTransactionService.updateProviderDetails(
+                transaction.getId(), providerSession.getProviderTransactionId());
+
+        log.info("Payment session created for viewing request {} transaction={} provider={}",
+                viewingRequestId, transaction.getId(), providerSession.getProviderTransactionId());
+        return PaymentSessionDto.from(transaction, providerSession.getRedirectUrl());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getPaymentStatus(Long viewingRequestId, Long userId) {
+        ViewingRequest viewingRequest = viewingRequestRepository.findById(viewingRequestId)
+                .orElseThrow(() -> new IllegalArgumentException("Viewing request not found"));
+
+        boolean isTenant = viewingRequest.getTenant().getId().equals(userId);
+        boolean isOwner = viewingRequest.getApartment().getOwner().getId().equals(userId);
+        if (!isTenant && !isOwner) {
+            throw new SecurityException("Not authorized to view payment status for this viewing request");
+        }
+
+        PaymentTransaction transaction = viewingRequest.getPaymentTransaction();
+        if (transaction == null) {
+            return null;
+        }
+        return transaction.getStatus().name();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ViewingRequestDto> getAllViewingRequestsAdmin(String status, Pageable pageable) {
+        if (status != null && !status.isBlank()) {
+            ViewingRequest.ViewingStatus vs = ViewingRequest.ViewingStatus.valueOf(status.toUpperCase(java.util.Locale.ROOT));
+            return viewingRequestRepository.findByStatus(vs, pageable)
+                    .map(ViewingRequestDto::fromEntity);
+        }
+        return viewingRequestRepository.findAll(pageable)
+                .map(ViewingRequestDto::fromEntity);
     }
 }

@@ -232,6 +232,91 @@ For any **real deployment** (beta droplet, production), you MUST:
 
 ---
 
+## 10. CSRF Posture (Why CSRF Tokens Are Not Used)
+
+Classic CSRF attacks trick a browser into sending a state-changing request to a
+site where the user is **already authenticated via a cookie**.  The browser
+auto-attaches the cookie; the server cannot distinguish the real request from
+the forged one.
+
+**SichrPlace does not use cookies for authentication.**
+
+| Property | Value |
+|----------|-------|
+| Session policy | `STATELESS` — no `HttpSession` is ever created |
+| Auth mechanism | `Authorization: Bearer <JWT>` request header |
+| Cookie usage | None for authentication |
+
+Because there are no ambient credentials (no auth cookie), a forged cross-site
+request arrives as unauthenticated — it does not carry the `Authorization`
+header, so the server rejects it with `401`.  **CSRF protection is provided by
+architectural design, not by tokens.**
+
+This means:
+
+- `csrf().disable()` in `SecurityConfig` is intentional and correct.
+- There is no `GET /api/auth/csrf-token` endpoint, and none is needed.
+- Frontend clients **must not** store the JWT in a cookie. Use memory or
+  `localStorage`. If a cookie is used for the JWT, `csrf().disable()` must be
+  reverted and `CookieCsrfTokenRepository` configured before going live.
+- `SecurityConfigTest` verifies: no `403` on POST without CSRF token; no
+  `Set-Cookie` on auth API responses.
+
+**Future condition:** If a Spring MVC / Thymeleaf view layer is added that
+handles `<form>` POST submissions, CSRF protection must be re-enabled for those
+form endpoints before launch.  See ROADMAP Phase 1.2 for the decision record.
+
+---
+
+## 11. WebSocket Authentication (STOMP over WebSocket)
+
+### How it works
+
+The SichrPlace backend exposes a STOMP endpoint at `/ws` (SockJS-wrapped for browser
+compatibility).  Every WebSocket connection requires a JWT — **not** in the HTTP
+handshake but in the STOMP `CONNECT` native frame header:
+
+```
+Authorization: Bearer <jwt>
+```
+
+Fallback header for SockJS clients that strip the `Authorization` key:
+```
+token: <raw-jwt>
+```
+
+`JwtChannelInterceptor` (in the `security` package) runs before every inbound
+STOMP frame.  On `CONNECT` frames it:
+1. Resolves the JWT from the header.
+2. Calls `JwtTokenProvider.validateToken(jwt)`.  Throws `MessageDeliveryException`
+   (which is translated to a STOMP `ERROR` frame + connection close) on failure.
+3. On success, extracts `userId` + `role` and attaches a
+   `UsernamePasswordAuthenticationToken` to the STOMP session principal.
+   All subsequent frames in the same session carry that principal automatically.
+
+### Why not HTTP handshake headers?
+
+- SockJS XHR / EventSource transports do not reliably forward custom HTTP headers.
+- JWT in a query parameter would be logged by proxies and CDNs.
+- STOMP CONNECT native headers are the idiomatic Spring WebSocket transport for JWTs.
+
+### Spring Security interaction
+
+`SecurityConfig` permits `/ws/**` at the HTTP layer (needed for the SockJS
+HTTP-polling upgrade).  Actual authentication is **not** delegated to the HTTP
+Security filter chain — it is enforced at the STOMP application layer by
+`JwtChannelInterceptor`.  The two layers are complementary.
+
+### Test coverage
+
+- `security/JwtChannelInterceptorTest` — 5 Mockito unit tests: valid Bearer header,
+  valid `token` fallback, missing header → exception, invalid JWT → exception,
+  non-CONNECT frame passthrough.
+- `config/WebSocketConfigTest` — 4 Spring context tests: bean presence, allowed-origins
+  property load.
+
+---
+
 ## Related Docs
 
 - [`TEST_STRATEGY.md`](TEST_STRATEGY.md) — test layers and quality gates

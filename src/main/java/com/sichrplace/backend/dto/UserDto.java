@@ -25,6 +25,7 @@ public class UserDto {
     private String city;
     private String country;
     private Boolean isActive;
+    private String preferredLocale;
     private Instant lastLoginAt;
     private Instant createdAt;
     private Instant updatedAt;
@@ -43,6 +44,7 @@ public class UserDto {
                 .city(user.getCity())
                 .country(user.getCountry())
                 .isActive(user.getIsActive())
+                .preferredLocale(user.getPreferredLocale())
                 .lastLoginAt(user.getLastLoginAt())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())

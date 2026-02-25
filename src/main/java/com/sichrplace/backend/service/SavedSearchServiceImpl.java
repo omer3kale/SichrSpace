@@ -122,7 +122,7 @@ public class SavedSearchServiceImpl implements SavedSearchService {
             filter = objectMapper.readValue(savedSearch.getFilterJson(), SearchFilterDto.class);
         } catch (Exception e) {
             log.error("Failed to parse filter_json for saved search id={}: {}", id, e.getMessage());
-            throw new IllegalStateException("Invalid filter_json in saved search");
+            throw new IllegalArgumentException("Invalid filter_json in saved search");
         }
 
         // Execute via JPA Specification

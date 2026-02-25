@@ -224,6 +224,79 @@ docker exec sichrplace-mssql /opt/mssql-tools18/bin/sqlcmd \
 
 ---
 
+## 8. Production MSSQL Connectivity
+
+Use one of these production models:
+
+- **Option A (preferred):** SQL Server managed service or dedicated VM in the same cloud/VPC as backend.
+- **Option B:** External SQL Server (for example Azure SQL/VM) with firewall locked to DigitalOcean backend egress IPs.
+
+### TLS + network requirements
+
+- Stable DB endpoint: `<host>:1433`.
+- Enforce TLS in JDBC URL (`encrypt=true;trustServerCertificate=false`).
+- Restrict inbound DB firewall rules to backend hosts/VPC only.
+- Never expose SQL port publicly unless for a temporary, scoped admin window.
+
+### Authentication model
+
+- `app_user` (least privilege): DML/read only for runtime API.
+- `migration_user` (elevated): schema migration execution only (CI/CD, not runtime app).
+- Rotate credentials and keep them in DigitalOcean secrets, not in git.
+
+### Connection string templates (same logical DB name across envs)
+
+Dev (local):
+```text
+jdbc:sqlserver://localhost:1433;databaseName=sichrplace;encrypt=false;trustServerCertificate=true;loginTimeout=30;socketTimeout=30
+```
+
+Staging (DigitalOcean):
+```text
+jdbc:sqlserver://staging-db-host:1433;databaseName=sichrplace;encrypt=true;trustServerCertificate=false;loginTimeout=30;socketTimeout=30
+```
+
+Production:
+```text
+jdbc:sqlserver://prod-db-host:1433;databaseName=sichrplace;encrypt=true;trustServerCertificate=false;loginTimeout=30;socketTimeout=30
+```
+
+### Required DigitalOcean env vars for backend deploy
+
+- `SPRING_PROFILES_ACTIVE=prod-mssql`
+- `PROD_DB_HOST`, `PROD_DB_PORT`, `PROD_DB_NAME`
+- `PROD_DB_USER`, `PROD_DB_PASS`
+- `PROD_DB_ENCRYPT=true`, `PROD_DB_TRUST_SERVER_CERTIFICATE=false`
+- `JWT_SECRET`, `CORS_ALLOWED_ORIGINS`
+
+---
+
+## 9. Staging Rehearsal (End-to-End)
+
+Run this exact sequence before production:
+
+1. Provision staging SQL Server + DB (`sichrplace`) and apply firewall/TLS policy.
+2. Run migrations (`MSSQL_SICHRPLACE_TEMPLATE.sql`, `V008__sichrplace_mini_backend.sql`, newer files).
+3. Run `sqlcmd -b -i db/mssql/smoke_seed.sql` then `sqlcmd -b -i db/mssql/smoke_test.sql`.
+4. Deploy staging backend on DigitalOcean with staging DB env vars.
+5. Verify `GET /api/health` and `GET /api/health/db-readiness`.
+6. Run a tiny API rehearsal: auth login, apartment listing read, viewing request create, conversation read.
+7. Record and fix any TLS timeout, firewall, or connection pool issues before prod cutover.
+
+---
+
+## 10. DB Integration Gates
+
+Production traffic switch is allowed only when all gates are green:
+
+1. **Migrations gate** — target DB migrations applied successfully.
+2. **Smoke gate** — non-interactive smoke test exits `0` (`sqlcmd -b -i db/mssql/smoke_test.sql`).
+3. **Backend readiness gate** — backend DB readiness endpoint returns `200` and `db=UP`.
+
+If any gate fails, stop deployment and do not switch DNS/traffic.
+
+---
+
 ## Teaching Checkpoints
 
 Students should be able to:

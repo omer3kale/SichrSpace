@@ -79,12 +79,12 @@ infrastructure extras) are entirely absent.
 | Reject / Decline | ✅ | ✅ | — |
 | Cancel | ✅ | ✅ | — |
 | Transition history | — | ✅ | **Spring Boot extra** |
-| Mark completed | ✅ | ❌ | **MISSING** |
-| Statistics endpoint | ✅ | ❌ | **MISSING** |
-| Payment status tracking | ✅ | ❌ | **MISSING** |
-| Email triggers on status change | ✅ | ❌ | **MISSING** |
+| Mark completed | ✅ | ✅ | — |
+| Statistics endpoint | ✅ | ✅ | — |
+| Payment status tracking | ✅ | ✅ (Stripe webhooks + booking-aware) | Phase 3 P3-5/P3-6: Stripe webhooks update PaymentTransaction status; PaymentDomainListener auto-confirms PENDING→CONFIRMED on payment completion, auto-cancels CONFIRMED→CANCELLED on refund |
+| Email triggers on status change | ✅ | ✅ | — (Phase 2 A-3: `ViewingRequestServiceImpl.sendStatusEmail()`) |
 
-**Spring Boot parity: 70 % (but has transition history the old backend lacked)**
+**Spring Boot parity: 85 % (has transition history the old backend lacked; email triggers restored)**
 
 ---
 
@@ -160,14 +160,14 @@ infrastructure extras) are entirely absent.
 | Delete message (soft) | ✅ (partial MongoDB) | ✅ | — |
 | Mark conversation read | — | ✅ | Spring Boot extra |
 | Unread message count | — | ✅ | Spring Boot extra |
-| Emoji reactions | ✅ (MongoDB) | ❌ | **MISSING** |
-| Archive conversation | ✅ (MongoDB) | ❌ | **MISSING** |
-| Report conversation | ✅ (MongoDB) | ❌ | **MISSING** |
-| Search messages | ✅ (MongoDB) | ❌ | **MISSING** |
-| File attachments | ✅ (MongoDB) | ❌ | **MISSING** |
-| Real-time (Supabase Realtime) | ✅ | ❌ | **MISSING** (WebSocket needed) |
+| Emoji reactions | ✅ (MongoDB) | ✅ | — (Phase 2 B-4: `MessageReaction` entity, add/remove/list endpoints, WebSocket push) |
+| Archive conversation | ✅ (MongoDB) | ✅ | — (Phase 2 B-1: `ConversationArchive` entity, toggle endpoint) |
+| Report conversation | ✅ (MongoDB) | ✅ | — (Phase 2 B-5: `ConversationReport` entity, user report + admin list/moderate endpoints) |
+| Search messages | ✅ (MongoDB) | ✅ | — (Phase 2 B-2: `MessageRepository.searchByUserAndContent()`) |
+| File attachments | ✅ (MongoDB) | ✅ | — (Phase 2 B-3: `MessageAttachment` entity, register/list endpoints, metadata-only) |
+| Real-time (Supabase Realtime) | ✅ | ✅ | — (Phase 1.4: STOMP over WebSocket, `/ws` endpoint, `JwtChannelInterceptor`) |
 
-**Spring Boot parity: 65 %**
+**Spring Boot parity: 100 %** (all conversation features implemented)
 
 ---
 
@@ -195,8 +195,8 @@ infrastructure extras) are entirely absent.
 
 | # | Category | Old Backend Endpoints | Status in Spring Boot |
 |---|----------|----------------------|----------------------|
-| 10 | **PayPal Payments** | 6 endpoints (create, capture, webhook) | ❌ Not implemented |
-| 11 | **Stripe Payments** | 3 endpoints (checkout, webhook, status) | ❌ Not implemented |
+| 10 | **PayPal Payments** | 6 endpoints (create, capture, webhook) | ✅ Phase 3 P3-7: PayPal order creation + webhook via PayPalPaymentProviderClient + PayPalWebhookController |
+| 11 | **Stripe Payments** | 3 endpoints (checkout, webhook, status) | ✅ Phase 3 P3-4/P3-5/P3-6: checkout session + webhook + booking-aware transitions |
 | 12 | **Google Maps / Geo** | 10–15 endpoints (geocode, nearby, distance, commute) | ❌ Not implemented |
 | 13 | **GDPR / Privacy** | 15+ endpoints (consent, requests, export, deletion, tracking) | ❌ Not implemented |
 | 14 | **Analytics Dashboard** | 4 endpoints (stats, popular, activity, locations) | ❌ Not implemented |

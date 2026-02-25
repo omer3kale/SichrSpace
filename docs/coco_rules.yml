@@ -7,11 +7,12 @@
 #   aspiration   — goal once full test suite is written
 #
 # Current baseline: 15.3 % overall (70+ tests, Feb 2026)
+# Updated after Backend Lock-In Sprint: target raised to 60 %
 # ──────────────────────────────────────────────────────────────
 
 # Global minimum — weighted across all packages
 overall:
-  target: 12         # Enforceable now  (current: 15.3 %)
+  target: 60         # Raised: Backend Lock-In Sprint adds 8 new test classes
   aspiration: 85     # Goal with full test suite
   metric: INSTRUCTION
 
@@ -20,8 +21,8 @@ overall:
 packages:
 
   service:
-    target: 25           # Current: 32.1 %
-    aspiration: 95
+    target: 99           # Strict meaningful-100 gate (current: 99.3 %)
+    aspiration: 100
     description: "Business logic — highest priority for coverage"
     critical_classes:
       - UserServiceImpl
@@ -35,12 +36,12 @@ packages:
       - AdminServiceImpl
 
   dto:
-    target: 5            # Current: 8.2 %
+    target: 20           # Raised after DTO mapping sprint (current: 22.7 %)
     aspiration: 95
     description: "DTO fromEntity() mapping — must be fully tested"
 
   security:
-    target: 15           # Current: 22.3 %
+    target: 95           # Raised after security hardening sprint (current: 100.0 %)
     aspiration: 90
     description: "JWT provider, auth filter, security config"
     critical_classes:
@@ -49,9 +50,14 @@ packages:
       - CustomUserDetailsService
 
   controller:
-    target: 8            # Current: 10.3 %
-    aspiration: 80
+    target: 99           # Lowered from 100% after Backend Lock-In Sprint added GdprController
+    aspiration: 100
     description: "REST endpoints — test request/response contracts"
+    notes: >
+      3 unreachable instructions remain in GdprController.sha256() (dead
+      NoSuchAlgorithmException catch block — SHA-256 is guaranteed by the JVM
+      spec and can never throw in practice). Lowering from 100% → 99% to
+      account for this structurally untestable dead code.
     critical_classes:
       - UserController
       - ApartmentController

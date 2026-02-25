@@ -42,4 +42,15 @@ class HealthControllerTest {
         mockMvc.perform(get("/api/health"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("GET /api/health/payments returns 200 with provider status")
+    void paymentsHealth_returns200() throws Exception {
+        mockMvc.perform(get("/api/health/payments"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.stripe").isNotEmpty())
+                .andExpect(jsonPath("$.paypal").isNotEmpty())
+                .andExpect(jsonPath("$.status").isNotEmpty());
+    }
 }

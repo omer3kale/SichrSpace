@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "users", indexes = {
@@ -62,6 +63,14 @@ public class User {
     @Column(name = "last_login_at")
     private Instant lastLoginAt;
 
+    /** Counts consecutive failed login attempts; reset to 0 on successful login. */
+    @Column(name = "failed_login_count")
+    private int failedLoginAttempts = 0;
+
+    /** If non-null and in the future, login is rejected until this instant. */
+    @Column(name = "locked_until")
+    private Instant lockedUntil;
+
     @Column(name = "gdpr_consent")
     private Boolean gdprConsent;
 
@@ -70,6 +79,49 @@ public class User {
 
     @Column(name = "marketing_consent")
     private Boolean marketingConsent;
+
+    /** ISO 639-1 language code (e.g. "en", "de", "tr"). Cosmetic only; does not affect auth. */
+    @Column(name = "preferred_locale", length = 10)
+    private String preferredLocale;
+
+    // ─── FTL-05  Personality / Habit fields (renter) ────────────────
+
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
+    @Column(name = "hobbies", length = 500)
+    private String hobbies;
+
+    /** Free-text: e.g. "early-riser, works from home". */
+    @Column(name = "daily_routine", length = 500)
+    private String dailyRoutine;
+
+    /** Comma-separated lifestyle tags (e.g. "vegan,fitness,music"). */
+    @Column(name = "lifestyle_tags", length = 500)
+    private String lifestyleTags;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "smoking_status", length = 20)
+    private SmokingStatus smokingStatus;
+
+    @Column(name = "pet_owner")
+    private Boolean petOwner;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", length = 20)
+    private Gender gender;
+
+    // ─── FTL-06  Landlord-specific fields ───────────────────────────
+
+    @Column(name = "company_name", length = 200)
+    private String companyName;
+
+    @Column(name = "number_of_properties")
+    private Integer numberOfProperties;
+
+    /** Short landlord self-description shown to tenants. */
+    @Column(name = "landlord_description", columnDefinition = "TEXT")
+    private String landlordDescription;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
@@ -81,5 +133,13 @@ public class User {
 
     public enum UserRole {
         ADMIN, LANDLORD, TENANT
+    }
+
+    public enum SmokingStatus {
+        NON_SMOKER, OCCASIONAL, SMOKER
+    }
+
+    public enum Gender {
+        MALE, FEMALE, NON_BINARY, PREFER_NOT_TO_SAY
     }
 }

@@ -1,5 +1,12 @@
 # Feature Spec — Email Verification
 
+> **Legacy Notice (2026-02-20):** Implementation is now authoritative.
+> Source of truth is Java code + tests:
+> `UserController#verifyEmail`, `UserController#resendVerification`,
+> `UserServiceImpl#verifyEmail`, `UserServiceImpl#resendVerificationEmail`,
+> `UserServiceEmailVerificationTest`, `UserControllerEmailVerificationTest`.
+> This generated feature spec is legacy and may be removed after final verification.
+
 > **Feature ID:** `auth_email_verification`
 > **Phase:** Phase 1
 > **Priority:** P0 — Critical Path

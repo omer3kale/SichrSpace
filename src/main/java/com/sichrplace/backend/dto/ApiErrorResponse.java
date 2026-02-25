@@ -18,6 +18,8 @@ public class ApiErrorResponse {
     private int status;
     private String error;
     private String message;
+    /** Machine-readable error code for client-side error handling, e.g. USER_EMAIL_ALREADY_EXISTS, DB_DEADLOCK. */
+    private String errorCode;
     private String path;
     private Instant timestamp;
     private Map<String, String> fieldErrors;

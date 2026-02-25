@@ -80,7 +80,12 @@ public class Notification {
         APARTMENT_APPROVED,
         APARTMENT_REJECTED,
         GDPR_REQUEST_COMPLETED,
-        ACCOUNT_UPDATE
+        ACCOUNT_UPDATE,
+        REPLY_REMINDER,
+        VIEWING_COMPLETED_REVIEW_PROMPT,
+        SUPPORT_TICKET_CREATED,
+        SUPPORT_TICKET_UPDATED,
+        VIDEO_SHARED
     }
 
     public enum NotificationPriority {

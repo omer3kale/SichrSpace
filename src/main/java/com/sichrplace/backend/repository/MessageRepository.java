@@ -39,4 +39,20 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Query("SELECT COUNT(m) FROM Message m WHERE m.conversation.id = :conversationId")
     long countByConversationId(@Param("conversationId") Long conversationId);
+
+    @Query("SELECT m FROM Message m WHERE " +
+            "m.conversation.id IN (SELECT c.id FROM Conversation c WHERE " +
+            "c.participant1.id = :userId OR c.participant2.id = :userId) AND " +
+            "m.isDeleted = false AND " +
+            "LOWER(m.content) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "ORDER BY m.createdAt DESC")
+    Page<Message> searchByUserAndContent(
+            @Param("userId") Long userId,
+            @Param("query") String query,
+            Pageable pageable);
+
+    /** FTL-20: find the most recent non-deleted message in a conversation. */
+    @Query("SELECT m FROM Message m WHERE m.conversation.id = :conversationId AND m.isDeleted = false " +
+            "ORDER BY m.createdAt DESC")
+    Page<Message> findLatestByConversationId(@Param("conversationId") Long conversationId, Pageable pageable);
 }

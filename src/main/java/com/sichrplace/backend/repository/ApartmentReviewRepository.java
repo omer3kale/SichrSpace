@@ -43,4 +43,18 @@ public interface ApartmentReviewRepository extends JpaRepository<ApartmentReview
 
     @Query("SELECT COUNT(r) FROM ApartmentReview r WHERE r.apartment.id = :apartmentId AND r.status = 'APPROVED' AND r.rating = :rating")
     long countByApartmentIdAndRating(@Param("apartmentId") Long apartmentId, @Param("rating") int rating);
+
+    /** Landlord-level aggregation: average landlordRating across all approved reviews for apartments owned by this landlord. */
+    @Query("SELECT AVG(r.landlordRating) FROM ApartmentReview r WHERE r.apartment.owner.id = :landlordId AND r.status = 'APPROVED' AND r.landlordRating IS NOT NULL")
+    Double findAverageLandlordRatingByLandlordUserId(@Param("landlordId") Long landlordId);
+
+    @Query("SELECT AVG(r.rating) FROM ApartmentReview r WHERE r.apartment.owner.id = :landlordId AND r.status = 'APPROVED'")
+    Double findAverageRatingByLandlordUserId(@Param("landlordId") Long landlordId);
+
+    @Query("SELECT COUNT(r) FROM ApartmentReview r WHERE r.apartment.owner.id = :landlordId AND r.status = 'APPROVED'")
+    long countApprovedByLandlordUserId(@Param("landlordId") Long landlordId);
+
+    /** Find approved reviews for all apartments owned by a landlord. */
+    @Query("SELECT r FROM ApartmentReview r WHERE r.apartment.owner.id = :landlordId AND r.status = 'APPROVED'")
+    Page<ApartmentReview> findApprovedByLandlordUserId(@Param("landlordId") Long landlordId, Pageable pageable);
 }

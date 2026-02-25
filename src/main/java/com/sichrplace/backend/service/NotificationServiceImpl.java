@@ -7,8 +7,10 @@ import com.sichrplace.backend.repository.NotificationRepository;
 import com.sichrplace.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,13 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+
+    /**
+     * Optional: injected when the WebSocket context is active.
+     * Null in pure unit tests (Mockito context) — null-checked before use.
+     */
+    @Autowired(required = false)
+    private SimpMessagingTemplate messagingTemplate;
 
     @Override
     @Transactional
@@ -47,7 +56,17 @@ public class NotificationServiceImpl implements NotificationService {
 
         Notification saved = notificationRepository.save(notification);
         log.info("Created notification for user {} — type={}, title={}", userId, type, title);
-        return NotificationDto.fromEntity(saved);
+
+        NotificationDto dto = NotificationDto.fromEntity(saved);
+
+        // Push notification to user's private queue (WebSocket realtime)
+        if (messagingTemplate != null) {
+            messagingTemplate.convertAndSendToUser(
+                    userId.toString(), "/queue/notifications", dto);
+            log.debug("WS push notification userId={} type={}", userId, type);
+        }
+
+        return dto;
     }
 
     @Override

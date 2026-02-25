@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * Deserialized filter criteria from a saved search's filter_json.
@@ -30,4 +31,19 @@ public class SearchFilterDto {
     private Boolean hasParking;
     private Boolean hasElevator;
     private Boolean hasBalcony;
+
+    // ── FTL v2 §4 additions ──
+
+    /** Filter by property type (APARTMENT, HOUSE, STUDIO, SHARED_ROOM, WG). */
+    private String propertyType;
+
+    /** Only return apartments available from this date or earlier. */
+    private LocalDate availableFrom;
+
+    // ── Amenity filters ──
+    private Boolean hasWifi;
+    private Boolean hasWashingMachine;
+    private Boolean hasDishwasher;
+    private Boolean hasAirConditioning;
+    private Boolean hasHeating;
 }

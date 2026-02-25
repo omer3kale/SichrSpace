@@ -17,24 +17,47 @@ percentage that must be met for the build to pass.  This ensures:
 
 ---
 
+## 1.1 What "100% Coverage" Means for SichrPlace
+
+**100% coverage = 100% of relevant application code** is exercised by tests.
+
+**Relevant** = actual business logic, not auto-generated boilerplate:
+- ✅ Service implementations (business rules, validation, DB queries)
+- ✅ Controllers (request handling, response mapping, auth checks)
+- ✅ Security (JWT generation, token validation, role checks)
+- ✅ Custom entity logic (helper methods, validation)
+- ✅ DTOs with custom mapping logic
+
+**Excluded (auto-generated or configuration-only, low testing ROI):**
+- ❌ Lombok-generated getters/setters/constructors
+- ❌ Spring auto-configuration classes (detected by JaCoCo exclusions)
+- ❌ Repository interfaces (Spring Data JPA generates the code)
+- ❌ Simple enums (constants only, no logic)
+- ❌ Application class itself (Bootstrap code)
+
+**Note:** 100% coverage is an aspirational target but secondary to
+writing meaningful tests. See BACKEND_10OF10_CRITERIA.md for context.
+
+---
+
 ## 2. Per-Package Targets
 
-### Current Enforceable Thresholds (CI gate)
+### Current Enforceable Thresholds (CI gate, v1.3.0)
 
-These targets reflect the **current baseline** (8 smoke tests, Feb 2026).
-The build fails if coverage drops below these.  They are intentionally low
-and must be raised as tests are added (see §5 Updating COCO).
+These targets reflect the **current baseline** (82 tests, Feb 2026).
+The build fails if coverage drops below these.  They are aggressively
+raised as tests are added using the "Ratchet" strategy (§5).
 
-| Package | Enforced | Aspiration | Current | Status |
-|---------|----------|------------|---------|--------|
-| `service` | **4 %** | 95 % | 4.8 % | Baseline |
-| `dto` | **0 %** | 95 % | 0 % | No tests yet |
-| `security` | **10 %** | 90 % | 12.4 % | Baseline |
-| `controller` | **5 %** | 80 % | 7.3 % | Baseline |
-| `repository` | **0 %** | 80 % | — | Spring interfaces |
-| `model` | **3 %** | 70 % | 4.0 % | Baseline |
-| `config` | **20 %** | 60 % | 22.2 % | Baseline |
-| **Overall** | **3 %** | 85 % | 3.7 % | Baseline |
+| Package | Enforced | Ratchet Target | Aspiration | Current | Status |
+|---------|----------|--------|--------|---------|--------|
+| `service` | **25 %** | 40 → 60 | 95 % | 32.1 % | ✅ Above gate |
+| `dto` | **5 %** | 15 → 40 | 95 % | 8.2 % | ✅ Above gate |
+| `security` | **15 %** | 30 → 50 | 90 % | 22.3 % | ✅ Above gate |
+| `controller` | **8 %** | 20 → 40 | 80 % | 10.3 % | ✅ Above gate |
+| `repository` | **0 %** | — | 80 % | — | Excluded (Spring-generated) |
+| `model` | **12 %** | 25 → 40 | 70 % | 18.1 % | ✅ Above gate |
+| `config` | **20 %** | 30 → 40 | 60 % | 23.5 % | ✅ Above gate |
+| **Overall** | **12 %** | 30 → 50 | 85 % | 15.3 % | ✅ Above gate |
 
 ### Aspiration Targets (full test suite)
 
@@ -247,6 +270,65 @@ CI pipeline stops on failure
 ║ OVERALL             ║   87.3%  ║   85%    ║ ✅ ALL PASS     ║
 ╚═════════════════════╩══════════╩══════════╩═════════════════╝
 ```
+
+---
+
+## 6. Backend Lock-In Sprint Test Goals
+
+> **Sprint period:** 2026-02-21 — ~3 weeks  
+> **Overall COCO target for this sprint:** 40.5% → **≥ 60%**  
+> **Mechanism:** New integration tests against real MSSQL (Testcontainers or staged profile) bring overall coverage up without inflating mock-only metrics.
+
+### New Test Classes Required
+
+| Test Class | Layer | Stories Covered | Min Test Count |
+|------------|-------|----------------|----------------|
+| `EmailServiceImplSmtpTest` | Service (unit) | P0-1 | 3 (reset email, verification email, null recipient) |
+| `FlywayMigrationSmokeTest` | Integration | P0-2 | 1 (all migrations apply on fresh schema) |
+| `CorsConfigTest` | Integration (MockMvc) | P0-3 | 4 (allowed preflight, blocked preflight, allowed request, blocked request) |
+| `RateLimitingTest` | Integration | P0-4 | 3 (under limit → 200, at limit → 200, over limit → 429 with Retry-After) |
+| `RefreshTokenServiceTest` | Service (unit) | P1-1 | 6 (valid, expired, used token, revoked, rotation produces new, old rejected) |
+| `RefreshTokenControllerTest` | Controller (WebMvcTest) | P1-1 | 4 (refresh → 200, logout → 200, no token → 401, used token → 401) |
+| `AccountLockoutTest` | Integration | P1-2 | 4 (under threshold, threshold trigger, locked state, auto-unlock) |
+| `JwtRotationTest` | Service (unit) | P1-3 | 3 (current secret, previous secret in grace, previous secret after grace) |
+| `GdprExportServiceTest` | Service (unit) | P6-1 | 4 (queue job, job status progression, all 12 entity types included, email triggered) |
+| `GdprExportControllerTest` | Controller (WebMvcTest) | P6-1 | 3 (create export → 202, status poll → 200, unauthenticated → 401) |
+| `GdprDeletionServiceTest` | Service (unit) | P6-2 | 5 (anonymise user, messages replaced, apartments soft-deleted, tokens revoked, login rejected) |
+| `ConsentLogServiceTest` | Service (unit) | P6-3 | 3 (store consent, IP hashed not plaintext, consent history returned) |
+
+**Total new tests this sprint: ~43 tests across 12 test classes**
+
+### Coverage Impact Estimate
+
+| Package | Before Sprint | After Sprint (estimate) | Delta |
+|---------|--------------|------------------------|-------|
+| `service` | 99.3% | 99.5% | +0.2% (new services fully tested) |
+| `controller` | 100.0% | 100.0% | Hold |
+| `security` | 100.0% | 100.0% | Hold |
+| `overall` | **40.5%** | **≥ 60.0%** | **+19.5%** (integration tests count) |
+
+### Sprint COCO Enforcement
+
+After the sprint closes, update `coco_rules.yml` to raise the `overall` enforced threshold:
+
+```yaml
+# Before (current gate)
+overall:
+  enforced: 12%
+  ratchet_target: 30%
+
+# After Backend Lock-In Sprint
+overall:
+  enforced: 60%   # ← raise this
+  ratchet_target: 80%  # ← next milestone (Phase 8 integration tests)
+```
+
+### Every Sprint P0–P6 Story Must Include
+
+1. At least **one unit test** covering the happy path and at least one failure case.
+2. At least **one integration test** for any story that touches the DB or an external service boundary.
+3. Controller test (`@WebMvcTest`) for any story that adds a new REST endpoint.
+4. Update to `docs/QA-HANDOVER.md` sprint section before the story is closed.
 
 ---
 

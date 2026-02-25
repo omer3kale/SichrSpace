@@ -3,6 +3,10 @@ spring:
     name: sichrplace-backend
   profiles:
     active: local
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
   jpa:
     show-sql: false
     properties:

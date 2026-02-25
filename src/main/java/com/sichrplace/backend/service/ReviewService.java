@@ -25,4 +25,9 @@ public interface ReviewService {
     Page<ReviewDto> getPendingReviews(Pageable pageable);
 
     ReviewDto moderateReview(Long adminId, Long reviewId, ModerateReviewRequest request);
+
+    // Landlord reviews
+    ReviewStatsDto getLandlordReviewStats(Long landlordUserId);
+
+    Page<ReviewDto> getApprovedReviewsForLandlord(Long landlordUserId, Pageable pageable);
 }

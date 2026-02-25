@@ -68,7 +68,7 @@ public class AdminServiceImpl implements AdminService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        User.UserRole newRole = User.UserRole.valueOf(request.getRole().toUpperCase());
+        User.UserRole newRole = User.UserRole.valueOf(request.getRole().toUpperCase(java.util.Locale.ROOT));
         User.UserRole oldRole = user.getRole();
         user.setRole(newRole);
         User saved = userRepository.save(user);

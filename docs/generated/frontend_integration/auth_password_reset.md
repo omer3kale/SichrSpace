@@ -1,5 +1,12 @@
 # Frontend Integration Spec — Password Reset
 
+> **Legacy Notice (2026-02-20):** Implementation is now authoritative.
+> Source of truth is Java code + tests:
+> `UserServiceImpl#forgotPassword`, `UserServiceImpl#resetPassword`,
+> `UserController#forgotPassword`, `UserController#resetPassword`,
+> `UserServicePasswordResetTest`, `UserControllerPasswordResetTest`.
+> This document is retained temporarily for transition and will be removed after final verification.
+
 | Meta | Value |
 |------|-------|
 | **Backend tag** | `v1.2.0-thesis-showcase` |

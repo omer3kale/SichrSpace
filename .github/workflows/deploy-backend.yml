@@ -11,8 +11,74 @@ env:
 
 jobs:
 
+  # ─── MSSQL Schema + Smoke Verification ───
+  mssql-verify:
+    runs-on: ubuntu-latest
+    env:
+      CI_MSSQL_SA_PASSWORD: SichrPlace_CI_StrongPass_2026!
+      CI_DB_NAME: sichrplace_ci
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: SichrPlace_CI_StrongPass_2026!
+        ports:
+          - 1433:1433
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for SQL Server
+        run: |
+          set -euo pipefail
+          CID=$(docker ps --filter "ancestor=mcr.microsoft.com/mssql/server:2022-latest" --format "{{.ID}}" | head -n1)
+          if [ -z "$CID" ]; then
+            echo "MSSQL container not found"
+            exit 1
+          fi
+          for i in $(seq 1 30); do
+            if docker exec "$CID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$CI_MSSQL_SA_PASSWORD" -C -Q "SELECT 1" >/dev/null 2>&1; then
+              echo "SQL Server is ready"
+              exit 0
+            fi
+            echo "Waiting for SQL Server ($i/30)..."
+            sleep 3
+          done
+          echo "SQL Server did not become ready in time"
+          exit 1
+
+      - name: Create CI database and copy SQL scripts
+        run: |
+          set -euo pipefail
+          CID=$(docker ps --filter "ancestor=mcr.microsoft.com/mssql/server:2022-latest" --format "{{.ID}}" | head -n1)
+          docker exec "$CID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$CI_MSSQL_SA_PASSWORD" -C -b -Q "IF DB_ID(N'$CI_DB_NAME') IS NULL CREATE DATABASE [$CI_DB_NAME];"
+          docker cp src/main/resources/db/migrations/MSSQL_SICHRPLACE_TEMPLATE.sql "$CID":/tmp/MSSQL_SICHRPLACE_TEMPLATE.sql
+          docker cp src/main/resources/db/migrations/V008__sichrplace_mini_backend.sql "$CID":/tmp/V008__sichrplace_mini_backend.sql
+          docker cp db/mssql/smoke_seed.sql "$CID":/tmp/smoke_seed.sql
+          docker cp db/mssql/smoke_test.sql "$CID":/tmp/smoke_test.sql
+
+      - name: Apply migrations
+        run: |
+          set -euo pipefail
+          CID=$(docker ps --filter "ancestor=mcr.microsoft.com/mssql/server:2022-latest" --format "{{.ID}}" | head -n1)
+          docker exec "$CID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$CI_MSSQL_SA_PASSWORD" -d "$CI_DB_NAME" -C -b -i /tmp/MSSQL_SICHRPLACE_TEMPLATE.sql
+          docker exec "$CID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$CI_MSSQL_SA_PASSWORD" -d "$CI_DB_NAME" -C -b -i /tmp/V008__sichrplace_mini_backend.sql
+
+      - name: Seed minimum relational data for smoke
+        run: |
+          set -euo pipefail
+          CID=$(docker ps --filter "ancestor=mcr.microsoft.com/mssql/server:2022-latest" --format "{{.ID}}" | head -n1)
+          docker exec "$CID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$CI_MSSQL_SA_PASSWORD" -d "$CI_DB_NAME" -C -b -i /tmp/smoke_seed.sql
+
+      - name: Run non-interactive smoke test
+        run: |
+          set -euo pipefail
+          CID=$(docker ps --filter "ancestor=mcr.microsoft.com/mssql/server:2022-latest" --format "{{.ID}}" | head -n1)
+          docker exec "$CID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$CI_MSSQL_SA_PASSWORD" -d "$CI_DB_NAME" -C -b -i /tmp/smoke_test.sql
+
   # ─── Build, Test, Push Docker Image ───
   build-and-push:
+    needs: mssql-verify
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -94,6 +160,10 @@ jobs:
 
             # Rolling restart — zero-downtime for Caddy & Postgres
             docker compose up -d --no-deps --remove-orphans api
+
+            # Deployment gate: app + DB readiness must be healthy before success
+            curl --fail --silent --show-error http://localhost:8080/api/health > /dev/null
+            curl --fail --silent --show-error http://localhost:8080/api/health/db-readiness > /dev/null
 
             # Cleanup old images
             docker image prune -f

@@ -23,3 +23,19 @@ app:
 
   cors:
     allowed-origins: http://localhost:8080
+
+  # Use stub email in tests — no real SMTP calls
+  email:
+    provider: stub
+
+  login:
+    maxFailedAttempts: 5
+    lockoutMinutes: 30
+
+  refreshTokenExpirationDays: 14
+
+google:
+  maps:
+    api-key: ""
+    geocoding:
+      enabled: false

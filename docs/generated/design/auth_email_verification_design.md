@@ -1,5 +1,10 @@
 # Design Doc — Email Verification
 
+> **Legacy Notice (2026-02-20):** Implementation is now authoritative.
+> See `UserController`, `UserServiceImpl`, `EmailVerificationToken`,
+> `UserServiceEmailVerificationTest`, and `UserControllerEmailVerificationTest`.
+> This design document is retained as historical context and may be removed after final verification.
+
 > **Feature ID:** `auth_email_verification`
 > **Phase:** Phase 1
 > **Date:** 2026-02-20

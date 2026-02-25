@@ -7,9 +7,13 @@ import com.sichrplace.backend.dto.ReviewStatsDto;
 import com.sichrplace.backend.model.Apartment;
 import com.sichrplace.backend.model.ApartmentReview;
 import com.sichrplace.backend.model.User;
+import com.sichrplace.backend.model.BookingRequest;
+import com.sichrplace.backend.model.ViewingRequest;
 import com.sichrplace.backend.repository.ApartmentRepository;
 import com.sichrplace.backend.repository.ApartmentReviewRepository;
+import com.sichrplace.backend.repository.BookingRequestRepository;
 import com.sichrplace.backend.repository.UserRepository;
+import com.sichrplace.backend.repository.ViewingRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +29,8 @@ public class ReviewServiceImpl implements ReviewService {
     private final ApartmentReviewRepository reviewRepository;
     private final ApartmentRepository apartmentRepository;
     private final UserRepository userRepository;
+    private final ViewingRequestRepository viewingRequestRepository;
+    private final BookingRequestRepository bookingRequestRepository;
     private final NotificationService notificationService;
 
     @Override
@@ -43,6 +49,16 @@ public class ReviewServiceImpl implements ReviewService {
         // Prevent duplicate reviews
         if (reviewRepository.existsByApartmentIdAndReviewerId(apartmentId, reviewerId)) {
             throw new IllegalStateException("You have already reviewed this apartment");
+        }
+
+        // Eligibility: must have a COMPLETED viewing or ACCEPTED booking for this apartment
+        boolean hasCompletedViewing = viewingRequestRepository.existsByTenantIdAndApartmentIdAndStatus(
+                reviewerId, apartmentId, ViewingRequest.ViewingStatus.COMPLETED);
+        boolean hasAcceptedBooking = bookingRequestRepository.existsByTenantIdAndApartmentIdAndStatus(
+                reviewerId, apartmentId, BookingRequest.BookingStatus.ACCEPTED);
+        if (!hasCompletedViewing && !hasAcceptedBooking) {
+            throw new IllegalStateException(
+                    "You can only review an apartment after a completed viewing or accepted booking");
         }
 
         ApartmentReview review = new ApartmentReview();
@@ -211,5 +227,51 @@ public class ReviewServiceImpl implements ReviewService {
         );
 
         return ReviewDto.fromEntity(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReviewStatsDto getLandlordReviewStats(Long landlordUserId) {
+        long totalReviews = reviewRepository.countApprovedByLandlordUserId(landlordUserId);
+
+        if (totalReviews == 0) {
+            return ReviewStatsDto.builder()
+                    .apartmentId(null)
+                    .averageRating(0.0)
+                    .totalReviews(0)
+                    .averageLandlordRating(0.0)
+                    .averageLocationRating(0.0)
+                    .averageValueRating(0.0)
+                    .fiveStarCount(0)
+                    .fourStarCount(0)
+                    .threeStarCount(0)
+                    .twoStarCount(0)
+                    .oneStarCount(0)
+                    .build();
+        }
+
+        Double avgRating = reviewRepository.findAverageRatingByLandlordUserId(landlordUserId);
+        Double avgLandlord = reviewRepository.findAverageLandlordRatingByLandlordUserId(landlordUserId);
+
+        return ReviewStatsDto.builder()
+                .apartmentId(null)
+                .averageRating(avgRating != null ? avgRating : 0.0)
+                .totalReviews((int) totalReviews)
+                .averageLandlordRating(avgLandlord != null ? avgLandlord : 0.0)
+                .averageLocationRating(0.0)
+                .averageValueRating(0.0)
+                .fiveStarCount(0)
+                .fourStarCount(0)
+                .threeStarCount(0)
+                .twoStarCount(0)
+                .oneStarCount(0)
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ReviewDto> getApprovedReviewsForLandlord(Long landlordUserId, Pageable pageable) {
+        return reviewRepository.findApprovedByLandlordUserId(landlordUserId, pageable)
+                .map(ReviewDto::fromEntity);
     }
 }

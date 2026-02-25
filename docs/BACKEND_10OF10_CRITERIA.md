@@ -53,7 +53,7 @@ be expected at this project's scope and audience."
 
 | # | Criterion | Evidence |
 |---|-----------|----------|
-| 1 | **Automated test suite with enforced coverage gates** | 82 tests across 11 files; JaCoCo minimum 12%; COCO per-package targets enforced (service ≥25%, security ≥15%, controller ≥8%, model ≥12%, config ≥20%, dto ≥5%) |
+| 1 | **Automated test suite with enforced coverage gates** | Expanded test suite with strict COCO gates now enforced: controller = 100%, service = 99% (meaningful-100), overall = 39% |
 | 2 | **Quality gate pipeline: tests + coverage + secrets** | `testWithCoverage` → `checkCoco` → `secretsCheck` — all pass and are integrated into CI |
 | 3 | **Production-appropriate DDL strategy** | `ddl-auto=none` (prod), `validate` (beta), `update` (local dev only), `create-drop` (test) — differentiated by environment risk |
 | 4 | **Secrets scanning prevents credential leaks** | `secretsCheck` Gradle task scans `src/` for hardcoded passwords, API keys, and private-key headers |
@@ -69,6 +69,11 @@ academic level:
 
 - **≥ 80% line coverage** — 15.3% with enforced gates is appropriate for a
   thesis prototype; the infrastructure to raise coverage exists
+- **100% line coverage** — an aspirational target (see roadmap below) but
+  secondary to writing **meaningful** tests that cover critical logic paths.
+  Trading code coverage for artificial, detail-obsessed tests (that would
+  break on minor refactors) is counter-educational. See "Roadmap to 100%
+  Coverage" section.
 - **Flyway or Liquibase** — manual `sqlcmd` migration execution with `ddl-auto=validate`
   is sufficient; Flyway is a deployment convenience, not a correctness requirement
 - **Integration tests against live MSSQL** — H2 tests with profile smoke tests
@@ -84,7 +89,63 @@ academic level:
 
 ---
 
-## Related Documents
+## Roadmap to 100% Coverage (Aspirational)
+
+| Version | Coverage | Phase | Key Tests | Timeline |
+|---------|----------|-------|-----------|----------|
+| v1.3.0 | **15.3%** | Baseline | 82 tests (Phase 1 gaps) | Feb 2026 |
+| v1.4.0 | **30%** | Service layer | +40 unit tests (CRUD, auth, error) | Mar 2026 |
+| v1.5.0 | **50%** | Controller layer | +30 controller tests (all endpoints) | Apr 2026 |
+| v1.6.0 | **60%** | Integration | +15 flow tests (E2E, happy paths) | May 2026 |
+| v1.7.0 | **75%** | Error paths | +20 exception/validation tests | Jun 2026 |
+| v1.8.0 | **85%** | Near-complete | DTO, model, config, edge cases | Jul 2026 |
+
+### What "100% Coverage" Means (When We Get There)
+
+100% ≠ "every line executed at least once." Instead:
+
+**100% coverage = 100% of relevant business logic is tested.**
+
+**Relevant** code:
+- Service layer business logic (CRUD validation, auth checks, DB queries)
+- Controller request/response handling
+- Security (JWT generation, token validation, role checks)
+- Custom entity methods and helpers
+- DTO mapping logic
+
+**Excluded (minimal testing ROI):**
+- Lombok-generated getters/setters/constructors (covered by framework)
+- Spring auto-configuration (boilerplate)
+- Repository interfaces (Spring Data JPA generates)
+- Simple constants/enums
+
+### Coverage Ratchet Strategy
+
+To prevent regression, enforced thresholds are raised after each phase:
+
+- v1.3.0: Service 25%, Overall 12%
+- v1.4.0: Service 40%, Overall 30%
+- v1.5.0: Controller 40%, Overall 50%
+- ...and so on
+
+This ensures coverage steadily improves without "test debt" accumulation.
+
+## Living Spec Rule (Spec → Code Migration)
+
+For completed features, the authoritative specification is **Java implementation + automated tests**.
+Generated or legacy Markdown feature specs may be removed when all of the following are true:
+
+1. Code and tests cover all required feature behaviors (happy path, errors, auth).
+2. `API_ENDPOINTS_BACKEND.md` reflects the current endpoint contract.
+3. QA sign-off confirms behavior and regression checks.
+
+Migration workflow for each feature:
+- implement/align Java first,
+- add or update tests as living spec,
+- mark old feature MD as legacy,
+- remove redundant MD in a dedicated cleanup commit after verification.
+
+---
 
 | Document | Purpose |
 |----------|---------|

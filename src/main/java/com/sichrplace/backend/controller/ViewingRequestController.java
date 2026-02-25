@@ -1,8 +1,10 @@
 package com.sichrplace.backend.controller;
 
 import com.sichrplace.backend.dto.ApiErrorResponse;
+import com.sichrplace.backend.dto.CreatePaymentSessionRequest;
 import com.sichrplace.backend.dto.CreateViewingRequestRequest;
 import com.sichrplace.backend.dto.DeclineRequest;
+import com.sichrplace.backend.dto.PaymentSessionDto;
 import com.sichrplace.backend.dto.ViewingRequestDto;
 import com.sichrplace.backend.dto.ViewingRequestStatsDto;
 import com.sichrplace.backend.dto.ViewingRequestTransitionDto;
@@ -92,9 +94,24 @@ public class ViewingRequestController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) auth.getPrincipal();
         ViewingRequestService.ViewingRequestStatus statusEnum =
-                ViewingRequestService.ViewingRequestStatus.valueOf(status.toUpperCase());
+                ViewingRequestService.ViewingRequestStatus.valueOf(status.toUpperCase(java.util.Locale.ROOT));
         Page<ViewingRequestDto> response =
                 viewingRequestService.getViewingRequestsByTenantPaged(userId, statusEnum, pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/received")
+    @PreAuthorize("hasRole('LANDLORD') or hasRole('ADMIN')")
+    @Operation(summary = "Get all viewing requests received by the current landlord")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List of received viewing requests"),
+            @ApiResponse(responseCode = "403", description = "Not a landlord",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<List<ViewingRequestDto>> getReceivedViewingRequests() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) auth.getPrincipal();
+        List<ViewingRequestDto> response = viewingRequestService.getViewingRequestsReceivedByLandlord(userId);
         return ResponseEntity.ok(response);
     }
 
@@ -103,7 +120,7 @@ public class ViewingRequestController {
     @Operation(summary = "Get viewing requests for a specific apartment")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of viewing requests"),
-            @ApiResponse(responseCode = "403", description = "Not the apartment owner",
+            @ApiResponse(responseCode = "403", description = "Not admin",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "Apartment not found",
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
@@ -119,7 +136,7 @@ public class ViewingRequestController {
 
     @GetMapping("/apartment/{apartmentId}/paged")
     @PreAuthorize("hasRole('LANDLORD') or hasRole('ADMIN')")
-    @Operation(summary = "Get viewing requests for a specific apartment (paged)")
+    @Operation(summary = "Get viewing requests for a specific apartment, paged")
     public ResponseEntity<Page<ViewingRequestDto>> getViewingRequestsByApartmentPaged(
             @PathVariable Long apartmentId,
             @RequestParam(defaultValue = "PENDING") String status,
@@ -127,7 +144,7 @@ public class ViewingRequestController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) auth.getPrincipal();
         ViewingRequestService.ViewingRequestStatus statusEnum =
-                ViewingRequestService.ViewingRequestStatus.valueOf(status.toUpperCase());
+                ViewingRequestService.ViewingRequestStatus.valueOf(status.toUpperCase(java.util.Locale.ROOT));
         Page<ViewingRequestDto> response =
                 viewingRequestService.getViewingRequestsByApartmentPaged(apartmentId, userId, statusEnum, pageable);
         return ResponseEntity.ok(response);
@@ -236,5 +253,64 @@ public class ViewingRequestController {
         Long userId = (Long) auth.getPrincipal();
         ViewingRequestStatsDto response = viewingRequestService.getStatistics(userId);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{id}/payments/session")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Create a payment session for a viewing request")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Payment session created"),
+            @ApiResponse(responseCode = "400", description = "Viewing request not found",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Not authenticated",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Not authorized",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "Payment not required for this request",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<PaymentSessionDto> createPaymentSession(
+            @PathVariable Long id,
+            @Valid @RequestBody CreatePaymentSessionRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) auth.getPrincipal();
+        PaymentSessionDto response = viewingRequestService.createPaymentSession(id, userId, request.getProvider());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{id}/payments/status")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Get payment status for a viewing request")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Payment status"),
+            @ApiResponse(responseCode = "400", description = "Viewing request not found",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Not authenticated",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Not authorized",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<java.util.Map<String, String>> getPaymentStatus(@PathVariable Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) auth.getPrincipal();
+        String status = viewingRequestService.getPaymentStatus(id, userId);
+        return ResponseEntity.ok(java.util.Map.of("status", status != null ? status : "NONE"));
+    }
+
+    // ── FTL-17: Admin-only listing of all viewing requests ──
+
+    @GetMapping("/admin/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "List all viewing requests (admin only)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "All viewing requests"),
+            @ApiResponse(responseCode = "403", description = "Not admin",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<Page<ViewingRequestDto>> getAllViewingRequestsAdmin(
+            @RequestParam(required = false) String status,
+            Pageable pageable) {
+        Page<ViewingRequestDto> result = viewingRequestService.getAllViewingRequestsAdmin(status, pageable);
+        return ResponseEntity.ok(result);
     }
 }

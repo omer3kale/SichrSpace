@@ -1,5 +1,10 @@
 # Migration Plan — V007__user_email_verification
 
+> **Legacy Notice (2026-02-20):** Final migration implementation is authoritative.
+> See `db/migrations/V007__email_verification_tokens.sql`,
+> `model/EmailVerificationToken.java`, and `repository/EmailVerificationTokenRepository.java`.
+> This plan document is legacy and may be removed after final verification.
+
 > **Feature:** Email Verification
 > **Phase:** Phase 1
 > **Author:** Omer Kale

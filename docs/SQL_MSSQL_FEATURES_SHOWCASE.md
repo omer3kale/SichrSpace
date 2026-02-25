@@ -338,6 +338,145 @@ WHEN NOT MATCHED THEN
 
 ---
 
+## 9. Service-Mirroring Query Patterns (Mini Backend)
+
+These are SQL equivalents of common SichrPlace service calls for the
+`apartments`, `viewing_requests`, `conversations`, and `messages` slice.
+
+### Apartment list/search with pagination
+
+```sql
+DECLARE @city NVARCHAR(100) = N'Berlin';
+DECLARE @status NVARCHAR(20) = N'available';
+DECLARE @offset INT = 0;
+DECLARE @page_size INT = 10;
+
+SELECT
+    a.id,
+    a.title,
+    a.city,
+    a.rent_amount,
+    a.rooms,
+    a.status,
+    a.created_at,
+    u.id AS landlord_id,
+    u.username AS landlord_username
+FROM dbo.apartments a
+INNER JOIN dbo.users u ON u.id = a.landlord_id
+WHERE (@city IS NULL OR a.city = @city)
+  AND (@status IS NULL OR a.status = @status)
+ORDER BY a.created_at DESC
+OFFSET @offset ROWS FETCH NEXT @page_size ROWS ONLY;
+```
+
+### Tenant viewing requests (own requests only)
+
+```sql
+DECLARE @tenant_id UNIQUEIDENTIFIER = @CurrentUserId;
+
+SELECT
+    vr.id,
+    vr.status,
+    vr.preferred_date,
+    vr.message,
+    vr.created_at,
+    a.id AS apartment_id,
+    a.title,
+    a.city,
+    a.rent_amount,
+    l.id AS landlord_id,
+    l.username AS landlord_username
+FROM dbo.viewing_requests vr
+INNER JOIN dbo.apartments a ON a.id = vr.apartment_id
+INNER JOIN dbo.users l ON l.id = a.landlord_id
+WHERE vr.tenant_id = @tenant_id
+ORDER BY vr.created_at DESC;
+```
+
+### Landlord viewing requests (for owned apartments)
+
+```sql
+DECLARE @landlord_id UNIQUEIDENTIFIER = @CurrentUserId;
+
+SELECT
+    vr.id,
+    vr.status,
+    vr.preferred_date,
+    vr.message,
+    vr.created_at,
+    a.id AS apartment_id,
+    a.title,
+    t.id AS tenant_id,
+    t.username AS tenant_username,
+    t.email AS tenant_email
+FROM dbo.viewing_requests vr
+INNER JOIN dbo.apartments a ON a.id = vr.apartment_id
+INNER JOIN dbo.users t ON t.id = vr.tenant_id
+WHERE a.landlord_id = @landlord_id
+ORDER BY vr.created_at DESC;
+```
+
+### Conversation list + ordered messages with sender role
+
+```sql
+DECLARE @user_id UNIQUEIDENTIFIER = @CurrentUserId;
+
+SELECT
+    c.id AS conversation_id,
+    c.apartment_id,
+    a.title AS apartment_title,
+    c.landlord_id,
+    c.tenant_id,
+    c.updated_at,
+    lm.created_at AS last_message_at,
+    lm.content AS last_message
+FROM dbo.conversations c
+INNER JOIN dbo.apartments a ON a.id = c.apartment_id
+OUTER APPLY (
+    SELECT TOP 1 m.created_at, m.content
+    FROM dbo.messages m
+    WHERE m.conversation_id = c.id
+    ORDER BY m.created_at DESC
+) lm
+WHERE c.landlord_id = @user_id OR c.tenant_id = @user_id
+ORDER BY ISNULL(lm.created_at, c.updated_at) DESC;
+
+DECLARE @conversation_id UNIQUEIDENTIFIER = @TargetConversationId;
+
+SELECT
+    m.id,
+    m.conversation_id,
+    m.sender_id,
+    u.role AS sender_role,
+    m.content,
+    m.created_at
+FROM dbo.messages m
+INNER JOIN dbo.users u ON u.id = m.sender_id
+WHERE m.conversation_id = @conversation_id
+ORDER BY m.created_at ASC;
+```
+
+### Stored procedure contracts for this slice
+
+```sql
+DECLARE @PreferredDate DATETIMEOFFSET = DATEADD(DAY, 3, SYSDATETIMEOFFSET());
+
+EXEC dbo.sp_CreateViewingRequest
+    @apartment_id = @ApartmentId,
+    @tenant_id = @CurrentUserId,
+    @preferred_date = @PreferredDate,
+    @message = N'I can visit after work.';
+
+EXEC dbo.sp_GetConversationWithMessages
+    @conversation_id = @TargetConversationId,
+    @user_id = @CurrentUserId;
+```
+
+> `sp_GetConversationWithMessages` enforces participant authorization and throws
+> `50021` when the caller is not landlord/tenant of that conversation.
+
+---
+
 ## Feature Summary
 
 | Feature | Standard SQL? | Java/JPA equivalent | When to use in MSSQL |
@@ -360,3 +499,96 @@ WHEN NOT MATCHED THEN
 - **Back to basics:** [`SQL_LAB_MSSQL_BASICS.md`](SQL_LAB_MSSQL_BASICS.md)
 - **Performance & constraints:** [`SQL_LAB_MSSQL_INTERMEDIATE.md`](SQL_LAB_MSSQL_INTERMEDIATE.md)
 - **Back to tutorium labs:** [`TUTORIUM_LAB_WORKPLACE.md`](TUTORIUM_LAB_WORKPLACE.md)
+
+---
+
+## MSSQL SichrPlace Mini – Smoke Test
+
+> Change only the database name in `USE ...`; the rest can be copy-pasted as-is.
+
+```sql
+USE sichrplace_playground;
+SET NOCOUNT ON;
+
+-- 1) quick table snapshots
+SELECT TOP (5) id, email, role, created_at
+FROM dbo.users
+ORDER BY created_at DESC;
+
+SELECT TOP (5) id, landlord_id, title, city, status, created_at
+FROM dbo.apartments
+ORDER BY created_at DESC;
+
+SELECT TOP (5) id, apartment_id, tenant_id, status, preferred_date, created_at
+FROM dbo.viewing_requests
+ORDER BY created_at DESC;
+
+SELECT TOP (5) id, apartment_id, landlord_id, tenant_id, created_at
+FROM dbo.conversations
+ORDER BY created_at DESC;
+
+SELECT TOP (5) id, conversation_id, sender_id, content, created_at
+FROM dbo.messages
+ORDER BY created_at DESC;
+
+-- 2) proc test: create viewing request with a known valid pair
+DECLARE @apartment_id UNIQUEIDENTIFIER = (
+    SELECT TOP 1 a.id
+    FROM dbo.apartments a
+    WHERE a.status = N'available'
+    ORDER BY a.created_at DESC
+);
+
+DECLARE @tenant_id UNIQUEIDENTIFIER = (
+    SELECT TOP 1 u.id
+    FROM dbo.users u
+    WHERE u.role = N'tenant'
+    ORDER BY u.created_at DESC
+);
+
+DECLARE @preferred_date DATETIMEOFFSET = DATEADD(DAY, 3, SYSDATETIMEOFFSET());
+
+EXEC dbo.sp_CreateViewingRequest
+    @apartment_id = @apartment_id,
+    @tenant_id = @tenant_id,
+    @preferred_date = @preferred_date,
+    @message = N'Smoke test viewing request';
+
+-- 3) proc test: get conversation + message stream for an authorized user
+DECLARE @conversation_id UNIQUEIDENTIFIER = (
+    SELECT TOP 1 c.id
+    FROM dbo.conversations c
+    ORDER BY c.created_at DESC
+);
+
+DECLARE @authorized_user_id UNIQUEIDENTIFIER = (
+    SELECT TOP 1 c.tenant_id
+    FROM dbo.conversations c
+    WHERE c.id = @conversation_id
+);
+
+EXEC dbo.sp_GetConversationWithMessages
+    @conversation_id = @conversation_id,
+    @user_id = @authorized_user_id;
+```
+
+Expected outcomes:
+- `SELECT TOP (5)` queries return rows for all five mini-backend tables.
+- `sp_CreateViewingRequest` returns exactly one newly inserted `viewing_requests` row (`status = pending`).
+- `sp_GetConversationWithMessages` returns two result sets: (1) conversation header and (2) ordered messages.
+
+### `sqlcmd` – Non-interactive Smoke Test
+
+Use `-b` so SQL errors return a non-zero exit code (CI-friendly).
+
+```powershell
+# Preferred: reusable script file
+$sqlcmd = "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\180\Tools\Binn\SQLCMD.EXE"
+& $sqlcmd -S . -d sichrplace_playground -E -C -b -i db/mssql/smoke_test.sql
+
+# Alternative: minimal inline check
+& $sqlcmd -S . -d sichrplace_playground -E -C -b -Q "SET NOCOUNT ON; SELECT TOP (1) id FROM dbo.users; SELECT TOP (1) id FROM dbo.apartments;"
+```
+
+- Replace server (`-S`), database (`-d`), and auth options (`-E` Windows auth or `-U/-P` SQL auth) for your environment.
+- In CI, fail the job when the command exits non-zero; pass only on exit code `0`.

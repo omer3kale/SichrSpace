@@ -41,6 +41,14 @@ public class ViewingRequest {
     @Column(columnDefinition = "TEXT")
     private String message;
 
+    /** FTL-15: optional open-ended questions from the tenant. */
+    @Column(columnDefinition = "TEXT")
+    private String questions;
+
+    /** FTL-15: points the tenant wants to pay attention to during viewing. */
+    @Column(name = "attention_points", columnDefinition = "TEXT")
+    private String attentionPoints;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ViewingStatus status;
@@ -54,6 +62,18 @@ public class ViewingRequest {
     @Column(name = "decline_reason")
     private String declineReason;
 
+    @Column(name = "payment_required", nullable = false)
+    @Builder.Default
+    private boolean paymentRequired = false;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "payment_transaction_id")
+    private PaymentTransaction paymentTransaction;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "video_id")
+    private ViewingVideo video;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
@@ -61,6 +81,34 @@ public class ViewingRequest {
     @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+    // ---- payment convenience methods ----
+
+    /**
+     * Returns true when no payment is needed, or the linked transaction is COMPLETED.
+     */
+    public boolean isPaid() {
+        return !paymentRequired
+                || (paymentTransaction != null
+                    && paymentTransaction.getStatus() == PaymentTransaction.PaymentTransactionStatus.COMPLETED);
+    }
+
+    /**
+     * Returns true when a payment transaction exists and is still in progress (CREATED or PENDING).
+     */
+    public boolean isPaymentInProgress() {
+        if (paymentTransaction == null) return false;
+        return paymentTransaction.getStatus() == PaymentTransaction.PaymentTransactionStatus.CREATED
+                || paymentTransaction.getStatus() == PaymentTransaction.PaymentTransactionStatus.PENDING;
+    }
+
+    /**
+     * Returns true when the linked payment transaction has been refunded.
+     */
+    public boolean isRefunded() {
+        return paymentTransaction != null
+                && paymentTransaction.getStatus() == PaymentTransaction.PaymentTransactionStatus.REFUNDED;
+    }
 
     public enum ViewingStatus {
         PENDING, CONFIRMED, DECLINED, COMPLETED, CANCELLED

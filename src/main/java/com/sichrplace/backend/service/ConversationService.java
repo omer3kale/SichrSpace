@@ -26,4 +26,10 @@ public interface ConversationService {
     int markConversationAsRead(Long userId, Long conversationId);
 
     long getTotalUnreadCount(Long userId);
+
+    Page<MessageDto> searchMessages(Long userId, String query, Pageable pageable);
+
+    boolean archiveConversation(Long userId, Long conversationId);
+
+    Page<ConversationDto> getArchivedConversations(Long userId, Pageable pageable);
 }

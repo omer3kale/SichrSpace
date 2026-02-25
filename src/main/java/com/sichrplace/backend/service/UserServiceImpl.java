@@ -2,6 +2,7 @@ package com.sichrplace.backend.service;
 
 import com.sichrplace.backend.dto.UserDto;
 import com.sichrplace.backend.dto.UserAuthDto;
+import com.sichrplace.backend.exception.AuthException;
 import com.sichrplace.backend.model.EmailVerificationToken;
 import com.sichrplace.backend.model.PasswordResetToken;
 import com.sichrplace.backend.model.User;
@@ -11,6 +12,7 @@ import com.sichrplace.backend.repository.UserRepository;
 import com.sichrplace.backend.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +25,9 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -31,12 +35,25 @@ import java.util.Map;
 @Transactional
 public class UserServiceImpl implements UserService {
 
+    /** Maximum consecutive failed logins before temporary lockout. */
+    @Value("${app.login.maxFailedAttempts:5}")
+    private int maxFailedAttempts;
+
+    /** Lock duration in minutes after exceeding {@link #maxFailedAttempts}. */
+    @Value("${app.login.lockoutMinutes:30}")
+    private int lockoutMinutes;
+
     private final UserRepository userRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
+
+    /** Password strength: >= 8 chars, 1 upper, 1 lower, 1 digit, 1 special. */
+    private static final Pattern STRONG_PASSWORD = Pattern.compile(
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$");
 
     @Override
     public UserAuthDto register(String email, String password, String firstName, String lastName, User.UserRole role) {
@@ -44,12 +61,17 @@ public class UserServiceImpl implements UserService {
 
         if (role == User.UserRole.ADMIN) {
             log.warn("Blocked attempt to self-register as ADMIN, email={}", email);
-            throw new IllegalArgumentException("Cannot self-register as ADMIN");
+            throw AuthException.adminSelfRegister();
         }
 
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmail(email.toLowerCase(Locale.ROOT))) {
             log.warn("Registration failed – email already exists: {}", email);
-            throw new IllegalArgumentException("Email already registered");
+            throw AuthException.emailTaken(email);
+        }
+
+        if (!STRONG_PASSWORD.matcher(password).matches()) {
+            log.warn("Registration failed – weak password for email={}", email);
+            throw AuthException.passwordWeak();
         }
 
         User user = User.builder()
@@ -69,7 +91,7 @@ public class UserServiceImpl implements UserService {
         issueVerificationToken(user);
 
         String accessToken = jwtTokenProvider.generateAccessToken(user);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+        String refreshToken = refreshTokenService.createToken(user, null);
 
         return UserAuthDto.builder()
                 .id(user.getId())
@@ -90,25 +112,49 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.warn("Login failed – email not found: {}", email);
-                    return new IllegalArgumentException("Invalid email or password");
+                    return AuthException.invalidCredentials();
                 });
 
         if (!user.getIsActive()) {
             log.warn("Login failed – account deactivated, userId={}", user.getId());
-            throw new IllegalArgumentException("Account is deactivated");
+            throw AuthException.accountDeactivated();
+        }
+
+        // --- Account lockout check ---
+        if (user.getLockedUntil() != null && Instant.now().isBefore(user.getLockedUntil())) {
+            log.warn("Login failed – account temporarily locked, userId={}, lockedUntil={}",
+                    user.getId(), user.getLockedUntil());
+            throw AuthException.accountLocked();
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            log.warn("Login failed – bad password for userId={}", user.getId());
-            throw new IllegalArgumentException("Invalid email or password");
+            int attempts = user.getFailedLoginAttempts() + 1;
+            user.setFailedLoginAttempts(attempts);
+            if (attempts >= maxFailedAttempts) {
+                user.setLockedUntil(Instant.now().plus(lockoutMinutes, ChronoUnit.MINUTES));
+                log.warn("Account locked after {} failed attempts, userId={}", attempts, user.getId());
+            } else {
+                log.warn("Login failed – bad password for userId={}, failedAttempts={}", user.getId(), attempts);
+            }
+            userRepository.save(user);
+            throw AuthException.invalidCredentials();
         }
 
+        // --- Email verification check ---
+        if (!Boolean.TRUE.equals(user.getEmailVerified())) {
+            log.warn("Login failed – email not verified, userId={}", user.getId());
+            throw AuthException.emailNotVerified();
+        }
+
+        // Successful login — reset lockout state
+        user.setFailedLoginAttempts(0);
+        user.setLockedUntil(null);
         user.setLastLoginAt(Instant.now());
         userRepository.save(user);
         log.info("Login successful userId={}, role={}", user.getId(), user.getRole());
 
         String accessToken = jwtTokenProvider.generateAccessToken(user);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+        String refreshToken = refreshTokenService.createToken(user, null);
 
         return UserAuthDto.builder()
                 .id(user.getId())
@@ -160,6 +206,13 @@ public class UserServiceImpl implements UserService {
         }
         if (updateData.getCountry() != null) {
             user.setCountry(updateData.getCountry());
+        }
+        if (updateData.getPreferredLocale() != null) {
+            String locale = updateData.getPreferredLocale().toLowerCase(java.util.Locale.ROOT);
+            if (!java.util.Set.of("en", "de", "tr").contains(locale)) {
+                throw new IllegalArgumentException("Preferred locale must be one of: en, de, tr");
+            }
+            user.setPreferredLocale(locale);
         }
 
         user = userRepository.save(user);
@@ -219,13 +272,13 @@ public class UserServiceImpl implements UserService {
         String tokenHash = sha256(token);
 
         PasswordResetToken prt = passwordResetTokenRepository.findByTokenHash(tokenHash)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired reset token"));
+                .orElseThrow(() -> AuthException.invalidToken());
 
         if (prt.isUsed()) {
-            throw new IllegalStateException("Reset token has already been used");
+            throw AuthException.tokenAlreadyUsed();
         }
         if (prt.isExpired()) {
-            throw new IllegalStateException("Reset token has expired");
+            throw AuthException.tokenExpired();
         }
 
         // Update password
@@ -284,13 +337,13 @@ public class UserServiceImpl implements UserService {
         String tokenHash = sha256(token);
 
         EmailVerificationToken evt = emailVerificationTokenRepository.findByTokenHash(tokenHash)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid verification token"));
+                .orElseThrow(() -> AuthException.invalidToken());
 
         if (evt.isUsed()) {
-            throw new IllegalStateException("Verification token has already been used");
+            throw AuthException.tokenAlreadyUsed();
         }
         if (evt.isExpired()) {
-            throw new IllegalStateException("Verification token has expired");
+            throw AuthException.tokenExpired();
         }
 
         // Mark user as email-verified

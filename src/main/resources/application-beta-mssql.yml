@@ -14,13 +14,19 @@
 
 spring:
   datasource:
-    url: jdbc:sqlserver://${BETA_DB_HOST:database}:1433;databaseName=sichrplace;encrypt=false
-    username: ${BETA_DB_USER}
-    password: ${BETA_DB_PASS}
+    url: jdbc:sqlserver://${STAGING_DB_HOST:${BETA_DB_HOST:database}}:${STAGING_DB_PORT:1433};databaseName=${STAGING_DB_NAME:sichrplace};encrypt=${STAGING_DB_ENCRYPT:true};trustServerCertificate=${STAGING_DB_TRUST_SERVER_CERTIFICATE:false};loginTimeout=30;socketTimeout=30
+    username: ${STAGING_DB_USER:${BETA_DB_USER}}
+    password: ${STAGING_DB_PASS:${BETA_DB_PASS}}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     hikari:
       pool-name: SichrPlace-MSSQL-Beta
       maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      validation-timeout: 5000
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
   jpa:
     hibernate:
       ddl-auto: validate          # Schema managed by migration scripts; Hibernate validates only
@@ -40,6 +46,38 @@ app:
 
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:https://sichrplace.com,https://www.sichrplace.com}
+
+  email:
+    provider: ${EMAIL_PROVIDER:smtp}
+    from: ${EMAIL_FROM:noreply@sichrplace.de}
+
+  login:
+    maxFailedAttempts: ${LOGIN_MAX_FAILED_ATTEMPTS:5}
+    lockoutMinutes: ${LOGIN_LOCKOUT_MINUTES:30}
+
+  # Optional: previous JWT secret kept during key-rotation grace period
+  jwtSecretPrevious: ${JWT_SECRET_PREVIOUS:}
+
+  refreshTokenExpirationDays: ${REFRESH_TOKEN_EXPIRATION_DAYS:14}
+
+  ratelimit:
+    capacity: ${RATE_LIMIT_CAPACITY:10}
+    refillTokens: ${RATE_LIMIT_REFILL_TOKENS:10}
+    refillSeconds: ${RATE_LIMIT_REFILL_SECONDS:60}
+
+spring:
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASS}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 
 # ── Teaching note ──
 # Students: This profile is identical in structure to application-local-mssql.yml

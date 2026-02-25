@@ -1,5 +1,12 @@
 # Frontend Integration Spec — Viewing Request Statistics & Completion
 
+> **Legacy Notice (2026-02-20):** Implementation is now authoritative.
+> Source of truth is Java code + tests:
+> `ViewingRequestController#getStatistics`, `ViewingRequestController#completeViewingRequest`,
+> `ViewingRequestServiceImpl#getStatistics`, `ViewingRequestServiceImpl#completeViewingRequest`,
+> `ViewingRequestServiceExtendedTest`, `ViewingRequestControllerShowcaseTest`.
+> This document is retained for transition/teaching and may be removed after final verification.
+
 | Meta | Value |
 |------|-------|
 | **Backend tag** | `v1.2.0-thesis-showcase` |

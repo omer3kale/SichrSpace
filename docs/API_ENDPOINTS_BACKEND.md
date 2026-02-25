@@ -81,8 +81,64 @@
 | 68 | POST | `/api/auth/resend-verification` | — | UserController | Resend verification email |
 | 69 | DELETE | `/api/notifications/{id}` | Bearer | NotificationController | Delete notification |
 | 70 | GET | `/api/health` | — | HealthController | Application health check |
+| 71 | GET | `/api/conversations/messages/search` | Bearer | ConversationController | Search messages (Phase 2 B-2) |
+| 72 | PATCH | `/api/conversations/{id}/archive` | Bearer | ConversationController | Toggle archive (Phase 2 B-1) |
+| 73 | GET | `/api/conversations/archived` | Bearer | ConversationController | Archived conversations (Phase 2 B-1) |
+| 74 | POST | `/api/conversations/{id}/report` | Bearer | ConversationController | Report conversation (Phase 2 B-5) |
+| 75 | GET | `/api/admin/conversations/reports` | ADMIN | AdminController | List conversation reports (Phase 2 B-5) |
+| 76 | PATCH | `/api/admin/conversations/reports/{id}` | ADMIN | AdminController | Update report status (Phase 2 B-5) |
+| 77 | POST | `/api/conversations/messages/{messageId}/attachments` | Bearer | ConversationController | Register attachment metadata (Phase 2 B-3) |
+| 78 | GET | `/api/conversations/messages/{messageId}/attachments` | Bearer | ConversationController | List message attachments (Phase 2 B-3) |
+| 79 | POST | `/api/conversations/messages/{messageId}/reactions` | Bearer | ConversationController | Add emoji reaction (Phase 2 B-4) |
+| 80 | DELETE | `/api/conversations/messages/{messageId}/reactions` | Bearer | ConversationController | Remove emoji reaction (Phase 2 B-4) |
+| 81 | GET | `/api/conversations/messages/{messageId}/reactions` | Bearer | ConversationController | List message reactions (Phase 2 B-4) |
+| 82 | POST | `/api/viewing-requests/{id}/payments/session` | Bearer | ViewingRequestController | Create payment session — Stripe Checkout (Phase 3 P3-4) |
+| 83 | GET | `/api/viewing-requests/{id}/payments/status` | Bearer | ViewingRequestController | Get payment status for viewing request (Phase 3 P3-3) |
+| 84 | POST | `/api/payments/stripe/webhook` | None (Stripe signature) | StripeWebhookController | Receive Stripe webhook events (Phase 3 P3-5) |
+| 85 | POST | `/api/payments/paypal/webhook` | None (PayPal webhook ID) | PayPalWebhookController | Receive PayPal webhook events (Phase 3 P3-7) |
+| 86 | GET | `/api/content/about` | — | ContentController | About page stub (Phase D §D1) |
+| 87 | GET | `/api/content/faq` | — | ContentController | FAQ page stub (Phase D §D1) |
+| 88 | GET | `/api/content/customer-service` | — | ContentController | Customer service stub (Phase D §D1) |
+| 89 | GET | `/api/content/scam-stories` | — | ContentController | Scam awareness stub (Phase D §D1) |
+| 90 | GET | `/api/health/db-readiness` | — | HealthController | Database readiness check |
+| 91 | GET | `/api/health/payments` | — | HealthController | Payment providers health status (FTL-v2 §3) |
+| 92 | GET | `/api/reviews/landlord/{id}` | — | ReviewController | Landlord aggregate review stats (FTL-v2 §1) |
+| 93 | GET | `/api/reviews/landlord/{id}/reviews` | — | ReviewController | Approved reviews for landlord (paged) (FTL-v2 §1) |
+| 94 | GET | `/api/viewing-credits/me` | Bearer | ViewingCreditController | Viewing credit summary (FTL-v2 §2) |
+| 95 | GET | `/api/viewing-credits/me/has-credit` | Bearer | ViewingCreditController | Check if next viewing is free (FTL-v2 §2) |
+| 96 | GET | `/api/matching/apartments-for-me` | TENANT | MatchingController | Smart-matched apartments for tenant |
+| 97 | GET | `/api/matching/applicants/{apartmentId}` | LANDLORD/ADMIN | MatchingController | Compare ranked applicants (FTL-v2 §3) |
+| 98 | GET | `/api/matching/success-rate` | LANDLORD/ADMIN | MatchingController | Matching success rate (FTL-v2 §3) |
+| 99 | POST | `/api/support/tickets` | Bearer | SupportTicketController | Create support ticket (FTL-v2 §5) |
+| 100 | GET | `/api/support/tickets` | Bearer | SupportTicketController | My support tickets (FTL-v2 §5) |
+| 101 | GET | `/api/admin/support/tickets` | ADMIN | AdminController | All tickets (paged, status filter) (FTL-v2 §5) |
+| 102 | PATCH | `/api/admin/support/tickets/{id}` | ADMIN | AdminController | Respond to ticket (FTL-v2 §5) |
+| 103 | GET | `/api/profiles/{userId}/public` | — | ProfileController | Limited public profile |
+| 104 | GET | `/api/profiles/me` | Bearer | ProfileController | Own full profile |
+| 105 | PUT | `/api/profiles/me` | Bearer | ProfileController | Update own profile |
+| 106 | POST | `/api/gdpr/me/export` | Bearer | GdprController | Queue GDPR data export (Art. 20) |
+| 107 | GET | `/api/gdpr/me/export/{jobId}/status` | Bearer | GdprController | Check export job status |
+| 108 | DELETE | `/api/gdpr/me` | Bearer | GdprController | Request data deletion (Art. 17) |
+| 109 | POST | `/api/gdpr/consent` | — | GdprController | Record GDPR consent (Art. 7) |
+| 110 | GET | `/api/gdpr/consent-history` | Bearer | GdprController | Consent audit trail |
+| 111 | GET | `/api/maps/geocode` | — | MapsController | Geocode address |
+| 112 | GET | `/api/maps/reverse-geocode` | — | MapsController | Reverse-geocode coordinates |
+| 113 | GET | `/api/maps/apartments/nearby` | — | MapsController | Nearby apartments by lat/lng |
+| 114 | GET | `/api/feature-flags` | — | FeatureFlagController | Feature flag status |
+| 115 | POST | `/api/auth/refresh` | — | UserController | Rotate refresh token + issue new access token |
+| 116 | POST | `/api/auth/logout` | Bearer | UserController | Revoke single refresh token |
+| 117 | POST | `/api/auth/logout-all` | Bearer | UserController | Revoke all refresh tokens for user |
+| 118 | GET | `/api/apartments/search` | — | ApartmentController | Advanced search → `ApartmentSearchCardDto` (22 filters) |
+| 119 | GET | `/api/viewing-requests/admin/all` | ADMIN | ViewingRequestController | Admin list all viewing requests |
+| 120 | POST | `/api/apartments/{apartmentId}/booking-requests` | TENANT | BookingRequestController | Create booking request |
+| 121 | GET | `/api/tenant/booking-requests` | TENANT | BookingRequestController | Tenant's own booking requests |
+| 122 | GET | `/api/landlord/booking-requests` | LANDLORD/ADMIN | BookingRequestController | Landlord's incoming requests |
+| 123 | GET | `/api/landlord/apartments/{aptId}/booking-requests` | LANDLORD/ADMIN | BookingRequestController | Requests per apartment |
+| 124 | PUT | `/api/landlord/booking-requests/{id}/accept` | LANDLORD/ADMIN | BookingRequestController | Accept booking request |
+| 125 | PUT | `/api/landlord/booking-requests/{id}/decline` | LANDLORD/ADMIN | BookingRequestController | Decline booking request |
+| 126 | GET | `/api/landlord/apartments/{aptId}/booking-requests/compare` | LANDLORD/ADMIN | BookingRequestController | Compare/rank applicants |
 
-**Total: 70 endpoints across 12 controllers.**
+**Total: 126 endpoints across 23 controllers.**
 
 ---
 
@@ -273,6 +329,70 @@ Response:
 }
 ```
 
+**Example — Create a payment session (as tenant, Stripe Checkout):**
+
+```bash
+curl -X POST http://localhost:8080/api/viewing-requests/1/payments/session \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN_CHARLIE" \
+  -d '{"provider":"stripe"}'
+```
+
+Response (201 Created):
+```json
+{
+  "transactionId": 1,
+  "provider": "stripe",
+  "status": "PENDING",
+  "redirectUrl": "https://checkout.stripe.com/pay/cs_test_..."
+}
+```
+
+> The `redirectUrl` points to a Stripe-hosted checkout page.
+> After payment, Stripe redirects to the configured success/cancel URL.
+> Transaction status is updated automatically via Stripe webhooks (P3-5).
+
+**Example — Stripe webhook (called by Stripe, not by client):**
+
+```bash
+# Stripe sends this to your server automatically:
+curl -X POST http://localhost:8080/api/payments/stripe/webhook \
+  -H "Content-Type: application/json" \
+  -H "Stripe-Signature: t=1234567890,v1=abc123..." \
+  -d '{"id":"evt_...","type":"checkout.session.completed","data":{"object":{...}}}'
+```
+
+Response (200 OK):
+```json
+{
+  "received": true
+}
+```
+
+> Webhook events handled:
+> - `checkout.session.completed` → marks PaymentTransaction **COMPLETED**
+> - `payment_intent.payment_failed` → marks PaymentTransaction **FAILED**
+> - `charge.refunded` → marks PaymentTransaction **REFUNDED**
+> - Unknown event types are logged and ignored (200 OK returned).
+> - Invalid/missing `Stripe-Signature` header → 400 Bad Request.
+> - Requires `STRIPE_WEBHOOK_SECRET` environment variable for signature verification.
+
+**Example — Get payment status (as tenant or landlord):**
+
+```bash
+curl http://localhost:8080/api/viewing-requests/1/payments/status \
+  -H "Authorization: Bearer $TOKEN_CHARLIE"
+```
+
+Response (200 OK):
+```json
+{
+  "status": "CREATED"
+}
+```
+
+> If no payment transaction exists yet, the response returns `{"status": "NONE"}`.
+
 **State machine (extended):**
 
 ```
@@ -281,6 +401,14 @@ PENDING ──decline──→ DECLINED
 PENDING ──cancel───→ CANCELLED
 CONFIRMED ──cancel──→ CANCELLED
 CONFIRMED ──complete→ COMPLETED
+```
+
+**Payment transaction states:**
+
+```
+CREATED ──→ PENDING ──→ COMPLETED
+                   └──→ FAILED
+COMPLETED ──→ REFUNDED
 ```
 
 ---

@@ -1,0 +1,73 @@
+# ── Production MSSQL profile (activated via SPRING_PROFILES_ACTIVE=prod-mssql) ──
+spring:
+  datasource:
+    url: jdbc:sqlserver://${PROD_DB_HOST}:${PROD_DB_PORT:1433};databaseName=${PROD_DB_NAME:sichrplace};encrypt=${PROD_DB_ENCRYPT:true};trustServerCertificate=${PROD_DB_TRUST_SERVER_CERTIFICATE:false};loginTimeout=30;socketTimeout=30
+    username: ${PROD_DB_USER}
+    password: ${PROD_DB_PASS}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    hikari:
+      pool-name: SichrPlace-MSSQL-Prod
+      maximum-pool-size: ${PROD_DB_POOL_MAX:15}
+      minimum-idle: ${PROD_DB_POOL_MIN:3}
+      connection-timeout: ${PROD_DB_CONNECTION_TIMEOUT_MS:30000}
+      validation-timeout: ${PROD_DB_VALIDATION_TIMEOUT_MS:5000}
+      idle-timeout: ${PROD_DB_IDLE_TIMEOUT_MS:300000}
+      max-lifetime: ${PROD_DB_MAX_LIFETIME_MS:1800000}
+      connection-test-query: SELECT 1
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.SQLServerDialect
+
+app:
+  jwtSecret: ${JWT_SECRET}
+  jwtExpirationMs: ${JWT_EXPIRATION:86400000}
+  jwtRefreshExpirationMs: ${JWT_REFRESH_EXPIRATION:604800000}
+
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://sichrplace.com,https://www.sichrplace.com}
+
+  email:
+    provider: ${EMAIL_PROVIDER:smtp}
+    from: ${EMAIL_FROM:noreply@sichrplace.de}
+
+  login:
+    maxFailedAttempts: ${LOGIN_MAX_FAILED_ATTEMPTS:5}
+    lockoutMinutes: ${LOGIN_LOCKOUT_MINUTES:30}
+
+  # Optional: previous JWT secret kept during key-rotation grace period
+  jwtSecretPrevious: ${JWT_SECRET_PREVIOUS:}
+
+  refreshTokenExpirationDays: ${REFRESH_TOKEN_EXPIRATION_DAYS:14}
+
+  ratelimit:
+    capacity: ${RATE_LIMIT_CAPACITY:20}
+    refillTokens: ${RATE_LIMIT_REFILL_TOKENS:20}
+    refillSeconds: ${RATE_LIMIT_REFILL_SECONDS:60}
+
+spring:
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASS}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+server:
+  port: ${PORT:8080}
+
+logging:
+  level:
+    root: WARN
+    com.sichrplace.backend: INFO
+    com.zaxxer.hikari: INFO

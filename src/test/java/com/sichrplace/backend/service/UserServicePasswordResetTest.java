@@ -1,5 +1,6 @@
 package com.sichrplace.backend.service;
 
+import com.sichrplace.backend.exception.AuthException;
 import com.sichrplace.backend.model.PasswordResetToken;
 import com.sichrplace.backend.model.User;
 import com.sichrplace.backend.repository.PasswordResetTokenRepository;
@@ -150,7 +151,7 @@ class UserServicePasswordResetTest {
         }
 
         @Test
-        @DisplayName("expired token → throws IllegalStateException")
+        @DisplayName("expired token → throws AuthException with TOKEN_EXPIRED")
         void expiredToken_throws() {
             PasswordResetToken prt = PasswordResetToken.builder()
                     .id(11L)
@@ -163,15 +164,15 @@ class UserServicePasswordResetTest {
 
             when(passwordResetTokenRepository.findByTokenHash(anyString())).thenReturn(Optional.of(prt));
 
-            IllegalStateException ex = assertThrows(IllegalStateException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.resetPassword("expiredToken", "NewP@ss1234"));
-            assertTrue(ex.getMessage().contains("expired"));
+            assertEquals("TOKEN_EXPIRED", ex.getErrorCode());
 
             verify(userRepository, never()).save(any());
         }
 
         @Test
-        @DisplayName("used token → throws IllegalStateException")
+        @DisplayName("used token → throws AuthException with TOKEN_ALREADY_USED")
         void usedToken_throws() {
             PasswordResetToken prt = PasswordResetToken.builder()
                     .id(12L)
@@ -184,21 +185,21 @@ class UserServicePasswordResetTest {
 
             when(passwordResetTokenRepository.findByTokenHash(anyString())).thenReturn(Optional.of(prt));
 
-            IllegalStateException ex = assertThrows(IllegalStateException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.resetPassword("usedToken", "NewP@ss1234"));
-            assertTrue(ex.getMessage().contains("already been used"));
+            assertEquals("TOKEN_ALREADY_USED", ex.getErrorCode());
 
             verify(userRepository, never()).save(any());
         }
 
         @Test
-        @DisplayName("invalid (non-existent) token → throws IllegalArgumentException")
+        @DisplayName("invalid (non-existent) token → throws AuthException with INVALID_TOKEN")
         void invalidToken_throws() {
             when(passwordResetTokenRepository.findByTokenHash(anyString())).thenReturn(Optional.empty());
 
-            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            AuthException ex = assertThrows(AuthException.class,
                     () -> userService.resetPassword("bogusToken", "NewP@ss1234"));
-            assertTrue(ex.getMessage().contains("Invalid"));
+            assertEquals("INVALID_TOKEN", ex.getErrorCode());
 
             verify(userRepository, never()).save(any());
         }

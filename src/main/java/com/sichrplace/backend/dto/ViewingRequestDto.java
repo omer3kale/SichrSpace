@@ -21,15 +21,24 @@ public class ViewingRequestDto {
     private String tenantName;
     private LocalDateTime proposedDateTime;
     private String message;
+    private String questions;
+    private String attentionPoints;
     private String status;
     private LocalDateTime respondedAt;
     private LocalDateTime confirmedDateTime;
     private String declineReason;
     private Instant createdAt;
     private Instant updatedAt;
+    private Boolean paymentRequired;
+    private String paymentStatus;
+    private Long videoId;
+    private boolean hasVideo;
 
     public static ViewingRequestDto fromEntity(ViewingRequest request) {
         String tenantName = request.getTenant().getFirstName() + " " + request.getTenant().getLastName();
+        String paymentStatus = request.getPaymentTransaction() != null
+                ? request.getPaymentTransaction().getStatus().name()
+                : null;
         return ViewingRequestDto.builder()
                 .id(request.getId())
                 .apartmentId(request.getApartment().getId())
@@ -38,12 +47,18 @@ public class ViewingRequestDto {
                 .tenantName(tenantName)
                 .proposedDateTime(request.getProposedDateTime())
                 .message(request.getMessage())
+                .questions(request.getQuestions())
+                .attentionPoints(request.getAttentionPoints())
                 .status(request.getStatus().name())
                 .respondedAt(request.getRespondedAt())
                 .confirmedDateTime(request.getConfirmedDateTime())
                 .declineReason(request.getDeclineReason())
                 .createdAt(request.getCreatedAt())
                 .updatedAt(request.getUpdatedAt())
+                .paymentRequired(request.isPaymentRequired())
+                .paymentStatus(paymentStatus)
+                .videoId(request.getVideo() != null ? request.getVideo().getId() : null)
+                .hasVideo(request.getVideo() != null)
                 .build();
     }
 }

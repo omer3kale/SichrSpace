@@ -22,4 +22,17 @@ public interface ApartmentRepository extends JpaRepository<Apartment, Long>, Jpa
 
     @Query("SELECT a FROM Apartment a WHERE a.status = 'AVAILABLE' ORDER BY a.createdAt DESC")
     Page<Apartment> findAllAvailable(Pageable pageable);
+
+    /**
+     * FTL-21: Bounding-box nearby search.
+     * Finds AVAILABLE apartments whose coordinates fall within the given lat/lng rectangle.
+     */
+    @Query("SELECT a FROM Apartment a WHERE a.status = 'AVAILABLE' " +
+           "AND a.latitude IS NOT NULL AND a.longitude IS NOT NULL " +
+           "AND a.latitude  BETWEEN :minLat AND :maxLat " +
+           "AND a.longitude BETWEEN :minLng AND :maxLng")
+    Page<Apartment> findNearby(
+            @Param("minLat") double minLat, @Param("maxLat") double maxLat,
+            @Param("minLng") double minLng, @Param("maxLng") double maxLng,
+            Pageable pageable);
 }

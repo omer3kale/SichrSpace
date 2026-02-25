@@ -17,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Instant;
 import java.util.List;
@@ -46,6 +48,8 @@ class NotificationServiceTest {
 
     @Mock private NotificationRepository notificationRepository;
     @Mock private UserRepository userRepository;
+    /** Injected so the messagingTemplate != null branch in createNotification() executes. */
+    @Mock private SimpMessagingTemplate messagingTemplate;
 
     @InjectMocks private NotificationServiceImpl notificationService;
 
@@ -54,6 +58,8 @@ class NotificationServiceTest {
 
     @BeforeEach
     void setUp() {
+        // Mockito won't field-inject after constructor injection — do it explicitly.
+        ReflectionTestUtils.setField(notificationService, "messagingTemplate", messagingTemplate);
         testUser = User.builder()
                 .id(1L)
                 .email("alice@example.com")

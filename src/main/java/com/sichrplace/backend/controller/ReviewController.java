@@ -108,4 +108,19 @@ public class ReviewController {
             @Valid @RequestBody ModerateReviewRequest request) {
         return ResponseEntity.ok(reviewService.moderateReview(getCurrentUserId(), reviewId, request));
     }
+
+    // ── Landlord Reviews ──
+
+    @GetMapping("/landlord/{landlordId}")
+    @Operation(summary = "Get aggregated reviews for a landlord (public)")
+    public ResponseEntity<ReviewStatsDto> getLandlordReviewStats(@PathVariable Long landlordId) {
+        return ResponseEntity.ok(reviewService.getLandlordReviewStats(landlordId));
+    }
+
+    @GetMapping("/landlord/{landlordId}/reviews")
+    @Operation(summary = "Get recent approved reviews for a landlord's apartments (public)")
+    public ResponseEntity<Page<ReviewDto>> getLandlordReviews(
+            @PathVariable Long landlordId, Pageable pageable) {
+        return ResponseEntity.ok(reviewService.getApprovedReviewsForLandlord(landlordId, pageable));
+    }
 }

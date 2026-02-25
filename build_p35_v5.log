@@ -1,0 +1,80 @@
+> Task :clean
+
+> Task :compileJava
+C:\Users\range\.redhat\src\main\java\com\sichrplace\backend\model\User.java:67: warning: @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+    private int failedLoginAttempts = 0;
+                ^
+Note: C:\Users\range\.redhat\src\main\java\com\sichrplace\backend\config\GlobalExceptionHandler.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+1 warning
+
+> Task :processResources
+> Task :classes
+
+> Task :compileTestJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :processTestResources
+> Task :testClasses
+> Task :test
+
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+2026-02-22 22:43:26.087 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2026-02-22 22:43:26.087 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5f9d8f74]]
+2026-02-22 22:43:26.088 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2026-02-22 22:43:26.103 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-22 22:43:26.855 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-02-22 22:43:26.860 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-02-22 22:43:26.861 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2026-02-22 22:43:26.862 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5f8c0480]]
+2026-02-22 22:43:26.862 [SpringApplicationShutdownHook] INFO  o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2026-02-22 22:43:26.866 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-22 22:43:26.870 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2026-02-22 22:43:26.872 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+
+> Task :jacocoTestReport
+> Task :jacocoTestCoverageVerification
+> Task :testWithCoverage
+
+> Task :checkCoco FAILED
+
+????????????????????????????????????????????????????????????
+?           COCO — Code Coverage Objectives               ?
+????????????????????????????????????????????????????????????
+? ? security              100,0% /  95%                   ?
+? ? controller             99,2% /  99%                   ?
+? ? config                 48,1% /  20%                   ?
+? ? service                98,9% /  99%                   ?
+? ? dto                    99,1% /  20%                   ?
+? ? repository              1,4% /   0%                   ?
+? ? model                  96,0% /  12%                   ?
+? ? OVERALL                85,6% /  60%                   ?
+????????????????????????????????????????????????????????????
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file 'C:\Users\range\.redhat\build.gradle' line: 209
+
+* What went wrong:
+Execution failed for task ':checkCoco'.
+> COCO check FAILED:
+    service: 98.9% < 99%
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.5/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUÝLD FAILED in 10h 3m 7s
+9 actionable tasks: 9 executed

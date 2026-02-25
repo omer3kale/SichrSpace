@@ -2,6 +2,8 @@ package com.sichrplace.backend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sichrplace.backend.dto.ApartmentDto;
+import com.sichrplace.backend.dto.CreateSavedSearchRequest;
+import com.sichrplace.backend.dto.SavedSearchDto;
 import com.sichrplace.backend.model.Apartment;
 import com.sichrplace.backend.model.SavedSearch;
 import com.sichrplace.backend.model.User;
@@ -38,7 +40,7 @@ import static org.mockito.Mockito.*;
  * <ul>
  *   <li>executeSavedSearch — valid filter_json produces matching apartments</li>
  *   <li>executeSavedSearch — ownership validation rejects unauthorized users</li>
- *   <li>executeSavedSearch — malformed filter_json throws IllegalStateException</li>
+ *   <li>executeSavedSearch — malformed filter_json throws IllegalArgumentException</li>
  *   <li>executeSavedSearch — updates lastMatchedAt and matchCount</li>
  * </ul>
  */
@@ -123,12 +125,12 @@ class SavedSearchServiceTest {
     }
 
     @Test
-    @DisplayName("malformed filter_json → throws IllegalStateException")
+        @DisplayName("malformed filter_json → throws IllegalArgumentException")
     void executeSavedSearch_malformedJson() {
         savedSearch.setFilterJson("{invalid json!!!");
         when(savedSearchRepository.findById(10L)).thenReturn(Optional.of(savedSearch));
 
-        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> savedSearchService.executeSavedSearch(10L, 1L, PageRequest.of(0, 20)));
         assertTrue(ex.getMessage().contains("Invalid filter_json"));
     }
@@ -189,4 +191,129 @@ class SavedSearchServiceTest {
 
         assertEquals(6, savedSearch.getMatchCount(), "matchCount should be 5 + 1 = 6");
     }
+
+        @Test
+        @DisplayName("createSavedSearch persists active search with zero match count")
+        void createSavedSearch_success() {
+                CreateSavedSearchRequest request = CreateSavedSearchRequest.builder()
+                                .name("My Search")
+                                .filterJson("{\"city\":\"Berlin\"}")
+                                .build();
+
+                when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
+                when(savedSearchRepository.existsByUserIdAndName(1L, "My Search")).thenReturn(false);
+                when(savedSearchRepository.save(any(SavedSearch.class))).thenAnswer(inv -> {
+                        SavedSearch ss = inv.getArgument(0);
+                        ss.setId(99L);
+                        return ss;
+                });
+
+                SavedSearchDto dto = savedSearchService.createSavedSearch(1L, request);
+
+                assertEquals(99L, dto.getId());
+                assertEquals("My Search", dto.getName());
+                verify(savedSearchRepository).save(any(SavedSearch.class));
+        }
+
+        @Test
+        @DisplayName("createSavedSearch throws when user missing")
+        void createSavedSearch_userMissing() {
+                CreateSavedSearchRequest request = CreateSavedSearchRequest.builder()
+                                .name("My Search")
+                                .filterJson("{}")
+                                .build();
+                when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+                assertThrows(IllegalArgumentException.class,
+                                () -> savedSearchService.createSavedSearch(1L, request));
+        }
+
+        @Test
+        @DisplayName("createSavedSearch throws on duplicate name")
+        void createSavedSearch_duplicateName() {
+                CreateSavedSearchRequest request = CreateSavedSearchRequest.builder()
+                                .name("My Search")
+                                .filterJson("{}")
+                                .build();
+                when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
+                when(savedSearchRepository.existsByUserIdAndName(1L, "My Search")).thenReturn(true);
+
+                assertThrows(IllegalStateException.class,
+                                () -> savedSearchService.createSavedSearch(1L, request));
+        }
+
+        @Test
+        @DisplayName("getSavedSearchesByUser maps repository results")
+        void getSavedSearchesByUser_maps() {
+                when(savedSearchRepository.findByUserIdOrderByCreatedAtDesc(1L)).thenReturn(List.of(savedSearch));
+
+                List<SavedSearchDto> items = savedSearchService.getSavedSearchesByUser(1L);
+
+                assertEquals(1, items.size());
+                assertEquals(10L, items.get(0).getId());
+        }
+
+        @Test
+        @DisplayName("getSavedSearchById validates ownership")
+        void getSavedSearchById_authChecks() {
+                when(savedSearchRepository.findById(10L)).thenReturn(Optional.of(savedSearch));
+
+                SavedSearchDto ok = savedSearchService.getSavedSearchById(10L, 1L);
+                assertEquals(10L, ok.getId());
+
+                assertThrows(SecurityException.class,
+                                () -> savedSearchService.getSavedSearchById(10L, 2L));
+        }
+
+        @Test
+        @DisplayName("toggleActive toggles state and validates ownership")
+        void toggleActive_paths() {
+                savedSearch.setIsActive(true);
+                when(savedSearchRepository.findById(10L)).thenReturn(Optional.of(savedSearch));
+                when(savedSearchRepository.save(any(SavedSearch.class))).thenAnswer(inv -> inv.getArgument(0));
+
+                SavedSearchDto toggled = savedSearchService.toggleActive(10L, 1L);
+                assertFalse(toggled.getIsActive());
+
+                assertThrows(SecurityException.class,
+                                () -> savedSearchService.toggleActive(10L, 7L));
+        }
+
+        @Test
+        @DisplayName("deleteSavedSearch deletes owned search and rejects unauthorized")
+        void deleteSavedSearch_paths() {
+                when(savedSearchRepository.findById(10L)).thenReturn(Optional.of(savedSearch));
+
+                savedSearchService.deleteSavedSearch(10L, 1L);
+                verify(savedSearchRepository).delete(savedSearch);
+
+                assertThrows(SecurityException.class,
+                                () -> savedSearchService.deleteSavedSearch(10L, 4L));
+        }
+
+        // ── not-found guards (covers orElseThrow lambda bodies) ─────────────
+
+        @Test
+        @DisplayName("getSavedSearchById throws IllegalArgumentException when ID not found")
+        void getSavedSearchById_notFound_throws() {
+                when(savedSearchRepository.findById(999L)).thenReturn(Optional.empty());
+                assertThrows(IllegalArgumentException.class,
+                                () -> savedSearchService.getSavedSearchById(999L, 1L));
+        }
+
+        @Test
+        @DisplayName("toggleActive throws IllegalArgumentException when ID not found")
+        void toggleActive_notFound_throws() {
+                when(savedSearchRepository.findById(999L)).thenReturn(Optional.empty());
+                assertThrows(IllegalArgumentException.class,
+                                () -> savedSearchService.toggleActive(999L, 1L));
+        }
+
+        @Test
+        @DisplayName("deleteSavedSearch throws IllegalArgumentException when ID not found")
+        void deleteSavedSearch_notFound_throws() {
+                when(savedSearchRepository.findById(999L)).thenReturn(Optional.empty());
+                assertThrows(IllegalArgumentException.class,
+                                () -> savedSearchService.deleteSavedSearch(999L, 1L));
+        }
 }

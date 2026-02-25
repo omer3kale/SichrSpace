@@ -3,11 +3,15 @@ package com.sichrplace.backend.controller;
 import com.sichrplace.backend.dto.ApiErrorResponse;
 import com.sichrplace.backend.dto.ForgotPasswordRequest;
 import com.sichrplace.backend.dto.LoginRequest;
+import com.sichrplace.backend.dto.RefreshTokenRequest;
 import com.sichrplace.backend.dto.RegisterRequest;
 import com.sichrplace.backend.dto.ResetPasswordRequest;
 import com.sichrplace.backend.dto.UserAuthDto;
 import com.sichrplace.backend.dto.UserDto;
 import com.sichrplace.backend.model.User;
+import com.sichrplace.backend.repository.UserRepository;
+import com.sichrplace.backend.security.JwtTokenProvider;
+import com.sichrplace.backend.service.RefreshTokenService;
 import com.sichrplace.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,6 +38,9 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
 
     @PostMapping("/register")
     @Operation(summary = "Register a new user", security = {})
@@ -43,7 +50,7 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     })
     public ResponseEntity<UserAuthDto> register(@Valid @RequestBody RegisterRequest request) {
-        User.UserRole role = User.UserRole.valueOf(request.getRole().toUpperCase());
+        User.UserRole role = User.UserRole.valueOf(request.getRole().toUpperCase(java.util.Locale.ROOT));
         UserAuthDto response = userService.register(
                 request.getEmail(),
                 request.getPassword(),
@@ -158,5 +165,68 @@ public class UserController {
     public ResponseEntity<Map<String, String>> resendVerification(@RequestParam String email) {
         Map<String, String> result = userService.resendVerificationEmail(email);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "Rotate refresh token and obtain a new access token", security = {})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "New token pair issued"),
+            @ApiResponse(responseCode = "401", description = "Invalid, expired, or revoked refresh token",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<UserAuthDto> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        String newRawRefresh = refreshTokenService.rotateToken(
+                request.getRefreshToken(),
+                request.getDeviceInfo());
+        Long userId = refreshTokenService.getUserIdFromToken(newRawRefresh);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        String newAccessToken = jwtTokenProvider.generateAccessToken(user);
+        return ResponseEntity.ok(UserAuthDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .role(user.getRole().name())
+                .accessToken(newAccessToken)
+                .refreshToken(newRawRefresh)
+                .expiresIn(jwtTokenProvider.getAccessTokenExpirationMs())
+                .build());
+    }
+
+    @PostMapping("/logout")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Revoke refresh token (single device logout)")
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Logged out successfully"),
+            @ApiResponse(responseCode = "401", description = "Not authenticated",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<Void> logout(@RequestBody(required = false) RefreshTokenRequest request) {
+        if (request != null && request.getRefreshToken() != null) {
+            refreshTokenService.revokeToken(request.getRefreshToken());
+        } else {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Long userId = (Long) auth.getPrincipal();
+            refreshTokenService.revokeAllForUser(userId);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/logout-all")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Revoke all refresh tokens for the current user (all devices)")
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "All sessions revoked"),
+            @ApiResponse(responseCode = "401", description = "Not authenticated",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public ResponseEntity<Void> logoutAll() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) auth.getPrincipal();
+        refreshTokenService.revokeAllForUser(userId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -12,13 +12,19 @@
 
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=sichrplace;encrypt=false
+    url: jdbc:sqlserver://${LOCAL_DB_HOST:localhost}:${LOCAL_DB_PORT:1433};databaseName=${LOCAL_DB_NAME:sichrplace};encrypt=${LOCAL_DB_ENCRYPT:false};trustServerCertificate=${LOCAL_DB_TRUST_SERVER_CERTIFICATE:true};loginTimeout=30;socketTimeout=30
     username: ${LOCAL_DB_USER:sichrplace_user}
     password: ${LOCAL_DB_PASS:changeme}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     hikari:
       pool-name: SichrPlace-MSSQL-Local
       maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 30000
+      validation-timeout: 5000
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
   jpa:
     hibernate:
       ddl-auto: update

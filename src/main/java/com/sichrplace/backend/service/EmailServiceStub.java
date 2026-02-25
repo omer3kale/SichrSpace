@@ -1,13 +1,15 @@
 package com.sichrplace.backend.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
  * Stub email service — logs the message instead of sending it.
  * <p>
- * This implementation is used for development and testing.
- * Replace with a real SMTP/SendGrid implementation for production.
+ * Active when {@code app.email.provider=stub} (or not set — this is the default).
+ * In production profiles (beta-mssql, prod-mssql), set {@code app.email.provider=smtp}
+ * to activate {@link EmailServiceImpl} instead.
  *
  * <p><strong>Teaching note:</strong> This follows the
  * <a href="https://en.wikipedia.org/wiki/Strategy_pattern">Strategy pattern</a>.
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "app.email.provider", havingValue = "stub", matchIfMissing = true)
 public class EmailServiceStub implements EmailService {
 
     @Override
@@ -29,3 +32,4 @@ public class EmailServiceStub implements EmailService {
         log.info("╚══════════════════════════════════════════════════════╝");
     }
 }
+

@@ -34,10 +34,25 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
     
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-    
+
+    // Email delivery (JavaMailSender / SMTP)
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // Rate limiting — Bucket4j (in-memory token bucket, no Redis required)
+    implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
+
+    // WebSocket — STOMP over WebSocket with SockJS fallback
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // Stripe Java SDK — payment provider integration (Phase 3 P3-4)
+    implementation 'com.stripe:stripe-java:24.3.0'
+
+    // PayPal Server SDK — payment provider integration (Phase 3 P3-7)
+    implementation 'com.paypal.sdk:checkout-sdk:1.0.5'
+
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
     runtimeOnly 'org.postgresql:postgresql'
-    
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'com.h2database:h2'

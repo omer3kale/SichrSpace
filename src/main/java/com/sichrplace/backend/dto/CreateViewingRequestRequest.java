@@ -22,4 +22,12 @@ public class CreateViewingRequestRequest {
 
     @Size(max = 1000, message = "Message must not exceed 1000 characters")
     private String message;
+
+    /** Optional open-ended questions for the landlord/company. */
+    @Size(max = 2000, message = "Questions must not exceed 2000 characters")
+    private String questions;
+
+    /** Points the tenant wants to pay special attention to during the viewing. */
+    @Size(max = 2000, message = "Attention points must not exceed 2000 characters")
+    private String attentionPoints;
 }

@@ -8,6 +8,16 @@
 > HTML/CSS/JS, Web Components, or any SPA framework, the integration
 > surface is the same: **HTTP + JSON + JWT**.
 
+> **Authoritative implementation references (living spec):**
+> - Password Reset: `UserController`, `UserServiceImpl`,
+>   `UserServicePasswordResetTest`, `UserControllerPasswordResetTest`
+> - Execute Saved Search: `SavedSearchController`, `SavedSearchServiceImpl`,
+>   `SavedSearchServiceTest`, `SavedSearchControllerExecuteTest`
+> - Viewing Stats + Complete: `ViewingRequestController`, `ViewingRequestServiceImpl`,
+>   `ViewingRequestServiceExtendedTest`, `ViewingRequestControllerShowcaseTest`
+> - Email Verification: `UserController`, `UserServiceImpl`,
+>   `UserServiceEmailVerificationTest`, `UserControllerEmailVerificationTest`
+
 ---
 
 ## 1  No-Framework Lock-In
@@ -140,7 +150,11 @@ Authorization: Bearer <jwt-token>
 Token lifecycle:
 
 1. `POST /api/auth/login` — returns `{ "token": "eyJ..." }`.
-2. Store the token (e.g. `localStorage`, memory, cookie — your choice).
+2. Store the token in memory or `localStorage`.  
+   ⚠ **Do not store the JWT in a cookie.** The backend's CSRF protection is
+   provided by the Bearer-header-only architecture (`csrf().disable()`
+   in `SecurityConfig`). Storing the JWT in a cookie re-opens the CSRF attack
+   surface and would require `CookieCsrfTokenRepository` to be re-enabled.
 3. Attach it to every subsequent request's `Authorization` header.
 4. On `401 Unauthorized`, redirect the user to login.
 
@@ -150,13 +164,59 @@ expiry gracefully.
 
 ---
 
-## 5  Related Documents
+## 5  WebSocket Realtime
+
+All three realtime event channels are delivered over STOMP-over-WebSocket (SockJS fallback available).
+
+### Endpoint
+
+```
+ws://<host>/ws          ← native WebSocket
+http://<host>/ws        ← SockJS HTTP fallback
+```
+
+### Authentication
+
+Send a `CONNECT` frame with a `Authorization: Bearer <jwt>` native header:
+
+```js
+const client = new Client({
+  brokerURL: 'ws://localhost:8080/ws',
+  connectHeaders: { Authorization: `Bearer ${jwt}` },
+});
+```
+
+SockJS clients that cannot set custom HTTP headers may use a plain `token` header instead.
+
+### Subscriptions (server → client only)
+
+| Destination | Payload type | When sent |
+|-------------|-------------|----------|
+| `/topic/conversations.{conversationId}` | `MessageDto` JSON | A new message is created in that conversation |
+| `/user/queue/notifications` | `NotificationDto` JSON | A notification is created for the authenticated user |
+| `/user/queue/viewing-requests` | `ViewingRequestDto` JSON | A viewing-request is confirmed or declined for the authenticated user |
+
+The `/user/…` prefix routes to the currently authenticated principal — use the
+STOMP `SUBSCRIBE` destination without the `/user` prefix; Spring resolves it
+using the STOMP session principal set during `CONNECT`.
+
+### No `@MessageMapping` (yet)
+
+All write operations (send message, create notifications, request/confirm/decline viewings)
+are still performed via HTTP POST.  WebSocket is **server → client push only** at this stage.
+Phase 11 may add `@MessageMapping` endpoints when the frontend consumer is live.
+
+---
+
+## 6  Related Documents
 
 | Document | Purpose |
 |----------|---------|
 | [`docs/SHOWCASE_FEATURES.md`](SHOWCASE_FEATURES.md) | The 3 thesis showcase features whose integration specs are generated |
 | [`docs/FULLSTACK_GOLDEN_PATH.md`](FULLSTACK_GOLDEN_PATH.md) | Traces one action end-to-end from browser to database |
 | [`docs/PHASE2_FRONTEND_INTEGRATION.md`](PHASE2_FRONTEND_INTEGRATION.md) | Phase 2 integration planning notes |
+| [`docs/FRONTEND_INTEGRATION_PLAN.md`](FRONTEND_INTEGRATION_PLAN.md) | Phase 3 payment + booking flow frontend tasks |
+| [`docs/DEPLOYMENT_CHECKLIST.md`](DEPLOYMENT_CHECKLIST.md) | Phase 3 deployment / webhook configuration checklist |
 | [`docs/BACKEND_10OF10_CRITERIA.md`](BACKEND_10OF10_CRITERIA.md) | Defines what 10/10 means for the backend — confirms the API surface is stable and complete for thesis scope |
 | [`docs/BACKEND_DB_STATUS.md`](BACKEND_DB_STATUS.md) | Full backend audit: 13 entities, 70 endpoints, 82 tests, all Phase 1 features complete |
 | [`THESIS_OVERVIEW_BACKEND.md`](../THESIS_OVERVIEW_BACKEND.md) | Full thesis overview (§10 covers frontend integration) |

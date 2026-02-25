@@ -23,3 +23,17 @@ app:
   cors:
     allowed-origins: http://localhost:3000,http://localhost:5173,http://localhost:8080,https://sichrplace.com,https://www.sichrplace.com,https://sichrplace.netlify.app
 
+  video:
+    storage-path: ${VIDEO_STORAGE_PATH:./data/videos}
+    hmac-secret: ${VIDEO_HMAC_SECRET:dev-only-video-hmac-secret-key-32chars!!}
+    link-validity-hours: ${VIDEO_LINK_VALIDITY_HOURS:48}
+    allowed-types: video/mp4,video/webm,video/quicktime
+    cleanup-cron: "0 0 * * * *"
+    max-file-size-mb: 500
+
+google:
+  maps:
+    api-key: ${GOOGLE_MAPS_API_KEY:}
+    geocoding:
+      enabled: ${GEOCODING_ENABLED:true}
+
