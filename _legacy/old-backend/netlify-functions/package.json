@@ -10,7 +10,7 @@
     "test:functions": "node test-netlify-functions.js"
   },
   "dependencies": {
-    "nodemailer": "^6.9.7",
+    "nodemailer": "^8.0.4",
     "crypto": "^1.0.1"
   },
   "devDependencies": {
